@@ -1,0 +1,39 @@
+:root{
+
+    /* PRIMARY */
+    --smartoffice-primary:#2563eb;
+    --smartoffice-primary-dark:#1d4ed8;
+
+    /* SUCCESS */
+    --smartoffice-success:#22c55e;
+
+    /* WARNING */
+    --smartoffice-warning:#f59e0b;
+
+    /* ERROR */
+    --smartoffice-danger:#ef4444;
+
+    /* TEXT */
+    --smartoffice-text:#1e293b;
+    --smartoffice-text-secondary:#64748b;
+
+    /* BACKGROUND */
+    --smartoffice-background:#f8fafc;
+    --smartoffice-card:#ffffff;
+
+    /* BORDER */
+    --smartoffice-border:#e2e8f0;
+
+    /* RADIUS */
+    --smartoffice-radius-sm:12px;
+    --smartoffice-radius-md:18px;
+    --smartoffice-radius-lg:24px;
+
+    /* SHADOW */
+    --smartoffice-shadow-sm:
+        0 6px 18px rgba(15,23,42,.08);
+
+    --smartoffice-shadow-md:
+        0 12px 32px rgba(15,23,42,.10);
+
+}

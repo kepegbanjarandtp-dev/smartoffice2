@@ -1,0 +1,30 @@
+/* ======================================================
+   SMART OFFICE MINI LOADER
+====================================================== */
+.smartoffice-mini-loader{
+
+  width:18px;
+  height:18px;
+
+  border-radius:50%;
+
+  border:
+    2px solid
+    rgba(255,255,255,0.35);
+
+  border-top-color:
+    #ffffff;
+
+  display:inline-block;
+
+  animation:
+    smartofficeSpin
+    0.7s linear infinite;
+}
+
+@keyframes smartofficeSpin{
+
+  to{
+    transform:rotate(360deg);
+  }
+}

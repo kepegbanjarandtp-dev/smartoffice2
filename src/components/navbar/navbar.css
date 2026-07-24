@@ -1,0 +1,101 @@
+/* ======================================================
+   SMART OFFICE MOBILE NAVBAR
+====================================================== */
+.smartoffice-mobile-navbar{
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  width:100%;
+  height:60px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+
+  background:
+    rgba(255,255,255,0.94);
+
+  backdrop-filter:
+    blur(16px);
+
+  border-top:
+    1px solid #e2e8f0;
+
+  box-shadow:
+    0 -4px 20px rgba(0,0,0,0.08);
+
+  z-index:999999;
+
+  padding-bottom:
+    env(safe-area-inset-bottom);
+
+  animation:
+    smartofficeNavbarAppear
+    0.3s ease;
+}
+
+.smartoffice-mobile-navbar-item{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:2px;
+  color:#64748b;
+  font-size:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+.smartoffice-mobile-navbar-item svg{
+  width:18px;
+  height:18px;
+  stroke-width:2.2;
+}
+
+.smartoffice-mobile-navbar-item small{
+  font-size:8px;
+  line-height:1.1;
+}
+
+.smartoffice-mobile-navbar-item.active{
+  color:#2563eb;
+}
+
+.smartoffice-mobile-navbar-item.active span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  border-radius:12px;
+  background:
+    rgba(37,99,235,0.12);
+}
+
+.smartoffice-mobile-navbar-item:active{
+  transform:scale(0.95);
+}
+
+
+/* ======================================================
+   MOBILE ONLY
+====================================================== */
+@media(max-width:768px){
+  .smartoffice-mobile-navbar{
+    display:flex;
+  }
+}
+
+/* ======================================================
+   TABLET & DESKTOP
+====================================================== */
+@media(min-width:769px){
+  .smartoffice-mobile-navbar{
+    display:none;
+  }
+}

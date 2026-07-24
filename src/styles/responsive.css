@@ -1,0 +1,64 @@
+/* ======================================================
+   MOBILE GLOBAL
+====================================================== */
+@media(max-width:768px){
+
+  html{
+    font-size:15px;
+
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+
+  body{
+    width:100%;
+    max-width:100vw;
+    overflow-x:hidden;
+
+    -webkit-overflow-scrolling:touch;
+  }
+
+  img,
+  svg,
+  canvas,
+  video{
+    max-width:100%;
+    height:auto;
+    display:block;
+  }
+
+  button,
+  input,
+  select,
+  textarea{
+    font-size:16px;
+  }
+
+  button{
+    touch-action:manipulation;
+  }
+
+  .smartoffice-toast{
+
+    top:18px;
+
+    left:50%;
+    right:auto;
+
+    width:max-content;
+
+    max-width:calc(100vw - 36px);
+
+    transform:
+      translateX(-50%)
+      translateY(-20px);
+  }
+
+  .smartoffice-toast.show{
+
+    transform:
+      translateX(-50%)
+      translateY(0);
+  }
+
+}

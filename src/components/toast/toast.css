@@ -1,0 +1,113 @@
+/* ======================================================
+   SMART OFFICE TOAST
+====================================================== */
+.smartoffice-toast{
+  position:fixed;
+  top:24px;
+  right:24px;
+  width:max-content;
+  max-width:320px;
+  padding:14px 18px;
+  border-radius:18px;
+  font-size:14px;
+  font-weight:500;
+  z-index:99999;
+  opacity:0;
+  pointer-events:none;
+
+  transform:
+    translateX(120%);
+
+  transition:
+    0.28s ease;
+
+  backdrop-filter:blur(14px);
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.08);
+}
+
+.smartoffice-toast.show{
+  opacity:1;
+  transform:
+    translateX(0);
+}
+
+/* ======================================================
+   SUCCESS
+====================================================== */
+.smartoffice-toast.smartoffice-toast-success{
+
+    background:
+        rgba(37,99,235,.96);
+
+    color:#ffffff;
+
+}
+
+/* ======================================================
+   ERROR
+====================================================== */
+.smartoffice-toast.smartoffice-toast-error{
+
+    background:
+        rgba(239,68,68,.96);
+
+    color:#ffffff;
+
+}
+
+/* ======================================================
+   INFO
+====================================================== */
+.smartoffice-toast.smartoffice-toast-info{
+
+    background:
+        rgba(100,116,139,.96);
+
+    color:#ffffff;
+
+}
+
+/* ======================================================
+   WARNING
+====================================================== */
+.smartoffice-toast.smartoffice-toast-warning{
+
+    background:
+        rgba(245,158,11,.96);
+
+    color:#ffffff;
+
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media(max-width:768px){
+
+    .smartoffice-toast{
+
+        top:18px;
+
+        left:50%;
+        right:auto;
+
+        width:max-content;
+
+        max-width:calc(100vw - 36px);
+
+        transform:
+            translateX(-50%)
+            translateY(-20px);
+
+    }
+
+    .smartoffice-toast.show{
+
+        transform:
+            translateX(-50%)
+            translateY(0);
+
+    }
+
+}
