@@ -187,7 +187,7 @@ async function smartofficeGetPageHtml(
 
     const response =
         await fetch(
-            `src/pages/${pageName}/${pageName}.html`
+            `/pages/${pageName}/${pageName}.html`
         );
 
     const html =
