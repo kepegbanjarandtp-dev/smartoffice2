@@ -5,13 +5,13 @@ import {
     smartofficeApi
 } from "../core/api.js";
 
+
 /* ======================================================
    GET DATA PEGAWAI
 ====================================================== */
 export async function smartofficeGetPegawaiByNip(
     nip
 ){
-
     const response =
         await smartofficeApi(
             "smartofficeGetPegawaiByNip",
@@ -19,7 +19,6 @@ export async function smartofficeGetPegawaiByNip(
                 nip
             }
         );
-
     if(
         !response.success
     ){
@@ -29,8 +28,8 @@ export async function smartofficeGetPegawaiByNip(
     }
 
     return response.data;
-
 }
+
 
 /* ======================================================
    SEARCH PEGAWAI
@@ -38,7 +37,6 @@ export async function smartofficeGetPegawaiByNip(
 export async function smartofficeSearchPegawai(
     keyword
 ){
-
     const response =
         await smartofficeApi(
             "smartofficeSearchPegawai",
@@ -46,7 +44,6 @@ export async function smartofficeSearchPegawai(
                 keyword
             }
         );
-
     if(
         !response.success
     ){
@@ -56,8 +53,8 @@ export async function smartofficeSearchPegawai(
     }
 
     return response.data;
-
 }
+
 
 /* ======================================================
    GET JUMLAH CUTI
@@ -66,7 +63,6 @@ export async function smartofficeGetJumlahCuti(
     tanggalAwal,
     tanggalAkhir
 ){
-
     const response =
         await smartofficeApi(
             "smartofficeGetJumlahCuti",
@@ -75,7 +71,6 @@ export async function smartofficeGetJumlahCuti(
                 tanggalAkhir
             }
         );
-
     if(
         !response.success
     ){
@@ -85,8 +80,8 @@ export async function smartofficeGetJumlahCuti(
     }
 
     return response;
-
 }
+
 
 /* ======================================================
    SUBMIT CUTI
@@ -94,13 +89,11 @@ export async function smartofficeGetJumlahCuti(
 export async function smartofficeSubmitCuti(
     formData
 ){
-
     const response =
         await smartofficeApi(
             "smartofficeSubmitCuti",
             formData
         );
-
     if(
         !response.success
     ){
@@ -110,8 +103,8 @@ export async function smartofficeSubmitCuti(
     }
 
     return response;
-
 }
+
 
 /* ======================================================
    GET RIWAYAT CUTI
@@ -119,7 +112,6 @@ export async function smartofficeSubmitCuti(
 export async function smartofficeGetRiwayatCuti(
     nip
 ){
-
     const response =
         await smartofficeApi(
             "smartofficeGetRiwayatCuti",
@@ -127,7 +119,6 @@ export async function smartofficeGetRiwayatCuti(
                 nip
             }
         );
-
     if(
         !response.success
     ){
@@ -137,5 +128,4 @@ export async function smartofficeGetRiwayatCuti(
     }
 
     return response.data;
-
 }

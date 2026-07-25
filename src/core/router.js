@@ -97,7 +97,7 @@ export async function smartofficeNavigate(
 
     app.innerHTML =
         html;
-
+    
     /* =========================
     LOAD MODULE
     ========================= */
@@ -200,3 +200,10 @@ async function smartofficeGetPageHtml(
 
     return html;
 }
+
+
+/* ======================================================
+   GLOBAL ROUTER
+====================================================== */
+window.smartofficeLoadPage =
+    smartofficeNavigate;

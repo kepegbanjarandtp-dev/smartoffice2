@@ -27,6 +27,13 @@ import {
     smartofficeRenderMobileNavbar
 } from "../../components/navbar/navbar.js";
 
+import {
+  smartofficeOpenPreviewDokumen,
+  smartofficeClosePreviewDokumen,
+  smartofficeZoomIn,
+  smartofficeZoomOut
+} from "../../components/preview/preview.js";
+
 /* ======================================================
    SERVICE
 ====================================================== */
@@ -38,6 +45,13 @@ import {
     smartofficeSubmitCuti
 } from "../../services/cuti.service.js";
 
+/* ======================================================
+   UTILS
+====================================================== */
+import {
+  smartofficeGetDriveFileId
+} from "../../utils/drive.js";
+
 
 
 /* ================================================================================
@@ -45,8 +59,12 @@ import {
 ================================================================================ */
 let smartofficePegawaiCache = [];
 let smartofficeSubmitting = false;
-let smartofficeRiwayatCutiData = [];
 let smartofficeLampiranFile = null;
+
+/* ======================================================
+   MEMORY
+====================================================== */
+let smartofficeRiwayatCutiCache = null;
 
 
 
@@ -100,47 +118,14 @@ export async function smartofficeLoadPage(){
     smartofficeValidateSunday(
         "smartofficeCutiTanggalAkhir",
         "Tanggal akhir cuti tidak boleh hari Minggu"
-    );
+    );    
 
-    const tanggalSurat =
-        document.getElementById(
-            "smartofficeCutiTanggalSurat"
-        );
-
-    if(tanggalSurat){
-        tanggalSurat.addEventListener(
-            "change",
-            function(){
-
-                const tanggalAwal =
-                    document.getElementById(
-                        "smartofficeCutiTanggalAwal"
-                    );
-                if(
-                    tanggalAwal &&
-                    tanggalAwal.value
-                ){
-                    tanggalAwal.dispatchEvent(
-                        new Event("change")
-                    );
-                }
-            }
-        );
-    }
-
-    /* LOAD RIWAYAT CUTI */
-    await smartofficeLoadRiwayatCuti(
-        sessionData.nip
-    );
-
-    /* INIT EVENT */
+    /* INIT COMPONENT */
     smartofficeInitAutoHitungCuti();
-
-    /* INIT LAMPIRAN */
     smartofficeInitUploadLampiran();
-
-    /* INIT SUBMIT */
     smartofficeInitSubmitButton();
+    smartofficeInitTab();
+    smartofficeInitRefreshButton();
 
     /* DEFAULT TAB */
     smartofficeSwitchCutiTab(
@@ -161,8 +146,7 @@ export async function smartofficeDestroyPage(){
 
     /* RESET CACHE */
     smartofficePegawaiCache = [];
-
-    smartofficeRiwayatCutiData = [];
+    smartofficeRiwayatCutiCache = null;
 
     /* RESET SUBMIT LOCK */
     smartofficeSubmitting = false;
@@ -171,14 +155,14 @@ export async function smartofficeDestroyPage(){
     smartofficeLampiranFile = null;
 
     /* AUTO HITUNG CUTI */
-    const jumlahHariElement =
+    const jumlahHariInput =
         document.getElementById(
             "smartofficeCutiJumlahHari"
         );
     if(
-        jumlahHariElement
+        jumlahHariInput
     ){
-        jumlahHariElement.value = "";
+        jumlahHariInput.value = "";
     }
 }
 
@@ -279,11 +263,6 @@ export async function smartofficeLoadPegawai(
 
         document.getElementById(
             "smartofficeCutiSisaCuti"
-        ).value =
-            "";
-
-        document.getElementById(
-            "smartofficeCutiSisaCuti"
         ).dataset.original =
             data.sisaCuti || 0;
 
@@ -334,10 +313,13 @@ export async function smartofficeLoadPegawai(
         /* LOAD JENIS CUTI */
         smartofficeLoadJenisCuti();
 
-        /* LOAD SISA CUTI */
-        document.getElementById(
-            "smartofficeCutiSisaCuti"
-        ).value =
+        /* SET SISA CUTI */
+        const sisaField =
+            document.getElementById(
+                "smartofficeCutiSisaCuti"
+            );
+
+        sisaField.value =
             data.sisaCuti || "0";
 
         /* UPDATE INFO */
@@ -504,26 +486,20 @@ export function smartofficeLoadJenisCuti(){
     );
 }
 
-/* ======================================================
+
+
+/* ================================================================================
    LOAD RIWAYAT CUTI
+================================================================================ */
+
+/* ======================================================
+   LOAD DATA RIWAYAT CUTI
 ====================================================== */
 export async function smartofficeLoadRiwayatCuti(
     nip
 ){
 
     try{
-        /* CONTAINER */
-        const container =
-            document.getElementById(
-                "smartofficeRiwayatCutiList"
-            );
-
-        /* VALIDASI CONTAINER */
-        if(
-            !container
-        ){
-            return;
-        }
 
         /* LOAD DATA */
         const data =
@@ -531,153 +507,16 @@ export async function smartofficeLoadRiwayatCuti(
                 nip
             );
 
-        /* SIMPAN DATA */
-        smartofficeRiwayatCutiData =
+        /* SIMPAN KE MEMORY */
+        smartofficeRiwayatCutiCache =
             data || [];
 
-        /* EMPTY DATA */
-        if(
-            !data ||
-            data.length === 0
-        ){
-            container.innerHTML = `
-                <div class="smartoffice-empty-state">
-                    <div class="smartoffice-empty-icon">
-                        📭
-                    </div>
+        /* RENDER */
+        smartofficeRenderRiwayatCuti();
 
-                    <h3>
-                        Data tidak ditemukan
-                    </h3>
-
-                    <p>
-                        Belum ada riwayat cuti
-                    </p>
-                </div>
-            `;
-            return;
-        }
-
-        /* HTML */
-        let html = "";
-
-        smartofficeRiwayatCutiData.forEach(
-            function(item){
-
-                let statusClass =
-                    "waiting";
-
-                let statusText =
-                    "Menunggu";
-
-                if(
-                    item.status ===
-                    "DISETUJUI"
-                ){
-                    statusClass =
-                        "approved";
-                    statusText =
-                        "Disetujui";
-                }
-
-                if(
-                    item.status ===
-                    "DITOLAK"
-                ){
-                    statusClass =
-                        "rejected";
-                    statusText =
-                        "Ditolak";
-                }
-
-                const startDate =
-                    new Date(
-                        item.tanggalAwal
-                    );
-
-                const day =
-                    startDate.getDate();
-
-                const month =
-                    startDate
-                        .toLocaleString(
-                            "id-ID",
-                            {
-                                month:"short"
-                            }
-                        )
-                        .toUpperCase();
-
-                const periodeCuti =
-                    item.tanggalAwal ===
-                    item.tanggalAkhir
-
-                    ?
-
-                    formatTanggalIndonesia(
-                        item.tanggalAwal
-                    )
-
-                    :
-
-                    `${formatTanggalIndonesia(
-                        item.tanggalAwal
-                    )} - ${formatTanggalIndonesia(
-                        item.tanggalAkhir
-                    )}`;
-
-                html += `
-                    <div
-                        class="smartoffice-riwayat-cuti-card"
-                        onclick='smartofficeOpenRiwayatCutiDetail(${JSON.stringify(item)})'
-                    >
-                        <div class="smartoffice-riwayat-date">
-                            <small>
-                                ${month}
-                            </small>
-
-                            <strong>
-                                ${day}
-                            </strong>
-                        </div>
-
-                        <div class="smartoffice-riwayat-cuti-content">
-                            <h3>
-                                ${item.jenisCuti}
-                            </h3>
-
-                            <small>
-                                ${item.jumlahCuti} Hari
-                            </small>
-
-                            <p>
-                                ${periodeCuti}
-                            </p>
-                        </div>
-
-                        <div class="smartoffice-riwayat-cuti-right">
-                            <span class="
-                                smartoffice-riwayat-status
-                                ${statusClass}
-                            ">
-                                ${statusText}
-                            </span>
-
-                            <div class="smartoffice-riwayat-arrow">
-                                <svg viewBox="0 0 24 24">
-                                    <path d="M9 18l6-6-6-6"/>
-                                </svg>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-        );
-
-        container.innerHTML =
-            html;
     }
     catch(error){
+
         console.error(
             error
         );
@@ -686,7 +525,197 @@ export async function smartofficeLoadRiwayatCuti(
             "Gagal memuat riwayat cuti",
             "error"
         );
+
     }
+
+}
+
+/* ======================================================
+   RENDER RIWAYAT CUTI
+====================================================== */
+function smartofficeRenderRiwayatCuti(){
+
+    /* DATA */
+    const data =
+        smartofficeRiwayatCutiCache;
+
+    /* CONTAINER */
+    const container =
+        document.getElementById(
+            "smartofficeRiwayatCutiList"
+        );
+
+    /* VALIDASI CONTAINER */
+    if(
+        !container
+    ){
+        return;
+    }
+
+    /* EMPTY DATA */
+    if(
+        !data ||
+        data.length === 0
+    ){
+
+        container.innerHTML = `
+            <div class="smartoffice-empty-state">
+
+                <div class="smartoffice-empty-icon">
+                    📭
+                </div>
+
+                <h3>
+                    Data tidak ditemukan
+                </h3>
+
+                <p>
+                    Belum ada riwayat cuti
+                </p>
+
+            </div>
+        `;
+
+        return;
+
+    }
+
+    /* HTML */
+    const html = [];
+
+    data.forEach(function(item){
+
+        let statusClass =
+            "waiting";
+
+        let statusText =
+            "Menunggu";
+
+        if(
+            item.status ===
+            "DISETUJUI"
+        ){
+
+            statusClass =
+                "approved";
+
+            statusText =
+                "Disetujui";
+
+        }
+
+        if(
+            item.status ===
+            "DITOLAK"
+        ){
+
+            statusClass =
+                "rejected";
+
+            statusText =
+                "Ditolak";
+
+        }
+
+        const startDate =
+            new Date(
+                item.tanggalAwal
+            );
+
+        const day =
+            startDate.getDate();
+
+        const month =
+            startDate
+                .toLocaleString(
+                    "id-ID",
+                    {
+                        month:"short"
+                    }
+                )
+                .toUpperCase();
+
+        const periodeCuti =
+            item.tanggalAwal ===
+            item.tanggalAkhir
+
+            ?
+
+            formatTanggalIndonesia(
+                item.tanggalAwal
+            )
+
+            :
+
+            `${formatTanggalIndonesia(
+                item.tanggalAwal
+            )} - ${formatTanggalIndonesia(
+                item.tanggalAkhir
+            )}`;
+
+        html.push(`
+
+            <div
+                class="smartoffice-riwayat-cuti-card"
+                onclick='smartofficeOpenRiwayatCutiDetail(${JSON.stringify(item)})'
+            >
+
+                <div class="smartoffice-riwayat-date">
+
+                    <small>
+                        ${month}
+                    </small>
+
+                    <strong>
+                        ${day}
+                    </strong>
+
+                </div>
+
+                <div class="smartoffice-riwayat-cuti-content">
+
+                    <h3>
+                        ${item.jenisCuti}
+                    </h3>
+
+                    <small>
+                        ${item.jumlahCuti} Hari
+                    </small>
+
+                    <p>
+                        ${periodeCuti}
+                    </p>
+
+                </div>
+
+                <div class="smartoffice-riwayat-cuti-right">
+
+                    <span class="
+                        smartoffice-riwayat-status
+                        ${statusClass}
+                    ">
+                        ${statusText}
+                    </span>
+
+                    <div class="smartoffice-riwayat-arrow">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 18l6-6-6-6"/>
+                        </svg>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        `);
+
+    });
+
+    container.innerHTML =
+        html.join("");
+
 }
 
 
@@ -734,6 +763,21 @@ export function smartofficeInitAutoHitungCuti(){
                 "smartofficeCutiTanggalSurat"
             ){
                 smartofficeResetTanggalAwal();
+
+                const tanggalAwal =
+                    document.getElementById(
+                        "smartofficeCutiTanggalAwal"
+                    );
+
+                if(
+                    tanggalAwal &&
+                    tanggalAwal.value
+                ){
+                    tanggalAwal.dispatchEvent(
+                        new Event("change")
+                    );
+                }
+
                 return;
             }
 
@@ -1173,6 +1217,12 @@ export function smartofficeGetMasaKerja(
             tmtAwal
         ).split("/");
 
+    if(
+        parts.length !== 3
+    ){
+        return "-";
+    }
+
     const startDate =
         new Date(
             parts[2],
@@ -1236,6 +1286,11 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
             "smartofficeCutiDelegasiAutocomplete"
         );
 
+    const nipField =
+        document.getElementById(
+            "smartofficeCutiDelegasiNip"
+        );    
+
     /* VALIDASI ELEMENT */
     if(
         !input ||
@@ -1245,9 +1300,8 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
     }
 
     /* INPUT LISTENER */
-    input.addEventListener(
-        "input",
-
+    input.oninput =
+    
         function(){
             /* KEYWORD */
             const keyword =
@@ -1263,9 +1317,7 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
             if(
                 keyword.length < 1
             ){
-                document.getElementById(
-                    "smartofficeCutiDelegasiNip"
-                ).value =
+                nipField.value =
                     "";
                 return;
             }
@@ -1274,11 +1326,20 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
             const filtered =
                 smartofficePegawaiCache.filter(
                     function(item){
-                        return item.nama
-                            .toLowerCase()
-                            .includes(
-                                keyword
-                            );
+                        return (
+                            item.nama
+                                .toLowerCase()
+                                .includes(
+                                    keyword
+                                )
+
+                            ||
+
+                            item.nip
+                                .includes(
+                                    keyword
+                                )
+                        );
                     }
                 );
 
@@ -1297,7 +1358,9 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
             }
 
             /* RENDER RESULT */
-            filtered.forEach(
+            filtered
+              .slice(0,10)
+              .forEach(
                 function(item){
                     const option =
                         document.createElement(
@@ -1331,8 +1394,7 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
                     );
                 }
             );
-        }
-    );
+    };
 }
 
 /* ======================================================
@@ -1369,9 +1431,43 @@ export function smartofficeSelectDelegasi(
 ================================================================================ */
 
 /* ======================================================
+   INIT TAB
+====================================================== */
+function smartofficeInitTab(){
+
+  const formButton =
+    document.getElementById(
+      "smartofficeTabFormCuti"
+    );
+
+  const riwayatButton =
+    document.getElementById(
+      "smartofficeTabRiwayatCuti"
+    );
+
+  if(formButton){
+    formButton.onclick =
+      function(){
+        smartofficeSwitchCutiTab(
+          "form"
+        );
+      };
+  }
+
+  if(riwayatButton){
+    riwayatButton.onclick =
+      function(){
+        smartofficeSwitchCutiTab(
+          "riwayat"
+        );
+      };
+  }
+}
+
+/* ======================================================
    SWITCH TAB CUTI
 ====================================================== */
-export function smartofficeSwitchCutiTab(
+export async function smartofficeSwitchCutiTab(
     tab
 ){
 
@@ -1430,25 +1526,42 @@ export function smartofficeSwitchCutiTab(
 
     /* RIWAYAT */
     else{
-        formContent.style.display =
-            "none";
 
         riwayatContent.style.display =
             "block";
 
+        formContent.style.display =
+            "none";
+
         riwayatButton.classList.add(
             "active"
         );
-        const session =
-            smartofficeGetSession();
 
+        /* BELUM ADA CACHE */
         if(
-            session
+            smartofficeRiwayatCutiCache === null
         ){
-            smartofficeLoadRiwayatCuti(
-                session.nip
-            );
+
+            const session =
+                smartofficeGetSession();
+
+            if(session){
+
+                await smartofficeLoadRiwayatCuti(
+                    session.nip
+                );
+
+            }
+
         }
+
+        /* SUDAH ADA CACHE */
+        else{
+
+            smartofficeRenderRiwayatCuti();
+
+        }
+
     }
 }
 
@@ -1477,6 +1590,7 @@ export function smartofficeConvertFileToBase64(
                             .split(",")[1]
                     );
                 };
+
             reader.onerror =
                 reject;
 
@@ -1491,27 +1605,40 @@ export function smartofficeConvertFileToBase64(
    INIT UPLOAD LAMPIRAN
 ====================================================== */
 export function smartofficeInitUploadLampiran(){
-    document.addEventListener(
-        "change",
 
-        function(event){
-            if(
-                event.target.id !==
-                "smartofficeCutiLampiran"
-            ){
-                return;
-            }
+    /* FILE INPUT */
+    const input =
+        document.getElementById(
+            "smartofficeCutiLampiran"
+        );
 
+    /* FILE NAME */
+    const fileNameElement =
+        document.getElementById(
+            "smartofficeCutiFileName"
+        );
+
+    /* VALIDASI ELEMENT */
+    if(
+        !input ||
+        !fileNameElement
+    ){
+        return;
+    }
+
+    /* CHANGE EVENT */
+    input.onchange =
+        function(){
+
+            /* FILE */
             const file =
-                event.target.files[0];
+                input.files?.[0] || null;
 
+            /* SAVE FILE */
             smartofficeLampiranFile =
-                file || null;
+                file;
 
-            const fileNameElement =
-                document.getElementById(
-                    "smartofficeCutiFileName"
-                );
+            /* UPDATE TEXT */
             if(
                 file
             ){
@@ -1522,141 +1649,7 @@ export function smartofficeInitUploadLampiran(){
                 fileNameElement.innerText =
                     "Belum ada file dipilih";
             }
-        }
-    );
-}
-
-
-
-/* ================================================================================
-   FORMATTER
-================================================================================ */
-
-/* ======================================================
-   FORMAT TANGGAL INDONESIA
-====================================================== */
-export function smartofficeFormatTanggalIndonesia(
-    tanggal
-){
-
-    /* VALIDASI */
-    if(
-        !tanggal
-    ){
-        return "-";
-    }
-
-    /* DATE OBJECT */
-    const date =
-        new Date(
-            tanggal
-        );
-
-    /* INVALID DATE */
-    if(
-        isNaN(
-            date.getTime()
-        )
-    ){
-        return "-";
-    }
-
-    /* FORMAT */
-    return date.toLocaleDateString(
-        "id-ID",
-        {
-            day:"2-digit",
-            month:"2-digit",
-            year:"numeric"
-        }
-    );
-}
-
-/* ======================================================
-   FORMAT STATUS CUTI
-====================================================== */
-export function smartofficeFormatStatusCuti(
-    status
-){
-
-    /* MENUNGGU */
-    if(
-        status ===
-        "MENUNGGU_APPROVAL_1"
-    ){
-        return "Menunggu";
-    }
-
-    /* DISETUJUI */
-    if(
-        status ===
-        "DISETUJUI"
-    ){
-        return "Disetujui";
-    }
-
-    /* DITOLAK */
-    if(
-        status ===
-        "DITOLAK"
-    ){
-        return "Ditolak";
-    }
-
-    /* DEFAULT */
-    return status;
-}
-
-/* ======================================================
-   GET APPROVAL BADGE
-====================================================== */
-export function smartofficeGetApprovalBadge(
-    status
-){
-
-    /* DISETUJUI */
-    if(
-        status === "DISETUJUI"
-    ){
-        return `
-            <span
-                class="
-                    smartoffice-riwayat-status
-                    approved
-                "
-            >
-                Disetujui
-            </span>
-        `;
-    }
-
-    /* DITOLAK */
-    if(
-        status === "DITOLAK"
-    ){
-        return `
-            <span
-                class="
-                    smartoffice-riwayat-status
-                    rejected
-                "
-            >
-                Ditolak
-            </span>
-        `;
-    }
-
-    /* MENUNGGU */
-    return `
-        <span
-            class="
-                smartoffice-riwayat-status
-                waiting
-            "
-        >
-            Menunggu
-        </span>
-    `;
+        };
 }
 
 
@@ -1669,21 +1662,27 @@ export function smartofficeGetApprovalBadge(
    INIT BUTTON SUBMIT
 ====================================================== */
 export function smartofficeInitSubmitButton(){
-    document.addEventListener(
-        "click",
 
-        function(event){
-            const submitButton =
-                event.target.closest(
-                    "#smartofficeCutiSubmitButton"
-                );
-            if(
-                submitButton
-            ){
-                smartofficeSubmitCutiForm();
-            }
-        }
-    );
+    /* BUTTON */
+    const submitButton =
+        document.getElementById(
+            "smartofficeCutiSubmitButton"
+        );
+
+    /* VALIDASI */
+    if(
+        !submitButton
+    ){
+        return;
+    }
+
+    /* CLICK EVENT */
+    submitButton.onclick =
+        function(){
+
+            smartofficeSubmitCutiForm();
+
+        };
 }
 
 
@@ -1699,17 +1698,19 @@ export async function smartofficeSubmitCutiForm(){
 
   /* SESSION DATA */
   const sessionData =
-    JSON.parse(
-      localStorage.getItem(
-        'smartoffice_session'
-      )
-    );
+    smartofficeGetSession();
 
   /* FILE INPUT */
   const fileInput =
     document.getElementById(
-      'smartofficeCutiLampiran'
+         "smartofficeCutiLampiran"
     );
+
+  if(
+    !fileInput
+  ){
+    return;
+  }
 
   /* JENIS CUTI */
   const jenisCuti =
@@ -1794,6 +1795,11 @@ export async function smartofficeSubmitCutiForm(){
       const parts =
         String(tmtValue)
           .split('/');
+    if(
+    parts.length !== 3
+){
+    return;
+}
 
       const tmtDate =
         new Date(
@@ -2095,8 +2101,14 @@ export async function smartofficeSubmitCutiForm(){
   /* SUBMIT BUTTON */
   const submitButton =
     document.getElementById(
-      'smartofficeCutiSubmitButton'
+        "smartofficeCutiSubmitButton"
     );
+
+  if(
+    !submitButton
+  ){
+    return;
+  }
 
   /* LOCK SUBMIT */
   smartofficeSubmitting =
@@ -2147,7 +2159,9 @@ export async function smartofficeSubmitCutiForm(){
             smartofficeResetCutiForm();
 
             /* RELOAD RIWAYAT */
-            await smartofficeLoadRiwayatCuti();
+            await smartofficeLoadRiwayatCuti(
+                formData.nip
+            );
 
             /* RESET FILTER */
             setTimeout(function(){
@@ -2205,6 +2219,848 @@ export async function smartofficeSubmitCutiForm(){
     }
 }
 
+
+
+/* ================================================================================
+   RESET FORM CUTI
+================================================================================ */
+export function smartofficeResetCutiForm(){
+
+  const ids = [
+    'smartofficeCutiTanggalSurat',
+    'smartofficeCutiJenis',
+    'smartofficeCutiTanggalAwal',
+    'smartofficeCutiTanggalAkhir',
+    'smartofficeCutiJumlah',
+    'smartofficeCutiSisaCuti',
+    'smartofficeCutiKeperluan',
+    'smartofficeCutiAlamatSaatCuti',
+    'smartofficeCutiDelegasi',
+    'smartofficeCutiDelegasiNip',
+    'smartofficeCutiTugasDelegasi',
+    'smartofficeCutiLampiran'
+  ];
+
+  ids.forEach(function(id){
+    const element =
+      document.getElementById(id);
+
+    if(element){
+      element.value = '';
+    }
+  });
+
+  const fileName =
+    document.getElementById(
+      'smartofficeCutiFileName'
+    );
+
+  if(fileName){
+    fileName.innerText =
+      'Belum ada file dipilih';
+  }
+
+  const autocomplete =
+    document.getElementById(
+      'smartofficeCutiDelegasiAutocomplete'
+    );
+
+  if(autocomplete){
+    autocomplete.innerHTML = '';
+  }
+
+  smartofficeLampiranFile = null;
+}
+
+
+
+/* ================================================================================
+   REFRESH 
+================================================================================ */
+
+/* ======================================================
+   REFRESH BUTTON
+====================================================== */
+function smartofficeInitRefreshButton(){
+
+  const refreshButton =
+    document.getElementById(
+      "smartofficeRefreshButton"
+    );
+
+  if(refreshButton){
+    refreshButton.onclick =
+      function(){
+        smartofficeRefreshCuti();
+      };
+  }
+}
+
+/* ======================================================
+   REFRESH CUTI
+====================================================== */
+export async function smartofficeRefreshCuti(){
+
+    console.log("REFRESH DIKLIK");
+
+    const sessionData =
+        smartofficeGetSession();
+
+    const sisaCuti =
+        document.getElementById(
+            "smartofficeStatSisaCuti"
+        );
+
+    const menungguCuti =
+        document.getElementById(
+            "smartofficeStatMenungguCuti"
+        );
+
+    const disetujuiCuti =
+        document.getElementById(
+            "smartofficeStatDisetujuiCuti"
+        );
+
+    const riwayatList =
+        document.getElementById(
+            "smartofficeRiwayatCutiList"
+        );
+
+    /* MINI STAT LOADING */
+    if(sisaCuti){
+        sisaCuti.innerHTML =
+            '<span class="smartoffice-mini-loader"></span>';
+    }
+
+    if(menungguCuti){
+        menungguCuti.innerHTML =
+            '<span class="smartoffice-mini-loader"></span>';
+    }
+
+    if(disetujuiCuti){
+        disetujuiCuti.innerHTML =
+            '<span class="smartoffice-mini-loader"></span>';
+    }
+
+    /* RIWAYAT LOADING */
+    if(riwayatList){
+
+        riwayatList.innerHTML = `
+            <div class="smartoffice-dokumen-loading">
+                <div class="smartoffice-dokumen-spinner"></div>
+                <p>Memuat riwayat...</p>
+            </div>
+        `;
+
+    }
+
+    /* RESET CACHE */
+    smartofficeRiwayatCutiCache =
+        null;
+
+    /* RELOAD DATA PEGAWAI */
+    await smartofficeLoadPegawai(
+        sessionData.nip
+    );
+
+    /* RELOAD RIWAYAT */
+    await smartofficeLoadRiwayatCuti(
+        sessionData.nip
+    );
+
+    smartofficeShowToast(
+        "Data berhasil diperbarui",
+        "success"
+    );
+
+}
+
+
+
+/* ================================================================================
+   FORMATTER
+================================================================================ */
+
+/* ======================================================
+   FORMAT TANGGAL INDONESIA
+====================================================== */
+/* =========================
+   FORMAT DATE INDONESIA
+
+   FUNCTION:
+   Mengubah format tanggal:
+   2026-05-19
+
+   Menjadi:
+   19/05/2026
+========================= */
+export function formatTanggalIndonesia(
+    tanggal
+){
+
+    /* VALIDASI */
+    if(
+        !tanggal
+    ){
+        return "-";
+    }
+
+    /* DATE OBJECT */
+    const date =
+        new Date(
+            tanggal
+        );
+
+    /* INVALID DATE */
+    if(
+        Number.isNaN(
+            date.getTime()
+        )
+    ){
+        return "-";
+    }
+
+    /* FORMAT */
+    return date.toLocaleDateString(
+        "id-ID",
+        {
+            day:"2-digit",
+            month:"2-digit",
+            year:"numeric"
+        }
+    );
+}
+
+/* ======================================================
+   FORMAT STATUS CUTI
+====================================================== */
+/* =========================
+   FORMAT STATUS LABEL
+
+   FUNCTION:
+   Mengubah status database
+   menjadi text lebih rapi.
+========================= */
+export function smartofficeFormatStatusCuti(
+    status
+){
+
+    /* VALIDASI */
+    if(
+        !status
+    ){
+        return "-";
+    }
+
+    /* MENUNGGU */
+    if(
+        status ===
+        "MENUNGGU_APPROVAL_1"
+    ){
+        return "Menunggu";
+    }
+
+    /* DISETUJUI */
+    if(
+        status ===
+        "DISETUJUI"
+    ){
+        return "Disetujui";
+    }
+
+    /* DITOLAK */
+    if(
+        status ===
+        "DITOLAK"
+    ){
+        return "Ditolak";
+    }
+
+    /* DEFAULT */
+    return status;
+}
+
+/* ======================================================
+   GET APPROVAL BADGE
+====================================================== */
+export function smartofficeGetApprovalBadge(
+    status
+){
+
+    /* VALIDASI */
+    if(
+        !status
+    ){
+        status =
+            "MENUNGGU_APPROVAL_1";
+    }
+
+    /* DISETUJUI */
+    if(
+        status ===
+        "DISETUJUI"
+    ){
+        return `
+            <span
+                class="
+                    smartoffice-riwayat-status
+                    approved
+                "
+            >
+                Disetujui
+            </span>
+        `;
+    }
+
+    /* DITOLAK */
+    if(
+        status ===
+        "DITOLAK"
+    ){
+        return `
+            <span
+                class="
+                    smartoffice-riwayat-status
+                    rejected
+                "
+            >
+                Ditolak
+            </span>
+        `;
+    }
+
+    /* MENUNGGU */
+    return `
+        <span
+            class="
+                smartoffice-riwayat-status
+                waiting
+            "
+        >
+            Menunggu
+        </span>
+    `;
+}
+
+
+
+/* ================================================================================
+   DETAIL MODAL RIWAYAT
+================================================================================ */
+/* ======================================================
+   OPEN RIWAYAT DETAIL
+====================================================== */
+export function smartofficeOpenRiwayatCutiDetail(
+    item
+){
+
+  /* MODAL */
+  const modal =
+    document.getElementById(
+      'smartofficeRiwayatCutiDetailModal'
+    );
+
+  /* BODY */
+  const body =
+    document.getElementById(
+      'smartofficeRiwayatCutiDetailBody'
+    );
+
+  /* SHOW */
+  modal.style.display =
+    'flex';
+
+  setTimeout(function(){
+
+    modal.classList.add(
+      'show'
+    );
+
+  },10);
+
+  /* STATUS */
+  let statusText =
+    'Menunggu';
+
+  let statusClass =
+    'waiting';
+
+  if(
+    item.status ===
+    'DISETUJUI'
+  ){
+
+    statusText =
+      'Disetujui';
+
+    statusClass =
+      'approved';
+  }
+
+  if(
+    item.status ===
+    'DITOLAK'
+  ){
+
+    statusText =
+      'Ditolak';
+
+    statusClass =
+      'rejected';
+  }
+
+  const periodeCuti =
+    item.tanggalAwal === item.tanggalAkhir
+
+    ?
+
+    formatTanggalIndonesia(
+      item.tanggalAwal
+    )
+
+    :
+
+    `${formatTanggalIndonesia(
+      item.tanggalAwal
+    )} - ${formatTanggalIndonesia(
+      item.tanggalAkhir
+    )}`;
+
+  /* RENDER */
+  body.scrollTop = 0;
+  body.innerHTML = `
+
+    <!-- PROFILE -->
+    <div class="
+      smartoffice-approval-profile
+    ">
+      
+      <div class="
+        smartoffice-approval-profile-info
+        smartoffice-riwayat-detail-header-info
+      ">
+        <h4>
+          ${item.jenisCuti || '-'}
+        </h4>
+
+        <span class="
+          smartoffice-riwayat-status
+          ${statusClass}
+        ">
+          ${statusText}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- DETAIL -->
+    <div class="
+      smartoffice-approval-detail-grid
+    ">
+
+      <div class="
+        smartoffice-approval-detail-item
+      ">
+
+        <label>
+          Tanggal Permohonan
+        </label>
+
+        <span>
+          ${formatTanggalIndonesia(
+            item.tanggalSurat
+          )}
+        </span>
+
+      </div>
+
+      <div class="
+        smartoffice-approval-detail-item
+      ">
+        <label>
+          Tanggal Cuti
+        </label>
+
+        <span>
+          ${periodeCuti}
+        </span>
+      </div>
+
+      <div class="
+        smartoffice-approval-detail-item
+      ">
+        <label>
+          Jumlah Hari
+        </label>
+
+        <span>
+          ${item.jumlahCuti || 0} Hari
+        </span>
+      </div>
+      
+      <div class="
+        smartoffice-approval-detail-item
+      ">
+        <label>
+          Sisa Cuti
+        </label>
+
+        <span>
+          ${item.sisaCuti || 0} Hari
+        </span>
+      </div>
+
+    </div>
+
+    <!-- KEPERLUAN -->
+    <div class="
+      smartoffice-approval-detail-item
+      full-width
+    ">
+
+      <label>
+        Keperluan
+      </label>
+
+      <span>
+        ${item.keperluan || '-'}
+      </span>
+
+    </div>
+
+    <!-- ALAMAT -->
+    <div class="
+      smartoffice-approval-detail-item
+      full-width
+    ">
+
+      <label>
+        Alamat Selama Menjalani Cuti
+      </label>
+
+      <span>
+        ${item.alamatSaatCuti || '-'}
+      </span>
+
+    </div>
+
+    <!-- LAMPIRAN -->
+    <div class="
+      smartoffice-approval-lampiran
+      smartoffice-riwayat-lampiran
+    ">
+      <div class="
+        smartoffice-approval-lampiran-title
+      ">
+        Lampiran
+      </div>
+
+      <div class="
+        smartoffice-approval-file-card
+      ">
+        <div class="
+          smartoffice-approval-file-icon
+        ">
+          📄
+        </div>
+
+        <div class="
+          smartoffice-approval-file-info
+        ">
+          <div class="
+            smartoffice-approval-file-name
+          ">
+            ${
+              item.lampiran
+              ?
+              `
+              <button
+                class="
+                  smartoffice-dokumen-link
+                "
+                onclick="
+                  smartofficeOpenPreviewDokumen(
+                    '${smartofficeGetDriveFileId(item.lampiran)}',
+                    'Lampiran Cuti'
+                  )
+                "
+              >
+
+                <svg
+                  style="
+                    flex-shrink:0;
+                  "
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <line x1="10" y1="9" x2="8" y2="9"/>
+                </svg>
+
+                <span>
+                  Lihat Lampiran
+                </span>
+
+              </button>
+              `
+              :
+              'Tidak ada lampiran'
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELEGASI GRID -->
+    <div class="
+      smartoffice-approval-detail-grid
+    ">
+
+      <!-- PENERIMA -->
+      <div class="
+        smartoffice-approval-detail-item
+      ">
+        <label>
+          Penerima Delegasi
+        </label>
+
+        <span>
+          ${item.delegasi || '-'}
+        </span>
+      </div>
+
+      <!-- NIP -->
+      <div class="
+        smartoffice-approval-detail-item
+      ">
+        <label>
+          NIP / NRP Delegasi
+        </label>
+
+        <span>
+          ${item.nipDelegasi || '-'}
+        </span>
+      </div>
+    </div>
+
+    <!-- TUGAS -->
+    <div class="
+      smartoffice-approval-detail-item
+      full-width
+    ">
+
+      <label>
+        Tugas Yang Didelegasikan
+      </label>
+
+      <span>
+        ${item.tugasDelegasi || '-'}
+      </span>
+
+    </div>
+
+    <!-- APPROVAL 1 -->
+    <div class="
+      smartoffice-approval-detail-item
+      full-width
+    ">
+
+      <label>
+        Approval 1
+      </label>
+
+      <div class="
+        smartoffice-riwayat-approval-box
+      ">
+
+        <div>
+          <small>Nama</small>
+          <strong>
+            ${item.approval1 || '-'}
+          </strong>
+        </div>
+
+        <div>
+          <small>Status</small>
+          ${smartofficeGetApprovalBadge(
+            item.approval1Status
+          )}
+        </div>
+
+        <div>
+          <small>Tanggal</small>
+          <strong>
+            ${item.approval1Tanggal || '-'}
+          </strong>
+        </div>
+
+        <div>
+          <small>Catatan</small>
+          <strong>
+            ${item.approval1Catatan || '-'}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- APPROVAL 2 -->
+    <div class="
+      smartoffice-approval-detail-item
+      full-width
+    ">
+      <label>
+        Approval 2
+      </label>
+
+      <div class="
+        smartoffice-riwayat-approval-box
+      ">
+        <div>
+          <small>Nama</small>
+          <strong>
+            ${item.approval2 || '-'}
+          </strong>
+        </div>
+
+        <div>
+          <small>Status</small>
+          ${smartofficeGetApprovalBadge(
+            item.approval2Status
+          )}
+        </div>
+
+        <div>
+          <small>Tanggal</small>
+          <strong>
+            ${item.approval2Tanggal || '-'}
+          </strong>
+        </div>
+
+        <div>
+          <small>Catatan</small>
+          <strong>
+            ${item.approval2Catatan || '-'}
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- PDF -->
+    <div class="
+      smartoffice-approval-detail-item
+      full-width
+    ">
+
+      <label>
+        File PDF Surat Cuti
+      </label>
+
+      <span>
+        ${
+          item.pdfUrl
+          ?
+          `
+          <button
+            class="
+              smartoffice-pdf-link
+            "
+            onclick="
+              smartofficeOpenPreviewDokumen(
+                '${smartofficeGetDriveFileId(item.pdfUrl)}',
+                'Surat Cuti.pdf'
+              )
+            "
+          >
+
+            <svg
+              style="
+                flex-shrink:0;
+              "
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <line x1="10" y1="9" x2="8" y2="9"/>
+            </svg>
+
+            <span>
+              Lihat PDF
+            </span>
+
+          </button>
+          `
+          :
+          'PDF belum tersedia'
+        }
+      </span>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="
+      smartoffice-approval-action-footer
+    ">
+
+      <button
+        class="
+          smartoffice-approval-cancel-button
+        "
+        onclick="
+          smartofficeCloseRiwayatCutiDetail()
+        "
+      >
+        Tutup
+      </button>
+    </div>
+  `;
+}
+
+/* ======================================================
+   CLOSE RIWAYAT DETAIL
+====================================================== */
+export function smartofficeCloseRiwayatCutiDetail(){
+
+  const modal =
+    document.getElementById(
+      'smartofficeRiwayatCutiDetailModal'
+    );
+
+  modal.classList.remove(
+    'show'
+  );
+
+  setTimeout(function(){
+    modal.style.display =
+      'none';
+
+  },200);
+}
+
+/* ======================================================
+   GLOBAL WINDOW
+====================================================== */
+window.smartofficeOpenRiwayatCutiDetail =
+    smartofficeOpenRiwayatCutiDetail;
+
+window.smartofficeCloseRiwayatCutiDetail =
+    smartofficeCloseRiwayatCutiDetail;
 
 
 

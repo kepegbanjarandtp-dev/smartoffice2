@@ -27,28 +27,6 @@
   gap:14px;
 }
 
-.smartoffice-cuti-back-button{
-  width:42px;
-  height:42px;
-  border:none;
-  border-radius:14px;
-  background:#ffffff;
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.05);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  transition:
-    0.2s ease;
-}
-
-.smartoffice-cuti-back-button:hover{
-  transform:
-    translateY(-2px);
-  background:#f8fbff;
-}
-
 .smartoffice-cuti-header h2{
   font-size:24px;
   margin-bottom:4px;

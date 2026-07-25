@@ -47,13 +47,9 @@ function smartofficeResetActivityTimer(){
 /* ======================================================
    AUTO LOGOUT
 ====================================================== */
-
 function smartofficeLogoutByTimeout(){
-
     localStorage.removeItem(
         "smartoffice_session"
     );
-
     location.reload();
-
 }
