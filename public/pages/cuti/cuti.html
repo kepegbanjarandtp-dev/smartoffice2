@@ -9,8 +9,8 @@
     <div class="smartoffice-cuti-header-info">
 
       <button
-        class="smartoffice-cuti-back-button"
-        onclick="smartofficeLoadPage('smartoffice_dashboard')"
+        class="smartoffice-back-button"
+        onclick="smartofficeLoadPage('dashboard')"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -38,23 +38,21 @@
 
     <!-- REFRESH -->
     <button
+      id="smartofficeRefreshButton"
       class="
-        smartoffice-management-refresh-btn
-      "
-      onclick="
-        smartofficeRefreshCuti()
+        smartoffice-refresh-button
       "
       title="Refresh Data"
     >
 
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
+        width="22"
+        height="22"
         viewBox="0 0 24 24"
         fill="none"
         stroke="currentColor"
-        stroke-width="2"
+        stroke-width="2.75"
         stroke-linecap="round"
         stroke-linejoin="round"
       >
@@ -70,10 +68,6 @@
           15 9
         "/>
       </svg>
-
-      <span>
-        Refresh
-      </span>
 
     </button>
 
@@ -234,11 +228,6 @@
         smartoffice-cuti-tab-button
         active
       "
-      onclick="
-        smartofficeSwitchCutiTab(
-          'form'
-        )
-      "
     >
 
       <svg
@@ -280,11 +269,6 @@
       id="smartofficeTabRiwayatCuti"
       class="
         smartoffice-cuti-tab-button
-      "
-      onclick="
-        smartofficeSwitchCutiTab(
-          'riwayat'
-        )
       "
     >
 
