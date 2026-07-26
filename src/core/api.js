@@ -37,17 +37,21 @@ export async function smartofficeApi(
         /* =========================
            REQUEST
         ========================= */
-        const response =
-            await fetch(
-                CONFIG.API_URL,
-                {
-                    method:"POST",
-                    body:formData
-                }
-            );
+        const response = await fetch(
+            CONFIG.API_URL,
+            {
+                method: "POST",
+                body: formData
+            }
+        );
 
-        const result =
-            await response.json();
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+        const result = await response.json();
 
         return result;
 

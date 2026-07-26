@@ -74,6 +74,15 @@ export async function smartofficeLogout(){
     smartofficeClearSession();
 
     /* =========================
+       HAPUS NAVBAR
+    ========================= */
+    document
+        .getElementById(
+            "smartofficeMobileNavbarFixed"
+        )
+        ?.remove();
+
+    /* =========================
        NAVIGATE LOGIN
     ========================= */
     await smartofficeNavigate(

@@ -524,6 +524,12 @@ async function smartofficeNavbarLogout(){
 
     smartofficeClearSession();
 
+    document
+        .getElementById(
+            "smartofficeMobileNavbarFixed"
+        )
+        ?.remove();
+
     await smartofficeNavigate(
         "login"
     );

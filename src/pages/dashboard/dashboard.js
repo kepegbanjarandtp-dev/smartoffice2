@@ -73,19 +73,19 @@ export async function smartofficeLoadPage(){
     );
 
     /* =========================
-       LOAD APPROVAL BADGE
-    ========================= */
-    await smartofficeLoadApprovalBadge(
-        sessionData
-    );
-
-    /* =========================
        RENDER MOBILE NAVBAR
     ========================= */
     smartofficeRenderMobileNavbar(
         sessionData.role,
         "home"
     );
+
+    /* =========================
+       LOAD APPROVAL BADGE
+    ========================= */
+    smartofficeLoadApprovalBadge(
+        sessionData
+    );    
 
     /* =========================
        INITIALIZE MENU
@@ -345,8 +345,7 @@ function smartofficeInitDashboardMenu(){
                     "cuti"
                 );
             }
-        );
-   
+        );   
 }
 
 

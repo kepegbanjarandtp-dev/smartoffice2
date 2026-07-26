@@ -96,13 +96,11 @@ export async function smartofficeLoadPage(){
         return;
     }
 
-    /* LOAD DATA PEGAWAI */
-    await smartofficeLoadPegawai(
-        sessionData.nip
-    );
-
-    /* LOAD CACHE PEGAWAI */
-    await smartofficeLoadPegawaiCache();
+    /* LOAD DATA PEGAWAI & CACHE PEGAWAI */
+    await Promise.all([
+        smartofficeLoadPegawai(sessionData.nip),
+        smartofficeLoadPegawaiCache()
+    ]);
 
     /* VALIDASI HARI MINGGU */
     smartofficeValidateSunday(
@@ -468,22 +466,21 @@ export function smartofficeLoadJenisCuti(){
     }
 
     /* RESET OPTION */
-    selectJenis.innerHTML = `
-        <option value="">
-            Pilih Jenis Cuti
-        </option>
+    let html = `
+    <option value="">
+        Pilih Jenis Cuti
+    </option>
     `;
 
     /* RENDER OPTION */
-    options.forEach(
-        function(item){
-            selectJenis.innerHTML += `
-                <option value="${item}">
-                    ${item}
-                </option>
-            `;
-        }
-    );
+    options.forEach(item=>{
+        html += `
+        <option value="${item}">
+            ${item}
+        </option>`;
+    });
+
+    selectJenis.innerHTML = html;
 }
 
 
@@ -2358,15 +2355,11 @@ export async function smartofficeRefreshCuti(){
     smartofficeRiwayatCutiCache =
         null;
 
-    /* RELOAD DATA PEGAWAI */
-    await smartofficeLoadPegawai(
-        sessionData.nip
-    );
-
-    /* RELOAD RIWAYAT */
-    await smartofficeLoadRiwayatCuti(
-        sessionData.nip
-    );
+    /* RELOAD DATA PEGAWAI & RIWAYAT CUTI*/
+    await Promise.all([
+        smartofficeLoadPegawai(sessionData.nip),
+        smartofficeLoadRiwayatCuti(sessionData.nip)
+    ]);
 
     smartofficeShowToast(
         "Data berhasil diperbarui",

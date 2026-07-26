@@ -37,28 +37,4 @@
   button{
     touch-action:manipulation;
   }
-
-  .smartoffice-toast{
-
-    top:18px;
-
-    left:50%;
-    right:auto;
-
-    width:max-content;
-
-    max-width:calc(100vw - 36px);
-
-    transform:
-      translateX(-50%)
-      translateY(-20px);
-  }
-
-  .smartoffice-toast.show{
-
-    transform:
-      translateX(-50%)
-      translateY(0);
-  }
-
 }

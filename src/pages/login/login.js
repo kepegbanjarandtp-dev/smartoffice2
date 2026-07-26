@@ -50,7 +50,6 @@ const smartofficeLoginElement = {
     rememberCheckbox:null,
     togglePasswordButton:null,
     passwordEye:null,
-
     passwordEyeOff:null
 };
 
@@ -145,7 +144,6 @@ export async function smartofficeLoadPage(){
 /* ==========================================================
    INITIALIZE LOGIN
 ========================================================== */
-
 function smartofficeInitializeLogin(){
 
     /* =========================
@@ -188,14 +186,12 @@ function smartofficeInitializeLogin(){
             "keydown",
             smartofficeHandlePasswordShortcut
         );
-
 }
 
 
 /* ==========================================================
    RESTORE REMEMBER ME
 ========================================================== */
-
 function smartofficeRestoreRememberMe(){
 
     const savedNip =
@@ -222,27 +218,22 @@ function smartofficeRestoreRememberMe(){
         smartofficeLoginElement
             .rememberCheckbox
     ){
-
         smartofficeLoginElement
             .rememberCheckbox
             .checked =
                 Boolean(
                     savedPassword
                 );
-
     }
-
 }
 
 
 /* ==========================================================
    PASSWORD TOGGLE
 ========================================================== */
-
 function smartofficeTogglePassword(){
 
     const showPassword =
-
         smartofficeLoginElement
             .passwordInput
             .type ===
@@ -251,7 +242,6 @@ function smartofficeTogglePassword(){
     smartofficeLoginElement
         .passwordInput
         .type =
-
             showPassword
                 ? "text"
                 : "password";
@@ -269,18 +259,15 @@ function smartofficeTogglePassword(){
             "smartoffice-login-password-hidden",
             !showPassword
         );
-
 }
 
 
 /* ==========================================================
    PASSWORD SHORTCUT
 ========================================================== */
-
 function smartofficeHandlePasswordShortcut(
     event
 ){
-
     if(
         event.key !==
         "Escape"
@@ -304,14 +291,12 @@ function smartofficeHandlePasswordShortcut(
         ?.classList.add(
             "smartoffice-login-password-hidden"
         );
-
 }
 
 
 /* ==========================================================
    HANDLE LOGIN
 ========================================================== */
-
 async function smartofficeHandleLogin(
     event
 ){
@@ -359,14 +344,12 @@ async function smartofficeHandleLogin(
         !nip ||
         !password
     ){
-
         smartofficeShowToast(
             "Lengkapi login terlebih dahulu.",
             "error"
         );
 
         return;
-
     }
 
     /* =========================
@@ -386,11 +369,9 @@ async function smartofficeHandleLogin(
             password,
             rememberMe
         );
-
     }
 
     catch(error){
-
         console.error(
             error
         );
@@ -399,17 +380,13 @@ async function smartofficeHandleLogin(
             "Terjadi kesalahan koneksi.",
             "error"
         );
-
     }
 
     finally{
-
         smartofficeSetLoadingState(
             false
         );
-
     }
-
 }
 
 
@@ -448,29 +425,20 @@ function smartofficeSetLoadingState(
             isLoading;
 
     smartofficeToggleLoader(
-
         smartofficeLoginElement
             .loginButton,
-
         isLoading
-
     );
-
 }
 
 
 /* ==========================================================
    PROCESS LOGIN
 ========================================================== */
-
 async function smartofficeProcessLogin(
-
     nip,
-
     password,
-
     rememberMe
-
 ){
 
     /* =========================
@@ -483,13 +451,9 @@ async function smartofficeProcessLogin(
     LOGIN REQUEST
     ========================= */
     const response =
-
         await smartofficeLogin(
-
             nip,
-
             password
-
         );
 
     /* =========================
@@ -502,34 +466,23 @@ async function smartofficeProcessLogin(
        VALIDASI RESPONSE
     ========================= */
     if(
-
         !response ||
-
         !response.success
-
     ){
-
         smartofficeShowToast(
-
             response?.message ||
-
             "Login gagal.",
-
             "error"
-
         );
 
         return;
-
     }
 
     /* =========================
        SAVE SESSION
     ========================= */
     smartofficeSaveSession(
-
         response.data
-
     );
 
     /* =========================
@@ -539,33 +492,21 @@ async function smartofficeProcessLogin(
         performance.now();
 
     console.log(
-
         "API      :",
-
         ((t1 - t0) / 1000).toFixed(2),
-
         "detik"
-
     );
 
     console.log(
-
         "Session  :",
-
         ((t2 - t1) / 1000).toFixed(2),
-
         "detik"
-
     );
 
     console.log(
-
         "Total    :",
-
         ((t2 - t0) / 1000).toFixed(2),
-
         "detik"
-
     );
 
     /* =========================
@@ -577,24 +518,17 @@ async function smartofficeProcessLogin(
        REMEMBER ME
     ========================= */
     smartofficeSaveRememberMe(
-
         rememberMe,
-
         nip,
-
         password
-
     );
 
     /* =========================
        LOGIN SUCCESS
     ========================= */
     smartofficeShowToast(
-
         "Login berhasil.",
-
         "success"
-
     );
 
     /* =========================
@@ -603,69 +537,43 @@ async function smartofficeProcessLogin(
     await smartofficeNavigate(
         "dashboard"
     );
-
 }
 
 
 /* ==========================================================
    SAVE REMEMBER ME
 ========================================================== */
-
 function smartofficeSaveRememberMe(
-
     rememberMe,
-
     nip,
-
     password
-
 ){
-
     if(
-
         rememberMe
-
     ){
-
         localStorage.setItem(
-
             "smartoffice_saved_nip",
-
             nip
-
         );
-
         localStorage.setItem(
-
             "smartoffice_saved_password",
-
             password
-
         );
 
         return;
-
     }
-
     localStorage.removeItem(
-
         "smartoffice_saved_nip"
-
     );
-
     localStorage.removeItem(
-
         "smartoffice_saved_password"
-
     );
-
 }
 
 
 /* ==========================================================
    DESTROY LOGIN PAGE
 ========================================================== */
-
 export async function smartofficeDestroyPage(){
 
     smartofficeLoginElement
@@ -690,14 +598,12 @@ export async function smartofficeDestroyPage(){
         );
 
     smartofficeClearLoginElement();
-
 }
 
 
 /* ==========================================================
    LOGIN CLEANUP
 ========================================================== */
-
 function smartofficeClearLoginElement(){
 
     smartofficeLoginElement.form =
@@ -729,5 +635,4 @@ function smartofficeClearLoginElement(){
 
     smartofficeLoginElement.passwordEyeOff =
         null;
-
 }

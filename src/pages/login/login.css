@@ -12,203 +12,126 @@
    LOGIN BACKGROUND
 ====================================================== */
 .smartoffice-login-background{
-
     position:relative;
-
     flex:1;
-
     display:flex;
-
     align-items:flex-end;
-
     overflow:hidden;
-
 }
-
 
 .smartoffice-login-background-image{
-
     width:100%;
-
     height:100%;
-
     object-fit:cover;
-
 }
 
-
 .smartoffice-login-background-overlay{
-
     position:absolute;
-
     inset:0;
-
     background:
         linear-gradient(
             135deg,
-            rgba(37,99,235,.55),
-            rgba(79,70,229,.45)
+            rgba(15,23,42,.60),
+            rgba(37,99,235,.40)
         );
-
 }
-
 
 .smartoffice-login-background-content{
-
     position:absolute;
-
     left:44px;
-
     right:44px;
-
     bottom:44px;
-
     z-index:2;
-
     color:#ffffff;
-
 }
-
 
 .smartoffice-login-background-content h2{
-
     margin:0 0 18px;
-
     font-size:56px;
-
-    line-height:1.1;
-
-    font-weight:800;
-
+    font-weight:900;
+    line-height:1.05;
+    letter-spacing:-2px;
+    color:#fff;
+    text-shadow:
+        0 2px 4px rgba(0,0,0,.25),
+        0 8px 18px rgba(0,0,0,.35),
+        0 18px 45px rgba(37,99,235,.35);
 }
-
 
 .smartoffice-login-background-content p{
-
     margin:0;
-
     max-width:520px;
-
     font-size:18px;
-
     line-height:1.8;
-
     opacity:.95;
-
+    text-shadow:0 3px 12px rgba(0,0,0,.30);
 }
+
 
 /* ======================================================
    LOGIN FEATURE
 ====================================================== */
 .smartoffice-login-feature-grid{
-
     display:flex;
-
     gap:18px;
-
     margin-top:42px;
-
 }
-
 
 .smartoffice-login-feature-item{
-
     flex:1;
-
     display:flex;
-
     align-items:flex-start;
-
     gap:12px;
-
 }
-
 
 .smartoffice-login-feature-icon{
-
     width:46px;
-
     height:46px;
-
     flex-shrink:0;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     border-radius:14px;
-
     background:rgba(255,255,255,.15);
-
     backdrop-filter:blur(10px);
-
 }
-
 
 .smartoffice-login-feature-icon svg{
-
     width:22px;
-
     height:22px;
-
 }
-
 
 .smartoffice-login-feature-content{
-
     flex:1;
-
     min-width:0;
-
 }
-
 
 .smartoffice-login-feature-content h4{
-
     margin:0 0 4px;
-
     font-size:14px;
-
     font-weight:700;
-
     line-height:1.4;
-
 }
-
 
 .smartoffice-login-feature-content p{
-
     margin:0;
-
     font-size:13px;
-
     line-height:1.5;
-
     opacity:.9;
-
 }
+
 
 /* ======================================================
    LOGIN FORM SIDE
 ====================================================== */
 .smartoffice-login-form-side{
-
     width:100%;
-
     max-width:460px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     padding:28px;
-
     background:#f8fafc;
-
 }
 
 
@@ -247,24 +170,16 @@
    LOGIN CARD ANIMATION
 ====================================================== */
 @keyframes smartofficeLoginAppear{
-
     from{
-
         opacity:0;
-
         transform:translateY(14px);
-
     }
-
     to{
-
         opacity:1;
-
         transform:translateY(0);
-
     }
-
 }
+
 
 /* ======================================================
    LOGIN HEADER
@@ -286,12 +201,12 @@
     flex-shrink:0;
 }
 
-
 .smartoffice-login-logo-image{
     width:100%;
     height:100%;
-    display:block;
     object-fit:contain;
+    filter:
+        drop-shadow(0 8px 18px rgba(37,99,235,.18));
 }
 
 
@@ -303,22 +218,47 @@
     min-width:0;
 }
 
-
 .smartoffice-login-header-text h1{
     margin:0;
-    color:#0f172a;
-    font-size:30px;
-    font-weight:800;
+    font-size:36px;
+    font-weight:900;
     line-height:1.1;
+    letter-spacing:-1px;
+    background:linear-gradient(
+        90deg,
+        #0f172a 0%,
+        #0f172a 35%,
+        #60a5fa 50%,
+        #0f172a 65%,
+        #0f172a 100%
+    );
+    background-size:250% auto;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:
+        smartofficeShine 6s linear infinite;
+}
+
+
+/* ======================================================
+   SHINE EFFECT
+====================================================== */
+@keyframes smartofficeShine{
+    from{
+        background-position:-250% 0;
+    }
+
+    to{
+        background-position:250% 0;
+    }
 }
 
 /* ======================================================
    LOGIN FORM
 ====================================================== */
 .smartoffice-login-form-group{
-
     margin-bottom:20px;
-
 }
 
 
@@ -326,17 +266,11 @@
    LABEL
 ====================================================== */
 .smartoffice-login-label{
-
     display:block;
-
     margin-bottom:10px;
-
     color:#334155;
-
     font-size:14px;
-
     font-weight:600;
-
 }
 
 
@@ -344,9 +278,7 @@
    INPUT WRAPPER
 ====================================================== */
 .smartoffice-login-input-wrapper{
-
     position:relative;
-
 }
 
 
@@ -354,32 +286,20 @@
    INPUT ICON
 ====================================================== */
 .smartoffice-login-input-icon{
-
     position:absolute;
-
     top:50%;
-
     left:18px;
-
     transform:translateY(-50%);
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     color:#64748b;
-
 }
 
 
 .smartoffice-login-input-icon svg{
-
     width:20px;
-
     height:20px;
-
 }
 
 
@@ -387,57 +307,35 @@
    INPUT
 ====================================================== */
 .smartoffice-login-input{
-
     width:100%;
-
     height:58px;
-
     padding:0 52px 0 52px;
-
     border:1px solid #e2e8f0;
-
     border-radius:18px;
-
     background:#ffffff;
-
     color:#0f172a;
-
     font-size:15px;
-
     transition:
         border-color .25s ease,
         box-shadow .25s ease,
         background .25s ease;
-
 }
-
 
 .smartoffice-login-input::placeholder{
-
     color:#94a3b8;
-
 }
-
 
 .smartoffice-login-input:focus{
-
     outline:none;
-
     border-color:#2563eb;
-
     box-shadow:
         0 0 0 4px rgba(37,99,235,.12);
-
 }
 
-
 .smartoffice-login-input:disabled{
-
     cursor:not-allowed;
-
     background:#f8fafc;
     opacity:.8;
-
 }
 
 
@@ -462,11 +360,9 @@
     transition:color .2s ease;
 }
 
-
 .smartoffice-login-password-toggle:hover{
     color:#2563eb;
 }
-
 
 .smartoffice-login-password-toggle svg{
     width:20px;
@@ -474,84 +370,51 @@
 }
 
 .smartoffice-login-password-icon{
-
     display:block;
-
 }
 
 .smartoffice-login-password-hidden{
-
     display:none;
-
 }
+
 
 /* ======================================================
    LOGIN OPTION
 ====================================================== */
 .smartoffice-login-option-row{
-
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
-
     margin-bottom:24px;
-
 }
-
 
 .smartoffice-login-checkbox{
-
     display:flex;
-
     align-items:center;
-
     gap:8px;
-
     color:#475569;
-
     font-size:14px;
-
     cursor:pointer;
-
     user-select:none;
-
 }
-
 
 .smartoffice-login-checkbox input{
-
     width:16px;
-
     height:16px;
-
     accent-color:#2563eb;
-
     cursor:pointer;
-
 }
-
 
 .smartoffice-login-forgot{
-
     color:#2563eb;
-
     font-size:14px;
-
     font-weight:500;
-
     text-decoration:none;
-
     transition:color .2s ease;
-
 }
 
-
 .smartoffice-login-forgot:hover{
-
     color:#1d4ed8;
-
 }
 
 
@@ -559,101 +422,60 @@
    LOGIN BUTTON
 ====================================================== */
 .smartoffice-login-button{
-
     width:auto;
-
     min-width:240px;
-
     height:54px;
-
     margin:0 auto;
-
     padding:0 28px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     gap:10px;
-
     border:none;
-
     border-radius:18px;
-
     background:
         linear-gradient(
             135deg,
             #2563eb,
             #1d4ed8
         );
-
     color:#ffffff;
-
     font-size:15px;
-
     font-weight:600;
-
     cursor:pointer;
-
     transition:
         transform .2s ease,
         box-shadow .2s ease;
-
 }
-
 
 .smartoffice-login-button:hover{
-
     transform:translateY(-2px);
-
     box-shadow:
         0 12px 30px rgba(37,99,235,.25);
-
 }
-
 
 .smartoffice-login-button:active{
-
     transform:scale(.98);
-
 }
-
 
 .smartoffice-login-button:disabled{
-
     opacity:.7;
-
     cursor:not-allowed;
-
 }
-
 
 .smartoffice-login-button-text{
-
     display:block;
-
 }
 
-
 .smartoffice-login-button-loader{
-
     display:none;
-
     width:18px;
-
     height:18px;
-
     border:2px solid rgba(255,255,255,.35);
-
     border-top-color:#ffffff;
-
     border-radius:50%;
-
     animation:
         smartofficeLoginSpinner .8s linear infinite;
-
 }
 
 
@@ -665,29 +487,18 @@
     display:none;
 }
 
-
 .smartoffice-login-button.loading
 .smartoffice-login-button-loader{
-
     display:block;
-
 }
 
-
 @keyframes smartofficeLoginSpinner{
-
     from{
-
         transform:rotate(0deg);
-
     }
-
     to{
-
         transform:rotate(360deg);
-
     }
-
 }
 
 
@@ -742,38 +553,6 @@
 
 
 /* ======================================================
-   TABLET
-====================================================== */
-@media (min-width:769px) and (max-width:1023px){
-
-    .smartoffice-login-background{
-
-        display:none;
-
-    }
-
-    .smartoffice-login-form-side{
-
-        width:100%;
-
-        max-width:none;
-
-        padding:28px;
-
-    }
-
-    .smartoffice-login-card{
-
-        margin:auto;
-
-        border-radius:32px;
-
-    }
-
-}
-
-
-/* ======================================================
    MOBILE
 ====================================================== */
 @media (max-width:768px){
@@ -782,55 +561,36 @@
        BACKGROUND
     ====================================================== */
     .smartoffice-login-background{
-
         display:none;
-
     }
 
     .smartoffice-login-form-side{
-
         padding:16px;
-
     }
 
     .smartoffice-login-card{
-
         width:100%;
-
         max-width:100%;
-
         padding:20px 18px 24px;
-
         border-radius:24px;
-
     }
-
 
     /* ======================================================
        HEADER
     ====================================================== */
     .smartoffice-login-header{
-
         gap:14px;
-
         margin-bottom:20px;
-
     }
 
     .smartoffice-login-logo{
-
         width:64px;
-
         height:64px;
-
     }
 
     .smartoffice-login-header-text h1{
-
-        font-size:30px;
-
+        font-size:32px;
     }
-
 
     /* ======================================================
        FORM
