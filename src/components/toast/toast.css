@@ -14,13 +14,10 @@
   z-index:99999;
   opacity:0;
   pointer-events:none;
-
   transform:
     translateX(120%);
-
   transition:
     0.28s ease;
-
   backdrop-filter:blur(14px);
   box-shadow:
     0 10px 30px rgba(0,0,0,0.08);
@@ -36,48 +33,36 @@
    SUCCESS
 ====================================================== */
 .smartoffice-toast.smartoffice-toast-success{
-
     background:
         rgba(37,99,235,.96);
-
     color:#ffffff;
-
 }
 
 /* ======================================================
    ERROR
 ====================================================== */
 .smartoffice-toast.smartoffice-toast-error{
-
     background:
         rgba(239,68,68,.96);
-
     color:#ffffff;
-
 }
 
 /* ======================================================
    INFO
 ====================================================== */
 .smartoffice-toast.smartoffice-toast-info{
-
     background:
         rgba(100,116,139,.96);
-
     color:#ffffff;
-
 }
 
 /* ======================================================
    WARNING
 ====================================================== */
 .smartoffice-toast.smartoffice-toast-warning{
-
     background:
         rgba(245,158,11,.96);
-
     color:#ffffff;
-
 }
 
 /* ======================================================

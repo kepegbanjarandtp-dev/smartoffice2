@@ -18,6 +18,8 @@ export function smartofficeOpenPreviewDokumen(
   fileId,
   fileName
 ){
+  console.log("fileId :", fileId);
+  console.log("fileName :", fileName);
 
   const modal =
     document.getElementById(
@@ -101,6 +103,8 @@ export function smartofficeOpenPreviewDokumen(
       fileId +
       '/preview';
 
+      console.log(previewUrl);
+
     content.innerHTML =
     `
       <iframe
@@ -113,18 +117,27 @@ export function smartofficeOpenPreviewDokumen(
 
   }
 
-  modal.style.display =
-    'flex';
+  modal.style.display = "flex";
+
+  requestAnimationFrame(() => {
+      modal.classList.add("show");
+  });
 }
 
 /* ======================================================
    CLOSE PREVIEW
 ====================================================== */
 export function smartofficeClosePreviewDokumen(){
-  document.getElementById(
-    'smartofficePreviewModal'
-  ).style.display =
-    'none';
+
+  const modal =
+    document.getElementById(
+      "smartofficePreviewModal"
+    );
+
+  modal.classList.remove("show");
+  setTimeout(() => {
+    modal.style.display = "none";
+  },300);
 }
 
 

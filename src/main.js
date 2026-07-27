@@ -14,6 +14,7 @@ import "./styles/responsive.css";
 import "./pages/login/login.css";
 import "./pages/dashboard/dashboard.css";
 import "./pages/cuti/cuti.css";
+import "./pages/cuti/cuti-riwayat-modal.css";
 import "./pages/approval/approval.css";
 
 import "./components/button/button.css";

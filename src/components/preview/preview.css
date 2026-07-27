@@ -235,30 +235,6 @@
 }
 
 
-/* =========================
-   TOMBOL LINK PDF
-========================= */
-.smartoffice-pdf-link{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:12px;
-  background:#eff6ff;
-  color:#2563eb;
-  font-size:13px;
-  font-weight:600;
-  text-decoration:none;
-  cursor:pointer;
-  border:none !important;
-}
-
-.smartoffice-pdf-link:hover{
-  background:#dbeafe;
-}
-
-
 /* ======================================================
    MOBILE
 ====================================================== */

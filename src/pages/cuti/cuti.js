@@ -2625,19 +2625,18 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- PROFILE -->
     <div class="
-      smartoffice-approval-profile
+      smartoffice-cuti-riwayat-modal-profile
     ">
       
       <div class="
-        smartoffice-approval-profile-info
-        smartoffice-riwayat-detail-header-info
-      ">
+        smartoffice-cuti-riwayat-modal-profile-info
+        ">
         <h4>
           ${item.jenisCuti || '-'}
         </h4>
 
         <span class="
-          smartoffice-riwayat-status
+          smartoffice-cuti-riwayat-modal-status
           ${statusClass}
         ">
           ${statusText}
@@ -2648,11 +2647,11 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- DETAIL -->
     <div class="
-      smartoffice-approval-detail-grid
+      smartoffice-cuti-riwayat-modal-grid
     ">
 
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
 
         <label>
@@ -2668,7 +2667,7 @@ export function smartofficeOpenRiwayatCutiDetail(
       </div>
 
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Tanggal Cuti
@@ -2680,7 +2679,7 @@ export function smartofficeOpenRiwayatCutiDetail(
       </div>
 
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Jumlah Hari
@@ -2692,7 +2691,7 @@ export function smartofficeOpenRiwayatCutiDetail(
       </div>
       
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Sisa Cuti
@@ -2707,7 +2706,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- KEPERLUAN -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -2723,7 +2722,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- ALAMAT -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -2739,29 +2738,28 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- LAMPIRAN -->
     <div class="
-      smartoffice-approval-lampiran
-      smartoffice-riwayat-lampiran
+      smartoffice-cuti-riwayat-modal-lampiran
     ">
       <div class="
-        smartoffice-approval-lampiran-title
+        smartoffice-cuti-riwayat-modal-lampiran-title
       ">
         Lampiran
       </div>
 
       <div class="
-        smartoffice-approval-file-card
+        smartoffice-cuti-riwayat-modal-file-card
       ">
         <div class="
-          smartoffice-approval-file-icon
+          smartoffice-cuti-riwayat-modal-file-icon
         ">
           📄
         </div>
 
         <div class="
-          smartoffice-approval-file-info
+          smartoffice-cuti-riwayat-modal-file-info
         ">
           <div class="
-            smartoffice-approval-file-name
+            smartoffice-cuti-riwayat-modal-file-name
           ">
             ${
               item.lampiran
@@ -2769,7 +2767,7 @@ export function smartofficeOpenRiwayatCutiDetail(
               `
               <button
                 class="
-                  smartoffice-dokumen-link
+                  smartoffice-cuti-riwayat-modal-dokumen-link
                 "
                 onclick="
                   smartofficeOpenPreviewDokumen(
@@ -2814,12 +2812,12 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- DELEGASI GRID -->
     <div class="
-      smartoffice-approval-detail-grid
+      smartoffice-cuti-riwayat-modal-grid
     ">
 
       <!-- PENERIMA -->
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Penerima Delegasi
@@ -2832,7 +2830,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
       <!-- NIP -->
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           NIP / NRP Delegasi
@@ -2846,7 +2844,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- TUGAS -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -2862,7 +2860,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- APPROVAL 1 -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -2871,7 +2869,7 @@ export function smartofficeOpenRiwayatCutiDetail(
       </label>
 
       <div class="
-        smartoffice-riwayat-approval-box
+        smartoffice-cuti-riwayat-modal-approval-box
       ">
 
         <div>
@@ -2908,7 +2906,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- APPROVAL 2 -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
       <label>
@@ -2916,7 +2914,7 @@ export function smartofficeOpenRiwayatCutiDetail(
       </label>
 
       <div class="
-        smartoffice-riwayat-approval-box
+        smartoffice-cuti-riwayat-modal-approval-box
       ">
         <div>
           <small>Nama</small>
@@ -2950,7 +2948,7 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- PDF -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -3008,12 +3006,12 @@ export function smartofficeOpenRiwayatCutiDetail(
 
     <!-- FOOTER -->
     <div class="
-      smartoffice-approval-action-footer
+      smartoffice-cuti-riwayat-modal-footer
     ">
 
       <button
         class="
-          smartoffice-approval-cancel-button
+          smartoffice-cuti-riwayat-modal-close-button
         "
         onclick="
           smartofficeCloseRiwayatCutiDetail()
