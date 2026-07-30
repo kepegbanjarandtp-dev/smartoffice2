@@ -344,8 +344,28 @@ function smartofficeInitDashboardMenu(){
                 await smartofficeNavigate(
                     "cuti"
                 );
+
             }
-        );   
+        );
+
+    /* =========================
+       APPROVAL
+    ========================= */
+    document
+        .getElementById(
+            "smartofficeApprovalMenuCard"
+        )
+        ?.addEventListener(
+            "click",
+            async function(){
+
+                await smartofficeNavigate(
+                    "approval"
+                );
+
+            }
+        );
+
 }
 
 

@@ -1,0 +1,90 @@
+/* ======================================================
+   SMARTOFFICE LOADING
+====================================================== */
+
+.smartoffice-loading{
+
+  display:flex;
+  flex-direction:column;
+
+  align-items:center;
+  justify-content:center;
+
+  gap:12px;
+
+  padding:48px 20px;
+
+}
+
+.smartoffice-loading-spinner{
+
+  width:40px;
+  height:40px;
+
+  border:4px solid #E2E8F0;
+  border-top:4px solid #2563EB;
+
+  border-radius:50%;
+
+  animation:
+    smartofficeLoadingSpin
+    .8s linear infinite;
+
+}
+
+.smartoffice-loading-text{
+
+  font-size:14px;
+  font-weight:500;
+
+  color:#64748B;
+
+}
+
+@keyframes smartofficeLoadingSpin{
+
+  from{
+
+    transform:rotate(0deg);
+
+  }
+
+  to{
+
+    transform:rotate(360deg);
+
+  }
+
+}
+
+
+/* ======================================================
+   MOBILE LOADING
+====================================================== */
+@media (max-width:768px){
+
+  .smartoffice-loading{
+
+    padding:24px 16px;
+    gap:8px;
+    min-height:150px;
+
+  }
+
+  .smartoffice-loading-spinner{
+
+    width:24px;
+    height:24px;
+
+    border-width:3px;
+
+  }
+
+  .smartoffice-loading-text{
+
+    font-size:12px;
+    font-weight:500;
+
+  }
+
+}

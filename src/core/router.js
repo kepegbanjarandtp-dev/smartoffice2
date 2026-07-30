@@ -25,8 +25,8 @@ const smartofficeModules = {
     cuti: () =>
         import("../pages/cuti/cuti.js"),
 
-    //approval: () =>
-    //    import("../pages/approval/approval.js"),
+    approval: () =>
+        import("../pages/approval/approval.js"),
 
     //smartspdBlud: () =>
     //    import("../pages/smartspd-blud/smartspd-blud.js"),

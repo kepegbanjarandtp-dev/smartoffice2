@@ -48,32 +48,50 @@
 /* ======================================================
    HEADER TITLE
 ====================================================== */
-
 .smartoffice-cuti-header-title{
-
     display:flex;
     flex-direction:column;
-
 }
 
 .smartoffice-cuti-header-title-row{
-
     display:flex;
     align-items:center;
-
     gap:10px;
-
 }
 
-.smartoffice-cuti-header-title-row svg{
+.smartoffice-cuti-header-title h2{
+    margin:0;
+    line-height:1.1;
+}
 
-    width:22px;
-    height:22px;
+.smartoffice-cuti-header-title p{
+    margin:2px 0 0;
+    font-size:14px;
+    line-height:1.3;
+    color:#64748B;
+}
 
-    color:#2563EB;
-
+/* ======================================================
+   HEADER ICON
+====================================================== */
+.smartoffice-cuti-header-icon{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:#EAFBF1;
+    border:1px solid #CDEFD9;
+    box-shadow:
+        0 2px 8px rgba(34,197,94,.08);
     flex-shrink:0;
+}
 
+.smartoffice-cuti-header-icon svg{
+    width:20px;
+    height:20px;
+    color:#22C55E;
 }
 
 /* =========================
@@ -683,6 +701,31 @@
   color:#64748b;
 }
 
+.smartoffice-riwayat-cuti-content small,
+.smartoffice-riwayat-cuti-content p{
+
+    display:flex;
+    align-items:center;
+
+    gap:6px;
+
+}
+
+.smartoffice-riwayat-cuti-content small svg,
+.smartoffice-riwayat-cuti-content p svg{
+
+    width:14px;
+    height:14px;
+
+    stroke:currentColor;
+    stroke-width:2;
+
+    fill:none;
+
+    flex-shrink:0;
+
+}
+
 /* =========================
    RIGHT
 ========================= */
@@ -793,6 +836,8 @@
 
 .smartoffice-cuti-autocomplete-list{
 
+    display:none;
+
     position:absolute;
 
     top:calc(100% + 8px);
@@ -802,7 +847,7 @@
 
     background:#ffffff;
 
-    border:1px solid #2563eb;
+    border:1px solid #2563EB;
 
     border-radius:18px;
 
@@ -888,7 +933,7 @@
   }
 
   /* =========================
-     HEADER
+    HEADER
   ========================= */
   .smartoffice-cuti-header{
     gap:12px;
@@ -901,51 +946,38 @@
     border-radius:12px;
   }
 
-  .smartoffice-cuti-header h2{
-    font-size:16px;
-    margin-bottom:2px;
-  }
-
-  .smartoffice-cuti-header p{
-    font-size:10px;
-    line-height:1.3;
-  }
-
   .smartoffice-cuti-header-title{
-
     min-width:0;
-
   }
 
   .smartoffice-cuti-header-title-row{
-
+    display:flex;
+    align-items:center;
     gap:8px;
-
-  }
-
-  .smartoffice-cuti-header-title-row svg{
-
-    width:18px;
-    height:18px;
-
-    flex-shrink:0;
-
   }
 
   .smartoffice-cuti-header-title h2{
-
+    margin:0;
     font-size:18px;
     line-height:1.2;
-
   }
 
   .smartoffice-cuti-header-title p{
-
-    margin-top:2px;
-
-    font-size:12px;
+    margin:2px 0 0;
+    font-size:10px;
     line-height:1.4;
+    color:#64748B;
+  }
 
+  .smartoffice-cuti-header-icon{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+  }
+
+  .smartoffice-cuti-header-icon svg{
+    width:18px;
+    height:18px;
   }
 
   /* =========================
@@ -1100,6 +1132,44 @@
   }
 
   /* =========================
+     EMPTY STATE
+  ========================= */
+  .smartoffice-empty-state{
+
+    min-height:220px;
+
+    padding:24px 16px;
+
+  }
+
+  .smartoffice-empty-icon{
+
+    font-size:34px;
+
+    margin-bottom:10px;
+
+  }
+
+  .smartoffice-empty-state h3{
+
+    margin:0 0 4px;
+
+    font-size:15px;
+
+  }
+
+  .smartoffice-empty-state p{
+
+    max-width:240px;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+  }
+
+
+  /* =========================
      RIWAYAT
   ========================= */
 
@@ -1161,6 +1231,13 @@
 
     font-size:10px;
 
+  }
+
+  .smartoffice-riwayat-cuti-content small svg,
+  .smartoffice-riwayat-cuti-content p svg{
+
+    width:11px;
+    height:11px;
   }
 
   .smartoffice-riwayat-status{

@@ -34,6 +34,10 @@ import {
   smartofficeZoomOut
 } from "../../components/preview/preview.js";
 
+import {
+    smartofficeShowLoading
+} from "../../components/loading/loading.js";
+
 /* ======================================================
    SERVICE
 ====================================================== */
@@ -48,6 +52,10 @@ import {
 /* ======================================================
    UTILS
 ====================================================== */
+import {
+    formatTanggalIndonesia
+} from "../../utils/date.js";
+
 import {
   smartofficeGetDriveFileId
 } from "../../utils/drive.js";
@@ -496,35 +504,53 @@ export async function smartofficeLoadRiwayatCuti(
     nip
 ){
 
-    try{
+    /* =========================
+       SHOW LOADING
+    ========================= */
+    smartofficeShowLoading(
+        "smartofficeRiwayatCutiList",
+        "Memuat riwayat cuti..."
+    );
 
-        /* LOAD DATA */
+    /* Beri kesempatan browser me-render spinner */
+    await new Promise(resolve =>
+        requestAnimationFrame(resolve)
+    );
+
+    try{
+        /* =========================
+           LOAD DATA
+        ========================= */
         const data =
             await smartofficeGetRiwayatCuti(
                 nip
             );
 
-        /* SIMPAN KE MEMORY */
+        /* =========================
+           SIMPAN KE CACHE
+        ========================= */
         smartofficeRiwayatCutiCache =
             data || [];
 
-        /* RENDER */
+        /* =========================
+           RENDER DATA
+        ========================= */
         smartofficeRenderRiwayatCuti();
 
     }
     catch(error){
-
-        console.error(
-            error
-        );
+        console.error(error);
 
         smartofficeShowToast(
             "Gagal memuat riwayat cuti",
             "error"
         );
 
+        /* Kosongkan loading bila gagal */
+        document.getElementById(
+            "smartofficeRiwayatCutiList"
+        ).innerHTML = "";
     }
-
 }
 
 /* ======================================================
@@ -676,11 +702,34 @@ function smartofficeRenderRiwayatCuti(){
                     </h3>
 
                     <small>
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="
+                                M8 2v3
+                                M16 2v3
+                                M4 7h16
+                                M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z
+                            "/>
+                        </svg>
+
                         ${item.jumlahCuti} Hari
+
                     </small>
 
                     <p>
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="
+                                M12 8v5
+                                l3 2
+                                M12 22
+                                a10 10 0 100-20
+                                10 10 0 000 20z
+                            "/>
+                        </svg>
+
                         ${periodeCuti}
+
                     </p>
 
                 </div>
@@ -1421,6 +1470,241 @@ export function smartofficeSelectDelegasi(
         "";
 }
 
+
+/* ======================================================
+   FILTER RIWAYAT CUTI
+====================================================== */
+export function smartofficeFilterRiwayatCuti(
+  status,
+  element = null
+){
+
+  /* BUTTON */
+  const buttons =
+    document.querySelectorAll(
+      '.smartoffice-riwayat-filter-item'
+    );
+
+  /* REMOVE ACTIVE */
+  buttons.forEach(function(btn){
+
+    btn.classList.remove(
+      'active'
+    );
+
+  });
+
+  /* ACTIVE CURRENT */
+  if(element){
+
+    element.classList.add(
+      'active'
+    );
+  }
+
+  /* CONTAINER */
+  const container =
+    document.getElementById(
+      'smartofficeRiwayatCutiList'
+    );
+
+  /* FILTER DATA */
+  let filteredData =
+    smartofficeRiwayatCutiCache;
+
+  if(
+    status !== 'SEMUA'
+  ){
+
+    filteredData =
+      smartofficeRiwayatCutiCache.filter(
+        function(item){
+
+          /* MENUNGGU */
+          if(
+            status === 'MENUNGGU'
+          ){
+
+            return (
+              item.status ===
+                'MENUNGGU_APPROVAL_1'
+              ||
+              item.status ===
+                'MENUNGGU_APPROVAL_2'
+            );
+          }
+
+          /* STATUS LAIN */
+          return (
+            item.status === status
+          );
+
+        }
+      );
+  }
+
+  /* EMPTY */
+  if(
+    filteredData.length === 0
+  ){
+
+    container.innerHTML = `
+
+      <div class="
+        smartoffice-empty-state
+      ">
+
+        <div class="
+          smartoffice-empty-icon
+        ">
+          📭
+        </div>
+
+        <h3>
+          Data tidak ditemukan
+        </h3>
+
+        <p>
+          Belum ada riwayat cuti
+          dengan status ini
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+  /* HTML */
+  let html = '';
+
+  filteredData.forEach(
+    function(item){
+
+      let statusClass =
+        'waiting';
+
+      let statusText =
+        'Menunggu';
+
+      if(
+        item.status === 'DISETUJUI'
+      ){
+
+        statusClass =
+          'approved';
+
+        statusText =
+          'Disetujui';
+      }
+
+      if(
+        item.status === 'DITOLAK'
+      ){
+
+        statusClass =
+          'rejected';
+
+        statusText =
+          'Ditolak';
+      }
+
+      const startDate =
+        new Date(
+          item.tanggalAwal
+        );
+
+      const day =
+        startDate.getDate();
+
+      const month =
+        startDate
+          .toLocaleString(
+            'id-ID',
+            {
+              month : 'short'
+            }
+          )
+          .toUpperCase();
+
+      html += `
+        <div class="
+          smartoffice-riwayat-cuti-card
+        "
+
+        onclick='
+          smartofficeOpenRiwayatCutiDetail(
+            ${JSON.stringify(item)}
+          )
+        '
+        >
+
+          <div class="
+            smartoffice-riwayat-date
+          ">
+            <small>
+              ${month}
+            </small>
+
+            <strong>
+              ${day}
+            </strong>
+          </div>
+
+          <div class="
+            smartoffice-riwayat-cuti-content
+          ">
+            <h3>
+              ${item.jenisCuti}
+            </h3>
+
+            <small>
+              ${item.jumlahCuti} Hari
+            </small>
+
+            <p>
+              ${formatTanggalIndonesia(
+                item.tanggalAwal
+              )}
+              -
+              ${formatTanggalIndonesia(
+                item.tanggalAkhir
+              )}
+            </p>
+          </div>
+
+          <div class="
+            smartoffice-riwayat-cuti-right
+          ">
+
+            <span class="
+              smartoffice-riwayat-status
+              ${statusClass}
+            ">
+              ${statusText}
+            </span>
+
+            <div class="
+              smartoffice-riwayat-arrow
+            ">
+              <svg viewBox="0 0 24 24">
+                <path d="
+                  M9 18l6-6-6-6
+                "/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+  );
+
+  container.innerHTML =
+    html;
+}
+
+window.smartofficeFilterRiwayatCuti =
+  smartofficeFilterRiwayatCuti;
 
 
 /* ================================================================================
@@ -2373,56 +2657,6 @@ export async function smartofficeRefreshCuti(){
 /* ================================================================================
    FORMATTER
 ================================================================================ */
-
-/* ======================================================
-   FORMAT TANGGAL INDONESIA
-====================================================== */
-/* =========================
-   FORMAT DATE INDONESIA
-
-   FUNCTION:
-   Mengubah format tanggal:
-   2026-05-19
-
-   Menjadi:
-   19/05/2026
-========================= */
-export function formatTanggalIndonesia(
-    tanggal
-){
-
-    /* VALIDASI */
-    if(
-        !tanggal
-    ){
-        return "-";
-    }
-
-    /* DATE OBJECT */
-    const date =
-        new Date(
-            tanggal
-        );
-
-    /* INVALID DATE */
-    if(
-        Number.isNaN(
-            date.getTime()
-        )
-    ){
-        return "-";
-    }
-
-    /* FORMAT */
-    return date.toLocaleDateString(
-        "id-ID",
-        {
-            day:"2-digit",
-            month:"2-digit",
-            year:"numeric"
-        }
-    );
-}
 
 /* ======================================================
    FORMAT STATUS CUTI

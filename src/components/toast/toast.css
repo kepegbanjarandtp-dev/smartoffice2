@@ -65,34 +65,35 @@
     color:#ffffff;
 }
 
+
+
 /* ======================================================
-   MOBILE
+   MOBILE TOAST
 ====================================================== */
-@media(max-width:768px){
+@media (max-width:768px){
 
-    .smartoffice-toast{
+  .smartoffice-toast{
+    position:fixed;
+    top:auto;
+    bottom:calc(90px + env(safe-area-inset-bottom));
+    left:16px;
+    right:16px;
+    width:auto;
+    max-width:none;
+    padding:14px 18px;
+    border-radius:18px;
+    font-size:13px;
+    font-weight:600;
+    text-align:center;
+    box-shadow:
+      0 12px 30px rgba(15,23,42,.18);
+    transform:translateY(120%);
+  }
 
-        top:18px;
-
-        left:50%;
-        right:auto;
-
-        width:max-content;
-
-        max-width:calc(100vw - 36px);
-
-        transform:
-            translateX(-50%)
-            translateY(-20px);
-
-    }
-
-    .smartoffice-toast.show{
-
-        transform:
-            translateX(-50%)
-            translateY(0);
-
-    }
-
+  .smartoffice-toast.show{
+    transform:translateY(0);
+  }
 }
+
+
+

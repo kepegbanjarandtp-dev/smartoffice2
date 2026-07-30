@@ -1,8 +1,11 @@
+/* ================================================================================
+   DETAIL MODAL RIWAYAT
+================================================================================ */
 /* ======================================================
    OPEN RIWAYAT DETAIL
 ====================================================== */
-function smartofficeOpenRiwayatCutiDetail(
-  item
+export function smartofficeOpenRiwayatCutiDetail(
+    item
 ){
 
   /* MODAL */
@@ -83,19 +86,18 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- PROFILE -->
     <div class="
-      smartoffice-approval-profile
+      smartoffice-cuti-riwayat-modal-profile
     ">
       
       <div class="
-        smartoffice-approval-profile-info
-        smartoffice-riwayat-detail-header-info
-      ">
+        smartoffice-cuti-riwayat-modal-profile-info
+        ">
         <h4>
           ${item.jenisCuti || '-'}
         </h4>
 
         <span class="
-          smartoffice-riwayat-status
+          smartoffice-cuti-riwayat-modal-status
           ${statusClass}
         ">
           ${statusText}
@@ -106,11 +108,11 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- DETAIL -->
     <div class="
-      smartoffice-approval-detail-grid
+      smartoffice-cuti-riwayat-modal-grid
     ">
 
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
 
         <label>
@@ -126,7 +128,7 @@ function smartofficeOpenRiwayatCutiDetail(
       </div>
 
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Tanggal Cuti
@@ -138,7 +140,7 @@ function smartofficeOpenRiwayatCutiDetail(
       </div>
 
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Jumlah Hari
@@ -150,7 +152,7 @@ function smartofficeOpenRiwayatCutiDetail(
       </div>
       
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Sisa Cuti
@@ -165,7 +167,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- KEPERLUAN -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -181,7 +183,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- ALAMAT -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -197,29 +199,28 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- LAMPIRAN -->
     <div class="
-      smartoffice-approval-lampiran
-      smartoffice-riwayat-lampiran
+      smartoffice-cuti-riwayat-modal-lampiran
     ">
       <div class="
-        smartoffice-approval-lampiran-title
+        smartoffice-cuti-riwayat-modal-lampiran-title
       ">
         Lampiran
       </div>
 
       <div class="
-        smartoffice-approval-file-card
+        smartoffice-cuti-riwayat-modal-file-card
       ">
         <div class="
-          smartoffice-approval-file-icon
+          smartoffice-cuti-riwayat-modal-file-icon
         ">
           📄
         </div>
 
         <div class="
-          smartoffice-approval-file-info
+          smartoffice-cuti-riwayat-modal-file-info
         ">
           <div class="
-            smartoffice-approval-file-name
+            smartoffice-cuti-riwayat-modal-file-name
           ">
             ${
               item.lampiran
@@ -227,7 +228,7 @@ function smartofficeOpenRiwayatCutiDetail(
               `
               <button
                 class="
-                  smartoffice-dokumen-link
+                  smartoffice-cuti-riwayat-modal-dokumen-link
                 "
                 onclick="
                   smartofficeOpenPreviewDokumen(
@@ -272,12 +273,12 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- DELEGASI GRID -->
     <div class="
-      smartoffice-approval-detail-grid
+      smartoffice-cuti-riwayat-modal-grid
     ">
 
       <!-- PENERIMA -->
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           Penerima Delegasi
@@ -290,7 +291,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
       <!-- NIP -->
       <div class="
-        smartoffice-approval-detail-item
+        smartoffice-cuti-riwayat-modal-item
       ">
         <label>
           NIP / NRP Delegasi
@@ -304,7 +305,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- TUGAS -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -320,7 +321,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- APPROVAL 1 -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -329,7 +330,7 @@ function smartofficeOpenRiwayatCutiDetail(
       </label>
 
       <div class="
-        smartoffice-riwayat-approval-box
+        smartoffice-cuti-riwayat-modal-approval-box
       ">
 
         <div>
@@ -366,7 +367,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- APPROVAL 2 -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
       <label>
@@ -374,7 +375,7 @@ function smartofficeOpenRiwayatCutiDetail(
       </label>
 
       <div class="
-        smartoffice-riwayat-approval-box
+        smartoffice-cuti-riwayat-modal-approval-box
       ">
         <div>
           <small>Nama</small>
@@ -408,7 +409,7 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- PDF -->
     <div class="
-      smartoffice-approval-detail-item
+      smartoffice-cuti-riwayat-modal-item
       full-width
     ">
 
@@ -423,7 +424,7 @@ function smartofficeOpenRiwayatCutiDetail(
           `
           <button
             class="
-              smartoffice-dokumen-link
+              smartoffice-pdf-link
             "
             onclick="
               smartofficeOpenPreviewDokumen(
@@ -466,12 +467,12 @@ function smartofficeOpenRiwayatCutiDetail(
 
     <!-- FOOTER -->
     <div class="
-      smartoffice-approval-action-footer
+      smartoffice-cuti-riwayat-modal-footer
     ">
 
       <button
         class="
-          smartoffice-approval-cancel-button
+          smartoffice-cuti-riwayat-modal-close-button
         "
         onclick="
           smartofficeCloseRiwayatCutiDetail()
@@ -486,7 +487,7 @@ function smartofficeOpenRiwayatCutiDetail(
 /* ======================================================
    CLOSE RIWAYAT DETAIL
 ====================================================== */
-function smartofficeCloseRiwayatCutiDetail(){
+export function smartofficeCloseRiwayatCutiDetail(){
 
   const modal =
     document.getElementById(
@@ -503,3 +504,12 @@ function smartofficeCloseRiwayatCutiDetail(){
 
   },200);
 }
+
+/* ======================================================
+   GLOBAL WINDOW
+====================================================== */
+window.smartofficeOpenRiwayatCutiDetail =
+    smartofficeOpenRiwayatCutiDetail;
+
+window.smartofficeCloseRiwayatCutiDetail =
+    smartofficeCloseRiwayatCutiDetail;
