@@ -338,6 +338,7 @@ smartofficeDashboardHeaderFade{
    DASHBOARD MENU CARD
 ====================================================== */
 .smartoffice-dashboard-menu-card{
+    position:relative;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -451,8 +452,8 @@ smartofficeDashboardHeaderFade{
 ====================================================== */
 .smartoffice-dashboard-menu-badge{
   position:absolute;
-  top:14px;
-  right:14px;
+  top:26px;
+  right:26px;
   min-width:24px;
   height:24px;
   padding:0 8px;
@@ -678,8 +679,8 @@ smartofficeDashboardHeaderFade{
   .smartoffice-dashboard-menu-badge{
     top:10px;
     right:10px;
-    min-width:22px;
-    height:22px;
-    font-size:11px;
+    min-width:18px;
+    height:18px;
+    font-size:10px;
   }
 }

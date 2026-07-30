@@ -18,6 +18,8 @@ import "./pages/cuti/cuti-riwayat-modal.css";
 import "./pages/approval/approval.css";
 
 import "./components/button/button.css";
+import "./components/layout/layout.css";
+import "./components/tabs/tabs.css";
 
 document.addEventListener(
 

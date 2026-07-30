@@ -1,18 +1,14 @@
-/* ======================================================
-   SMART OFFICE APPROVAL
-====================================================== */
-
 /* =========================
-   APPROVAL PAGE
+   HEADER ICON
 ========================= */
-.smartoffice-approval-page{
-  width:100%;
-  max-width:1400px;
-  margin:auto;
-  padding:
-    24px
-    20px
-    120px;
+.smartoffice-approval-header-icon{
+    background:#FFF4E5;
+    border:1px solid #FCD9A8;
+    box-shadow:0 2px 8px rgba(245,158,11,.08);
+}
+
+.smartoffice-approval-header-icon svg{
+    color:#F59E0B;
 }
 
 /* =========================
@@ -29,22 +25,25 @@
    APPROVAL TAB BUTTON
 ========================= */
 .smartoffice-approval-tab-button{
-  flex:1;
-  border:none;
-  border-radius:14px;
-  padding:
-    14px
-    18px;
+    flex:1;
 
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
 
-  background:#f3f4f6;
-  color:#6b7280;
+    border:none;
+    border-radius:14px;
+    padding:14px 18px;
 
-  transition:
-    all .2s ease;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+
+    background:#f3f4f6;
+    color:#6b7280;
+
+    transition:all .2s ease;
 }
 
 /* =========================
@@ -66,45 +65,31 @@
 }
 
 /* ======================================================
-   APPROVAL SKELETON
+   APPROVAL TAB BADGE
 ====================================================== */
-.smartoffice-approval-skeleton-card{
-  width:100%;
-  height:180px;
-  border-radius:24px;
+.smartoffice-approval-tab-badge{
+    display:none;
 
-  background:
-    linear-gradient(
-      90deg,
-      #ffffff 25%,
-      #f8fafc 37%,
-      #ffffff 63%
-    );
+    align-items:center;
+    justify-content:center;
 
-  border:
-    1px solid #e2e8f0;
+    width:20px;
+    min-width:20px;
+    height:20px;
 
-  background-size:
-    400% 100%;
+    border-radius:50%;
 
-  animation:
-    smartofficeApprovalSkeleton
-    1.4s ease infinite;
+    background:#EF4444;
+    color:#FFFFFF;
+
+    font-size:11px;
+    font-weight:700;
+
+    flex-shrink:0;
 }
 
-/* ======================================================
-   SKELETON ANIMATION
-====================================================== */
-@keyframes smartofficeApprovalSkeleton{
-  0%{
-    background-position:
-      100% 50%;
-  }
-
-  100%{
-    background-position:
-      0 50%;
-  }
+.smartoffice-approval-tab-badge.show{
+    display:flex;
 }
 
 /* =========================

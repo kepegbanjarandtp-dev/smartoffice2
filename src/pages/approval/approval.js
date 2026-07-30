@@ -268,272 +268,293 @@ export async function smartofficeLoadApprovalCuti(){
   );
   
   try{
-    const data =
+      const data =
         await smartofficeGetApprovalCuti(
             sessionData.nip
         );
 
-        console.log(data);
+      console.log(data);
 
-        /* =========================
-          EMPTY DATA
-        ========================= */
-        if (!data || data.length === 0) {
+      /* =========================
+        BADGE TAB CUTI
+      ========================= */
+      const badge =
+          document.getElementById(
+              "smartofficeApprovalCutiBadge"
+          );
 
-          container.innerHTML = `
+      if (badge) {
+
+          const total =
+              data?.length || 0;
+
+          badge.textContent = total;
+
+          badge.classList.toggle(
+              "show",
+              total > 0
+          );
+      }
+
+      /* =========================
+        EMPTY DATA
+      ========================= */
+      if (!data || data.length === 0) {
+
+        container.innerHTML = `
+          <div class="
+            smartoffice-empty-state
+          ">
             <div class="
-              smartoffice-empty-state
+              smartoffice-empty-icon
+            ">
+              📭
+            </div>
+
+            <h3>
+              Tidak ada approval
+            </h3>
+
+            <p>
+              Belum ada pengajuan
+              yang perlu diproses
+            </p>
+          </div>
+        `;
+
+        return;
+      }
+
+      /* =========================
+         HTML
+      ========================= */
+      let html = '';
+
+      /* =========================
+        AVATAR COLORS
+      ========================= */
+      const avatarColors = [
+        'linear-gradient(135deg,#2563eb,#1d4ed8)',
+        'linear-gradient(135deg,#7c3aed,#6d28d9)',
+        'linear-gradient(135deg,#059669,#047857)',
+        'linear-gradient(135deg,#ea580c,#c2410c)',
+        'linear-gradient(135deg,#db2777,#be185d)',
+        'linear-gradient(135deg,#0891b2,#0e7490)',
+        'linear-gradient(135deg,#dc2626,#b91c1c)'
+      ];
+
+      console.log(data);
+      /* =========================
+        LOOP DATA
+      ========================= */
+      data.forEach(
+        function(item,index){
+            
+          console.log(item);   // <-- Di sini
+            
+          const avatarColor =
+            avatarColors[
+              index % avatarColors.length
+            ];
+
+          const periodeCuti =
+            item.tanggalAwal === item.tanggalAkhir
+
+            ?
+
+            formatTanggalIndonesia(
+              item.tanggalAwal
+            )
+
+            :
+
+            `${formatTanggalIndonesia(
+              item.tanggalAwal
+            )} - ${formatTanggalIndonesia(
+              item.tanggalAkhir
+            )}`;
+            
+          html += `
+            <div class="
+              smartoffice-approval-card
             ">
               <div class="
-                smartoffice-empty-icon
+                smartoffice-approval-card-header
               ">
-                📭
+
+                <!-- LEFT -->
+                <div class="
+                  smartoffice-approval-card-user
+                ">
+
+                  <!-- AVATAR -->
+                  <div
+                    class="
+                      smartoffice-approval-avatar
+                    "
+
+                    style="
+                      background:${avatarColor};
+                    "
+                  >
+                    ${
+                      item.nama
+                      ? item.nama.charAt(0)
+                      : 'A'
+                    }
+                  </div>
+
+                  <!-- INFO -->
+                  <div class="
+                    smartoffice-approval-card-info
+                  ">
+
+                    <div class="
+                      smartoffice-approval-card-title
+                    ">
+                      ${item.nama}
+                    </div>
+
+                    <div class="
+                      smartoffice-approval-card-subtitle
+                    ">
+                      ${item.jabatan || '-'}
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <!-- STATUS -->
+                <div class="
+                  smartoffice-approval-status
+                ">
+                  Pending
+                </div>
+
               </div>
 
-              <h3>
-                Tidak ada approval
-              </h3>
+              <div class="
+                smartoffice-approval-card-body
+              ">
+                <div class="
+                  smartoffice-approval-item
+                ">
+                  <div class="
+                    smartoffice-approval-label
+                  ">
+                    Jenis Cuti
+                  </div>
 
-              <p>
-                Belum ada pengajuan
-                yang perlu diproses
-              </p>
+                  <div class="
+                    smartoffice-approval-value
+                  ">
+                    ${item.jenisCuti}
+                  </div>
+                </div>
+
+                <div class="
+                  smartoffice-approval-item
+                ">
+                  <div class="
+                    smartoffice-approval-label
+                  ">
+                    Tanggal Cuti
+                  </div>
+
+                  <div class="
+                    smartoffice-approval-value
+                  ">
+                    ${periodeCuti}
+                  </div>
+                </div>
+
+                <div class="
+                  smartoffice-approval-item
+                ">
+                  <div class="
+                    smartoffice-approval-label
+                  ">
+                    Jumlah Hari
+                  </div>
+
+                  <div class="
+                    smartoffice-approval-value
+                  ">
+                    ${item.jumlahCuti} Hari
+                  </div>
+                </div>
+
+                <div class="
+                  smartoffice-approval-item
+                ">
+                  <div class="
+                    smartoffice-approval-label
+                  ">
+                    Keperluan
+                  </div>
+
+                  <div class="
+                    smartoffice-approval-value
+                  ">
+                    ${item.keperluan}
+                  </div>
+                </div>
+              </div>
+
+              <!-- =========================
+                  FOOTER ACTION
+              ========================= -->
+              <div class="
+                smartoffice-approval-card-footer
+              ">
+
+                <!-- DETAIL & APPROVAL -->
+                <button
+                    class="
+                      smartoffice-approval-detail-button
+                    "
+                    data-index="${index}"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="
+                      M1 12s4-8 11-8
+                      11 8 11 8
+                      -4 8-11 8
+                      -11-8-11-8
+                    "/>
+
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="3"
+                    />
+                  </svg>
+
+                  <span>
+                    Detail & Approval
+                  </span>
+                </button>
+              </div>
             </div>
           `;
-
-          return;
         }
+      );
 
-        /* =========================
-          HTML
-        ========================= */
-        let html = '';
-
-        /* =========================
-          AVATAR COLORS
-        ========================= */
-        const avatarColors = [
-          'linear-gradient(135deg,#2563eb,#1d4ed8)',
-          'linear-gradient(135deg,#7c3aed,#6d28d9)',
-          'linear-gradient(135deg,#059669,#047857)',
-          'linear-gradient(135deg,#ea580c,#c2410c)',
-          'linear-gradient(135deg,#db2777,#be185d)',
-          'linear-gradient(135deg,#0891b2,#0e7490)',
-          'linear-gradient(135deg,#dc2626,#b91c1c)'
-        ];
-
-        console.log(data);
-        /* =========================
-          LOOP DATA
-        ========================= */
-        data.forEach(
-          function(item,index){
-            
-            console.log(item);   // <-- Di sini
-            
-            const avatarColor =
-              avatarColors[
-                index % avatarColors.length
-              ];
-
-            const periodeCuti =
-              item.tanggalAwal === item.tanggalAkhir
-
-              ?
-
-              formatTanggalIndonesia(
-                item.tanggalAwal
-              )
-
-              :
-
-              `${formatTanggalIndonesia(
-                item.tanggalAwal
-              )} - ${formatTanggalIndonesia(
-                item.tanggalAkhir
-              )}`;
-            
-            html += `
-              <div class="
-                smartoffice-approval-card
-              ">
-                <div class="
-                  smartoffice-approval-card-header
-                ">
-
-                  <!-- LEFT -->
-                  <div class="
-                    smartoffice-approval-card-user
-                  ">
-
-                    <!-- AVATAR -->
-                    <div
-                      class="
-                        smartoffice-approval-avatar
-                      "
-
-                      style="
-                        background:${avatarColor};
-                      "
-                    >
-                      ${
-                        item.nama
-                        ? item.nama.charAt(0)
-                        : 'A'
-                      }
-                    </div>
-
-                    <!-- INFO -->
-                    <div class="
-                      smartoffice-approval-card-info
-                    ">
-
-                      <div class="
-                        smartoffice-approval-card-title
-                      ">
-                        ${item.nama}
-                      </div>
-
-                      <div class="
-                        smartoffice-approval-card-subtitle
-                      ">
-                        ${item.jabatan || '-'}
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <!-- STATUS -->
-                  <div class="
-                    smartoffice-approval-status
-                  ">
-                    Pending
-                  </div>
-
-                </div>
-
-                <div class="
-                  smartoffice-approval-card-body
-                ">
-                  <div class="
-                    smartoffice-approval-item
-                  ">
-                    <div class="
-                      smartoffice-approval-label
-                    ">
-                      Jenis Cuti
-                    </div>
-
-                    <div class="
-                      smartoffice-approval-value
-                    ">
-                      ${item.jenisCuti}
-                    </div>
-                  </div>
-
-                  <div class="
-                    smartoffice-approval-item
-                  ">
-                    <div class="
-                      smartoffice-approval-label
-                    ">
-                      Tanggal Cuti
-                    </div>
-
-                    <div class="
-                      smartoffice-approval-value
-                    ">
-                      ${periodeCuti}
-                    </div>
-                  </div>
-
-                  <div class="
-                    smartoffice-approval-item
-                  ">
-                    <div class="
-                      smartoffice-approval-label
-                    ">
-                      Jumlah Hari
-                    </div>
-
-                    <div class="
-                      smartoffice-approval-value
-                    ">
-                      ${item.jumlahCuti} Hari
-                    </div>
-                  </div>
-
-                  <div class="
-                    smartoffice-approval-item
-                  ">
-                    <div class="
-                      smartoffice-approval-label
-                    ">
-                      Keperluan
-                    </div>
-
-                    <div class="
-                      smartoffice-approval-value
-                    ">
-                      ${item.keperluan}
-                    </div>
-                  </div>
-                </div>
-
-                <!-- =========================
-                    FOOTER ACTION
-                ========================= -->
-                <div class="
-                  smartoffice-approval-card-footer
-                ">
-
-                  <!-- DETAIL & APPROVAL -->
-                  <button
-                     class="
-                        smartoffice-approval-detail-button
-                     "
-                     data-index="${index}"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    >
-                      <path d="
-                        M1 12s4-8 11-8
-                        11 8 11 8
-                        -4 8-11 8
-                        -11-8-11-8
-                      "/>
-
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="3"
-                      />
-                    </svg>
-
-                    <span>
-                      Detail & Approval
-                    </span>
-                  </button>
-                </div>
-              </div>
-            `;
-          }
-        );
-
-        /* =========================
-         RENDER HTML
-         ========================= */
-         container.innerHTML = html;
+      /* =========================
+        RENDER HTML
+      ========================= */
+      container.innerHTML = html;
 
          const buttons =
             container.querySelectorAll(
@@ -569,137 +590,8 @@ export async function smartofficeLoadApprovalCuti(){
 
 
 
-
 /* ================================================================================
-   APPROVAL ACTION
-================================================================================ */
-
-/* ======================================================
-   SMART OFFICE REFRESH APPROVAL
-====================================================== */
-async function smartofficeRefreshApproval(){
-
-  try{
-
-    await smartofficeLoadApprovalCuti();
-
-    smartofficeShowToast(
-      "Data berhasil diperbarui",
-      "success"
-    );
-
-  }catch(error){
-
-    smartofficeShowToast(
-      error.message ||
-      "Gagal memuat data.",
-      "error"
-    );
-
-  }
-
-}
-
-
-/* ======================================================
-   SMART OFFICE SWITCH APPROVAL TAB
-====================================================== */
-function smartofficeSwitchApprovalTab(tab){
-
-  /* CONTENT */
-  const cutiContent =
-    document.getElementById(
-      "smartofficeApprovalCutiContent"
-    );
-
-  const spdContent =
-    document.getElementById(
-      "smartofficeApprovalSpdContent"
-    );
-
-  const dokumenContent =
-    document.getElementById(
-      "smartofficeApprovalDokumenContent"
-    );
-
-  /* BUTTON */
-  const cutiButton =
-    document.getElementById(
-      "smartofficeTabApprovalCuti"
-    );
-
-  const spdButton =
-    document.getElementById(
-      "smartofficeTabApprovalSpd"
-    );
-
-  const dokumenButton =
-    document.getElementById(
-      "smartofficeTabApprovalDokumen"
-    );
-
-  /* VALIDASI */
-  if(
-    !cutiContent ||
-    !spdContent ||
-    !dokumenContent ||
-    !cutiButton ||
-    !spdButton ||
-    !dokumenButton
-  ){
-    return;
-  }
-
-  /* RESET */
-  cutiContent.style.display = "none";
-  spdContent.style.display = "none";
-  dokumenContent.style.display = "none";
-
-  cutiButton.classList.remove("active");
-  spdButton.classList.remove("active");
-  dokumenButton.classList.remove("active");
-
-  switch(tab){
-
-    case "cuti":
-
-      cutiContent.style.display = "block";
-      cutiButton.classList.add("active");
-
-      break;
-
-    case "spd":
-
-      spdContent.style.display = "block";
-      spdButton.classList.add("active");
-
-      break;
-
-    case "dokumen":
-
-      dokumenContent.style.display = "block";
-      dokumenButton.classList.add("active");
-
-      break;
-
-  }
-
-}
-
-
-
-/* ======================================================
-   SMART OFFICE PROCESS APPROVAL CUTI
-====================================================== 
-function smartofficeProcessApprovalCuti(
-    idCuti,
-    action
-){}*/
-
-
-
-/* ================================================================================
-   DETAIL MODAL
+   DETAIL MODAL CUTI
 ================================================================================ */
 
 /* ======================================================
@@ -1269,19 +1161,11 @@ function smartofficeCloseApprovalDetail(){
 
   /* HIDE AFTER ANIMATION */
   setTimeout(()=>{
-
     modal.style.display =
       "none";
-
   },250);
-
 }
 
-
-
-/* ================================================================================
-   SUBMIT APPROVAL
-================================================================================ */
 
 /* ======================================================
    SUBMIT APPROVAL ACTION
@@ -1335,7 +1219,6 @@ async function smartofficeSubmitApprovalAction(){
     );
 
     return;
-
   }
 
   /* =========================
@@ -1359,7 +1242,6 @@ async function smartofficeSubmitApprovalAction(){
     <div class="
       smartoffice-cuti-form-button-loading
     ">
-
       <div class="
         smartoffice-cuti-form-button-spinner
       "></div>
@@ -1371,7 +1253,6 @@ async function smartofficeSubmitApprovalAction(){
             : "Menyetujui..."
         }
       </span>
-
     </div>
   `;
 
@@ -1382,15 +1263,10 @@ async function smartofficeSubmitApprovalAction(){
     ========================= */
     const response =
       await smartofficeProcessApprovalCuti(
-
         smartofficeApprovalState.idCuti,
-
         action,
-
         sessionData.nip,
-
         catatan
-
       );
 
     /* =========================
@@ -1412,7 +1288,6 @@ async function smartofficeSubmitApprovalAction(){
     await smartofficeLoadApprovalCuti();
 
   }catch(error){
-
     smartofficeShowToast(
       error.message ||
       "Terjadi kesalahan.",
@@ -1430,17 +1305,13 @@ async function smartofficeSubmitApprovalAction(){
     if(
       submitButton
     ){
-
       submitButton.disabled =
         false;
 
       submitButton.innerHTML =
         "Submit";
-
     }
-
   }
-
 }
 
 
@@ -1532,3 +1403,112 @@ function smartofficeSetApprovalAction(action){
     }
   }
 }
+
+
+
+/* ================================================================================
+   APPROVAL ACTION HELPER
+================================================================================ */
+
+/* ======================================================
+   SMART OFFICE REFRESH APPROVAL
+====================================================== */
+async function smartofficeRefreshApproval(){
+
+  try{
+    await smartofficeLoadApprovalCuti();
+
+    smartofficeShowToast(
+      "Data berhasil diperbarui",
+      "success"
+    );
+
+  }catch(error){
+    smartofficeShowToast(
+      error.message ||
+      "Gagal memuat data.",
+      "error"
+    );
+  }
+}
+
+
+/* ======================================================
+   SMART OFFICE SWITCH APPROVAL TAB
+====================================================== */
+function smartofficeSwitchApprovalTab(tab){
+
+  /* CONTENT */
+  const cutiContent =
+    document.getElementById(
+      "smartofficeApprovalCutiContent"
+    );
+
+  const spdContent =
+    document.getElementById(
+      "smartofficeApprovalSpdContent"
+    );
+
+  const dokumenContent =
+    document.getElementById(
+      "smartofficeApprovalDokumenContent"
+    );
+
+  /* BUTTON */
+  const cutiButton =
+    document.getElementById(
+      "smartofficeTabApprovalCuti"
+    );
+
+  const spdButton =
+    document.getElementById(
+      "smartofficeTabApprovalSpd"
+    );
+
+  const dokumenButton =
+    document.getElementById(
+      "smartofficeTabApprovalDokumen"
+    );
+
+  /* VALIDASI */
+  if(
+    !cutiContent ||
+    !spdContent ||
+    !dokumenContent ||
+    !cutiButton ||
+    !spdButton ||
+    !dokumenButton
+  ){
+    return;
+  }
+
+  /* RESET */
+  cutiContent.style.display = "none";
+  spdContent.style.display = "none";
+  dokumenContent.style.display = "none";
+
+  cutiButton.classList.remove("active");
+  spdButton.classList.remove("active");
+  dokumenButton.classList.remove("active");
+
+  switch(tab){
+    case "cuti":
+      cutiContent.style.display = "block";
+      cutiButton.classList.add("active");
+      break;
+
+    case "spd":
+      spdContent.style.display = "block";
+      spdButton.classList.add("active");
+      break;
+
+    case "dokumen":
+      dokumenContent.style.display = "block";
+      dokumenButton.classList.add("active");
+      break;
+  }
+}
+
+
+
+

@@ -60,6 +60,10 @@ import {
   smartofficeGetDriveFileId
 } from "../../utils/drive.js";
 
+import {
+    smartofficeConvertFileToBase64
+} from "../../utils/file.js";
+
 
 
 /* ================================================================================
@@ -1851,36 +1855,6 @@ export async function smartofficeSwitchCutiTab(
 /* ================================================================================
    UPLOAD
 ================================================================================ */
-
-/* ======================================================
-   CONVERT FILE TO BASE64
-====================================================== */
-export function smartofficeConvertFileToBase64(
-    file
-){
-    return new Promise(
-        function(resolve,reject){
-
-            const reader =
-                new FileReader();
-
-            reader.onload =
-                function(){
-                    resolve(
-                        reader.result
-                            .split(",")[1]
-                    );
-                };
-
-            reader.onerror =
-                reject;
-
-            reader.readAsDataURL(
-                file
-            );
-        }
-    );
-}
 
 /* ======================================================
    INIT UPLOAD LAMPIRAN

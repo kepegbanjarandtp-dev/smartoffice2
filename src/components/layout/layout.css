@@ -1,0 +1,149 @@
+/* ======================================================
+   SMARTOFFICE WRAPPER
+====================================================== */
+.smartoffice-wrapper{
+  width:100%;
+  max-width:1400px;
+  margin:auto;
+  padding:24px;
+  padding-bottom:100px;
+  min-height:100vh;
+  background:
+        linear-gradient(
+            180deg,
+            #F7FAFF 0%,
+            #F3F7FD 50%,
+            #EEF4FF 100%
+        );
+}
+
+/* =========================
+   HEADER
+========================= */
+.smartoffice-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:24px;
+}
+
+.smartoffice-header-info{
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.smartoffice-header h2{
+  font-size:24px;
+  margin-bottom:4px;
+}
+
+.smartoffice-header p{
+  color:#64748b;
+  font-size:14px;
+}
+
+/* ======================================================
+   HEADER TITLE
+====================================================== */
+.smartoffice-header-title{
+    display:flex;
+    flex-direction:column;
+}
+
+.smartoffice-header-title-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.smartoffice-header-title h2{
+    margin:0;
+    line-height:1.1;
+}
+
+.smartoffice-header-title p{
+    margin:2px 0 0;
+    font-size:14px;
+    line-height:1.3;
+    color:#64748B;
+}
+
+/* ======================================================
+   HEADER ICON
+====================================================== */
+.smartoffice-header-icon{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    flex-shrink:0;
+}
+
+.smartoffice-header-icon svg{
+    width:20px;
+    height:20px;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media(max-width:768px){
+
+  /* =========================
+     WRAPPER
+  ========================= */
+  .smartoffice-cuti-wrapper{
+    padding:16px;
+    padding-bottom:88px;
+  }
+
+  /* =========================
+    HEADER
+  ========================= */
+  .smartoffice-header{
+    gap:12px;
+    margin-bottom:18px;
+  }
+
+  .smartoffice-header-title{
+    min-width:0;
+  }
+
+  .smartoffice-header-title-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .smartoffice-header-title h2{
+    margin:0;
+    font-size:18px;
+    line-height:1.2;
+  }
+
+  .smartoffice-header-title p{
+    margin:2px 0 0;
+    font-size:10px;
+    line-height:1.4;
+    color:#64748B;
+  }
+
+  .smartoffice-header-icon{
+    width:32px;
+    height:32px;
+    border-radius:10px;
+  }
+
+  .smartoffice-header-icon svg{
+    width:18px;
+    height:18px;
+  }
+
+}
+
