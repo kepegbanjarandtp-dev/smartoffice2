@@ -98,9 +98,9 @@
   /* =========================
      WRAPPER
   ========================= */
-  .smartoffice-cuti-wrapper{
+  .smartoffice-wrapper{
     padding:16px;
-    padding-bottom:88px;
+    padding:16px 10px calc(88px + env(safe-area-inset-bottom));
   }
 
   /* =========================
