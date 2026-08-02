@@ -28,6 +28,13 @@ import {
 } from "../../components/toast/toast.js";
 
 import {
+  smartofficeOpenPreviewDokumen,
+  smartofficeClosePreviewDokumen,
+  smartofficeZoomIn,
+  smartofficeZoomOut
+} from "../../components/preview/preview.js";
+
+import {
     smartofficeShowLoading
 } from "../../components/loading/loading.js";
 
@@ -839,7 +846,7 @@ function smartofficeOpenApprovalDetail(
         <div class="
           smartoffice-approval-detail-item
         ">
-          <label>NIP / NRP</label>
+          <label>NIP/NRP</label>
 
           <span>
             ${item.nipDelegasi || '-'}
@@ -894,7 +901,7 @@ function smartofficeOpenApprovalDetail(
                 <button
                   id="smartofficePreviewLampiranButton"
                   class="
-                     smartoffice-dokumen-link
+                     smartoffice-approval-dokumen-link
                   "
                   data-fileid="${smartofficeGetDriveFileId(item.lampiran)}"
                 >
@@ -1165,6 +1172,9 @@ function smartofficeCloseApprovalDetail(){
       "none";
   },250);
 }
+
+window.smartofficeCloseApprovalDetail =
+    smartofficeCloseApprovalDetail;
 
 
 /* ======================================================

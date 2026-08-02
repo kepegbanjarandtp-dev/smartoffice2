@@ -22,16 +22,48 @@
 }*/
 
 /* ======================================================
+   BRAND INFO
+====================================================== */
+.smartoffice-dashboard-brand-info{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+}
+
+/* ======================================================
    DASHBOARD HEADER
 ====================================================== */
 .smartoffice-dashboard-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:28px;
-  animation:
-    smartofficeDashboardHeaderFade
-    0.45s ease;
+    position:relative;
+    overflow:hidden;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:18px;
+
+    margin-bottom:28px;
+
+    padding:12px 20px;   /* lebih pendek */
+
+    background:
+        linear-gradient(
+            180deg,
+            #FFFFFF 0%,
+            #FCFDFF 100%
+        );
+
+    border:1.5px solid rgba(255,255,255,.9);
+    border-radius:30px;
+
+    box-shadow:
+        0 10px 28px rgba(26,59,120,.08);
+
+    backdrop-filter:blur(14px);
+
+    animation:
+        smartofficeDashboardHeaderFade
+        .45s ease;
 }
 
 @keyframes
@@ -46,13 +78,42 @@ smartofficeDashboardHeaderFade{
   }
 }
 
-.smartoffice-dashboard-user-info{
+/* ======================================================
+   HEADER GLOSSY
+====================================================== */
+.smartoffice-dashboard-header::before{
+    content:"";
+
+    position:absolute;
+
+    left:3px;
+    right:3px;
+    top:3px;
+
+    height:34%;
+
+    border-radius:28px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.95) 0%,
+            rgba(255,255,255,.55) 60%,
+            rgba(255,255,255,0) 100%
+        );
+
+    pointer-events:none;
+}
+
+.smartoffice-dashboard-brand{
   display:flex;
   align-items:center;
   gap:16px;
+  flex:1;
+  min-width:0;
 }
 
-.smartoffice-dashboard-header h2{
+.smartoffice-dashboard-brand-info h2{
   font-size:40px;
   font-weight:900;
   letter-spacing:-1px;
@@ -61,7 +122,7 @@ smartofficeDashboardHeaderFade{
   margin-bottom:4px;
 }
 
-.smartoffice-dashboard-header p{
+.smartoffice-dashboard-brand-info p{
   font-size:16px;
   font-weight:500;
   color:#64748b;
@@ -508,24 +569,35 @@ smartofficeDashboardHeaderFade{
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap:14px;
-    margin-bottom:12px;
-}
 
-  .smartoffice-dashboard-user-info{
+    gap:12px;
+
+    padding:8px 14px;      /* tambahkan ini */
+
+    margin-bottom:12px;
+
+    border-radius:22px;
+  }
+
+  .smartoffice-dashboard-brand{
     display:flex;
     align-items:center;
     gap:10px;
     flex:1;
-}
+    min-width:0;
+  }
 
-  .smartoffice-dashboard-header h2{
+  .smartoffice-dashboard-brand-info{
+    min-width:0;
+  }
+
+  .smartoffice-dashboard-brand-info h2{
     font-size:20px;
     line-height:1.1;
     margin-bottom:2px;
   }
 
-  .smartoffice-dashboard-header p{
+  .smartoffice-dashboard-brand-info p{
     font-size:8px;
     line-height:1.4;
   }
@@ -554,8 +626,8 @@ smartofficeDashboardHeaderFade{
     LOGO
   ========================= */
   .smartoffice-dashboard-logo{
-    width:52px;
-    height:52px;
+    width:46px;
+    height:46px;
   }
 
   /* =========================
