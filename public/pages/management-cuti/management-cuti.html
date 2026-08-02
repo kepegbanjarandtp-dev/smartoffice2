@@ -1,0 +1,451 @@
+<div class="smartoffice-cuti-wrapper">
+
+  <!-- =========================
+       HEADER
+  ========================= -->
+  <div class="smartoffice-cuti-header">
+
+    <button
+      class="smartoffice-cuti-back-button"
+      onclick="smartofficeLoadDashboardPage()"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    </button>
+
+    <div class="
+      smartoffice-management-header-info
+    ">
+
+      <div>
+
+        <h2>
+          Management Cuti
+        </h2>
+
+        <p>
+          Monitoring dan riwayat cuti pegawai
+        </p>
+
+      </div>
+
+      <!-- REFRESH -->
+      <button
+        class="
+          smartoffice-management-refresh-btn
+        "
+        onclick="
+          smartofficeRefreshManagementCuti()
+        "
+        title="Refresh Data"
+      >
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+
+          <path d="
+            M21 12
+            a9 9 0 1 1
+            -3-6.7
+          "/>
+
+          <polyline points="
+            21 3
+            21 9
+            15 9
+          "/>
+
+        </svg>
+
+        <span>
+          Refresh
+        </span>
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+      MINI STATS
+  ========================= -->
+  <div class="
+    smartoffice-management-stat-row
+  ">
+
+    <!-- TOTAL PEGAWAI -->
+    <div class="
+      smartoffice-management-stat-card
+      smartoffice-management-stat-blue
+    ">
+
+      <div class="
+        smartoffice-management-stat-top
+      ">
+        <p>
+          Total Pegawai
+        </p>
+      </div>
+
+      <h3 id="smartofficeManagementTotalPegawai">
+        <span class="smartoffice-mini-loader"></span>
+      </h3>
+
+    </div>
+
+    <!-- MENUNGGU -->
+    <div class="
+      smartoffice-management-stat-card
+      smartoffice-management-stat-orange
+    ">
+
+      <div class="
+        smartoffice-management-stat-top
+      ">
+        <p>
+          Pending
+        </p>
+      </div>
+
+      <h3 id="smartofficeManagementMenunggu">
+        <span class="smartoffice-mini-loader"></span>
+      </h3>
+
+    </div>
+
+    <!-- DISETUJUI -->
+    <div class="
+      smartoffice-management-stat-card
+      smartoffice-management-stat-green
+    ">
+
+      <div class="
+        smartoffice-management-stat-top
+      ">
+        <p>
+          Disetujui
+        </p>
+      </div>
+
+      <h3 id="smartofficeManagementDisetujui">
+        <span class="smartoffice-mini-loader"></span>
+      </h3>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+      TAB
+  ========================= -->
+  <div class="smartoffice-management-tab-wrapper">
+
+    <button
+      id="smartofficeTabRekapCuti"
+      class="
+        smartoffice-management-tab-button
+        active
+      "
+      onclick="
+        smartofficeSwitchManagementCutiTab(
+          'rekap'
+        )
+      "
+    >
+      <span>
+        Rekap Pegawai
+      </span>
+    </button>
+
+    <button
+      id="smartofficeTabRiwayatManagement"
+      class="
+        smartoffice-management-tab-button
+      "
+      onclick="
+        smartofficeSwitchManagementCutiTab(
+          'riwayat'
+        )
+      "
+    >
+      <span>
+        Riwayat Cuti
+      </span>
+    </button>
+
+  </div>
+
+  <!-- =========================
+      REKAP PEGAWAI
+  ========================= -->
+  <div
+    id="smartofficeManagementRekapContent"
+    class="smartoffice-management-content"
+  >
+
+    <div class="
+      smartoffice-management-search-card
+    ">
+
+      <!-- SEARCH -->
+      <input
+        type="text"
+        id="smartofficeManagementSearchPegawai"
+        placeholder="Cari nama atau NIP..."
+      >
+
+      <!-- STATUS KEPEGAWAIAN -->
+      <select
+        id="smartofficeManagementFilterStatusPegawai"
+      >
+
+        <option value="">
+          Semua Status Kepegawaian
+        </option>
+
+        <option value="PNS">
+          PNS
+        </option>
+
+        <option value="PPPK">
+          PPPK
+        </option>
+
+        <option value="PPPK PARUH WAKTU">
+          PPPK PARUH WAKTU
+        </option>
+
+        <option value="BLUD">
+          BLUD
+        </option>
+
+      </select>
+
+    </div>
+
+    <div
+      id="smartofficeManagementRekapList"
+    ></div>
+
+  </div>
+
+  <!-- =========================
+       RIWAYAT CUTI
+  ========================= -->
+  <div
+    id="smartofficeManagementRiwayatContent"
+    class="smartoffice-management-content"
+    style="display:none;"
+  >
+
+    <div class="
+      smartoffice-management-filter-card
+    ">
+
+      <div class="
+        smartoffice-cuti-form-group
+      ">
+
+        <label>
+          Pegawai
+        </label>
+
+        <select
+          id="smartofficeManagementFilterPegawai"
+        >
+          <option value="">
+            Semua Pegawai
+          </option>
+        </select>
+
+      </div>
+
+      <div class="
+        smartoffice-cuti-form-group
+      ">
+
+        <label>
+          Status
+        </label>
+
+        <select
+          id="smartofficeManagementFilterStatus"
+        >
+
+          <option value="">
+            Semua Status
+          </option>
+
+          <option value="MENUNGGU">
+            Menunggu
+          </option>
+
+          <option value="DISETUJUI">
+            Disetujui
+          </option>
+
+          <option value="DITOLAK">
+            Ditolak
+          </option>
+
+        </select>
+
+      </div>
+
+      <div class="
+        smartoffice-cuti-form-group
+      ">
+
+        <label>
+          Bulan
+        </label>
+
+        <select
+          id="smartofficeManagementFilterBulan"
+        >
+
+          <option value="">
+            Semua Bulan
+          </option>
+
+          <option value="0">Januari</option>
+          <option value="1">Februari</option>
+          <option value="2">Maret</option>
+          <option value="3">April</option>
+          <option value="4">Mei</option>
+          <option value="5">Juni</option>
+          <option value="6">Juli</option>
+          <option value="7">Agustus</option>
+          <option value="8">September</option>
+          <option value="9">Oktober</option>
+          <option value="10">November</option>
+          <option value="11">Desember</option>
+
+        </select>
+
+      </div>
+
+      <div class="
+        smartoffice-cuti-form-group
+      ">
+
+        <label>
+          Tahun
+        </label>
+
+        <select
+          id="smartofficeManagementFilterTahun"
+        >
+          <option value="">
+            Semua Tahun
+          </option>
+        </select>
+
+      </div>
+
+      <button
+        class="
+          smartoffice-management-filter-button
+        "
+        onclick="
+          smartofficeFilterManagementRiwayat()
+        "
+      >
+        Cari
+      </button>
+
+      <button
+        class="
+          smartoffice-management-reset-button
+        "
+        onclick="
+          smartofficeResetManagementRiwayat()
+        "
+      >
+        Reset
+      </button>
+
+      <button
+        class="
+          smartoffice-management-print-button
+        "
+        onclick="
+          smartofficeExportRiwayatCutiPdf()
+        "
+      >
+        🖨 Print
+      </button>
+
+    </div>
+
+    <div
+      id="smartofficeManagementRiwayatList"
+    ></div>
+
+  </div>
+
+</div>
+
+<!-- =========================
+     MODAL DETAIL
+========================= -->
+<div
+  id="smartofficeManagementCutiDetailModal"
+  class="smartoffice-approval-detail-modal"
+>
+
+  <div class="
+    smartoffice-approval-detail-content
+    smartoffice-riwayat-detail-content
+  ">
+
+    <div class="
+      smartoffice-approval-detail-header
+    ">
+
+      <h3>
+        Detail Pengajuan Cuti
+      </h3>
+
+      <button
+        class="
+          smartoffice-approval-detail-close
+        "
+        onclick="
+          smartofficeCloseManagementCutiDetail()
+        "
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <div
+      id="smartofficeManagementCutiDetailBody"
+      class="
+        smartoffice-riwayat-detail-body
+      "
+    ></div>
+
+  </div>
+
+</div>
