@@ -366,6 +366,24 @@ function smartofficeInitDashboardMenu(){
             }
         );
 
+    /* =========================
+       MANAGEMENT CUTI
+    ========================= */
+    document
+        .getElementById(
+            "smartofficeManagementCutiMenuCard"
+        )
+        ?.addEventListener(
+            "click",
+            async function(){
+
+                await smartofficeNavigate(
+                    "management-cuti"
+                );
+
+            }
+        );
+
 }
 
 

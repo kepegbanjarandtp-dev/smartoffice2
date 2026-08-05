@@ -28,6 +28,9 @@ const smartofficeModules = {
     approval: () =>
         import("../pages/approval/approval.js"),
 
+    "management-cuti": () =>
+        import("../pages/management-cuti/management-cuti.js"),
+
     //smartspdBlud: () =>
     //    import("../pages/smartspd-blud/smartspd-blud.js"),
 
@@ -37,8 +40,7 @@ const smartofficeModules = {
     //arsipKepegawaian: () =>
     //    import("../pages/arsip-kepegawaian/arsip-kepegawaian.js"),
 
-    //managementCuti: () =>
-    //    import("../pages/management-cuti/management-cuti.js"),
+    
 
     //bukuTamu: () =>
     //    import("../pages/buku-tamu/buku-tamu.js")*/
