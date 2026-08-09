@@ -33,6 +33,8 @@
 
         <svg
           xmlns="http://www.w3.org/2000/svg"
+          width="38"
+          height="38"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -40,8 +42,25 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <path d="M9 11l3 3L22 4"/>
-          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          <path d="
+            M16 21v-2
+            a4 4 0 0 0-4-4H5
+            a4 4 0 0 0-4 4v2
+          "/>
+
+          <circle
+            cx="8.5"
+            cy="7"
+            r="4"
+          />
+
+          <path d="
+            M20 8v6
+          "/>
+
+          <path d="
+            M23 11h-6
+          "/>
         </svg>
 
       </div>
@@ -90,22 +109,58 @@
   <!-- =========================
       MINI STATS
   ========================= -->
-  <div class="
-    smartoffice-management-stat-row
-  ">
+  <div class="smartoffice-cuti-stats-row">
 
     <!-- TOTAL PEGAWAI -->
     <div class="
-      smartoffice-management-stat-card
-      smartoffice-management-stat-blue
+      smartoffice-cuti-stat-card
+      smartoffice-cuti-stat-blue
     ">
 
       <div class="
-        smartoffice-management-stat-top
+        smartoffice-cuti-stat-top
       ">
+
         <p>
-          Total Pegawai
+          Pegawai
         </p>
+
+        <div class="
+          smartoffice-cuti-stat-icon
+        ">
+
+          <svg viewBox="0 0 24 24">
+
+            <!-- Kepala -->
+            <circle
+              cx="9"
+              cy="8"
+              r="3"
+            />
+
+            <circle
+              cx="17"
+              cy="9"
+              r="2.5"
+            />
+
+            <!-- Badan -->
+            <path d="
+              M3 20
+              c0-3 3-5 6-5
+              s6 2 6 5
+            "/>
+
+            <path d="
+              M14 20
+              c0-2.2 2-3.8 4.5-3.8
+              S23 17.8 23 20
+            "/>
+
+          </svg>
+
+        </div>
+
       </div>
 
       <h3 id="smartofficeManagementTotalPegawai">
@@ -114,18 +169,46 @@
 
     </div>
 
-    <!-- MENUNGGU -->
+    <!-- PENDING -->
     <div class="
-      smartoffice-management-stat-card
-      smartoffice-management-stat-orange
+      smartoffice-cuti-stat-card
+      smartoffice-cuti-stat-orange
     ">
 
       <div class="
-        smartoffice-management-stat-top
+        smartoffice-cuti-stat-top
       ">
+
         <p>
           Pending
         </p>
+
+        <div class="
+          smartoffice-cuti-stat-icon
+        ">
+
+          <svg viewBox="0 0 24 24">
+
+            <path d="
+              M12 2
+              a10 10 0 1 0 10 10
+              A10 10 0 0 0 12 2
+            "/>
+
+            <path d="
+              M12 7
+              v6
+            "/>
+
+            <path d="
+              M12 13
+              l4 2
+            "/>
+
+          </svg>
+
+        </div>
+
       </div>
 
       <h3 id="smartofficeManagementMenunggu">
@@ -136,16 +219,40 @@
 
     <!-- DISETUJUI -->
     <div class="
-      smartoffice-management-stat-card
-      smartoffice-management-stat-green
+      smartoffice-cuti-stat-card
+      smartoffice-cuti-stat-green
     ">
 
       <div class="
-        smartoffice-management-stat-top
+        smartoffice-cuti-stat-top
       ">
+
         <p>
           Disetujui
         </p>
+
+        <div class="
+          smartoffice-cuti-stat-icon
+        ">
+
+          <svg viewBox="0 0 24 24">
+
+            <path d="
+              M9 12
+              l2 2
+              l5-5
+            "/>
+
+            <circle
+              cx="12"
+              cy="12"
+              r="9"
+            />
+
+          </svg>
+
+        </div>
+
       </div>
 
       <h3 id="smartofficeManagementDisetujui">
@@ -181,7 +288,7 @@
     <button
       id="smartofficeTabRiwayatManagement"
       class="
-        smartoffice-management-tab-button
+        smartoffice-tab-button
       "
       onclick="
         smartofficeSwitchManagementCutiTab(
@@ -264,7 +371,7 @@
     ">
 
       <div class="
-        smartoffice-cuti-form-group
+        smartoffice-management-riwayat-filter-group
       ">
 
         <label>
@@ -282,7 +389,7 @@
       </div>
 
       <div class="
-        smartoffice-cuti-form-group
+        smartoffice-management-riwayat-filter-group
       ">
 
         <label>
@@ -314,7 +421,7 @@
       </div>
 
       <div class="
-        smartoffice-cuti-form-group
+        smartoffice-management-riwayat-filter-group
       ">
 
         <label>
@@ -347,7 +454,7 @@
       </div>
 
       <div class="
-        smartoffice-cuti-form-group
+        smartoffice-management-riwayat-filter-group
       ">
 
         <label>
@@ -421,22 +528,37 @@
   ">
 
     <div class="
-      smartoffice-approval-detail-header
+      smartoffice-cuti-riwayat-modal-header
     ">
 
-      <h3>
+      <h3 class="
+        smartoffice-cuti-riwayat-modal-title
+      ">
         Detail Pengajuan Cuti
       </h3>
 
       <button
         class="
-          smartoffice-approval-detail-close
+          smartoffice-cuti-riwayat-modal-close
         "
         onclick="
           smartofficeCloseManagementCutiDetail()
         "
       >
-        ✕
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6L6 18"/>
+          <path d="M6 6l12 12"/>
+        </svg>
       </button>
 
     </div>
@@ -444,7 +566,7 @@
     <div
       id="smartofficeManagementCutiDetailBody"
       class="
-        smartoffice-riwayat-detail-body
+        smartoffice-cuti-riwayat-modal-body
       "
     ></div>
 
