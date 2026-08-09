@@ -29,6 +29,13 @@ import {
 } from "../../components/loading/loading.js";
 
 /* ======================================================
+   CUTI
+====================================================== */
+import {
+    smartofficeGetApprovalBadge
+} from "../cuti/cuti.js";
+
+/* ======================================================
    SERVICE
 ====================================================== */
 import {
@@ -43,6 +50,9 @@ import {
     formatTanggalIndonesia
 } from "../../utils/date.js";
 
+import {
+  smartofficeGetDriveFileId
+} from "../../utils/drive.js";
 
 /* ================================================================================
    GLOBAL STATE
@@ -96,7 +106,7 @@ export async function smartofficeLoadPage(){
     /* =========================
        INIT EVENT
     ========================= */
-    //smartofficeInitManagementSearch();
+    smartofficeInitManagementSearch();
 
     /* =========================
        LOAD DATA
@@ -193,17 +203,15 @@ export function smartofficeSwitchManagementCutiTab(
        TAB RIWAYAT
     ========================= */
     else{
-        rekapContent.style.display =
-            "none";
+        rekapContent.style.display = "none";
+        riwayatContent.style.display = "block";
 
-        riwayatContent.style.display =
-            "block";
-
-        rekapButton.classList.add(
-            "active"
-        );
+        riwayatButton.classList.add("active");
     }
 }
+
+window.smartofficeSwitchManagementCutiTab =
+    smartofficeSwitchManagementCutiTab;
 
 
 /* ================================================================================
@@ -343,16 +351,14 @@ function smartofficeRenderRekapPegawai(
                 <div class="smartoffice-management-avatar">
                     ${
                         item.nama
-                        ? item.nama
-                            .trim()
-                            .charAt(0)
-                            .toUpperCase()
+                        ? item.nama.trim().charAt(0).toUpperCase()
                         : "-"
                     }
                 </div>
 
                 <!-- CONTENT -->
                 <div class="smartoffice-management-card-content">
+
                     <h3>
                         ${item.nama}
                     </h3>
@@ -368,23 +374,57 @@ function smartofficeRenderRekapPegawai(
 
                     <div class="smartoffice-management-divider"></div>
 
-                    <p>
-                        Cuti Tahunan :
-                        ${item.totalCuti || 0}
-                        Hari
-                    </p>
+                    <!-- SUMMARY -->
+                    <div class="smartoffice-management-summary">
 
-                    <p>
-                        Terpakai :
-                        ${item.cutiTerpakai || 0}
-                        Hari
-                    </p>
+                        <div class="smartoffice-management-summary-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 2v4"/>
+                                <path d="M16 2v4"/>
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M3 10h18"/>
+                            </svg>
 
-                    <p>
-                        Sisa Cuti :
-                        ${item.sisaCuti || 0}
-                        Hari
-                    </p>
+                            <strong>
+                                ${item.totalCuti || 0}
+                            </strong>
+
+                            <span>
+                                Jumlah Cuti Tahunan
+                            </span>
+                        </div>
+
+                        <div class="smartoffice-management-summary-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M20 6L9 17l-5-5"/>
+                            </svg>
+
+                             <strong>
+                                ${item.cutiTerpakai || 0}
+                            </strong>
+
+                            <span>
+                                Cuti Tahunan Terpakai
+                            </span>
+                        </div>
+
+                        <div class="smartoffice-management-summary-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2v20"/>
+                                <path d="M5 9l7-7 7 7"/>
+                            </svg>
+
+                            <strong>
+                                ${item.sisaCuti || 0}
+                            </strong>
+
+                            <span>
+                                Sisa Cuti Tahunan
+                            </span>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <!-- STATUS -->
@@ -398,7 +438,9 @@ function smartofficeRenderRekapPegawai(
                 >
                     ${item.statusKepegawaian}
                 </div>
+
             </div>
+
         `);
     });
 
@@ -677,14 +719,13 @@ function smartofficeRenderManagementRiwayat(
         html.push(`
 
             <div
-                class="smartoffice-management-card"
+                class="smartoffice-management-riwayat-card"
                 onclick='
                     smartofficeOpenManagementCutiDetail(
                         ${JSON.stringify(item)}
                     )
                 '
             >
-
                 <div class="smartoffice-riwayat-date">
                     <small>
                         ${month}
@@ -693,15 +734,14 @@ function smartofficeRenderManagementRiwayat(
                     <strong>
                         ${day}
                     </strong>
-
                 </div>
 
-                <div class="smartoffice-management-card-content">
+                <div class="smartoffice-management-riwayat-content">
                     <h3>
                         ${item.jenisCuti}
                     </h3>
 
-                    <p class="smartoffice-management-pegawai-nama">
+                    <p>
                         ${item.nama}
                     </p>
 
@@ -710,26 +750,54 @@ function smartofficeRenderManagementRiwayat(
                         ${item.nip}
                     </small>
 
-                    <div class="smartoffice-management-riwayat-info">
-                        <div
-                            class="
-                                smartoffice-management-status-badge
-                                ${String(item.statusKepegawaian || "")
-                                    .toLowerCase()
-                                    .replaceAll(" ","-")}
-                            "
-                        >
-                            ${item.statusKepegawaian}
+                    <small
+                        class="
+                            smartoffice-management-status-badge
+                            smartoffice-management-riwayat-status-kepegawaian
+                        "
+                    >
+                        ${item.statusKepegawaian}
+                    </small>
+
+                    <div class="smartoffice-management-divider"></div>
+
+                    <div class="smartoffice-management-riwayat-summary">
+                        <div class="smartoffice-management-riwayat-summary-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M8 2v4"/>
+                                <path d="M16 2v4"/>
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M3 10h18"/>
+                            </svg>
+                            
+                            <div>
+                              <span>
+                                Tanggal Cuti
+                              </span>
+
+                              <strong>
+                                ${periodeCuti}
+                              </strong>   
+                            </div>                         
                         </div>
 
-                        <p>
-                            ${periodeCuti}
-                        </p>
+                        <div class="smartoffice-management-riwayat-summary-item">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 2v20"/>
+                                <path d="M5 9l7-7 7 7"/>
+                            </svg>
 
-                        <p>
-                            ${item.jumlahCuti}
-                            Hari
-                        </p>
+                            <div>    
+                              <span>
+                                Ajuan Cuti
+                              </span>
+
+                              <strong>
+                                ${item.jumlahCuti}
+                                Hari
+                              </strong>
+                            </div>                           
+                        </div>
                     </div>
                 </div>
 
@@ -1240,3 +1308,509 @@ export function smartofficeOpenRiwayatPegawai(
     /* FILTER */
     smartofficeFilterManagementRiwayat();
 }
+
+
+/* ======================================================
+   OPEN DETAIL MANAGEMENT CUTI
+====================================================== */
+
+/* =========================
+   OPEN DETAIL
+
+   FUNCTION:
+   Menampilkan detail
+   pengajuan cuti pegawai
+   dalam modal.
+========================= */
+function smartofficeOpenManagementCutiDetail(
+  item
+){
+
+  /* MODAL */
+  const modal =
+    document.getElementById(
+      'smartofficeManagementCutiDetailModal'
+    );
+
+  /* BODY */
+  const body =
+    document.getElementById(
+      'smartofficeManagementCutiDetailBody'
+    );
+
+  /* SHOW MODAL */
+  modal.style.display =
+    'flex';
+
+  setTimeout(function(){
+
+    modal.classList.add(
+      'show'
+    );
+
+  },10);
+
+  /* STATUS */
+  let statusText =
+    'Menunggu';
+
+  let statusClass =
+    'waiting';
+
+  if(
+    item.status ===
+    'DISETUJUI'
+  ){
+
+    statusText =
+      'Disetujui';
+
+    statusClass =
+      'approved';
+
+  }
+
+  if(
+    item.status ===
+    'DITOLAK'
+  ){
+
+    statusText =
+      'Ditolak';
+
+    statusClass =
+      'rejected';
+
+  }
+
+  /* RESET SCROLL */
+  body.scrollTop = 0;
+
+  /* NIP/NRP */
+  const identitasLabel =
+    item.statusKepegawaian === 'BLUD'
+      ? 'NRP'
+      : 'NIP';
+
+  /* PERIODE CUTI */
+  const periodeCuti =
+    item.tanggalAwal === item.tanggalAkhir
+      ? formatTanggalIndonesia(
+          item.tanggalAwal
+        )
+      : `${formatTanggalIndonesia(
+          item.tanggalAwal
+        )} - ${formatTanggalIndonesia(
+          item.tanggalAkhir
+        )}`;
+
+  /* RENDER */
+  body.innerHTML = `
+
+    <!-- =========================
+         PROFILE
+    ========================= -->
+    <div class="smartoffice-management-cuti-modal-profile">
+
+        <div class="smartoffice-management-cuti-modal-profile-info">
+
+            <h4>
+                ${item.nama || '-'}
+            </h4>
+
+            <small>
+                ${identitasLabel} :
+                ${item.nip || '-'}
+            </small>
+
+            <span class="
+                smartoffice-management-cuti-modal-status
+                ${statusClass}
+            ">
+                ${statusText}
+            </span>
+
+        </div>
+
+    </div>
+
+    <!-- =========================
+         DETAIL GRID
+    ========================= -->
+    <div class="smartoffice-cuti-riwayat-modal-grid">
+
+        <div class="smartoffice-cuti-riwayat-modal-item">
+            <label>ID Cuti</label>
+            <span>${item.idCuti || '-'}</span>
+        </div>
+
+        <div class="smartoffice-cuti-riwayat-modal-item">
+            <label>Jenis Cuti</label>
+            <span>${item.jenisCuti || '-'}</span>
+        </div>
+
+        <div class="smartoffice-cuti-riwayat-modal-item">
+            <label>Tanggal Permohonan</label>
+            <span>${formatTanggalIndonesia(item.tanggalSurat)}</span>
+        </div>
+
+        <div class="smartoffice-cuti-riwayat-modal-item">
+            <label>Tanggal Cuti</label>
+            <span>${periodeCuti}</span>
+        </div>
+
+        <div class="smartoffice-cuti-riwayat-modal-item">
+            <label>Jumlah Hari</label>
+            <span>${item.jumlahCuti || 0} Hari</span>
+        </div>
+
+        <div class="smartoffice-cuti-riwayat-modal-item">
+            <label>Sisa Cuti</label>
+            <span>${item.sisaCuti || 0} Hari</span>
+        </div>
+
+    </div>
+    
+    <!-- =========================
+         KEPERLUAN
+    ========================= -->
+    <div class="
+        smartoffice-cuti-riwayat-modal-item
+        full-width
+        ">
+
+        <label>Keperluan</label>
+
+        <span>
+        ${item.keperluan || '-'}
+        </span>
+
+    </div>
+
+    <!-- =========================
+         ALAMAT CUTI
+    ========================= -->
+    <div class="
+      smartoffice-cuti-riwayat-modal-item
+      full-width
+    ">
+
+      <label>Alamat Selama Menjalani Cuti</label>
+
+      <span>
+        ${item.alamatSaatCuti || '-'}
+      </span>
+
+    </div>
+
+    <!-- =========================
+         LAMPIRAN CUTI
+    ========================= -->
+    <div class="
+      smartoffice-cuti-riwayat-modal-lampiran
+    ">
+      <div class="
+        smartoffice-cuti-riwayat-modal-lampiran-title
+      ">
+        Lampiran
+      </div>
+
+      <div class="
+        smartoffice-cuti-riwayat-modal-file-card
+      ">
+        <div class="
+          smartoffice-cuti-riwayat-modal-file-icon
+        ">
+          📄
+        </div>
+
+        <div class="
+          smartoffice-cuti-riwayat-modal-file-info
+        ">
+          <div class="
+            smartoffice-cuti-riwayat-modal-file-name
+          ">
+            ${
+              item.lampiran
+              ?
+              `
+              <button
+                class="
+                  smartoffice-cuti-riwayat-modal-dokumen-link
+                "
+                onclick="
+                  smartofficeOpenPreviewDokumen(
+                    '${smartofficeGetDriveFileId(item.lampiran)}',
+                    'Lampiran Cuti'
+                  )
+                "
+              >
+
+                <svg
+                  style="
+                    flex-shrink:0;
+                  "
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                  <polyline points="14 2 14 8 20 8"/>
+                  <line x1="16" y1="13" x2="8" y2="13"/>
+                  <line x1="16" y1="17" x2="8" y2="17"/>
+                  <line x1="10" y1="9" x2="8" y2="9"/>
+                </svg>
+
+                <span>
+                  Lihat Lampiran
+                </span>
+
+              </button>
+              `
+              :
+              'Tidak ada lampiran'
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================
+         DELEGASI
+    ========================= -->
+    <div class="
+      smartoffice-cuti-riwayat-modal-grid
+    ">
+
+      <div class="
+        smartoffice-cuti-riwayat-modal-item
+      ">
+        <label>
+          Delegasi
+        </label>
+
+        <span>
+          ${item.delegasi || '-'}
+        </span>
+      </div>
+
+      <div class="
+        smartoffice-cuti-riwayat-modal-item
+      ">
+        <label>
+          NIP/NRP Delegasi
+        </label>
+
+        <span>
+          ${item.nipDelegasi || '-'}
+        </span>
+      </div>
+
+    </div>
+
+    <!-- =========================
+         TUGAS
+    ========================= -->
+    <div class="
+      smartoffice-cuti-riwayat-modal-item
+      full-width
+    ">
+
+      <label>
+        Tugas Delegasi
+      </label>
+
+      <span>
+        ${item.tugasDelegasi || '-'}
+      </span>
+
+    </div>
+
+    <!-- =========================
+         PDF SURAT CUTI
+    ========================= -->
+    <div class="
+      smartoffice-cuti-riwayat-modal-item
+      full-width
+    ">
+
+      <label>
+        File PDF Surat Cuti
+      </label>
+
+      <span>
+
+        ${
+          item.pdfUrl
+
+          ?
+
+          `
+          <button
+            class="
+              smartoffice-pdf-link
+            "
+            onclick="
+              smartofficeOpenPreviewDokumen(
+                '${smartofficeGetDriveFileId(item.pdfUrl)}',
+                'Surat Cuti.pdf'
+              )
+            "
+          >
+
+            <svg
+              style="
+                flex-shrink:0;
+              "
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+              <line x1="10" y1="9" x2="8" y2="9"/>
+            </svg>
+
+            <span>
+              Lihat PDF
+            </span>
+
+          </button>
+          `
+
+          :
+
+          'PDF belum tersedia'
+
+        }
+
+      </span>
+
+    </div>
+
+    <!-- =========================
+         APPROVAL
+    ========================= -->
+    <!-- APPROVAL 1 -->
+    <div class="
+        smartoffice-cuti-riwayat-modal-item
+        full-width
+        ">
+
+        <label>Approval 1 - PJKM</label>
+
+        <div class="
+        smartoffice-cuti-riwayat-modal-approval-box
+        ">
+
+        <div>
+        <small>Nama</small>
+        <strong>${item.approval1 || '-'}</strong>
+        </div>
+
+        <div>
+        <small>Status</small>
+        ${smartofficeGetApprovalBadge(item.approval1Status)}
+        </div>
+
+        <div>
+        <small>Tanggal</small>
+        <strong>${item.approval1Tanggal || '-'}</strong>
+        </div>
+
+        <div>
+        <small>Catatan</small>
+        <strong>${item.approval1Catatan || '-'}</strong>
+        </div>
+
+        </div>
+
+    </div>
+
+    <!-- APPROVAL 2 -->
+    <div class="
+      smartoffice-cuti-riwayat-modal-item
+      full-width
+    ">
+
+      <label>
+        Approval 2 - Kepala Puskesmas
+      </label>
+
+      <div class="
+        smartoffice-cuti-riwayat-modal-approval-box
+      ">
+
+        <div>
+          <small>Nama</small>
+          <strong>
+            ${item.approval2 || '-'}
+          </strong>
+        </div>
+
+        <div>
+          <small>Status</small>
+          ${smartofficeGetApprovalBadge(item.approval2Status)}
+        </div>
+
+        <div>
+          <small>Tanggal</small>
+          <strong>
+            ${item.approval2Tanggal || '-'}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* ================================================================================
+   CLOSE DETAIL MANAGEMENT CUTI
+================================================================================ */
+export function smartofficeCloseManagementCutiDetail(){
+
+    /* MODAL */
+    const modal =
+        document.getElementById(
+            "smartofficeManagementCutiDetailModal"
+        );
+
+    if(!modal){
+        return;
+    }
+
+    /* HIDE ANIMATION */
+    modal.classList.remove(
+        "show"
+    );
+
+    /* HIDE MODAL */
+    setTimeout(function(){
+
+        modal.style.display =
+            "none";
+
+    },200);
+
+}
+
+window.smartofficeOpenManagementCutiDetail =
+    smartofficeOpenManagementCutiDetail;
+
+window.smartofficeCloseManagementCutiDetail =
+    smartofficeCloseManagementCutiDetail;

@@ -135,6 +135,15 @@
   color:#0f172a;
 }
 
+.smartoffice-cuti-riwayat-modal-profile-info small{
+    display:block;
+    margin:6px 0 0;
+    font-size:14px;
+    font-weight:500;
+    line-height:1.4;
+    color:#64748b;
+}
+
 .smartoffice-cuti-riwayat-modal-profile-info p{
   margin:
     6px 0 0;
