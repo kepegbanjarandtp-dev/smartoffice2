@@ -31,6 +31,9 @@ const smartofficeModules = {
     "management-cuti": () =>
         import("../pages/management-cuti/management-cuti.js"),
 
+    "verify-cuti": () =>
+        import("../pages/verify-cuti/verify-cuti.js")
+
     //smartspdBlud: () =>
     //    import("../pages/smartspd-blud/smartspd-blud.js"),
 
@@ -56,9 +59,59 @@ export async function smartofficeInitializeRouter(){
         "SmartOffice Router Ready"
     );
 
+    const hash =
+        window.location.hash;
+
+
+    /* =========================
+       VERIFY CUTI
+       PUBLIC PAGE
+    ========================= */
+
+    if(
+        hash.startsWith(
+            "#verify-cuti"
+        )
+    ){
+
+        const queryString =
+            hash.includes("?")
+                ? hash.split("?")[1]
+                : "";
+
+
+        const urlParams =
+            new URLSearchParams(
+                queryString
+            );
+
+
+        const idCuti =
+            urlParams.get(
+                "idCuti"
+            );
+
+
+        await smartofficeNavigate(
+            "verify-cuti",
+            {
+                idCuti:
+                    idCuti || ""
+            }
+        );
+
+        return;
+    }
+
+
+    /* =========================
+       DEFAULT
+    ========================= */
+
     await smartofficeNavigate(
         "login"
     );
+
 }
 
 
@@ -66,8 +119,10 @@ export async function smartofficeInitializeRouter(){
    LOAD PAGE
 ====================================================== */
 export async function smartofficeNavigate(
-    pageName
+    pageName,
+    params = {}
 ){
+
     if(
         !pageName
     ){
@@ -77,81 +132,125 @@ export async function smartofficeNavigate(
     /* =========================
        DESTROY CURRENT PAGE
     ========================= */
+
     await smartofficeDestroyCurrentPage();
+
 
     /* =========================
        LOAD HTML
     ========================= */
+
     const html =
         await smartofficeGetPageHtml(
             pageName
         );
 
+
     const app =
         document.getElementById(
             "app"
         );
+
     if(
         !app
     ){
         return;
     }
 
+
     app.innerHTML =
         html;
-    
+
+
     /* =========================
-    LOAD MODULE
+       LOAD MODULE
     ========================= */
+
     const loader =
         smartofficeModules[
             pageName
         ];
 
+
     if(
         !loader
     ){
+
         throw new Error(
             `Halaman "${pageName}" tidak ditemukan`
         );
+
     }
+
 
     const module =
         await loader();
 
+
     /* =========================
        INIT PAGE
     ========================= */
+
     const loadFunction =
         module.smartofficeLoadPage ||
         module.smartofficeLoadLoginPage ||
         module.default;
+
+
     if(
         typeof loadFunction ===
         "function"
     ){
-        await loadFunction();
+
+        await loadFunction(
+            params
+        );
+
     }
+
 
     /* =========================
        DESTROY FUNCTION
     ========================= */
+
     smartofficeCurrentDestroy =
         module.smartofficeDestroyPage ||
         module.smartofficeDestroyLoginPage ||
         null;
 
+
     smartofficeCurrentPage =
         pageName;
+
+
+    /* =========================
+       URL
+    ========================= */
+
+    const query =
+        new URLSearchParams(
+            params
+        ).toString();
+
+
+    const hash =
+        query
+            ? `#${pageName}?${query}`
+            : `#${pageName}`;
+
 
     history.pushState(
         {
             page:
-                pageName
+                pageName,
+
+            params:
+                params
         },
         "",
-        `#${pageName}`
+        hash
     );
+
 }
 
 

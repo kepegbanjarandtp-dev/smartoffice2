@@ -162,7 +162,6 @@
     rgba(15,23,42,.08);
 }
 
-
 /* ======================================================
    DETAIL BUTTON
 ====================================================== */
@@ -281,10 +280,8 @@
     display:flex;
     justify-content:flex-end;
     gap:12px;
-
     margin-top:10px;
     padding-top:10px;
-
     border-top:1px solid #f1f5f9;
   }
 
@@ -302,7 +299,6 @@
     width:14px;
     height:14px;
   }
-
 }
 
 

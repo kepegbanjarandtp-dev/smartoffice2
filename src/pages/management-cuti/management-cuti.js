@@ -40,7 +40,8 @@ import {
 ====================================================== */
 import {
     smartofficeGetRekapPegawai,
-    smartofficeGetAllRiwayatCuti
+    smartofficeGetAllRiwayatCuti,
+    smartofficeGetKapus
 } from "../../services/management-cuti.service.js";
 
 /* ======================================================
@@ -53,6 +54,10 @@ import {
 import {
   smartofficeGetDriveFileId
 } from "../../utils/drive.js";
+
+import {
+    smartofficeExportRiwayatCutiPdf
+} from "../../utils/print.js";
 
 /* ================================================================================
    GLOBAL STATE
@@ -109,13 +114,18 @@ export async function smartofficeLoadPage(){
     smartofficeInitManagementSearch();
 
     /* =========================
-       LOAD DATA
+        LOAD DATA
     ========================= */
     await Promise.all([
         smartofficeLoadRekapPegawai(),
         smartofficeLoadAllRiwayatCuti()
     ]);
 
+    /* =========================
+    LOAD FILTER PEGAWAI
+    SETELAH DATA REKAP SIAP
+    ========================= */
+    smartofficeLoadPegawaiFilter();
 }
 
 /* ================================================================================
@@ -126,7 +136,6 @@ export async function smartofficeDestroyPage(){
     /* RESET CACHE */
     smartofficeManagementRekapData = [];
     smartofficeManagementRiwayatData = [];
-
 }
 
 
@@ -527,8 +536,9 @@ export async function smartofficeLoadAllRiwayatCuti(){
         /* =========================
            LOAD FILTER
         ========================= */
-        smartofficeLoadPegawaiFilter();
+        //smartofficeLoadPegawaiFilter();
         smartofficeLoadTahunFilter();
+        smartofficeSetDefaultManagementBulan();
 
         /* DEFAULT FILTER */
         smartofficeFilterManagementRiwayat();
@@ -851,10 +861,15 @@ function smartofficeLoadPegawaiFilter(){
         </option>
     `;
 
-    /* CEGAH DUPLIKAT */
+    /* ======================================================
+       SUMBER DATA PEGAWAI
+       Gunakan DATA REKAP PEGAWAI
+       agar pegawai tanpa riwayat tetap muncul
+    ====================================================== */
+
     const uniquePegawai = [
         ...new Map(
-            smartofficeManagementRiwayatData.map(
+            smartofficeManagementRekapData.map(
                 item => [
                     item.nip,
                     item
@@ -934,6 +949,32 @@ function smartofficeLoadTahunFilter(){
         select.value =
             tahunList[0];
     }
+}
+
+/* ======================================================
+   SET DEFAULT FILTER BULAN BERJALAN
+====================================================== */
+function smartofficeSetDefaultManagementBulan(){
+
+    const select =
+        document.getElementById(
+            "smartofficeManagementFilterBulan"
+        );
+
+    if(!select){
+        return;
+    }
+
+    /* BULAN BERJALAN
+       Januari = 0
+       Februari = 1
+       dst.
+    */
+    const bulanSekarang =
+        new Date().getMonth();
+
+    select.value =
+        String(bulanSekarang);
 }
 
 
@@ -1080,6 +1121,9 @@ export function smartofficeFilterManagementRiwayat(){
         filteredData
     );
 }
+
+window.smartofficeFilterManagementRiwayat =
+    smartofficeFilterManagementRiwayat;
 
 
 /* ================================================================================
@@ -1232,12 +1276,8 @@ export function smartofficeResetManagementRiwayat(){
         )
         .value = "";
 
-    /* RESET BULAN */
-    document
-        .getElementById(
-            "smartofficeManagementFilterBulan"
-        )
-        .value = "";
+    /* RESET BULAN → BULAN BERJALAN */
+    smartofficeSetDefaultManagementBulan();
 
     /* RESET TAHUN */
     smartofficeLoadTahunFilter();
@@ -1245,6 +1285,9 @@ export function smartofficeResetManagementRiwayat(){
     /* FILTER ULANG */
     smartofficeFilterManagementRiwayat();
 }
+
+window.smartofficeResetManagementRiwayat =
+    smartofficeResetManagementRiwayat;
 
 
 /* ================================================================================

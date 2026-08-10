@@ -1372,23 +1372,52 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
                 return;
             }
 
-            /* FILTER DATA */
+            /* =========================
+              NIP PEGAWAI LOGIN
+            ========================= */
+            const sessionData =
+                smartofficeGetSession();
+
+            const currentNip =
+                String(
+                    sessionData?.nip || ""
+                ).trim();
+
+
+            /* =========================
+              FILTER DATA DELEGASI
+            ========================= */
             const filtered =
                 smartofficePegawaiCache.filter(
                     function(item){
+
+                        const itemNip =
+                            String(
+                                item.nip || ""
+                            ).trim();
+
+                        /* EXCLUDE DIRI SENDIRI */
+                        if(
+                            itemNip === currentNip
+                        ){
+                            return false;
+                        }
+
+                        /* FILTER NAMA / NIP */
                         return (
-                            item.nama
-                                .toLowerCase()
-                                .includes(
-                                    keyword
-                                )
+                            String(
+                                item.nama || ""
+                            )
+                            .toLowerCase()
+                            .includes(
+                                keyword
+                            )
 
                             ||
 
-                            item.nip
-                                .includes(
-                                    keyword
-                                )
+                            itemNip.includes(
+                                keyword
+                            )
                         );
                     }
                 );
@@ -2389,89 +2418,117 @@ export async function smartofficeSubmitCutiForm(){
 
   /* KIRIM KE SHEET */
   try{
-        /* SUBMIT */
-        const response =
-            await smartofficeSubmitCuti(
-                formData
-            );
 
-        /* RESET LOCK */
-        smartofficeSubmitting =
-            false;
+      /* KIRIM KE SHEET */
+      const response =
+          await smartofficeSubmitCuti(
+              formData
+          );
 
-        /* RESET BUTTON */
-        submitButton.disabled =
-            false;
 
-        submitButton.innerHTML =
-            "Ajukan Cuti";
+      /* RESET LOCK */
+      smartofficeSubmitting =
+          false;
 
-        /* SUCCESS */
-        if(
-            response.success
-        ){
-            /* RESET FORM */
-            smartofficeResetCutiForm();
+      /* RESET BUTTON */
+      submitButton.disabled =
+          false;
 
-            /* RELOAD RIWAYAT */
-            await smartofficeLoadRiwayatCuti(
-                formData.nip
-            );
+      submitButton.innerHTML =
+          "Ajukan Cuti";
 
-            /* RESET FILTER */
-            setTimeout(function(){
 
-                smartofficeFilterRiwayatCuti(
-                    "SEMUA"
-                );
+      /* =========================
+        SUCCESS
+      ========================= */
 
-            },300);
+      if(
+          response.success
+      ){
 
-            /* RELOAD STATS */
-            await smartofficeLoadCutiStats();
+          /* =========================
+            RESET FORM
+          ========================= */
+          smartofficeResetCutiForm();
 
-            /* TOAST */
-            smartofficeShowToast(
-                "Pengajuan berhasil: " +
-                (response.data.idCuti || ""),
-                "success"
-            );
+          /* =========================
+            TOAST SEGERA
+          ========================= */
+          smartofficeShowToast(
+              "Pengajuan berhasil: " +
+              (response.data.idCuti || ""),
+              "success"
+          );
 
-            /* PINDAH TAB */
-            setTimeout(function(){
-                smartofficeSwitchCutiTab(
-                    "riwayat"
-                );
-            },700);
-        }
+          /* =========================
+            PINDAH TAB
+          ========================= */
+          setTimeout(function(){
+              smartofficeSwitchCutiTab(
+                  "riwayat"
+              );
+          },700);
 
-        /* FAILED */
-        else{
-            smartofficeShowToast(
-                response.message,
-                "error"
-            );
-        }
+          /* =========================
+            RELOAD DATA
+            BERJALAN DI BELAKANG
+          ========================= */
+          Promise.allSettled([
+              smartofficeLoadRiwayatCuti(
+                  formData.nip
+              ),
 
-    }catch(error){
+              smartofficeLoadPegawai(
+                  formData.nip
+              )
+          ]).then(function(){
 
-        /* RESET LOCK */
-        smartofficeSubmitting =
-            false;
+              /* =========================
+                FILTER SETELAH DATA SELESAI
+              ========================= */
+              smartofficeFilterRiwayatCuti(
+                  "SEMUA"
+              );
 
-        /* RESET BUTTON */
-        submitButton.disabled =
-            false;
+          }).catch(function(error){
 
-        submitButton.innerHTML =
-            "Ajukan Cuti";
+              console.error(
+                  "Gagal refresh data setelah submit:",
+                  error
+              );
+          });
+      }
 
-        /* TOAST */
-        smartofficeShowToast(
-            error.message,
-            "error"
-        );
-    }
+      /* =========================
+        FAILED
+      ========================= */
+      else{
+          smartofficeShowToast(
+              response.message,
+              "error"
+          );
+      }
+  }
+  catch(error){
+
+      /* RESET LOCK */
+      smartofficeSubmitting =
+          false;
+
+      /* RESET BUTTON */
+      submitButton.disabled =
+          false;
+
+      submitButton.innerHTML =
+          "Ajukan Cuti";
+
+      /* TOAST */
+      smartofficeShowToast(
+          error.message,
+          "error"
+      );
+
+  }
 }
 
 

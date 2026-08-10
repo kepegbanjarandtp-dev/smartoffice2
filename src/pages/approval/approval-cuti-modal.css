@@ -173,7 +173,7 @@
 
 .smartoffice-approval-profile-info p{
   margin:
-    6px 0 0;
+    2px 0 0;
   font-size:14px;
   color:#64748b;
 }
@@ -551,10 +551,8 @@
   .smartoffice-approval-detail-content{
     max-width:100%;
     max-height:calc(100vh - 100px);
-
     display:flex;
     flex-direction:column;
-
     border-radius:22px;
   }
 

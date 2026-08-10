@@ -41,3 +41,76 @@ export function formatTanggalIndonesia(tanggal){
     );
 
 }
+
+
+/* ======================================================
+   FORMAT TANGGAL INDONESIA + JAM
+====================================================== */
+export function smartofficeFormatTanggalIndoJamFrontend(
+    date
+){
+
+    const bulan = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+    const d =
+        new Date(date);
+
+    if(
+        isNaN(d.getTime())
+    ){
+        return "-";
+    }
+
+    const tanggal =
+        d.getDate();
+
+    const namaBulan =
+        bulan[
+            d.getMonth()
+        ];
+
+    const tahun =
+        d.getFullYear();
+
+    const jam =
+        String(
+            d.getHours()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    const menit =
+        String(
+            d.getMinutes()
+        ).padStart(
+            2,
+            "0"
+        );
+
+    return `
+        ${tanggal}
+        ${namaBulan}
+        ${tahun}
+        ${jam}:${menit}
+    `
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim();
+
+}

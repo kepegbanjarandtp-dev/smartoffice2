@@ -41,3 +41,22 @@ export async function smartofficeGetAllRiwayatCuti(){
     return response.data;
 
 }
+
+/* ======================================================
+   GET DATA KAPUS
+====================================================== */
+export async function smartofficeGetKapus(){
+
+    const response =
+        await smartofficeApi(
+            "smartofficeGetKapus"
+        );
+
+    if(!response.success){
+        throw new Error(
+            response.message
+        );
+    }
+
+    return response.data;
+}

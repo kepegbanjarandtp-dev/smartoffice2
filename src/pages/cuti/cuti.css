@@ -573,12 +573,9 @@
 
 .smartoffice-riwayat-cuti-content small,
 .smartoffice-riwayat-cuti-content p{
-
-    display:flex;
-    align-items:center;
-
-    gap:6px;
-
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 
 .smartoffice-riwayat-cuti-content small svg,
@@ -697,97 +694,76 @@
 /* ======================================================
    AUTOCOMPLETE
 ====================================================== */
-
 .smartoffice-cuti-autocomplete{
-
-    position:relative;
-
+  position:relative;
 }
 
 .smartoffice-cuti-autocomplete-list{
-
-    display:none;
-
-    position:absolute;
-
-    top:calc(100% + 8px);
-
-    left:0;
-    right:0;
-
-    background:#ffffff;
-
-    border:1px solid #2563EB;
-
-    border-radius:18px;
-
-    box-shadow:
-        0 16px 40px rgba(37,99,235,.18);
-
-    max-height:280px;
-
-    overflow-y:auto;
-
-    z-index:9999;
-
+  display:none;
+  position:absolute;
+  top:calc(100% + 8px);
+  left:0;
+  right:0;
+  background:#ffffff;
+  border:1px solid #2563EB;
+  border-radius:18px;
+  box-shadow:
+      0 16px 40px rgba(37,99,235,.18);
+  max-height:280px;
+  overflow-y:auto;
+  z-index:9999;
 }
 
 .smartoffice-cuti-autocomplete-list:not(:empty){
-
-    display:block;
-
+  display:block;
 }
 
 .smartoffice-cuti-autocomplete-item{
-
-    padding:16px 18px;
-
-    cursor:pointer;
-
-    transition:.18s;
-
-    border-bottom:2px solid #cbd5e1;
-
+  padding:16px 18px;
+  cursor:pointer;
+  transition:.18s;
+  border-bottom:2px solid #cbd5e1;
 }
 
 .smartoffice-cuti-autocomplete-item strong{
-
-    display:block;
-
-    font-size:14px;
-
-    font-weight:700;
-
-    color:#0f172a;
-
+  display:block;
+  font-size:14px;
+  font-weight:700;
+  color:#0f172a;
 }
 
 .smartoffice-cuti-autocomplete-item:last-child{
-
-    border-bottom:none;
-
+  border-bottom:none;
 }
 
 .smartoffice-cuti-autocomplete-item:hover{
-
-    background:#f8fbff;
-
-    transform:translateX(6px);
-
+  background:#f8fbff;
+  transform:translateX(6px);
 }
 
 .smartoffice-cuti-autocomplete-item span{
-
-    display:block;
-
-    margin-top:4px;
-
-    font-size:12px;
-
-    color:#64748b;
-
+  display:block;
+  margin-top:4px;
+  font-size:12px;
+  color:#64748b;
 }
 
+/* ======================================================
+   AUTOCOMPLETE EMPTY STATE
+====================================================== */
+.smartoffice-cuti-autocomplete-empty{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:52px;
+    padding:12px 16px;
+    font-size:14px;
+    font-weight:500;
+    color:#64748b;
+    text-align:center;
+    background:#f8fafc;
+    border-radius:18px;
+}
 
 /* ======================================================
    MOBILE
@@ -875,8 +851,8 @@
 
   /* FULL WIDTH */
   .smartoffice-cuti-form-group.full-width{
-      margin-top:18px;
-      margin-bottom:12px;
+    margin-top:18px;
+    margin-bottom:12px;
   }
 
   .smartoffice-cuti-info-box{
@@ -925,137 +901,105 @@
     margin-bottom:8px;
   }
 
+  /* ======================================================
+    AUTOCOMPLETE EMPTY STATE - MOBILE
+  ====================================================== */
+  .smartoffice-cuti-autocomplete-empty{
+        min-height:44px;
+        padding:10px 14px;
+        font-size:11px;
+        font-weight:500;
+        border-radius:14px;
+    }
+
   /* =========================
      EMPTY STATE
   ========================= */
   .smartoffice-empty-state{
-
     min-height:160px;
-
     padding:24px 16px;
 
   }
 
   .smartoffice-empty-icon{
-
     font-size:28px;
-
     margin-bottom:10px;
-
   }
 
   .smartoffice-empty-state h3{
-
     margin:0 0 4px;
-
     font-size:12px;
-
   }
 
   .smartoffice-empty-state p{
-
     max-width:240px;
-
     font-size:10px;
-
     line-height:1.5;
-
   }
 
 
   /* =========================
      RIWAYAT
   ========================= */
-
   .smartoffice-riwayat-filter-item{
-
     padding:10px 14px;
-
     font-size:9px;
-
   }
 
   .smartoffice-riwayat-filter-item svg{
-
     display:none;
-
   }
 
   .smartoffice-riwayat-cuti-card{
-
     padding:12px;
-
     gap:14px;
-
     border-radius:20px;
     margin-bottom:8px;
-
   }
 
   .smartoffice-riwayat-date{
-
     width:52px;
     height:52px;
-
-    min-width:52px;
-    
-
+    min-width:52px;  
   }
 
   .smartoffice-riwayat-date strong{
-
     font-size:18px;
-
   }
 
   .smartoffice-riwayat-date small{
-
     font-size:10px;
-
   }
 
   .smartoffice-riwayat-cuti-content h3{
-
     font-size:12px;
-
   }
 
   .smartoffice-riwayat-cuti-content small,
   .smartoffice-riwayat-cuti-content p{
-
     font-size:10px;
-
   }
 
   .smartoffice-riwayat-cuti-content small svg,
   .smartoffice-riwayat-cuti-content p svg{
-
     width:11px;
     height:11px;
   }
 
   .smartoffice-riwayat-status{
-
     padding:7px 10px;
-
     font-size:10px;
-
   }
 
   .smartoffice-riwayat-arrow{
-
     width:30px;
     height:30px;
-
   }
 
   .smartoffice-riwayat-arrow svg{
-
     width:14px;
     height:14px;
-
   }
-
 }
 
 
