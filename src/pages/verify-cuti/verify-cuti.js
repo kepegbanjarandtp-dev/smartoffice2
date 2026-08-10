@@ -65,8 +65,20 @@ export async function smartofficeLoadPage(){
 
     try{
 
+        console.log(
+            "VERIFY: RENDER LOADING"
+        );
+
         smartofficeRenderVerifyCutiLoading();
 
+        console.log(
+            "VERIFY: LOADING SELESAI"
+        );
+
+        console.log(
+            "VERIFY: CALL API",
+            idCuti
+        );
 
         const response =
             await smartofficeApi(
@@ -76,6 +88,11 @@ export async function smartofficeLoadPage(){
                         idCuti
                 }
             );
+
+        console.log(
+            "VERIFY: API RESPONSE",
+            response
+        );
 
 
         if(
