@@ -4,36 +4,43 @@ import {
 
 import "./verify-cuti.css";
 
+import {
+    smartofficeFormatTanggalIndoJamFrontend
+} from "../../utils/date.js";
+
+console.log(
+    "VERIFY-CUTI.JS LOADED"
+);
+
 /* ======================================================
    LOAD VERIFY CUTI
 ====================================================== */
 export async function smartofficeLoadPage(){
 
+    console.log(
+        "VERIFY LOAD PAGE START"
+    );
+
     /* =========================
        GET URL
     ========================= */
-
     const hash =
         window.location.hash;
-
 
     const queryString =
         hash.includes("?")
             ? hash.split("?")[1]
             : "";
 
-
     const params =
         new URLSearchParams(
             queryString
         );
 
-
     const idCuti =
         params.get(
             "idCuti"
         );
-
 
     /* =========================
        VALIDASI ID

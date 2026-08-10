@@ -186,6 +186,11 @@ export async function smartofficeNavigate(
     const module =
         await loader();
 
+    console.log(
+        "VERIFY MODULE LOADED:",
+        module
+    );
+
 
     /* =========================
        INIT PAGE
@@ -196,12 +201,20 @@ export async function smartofficeNavigate(
         module.smartofficeLoadLoginPage ||
         module.default;
 
+    console.log(
+        "VERIFY LOAD FUNCTION:",
+        loadFunction
+    );
 
     if(
         typeof loadFunction ===
         "function"
     ){
-
+        console.log(
+            "CALLING VERIFY LOAD PAGE:",
+            params
+        );
+        
         await loadFunction(
             params
         );
