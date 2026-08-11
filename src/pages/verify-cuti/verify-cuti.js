@@ -191,26 +191,21 @@ function smartofficeRenderVerifyCuti(
     container.innerHTML = `
 
         <div class="smartoffice-verify-cuti-page">
-
             <div class="smartoffice-verify-cuti-card">
-
                 <div
                     class="
                         smartoffice-verify-cuti-top-glow
                     "
                 ></div>
 
-
                 <div
                     class="
                         smartoffice-verify-cuti-check-wrapper
                     "
                 >
-
                     <svg
                         viewBox="0 0 24 24"
                     >
-
                         <path
                             d="
                                 M5 13
@@ -218,16 +213,12 @@ function smartofficeRenderVerifyCuti(
                                 L19 7
                             "
                         ></path>
-
                     </svg>
-
                 </div>
-
 
                 <h1>
                     Dokumen Valid
                 </h1>
-
 
                 <div
                     class="
@@ -242,17 +233,14 @@ function smartofficeRenderVerifyCuti(
 
                 </div>
 
-
                 <!-- =========================
                      ID CUTI
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -268,20 +256,16 @@ function smartofficeRenderVerifyCuti(
                     >
                         ${data.idCuti || "-"}
                     </div>
-
                 </div>
-
 
                 <!-- =========================
                      NAMA
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -297,20 +281,16 @@ function smartofficeRenderVerifyCuti(
                     >
                         ${data.nama || "-"}
                     </div>
-
                 </div>
-
 
                 <!-- =========================
                      NIP
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -326,20 +306,16 @@ function smartofficeRenderVerifyCuti(
                     >
                         ${data.nip || "-"}
                     </div>
-
                 </div>
-
 
                 <!-- =========================
                      JENIS CUTI
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -355,20 +331,16 @@ function smartofficeRenderVerifyCuti(
                     >
                         ${data.jenisCuti || "-"}
                     </div>
-
                 </div>
-
 
                 <!-- =========================
                      TANGGAL CUTI
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -382,24 +354,18 @@ function smartofficeRenderVerifyCuti(
                             smartoffice-verify-cuti-value
                         "
                     >
-                        ${data.tanggalAwal || "-"}
-                        -
-                        ${data.tanggalAkhir || "-"}
+                        ${data.tanggalAwal || "-"} s/d ${data.tanggalAkhir || "-"}
                     </div>
-
                 </div>
-
 
                 <!-- =========================
                      JUMLAH CUTI
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -418,17 +384,14 @@ function smartofficeRenderVerifyCuti(
 
                 </div>
 
-
                 <!-- =========================
                      STATUS APPROVAL
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -442,30 +405,24 @@ function smartofficeRenderVerifyCuti(
                             smartoffice-verify-cuti-status-badge
                         "
                     >
-
                         <div
                             class="
                                 smartoffice-verify-cuti-status-dot
                             "
                         ></div>
-
                         ${data.status || "-"}
-
                     </div>
-
                 </div>
 
-
                 <!-- =========================
-                     DIVERIFIKASI
+                    DIVERIFIKASI
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
+                        smartoffice-verify-cuti-approval-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -476,25 +433,31 @@ function smartofficeRenderVerifyCuti(
 
                     <div
                         class="
+                            smartoffice-verify-cuti-role
+                        "
+                    >
+                        Penanggungjawab Klaster Manajemen
+                    </div>
+
+                    <div
+                        class="
                             smartoffice-verify-cuti-value
                         "
                     >
                         ${data.diverifikasiOleh || "-"}
                     </div>
-
                 </div>
 
 
                 <!-- =========================
-                     DISETUJUI
+                    DISETUJUI
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-info-box
+                        smartoffice-verify-cuti-approval-box
                     "
                 >
-
                     <div
                         class="
                             smartoffice-verify-cuti-label
@@ -505,19 +468,24 @@ function smartofficeRenderVerifyCuti(
 
                     <div
                         class="
+                            smartoffice-verify-cuti-role
+                        "
+                    >
+                        Kepala Puskesmas
+                    </div>
+
+                    <div
+                        class="
                             smartoffice-verify-cuti-value
                         "
                     >
                         ${data.disetujuiOleh || "-"}
                     </div>
-
                 </div>
-
 
                 <!-- =========================
                      FOOTER
                 ========================= -->
-
                 <div
                     class="
                         smartoffice-verify-cuti-footer
@@ -530,11 +498,8 @@ function smartofficeRenderVerifyCuti(
                     ${smartofficeFormatTanggalIndoJamFrontend(
                         new Date()
                     )}
-
                 </div>
-
             </div>
-
         </div>
 
     `;
@@ -543,7 +508,6 @@ function smartofficeRenderVerifyCuti(
         "VERIFY: RENDER SELESAI",
         container.innerHTML.length
     );
-
 }
 
 
@@ -557,37 +521,53 @@ function smartofficeRenderVerifyCutiLoading(){
             "smartofficeVerifyCutiPage"
         );
 
-
     if(
         !container
     ){
         return;
     }
 
-
     container.innerHTML = `
 
         <div
             class="
-                smartoffice-verify-cuti-page
+                smartoffice-verify-cuti-loading-page
             "
         >
 
             <div
                 class="
-                    smartoffice-verify-cuti-card
-                    smartoffice-verify-cuti-loading
+                    smartoffice-verify-cuti-loading-card
                 "
             >
 
-                Memverifikasi dokumen...
+                <div
+                    class="
+                        smartoffice-verify-cuti-spinner
+                    "
+                ></div>
+
+                <div
+                    class="
+                        smartoffice-verify-cuti-loading-title
+                    "
+                >
+                    Memverifikasi dokumen
+                </div>
+
+                <div
+                    class="
+                        smartoffice-verify-cuti-loading-text
+                    "
+                >
+                    Mohon tunggu sebentar...
+                </div>
 
             </div>
 
         </div>
 
     `;
-
 }
 
 
@@ -597,34 +577,27 @@ function smartofficeRenderVerifyCutiLoading(){
 function smartofficeRenderVerifyCutiError(
     message
 ){
-
     const container =
         document.getElementById(
             "smartofficeVerifyCutiPage"
         );
-
-
     if(
         !container
     ){
         return;
     }
 
-
     container.innerHTML = `
-
         <div
             class="
                 smartoffice-verify-cuti-error-page
             "
         >
-
             <div
                 class="
                     smartoffice-verify-cuti-error-card
                 "
             >
-
                 <h2>
                     Dokumen Tidak Ditemukan
                 </h2>
@@ -632,11 +605,7 @@ function smartofficeRenderVerifyCutiError(
                 <p>
                     ${message || "QR atau ID dokumen tidak valid."}
                 </p>
-
             </div>
-
         </div>
-
     `;
-
 }
