@@ -145,6 +145,18 @@ export async function smartofficeNavigate(
             pageName
         );
 
+    console.log(
+        "VERIFY HTML HAS CONTAINER:",
+        html.includes(
+            'id="smartofficeVerifyCutiPage"'
+        )
+    );
+
+    console.log(
+        "VERIFY HTML:",
+        html
+    );
+
 
     const app =
         document.getElementById(
@@ -154,12 +166,23 @@ export async function smartofficeNavigate(
     if(
         !app
     ){
+        console.error(
+            "APP CONTAINER TIDAK DITEMUKAN"
+        );
+
         return;
     }
 
-
     app.innerHTML =
         html;
+
+
+    console.log(
+        "VERIFY DOM CONTAINER:",
+        document.getElementById(
+            "smartofficeVerifyCutiPage"
+        )
+    );
 
 
     /* =========================
