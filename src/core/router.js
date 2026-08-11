@@ -176,9 +176,23 @@ export async function smartofficeNavigate(
     app.innerHTML =
         html;
 
+    console.log(
+        "HTML PAGE:",
+        pageName
+    );
 
     console.log(
-        "VERIFY DOM CONTAINER:",
+        "HTML LENGTH:",
+        html.length
+    );
+
+    console.log(
+        "HTML CONTENT:",
+        html
+    );
+
+    console.log(
+        "VERIFY CONTAINER AFTER INSERT:",
         document.getElementById(
             "smartofficeVerifyCutiPage"
         )
