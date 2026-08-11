@@ -18,7 +18,6 @@
     justify-content:center;
 }
 
-
 /* ======================================================
    CARD
 ====================================================== */
@@ -35,7 +34,6 @@
     overflow:hidden;
 }
 
-
 /* ======================================================
    GLOW
 ====================================================== */
@@ -49,7 +47,6 @@
     background:
         rgba(34,197,94,.12);
 }
-
 
 /* ======================================================
    CHECK
@@ -75,7 +72,6 @@
     z-index:2;
 }
 
-
 .smartoffice-verify-cuti-check-wrapper svg{
     width:42px;
     height:42px;
@@ -83,7 +79,6 @@
     stroke-width:3;
     fill:none;
 }
-
 
 /* ======================================================
    TITLE
@@ -97,7 +92,6 @@
     position:relative;
     z-index:2;
 }
-
 
 /* ======================================================
    SUBTITLE
@@ -113,7 +107,6 @@
     z-index:2;
 }
 
-
 /* ======================================================
    INFO BOX
 ====================================================== */
@@ -127,7 +120,6 @@
         #e2e8f0;
 }
 
-
 .smartoffice-verify-cuti-label{
     font-size:12px;
     font-weight:700;
@@ -136,14 +128,12 @@
     letter-spacing:.5px;
 }
 
-
 .smartoffice-verify-cuti-value{
     font-size:20px;
     font-weight:700;
     color:#0f172a;
     word-break:break-word;
 }
-
 
 /* ======================================================
    STATUS
@@ -163,7 +153,6 @@
     margin-top:6px;
 }
 
-
 .smartoffice-verify-cuti-status-dot{
     width:10px;
     height:10px;
@@ -171,6 +160,24 @@
     background:#22c55e;
 }
 
+/* ======================================================
+   APPROVAL INFO
+====================================================== */
+.smartoffice-verify-cuti-approval-box{
+    padding-bottom:16px;
+}
+
+.smartoffice-verify-cuti-role{
+    margin-bottom:6px;
+    font-size:13px;
+    font-weight:600;
+    color:#475569;
+}
+
+.smartoffice-verify-cuti-approval-box
+.smartoffice-verify-cuti-value{
+    font-size:17px;
+}
 
 /* ======================================================
    FOOTER
@@ -183,20 +190,113 @@
     line-height:1.7;
 }
 
-
 /* ======================================================
-   LOADING
+   VERIFY CUTI LOADING PAGE
 ====================================================== */
-.smartoffice-verify-cuti-loading{
-    min-height:180px;
+
+.smartoffice-verify-cuti-loading-page{
+
+    width:100%;
+
+    min-height:100vh;
+
+    padding:24px;
+
     display:flex;
+
     align-items:center;
+
     justify-content:center;
-    color:#64748b;
-    font-size:14px;
-    font-weight:600;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #eef2ff
+        );
+
 }
 
+
+/* ======================================================
+   LOADING CARD
+====================================================== */
+
+.smartoffice-verify-cuti-loading-card{
+
+    width:100%;
+
+    max-width:360px;
+
+    padding:28px 24px;
+
+    border-radius:24px;
+
+    background:#ffffff;
+
+    text-align:center;
+
+    box-shadow:
+        0 15px 40px
+        rgba(15,23,42,.08);
+
+}
+
+
+/* ======================================================
+   SPINNER
+====================================================== */
+
+.smartoffice-verify-cuti-spinner{
+
+    width:46px;
+
+    height:46px;
+
+    margin:
+        0 auto 18px;
+
+    border:
+        4px solid
+        #e2e8f0;
+
+    border-top-color:
+        #2563eb;
+
+    border-radius:50%;
+
+    animation:
+        smartofficeVerifyCutiSpin
+        .8s linear infinite;
+}
+
+
+@keyframes smartofficeVerifyCutiSpin{
+    to{
+        transform:
+            rotate(360deg);
+    }
+}
+
+
+/* ======================================================
+   LOADING TITLE
+====================================================== */
+.smartoffice-verify-cuti-loading-title{
+    font-size:16px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+
+/* ======================================================
+   LOADING TEXT
+====================================================== */
+.smartoffice-verify-cuti-loading-text{
+    margin-top:6px;
+    font-size:13px;
+    color:#64748b;
+}
 
 /* ======================================================
    ERROR
@@ -210,7 +310,6 @@
     background:#f8fafc;
 }
 
-
 .smartoffice-verify-cuti-error-card{
     width:100%;
     max-width:420px;
@@ -223,12 +322,10 @@
         rgba(0,0,0,.08);
 }
 
-
 .smartoffice-verify-cuti-error-card h2{
     margin-top:0;
     color:#dc2626;
 }
-
 
 .smartoffice-verify-cuti-error-card p{
     color:#64748b;
@@ -273,8 +370,8 @@
        CHECK
     ========================= */
     .smartoffice-verify-cuti-check-wrapper{
-        width:64px;
-        height:64px;
+        width:48px;
+        height:48px;
         margin:
             0 auto 18px;
     }
@@ -288,7 +385,7 @@
        TITLE
     ========================= */
     .smartoffice-verify-cuti-card h1{
-        font-size:26px;
+        font-size:18px;
     }
 
     /* =========================
@@ -297,7 +394,7 @@
     .smartoffice-verify-cuti-subtitle{
         margin:
             8px 0 20px;
-        font-size:13px;
+        font-size:11px;
         line-height:1.5;
     }
 
@@ -305,18 +402,18 @@
        INFO BOX
     ========================= */
     .smartoffice-verify-cuti-info-box{
-        padding:14px;
-        margin-bottom:10px;
-        border-radius:16px;
+        padding:8px;
+        margin-bottom:8px;
+        border-radius:12px;
     }
 
     .smartoffice-verify-cuti-label{
-        font-size:11px;
-        margin-bottom:6px;
+        font-size:9px;
+        margin-bottom:4px;
     }
 
     .smartoffice-verify-cuti-value{
-        font-size:16px;
+        font-size:12px;
     }
 
     /* =========================
@@ -324,9 +421,9 @@
     ========================= */
     .smartoffice-verify-cuti-status-badge{
         padding:
-            8px 14px;
-        font-size:13px;
-        gap:7px;
+            6px 12px;
+        font-size:9px;
+        gap:5px;
     }
 
     .smartoffice-verify-cuti-status-dot{
@@ -335,11 +432,50 @@
     }
 
     /* =========================
+       APPROVAL
+    ========================= */
+
+    .smartoffice-verify-cuti-role{
+
+        font-size:12px;
+
+        margin-bottom:5px;
+
+    }
+
+
+    .smartoffice-verify-cuti-approval-box
+    .smartoffice-verify-cuti-value{
+
+        font-size:15px;
+
+    }
+
+    /* =========================
        FOOTER
     ========================= */
     .smartoffice-verify-cuti-footer{
         margin-top:20px;
-        font-size:11px;
+        font-size:9px;
         line-height:1.6;
+    }
+
+    /* =========================
+       ERROR
+    ========================= */
+
+    .smartoffice-verify-cuti-error-page{
+
+        padding:14px;
+
+    }
+
+
+    .smartoffice-verify-cuti-error-card{
+
+        padding:24px 18px;
+
+        border-radius:22px;
+
     }
 }
