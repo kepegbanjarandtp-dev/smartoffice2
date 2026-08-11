@@ -1,0 +1,627 @@
+<div class="smartoffice-wrapper">
+
+    <!-- =========================
+        HEADER
+    ========================= -->
+    <div class="smartoffice-header">
+
+        <!-- LEFT -->
+        <div class="smartoffice-header-info">
+
+            <!-- BACK -->
+            <button
+                class="smartoffice-back-button"
+                onclick="smartofficeLoadDashboardPage()"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path
+                        d="m15 18-6-6 6-6"
+                    />
+                </svg>
+            </button>
+
+            <!-- ICON -->
+            <div
+                class="
+                    smartoffice-header-icon
+                    smartoffice-bukutamu-header-icon
+                "
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="38"
+                    height="38"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    >
+                    <path d="
+                        M4 19.5
+                        A2.5 2.5 0 0 1
+                        6.5 17H20
+                    "/>
+
+                    <path d="
+                        M6.5 2H20
+                        v20H6.5
+                        A2.5 2.5 0 0 1
+                        4 19.5V4.5
+                        A2.5 2.5 0 0 1
+                        6.5 2Z
+                    "/>
+
+                    <line
+                        x1="8"
+                        y1="7"
+                        x2="16"
+                        y2="7"
+                    />
+
+                    <line
+                        x1="8"
+                        y1="11"
+                        x2="16"
+                        y2="11"
+                    />
+
+                    <line
+                        x1="8"
+                        y1="15"
+                        x2="13"
+                        y2="15"
+                    />
+                </svg>
+            </div>
+
+            <!-- TITLE -->
+            <div
+                class="
+                    smartoffice-header-title
+                "
+            >
+                <h2>
+                    Buku Tamu
+                </h2>
+
+                <p>
+                    Monitoring data tamu
+                </p>
+            </div>
+        </div>
+
+        <!-- REFRESH -->
+        <button
+            id="smartofficeBukuTamuRefreshButton"
+            class="smartoffice-refresh-button"
+            onclick="smartofficeRefreshBukuTamu()"
+            title="Refresh Data"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path
+                    d="
+                        M21 12
+                        a9 9 0 1 1
+                        -3-6.7
+                    "
+                />
+
+                <polyline
+                    points="
+                        21 3
+                        21 9
+                        15 9
+                    "
+                />
+            </svg>
+        </button>
+    </div>
+
+    <!-- =========================
+        MINI STATS
+    ========================= -->
+    <div
+        class="
+            smartoffice-cuti-stats-row
+        "
+    >
+        <!-- =========================
+            TOTAL TAMU
+        ========================= -->
+        <div
+            class="
+                smartoffice-cuti-stat-card
+                smartoffice-cuti-stat-blue
+            "
+        >
+            <div
+                class="
+                    smartoffice-cuti-stat-top
+                "
+            >
+                <p>
+                    Total Tamu
+                </p>
+
+                <div
+                    class="
+                        smartoffice-cuti-stat-icon
+                    "
+                >
+                    <!-- USERS -->
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="
+                                M16 21
+                                v-2
+                                a4 4 0 0 0
+                                -4-4
+                                H6
+                                a4 4 0 0 0
+                                -4 4
+                                v2
+                            "
+                        />
+
+                        <circle
+                            cx="9"
+                            cy="7"
+                            r="4"
+                        />
+
+                        <path
+                            d="
+                                M22 21
+                                v-2
+                                a4 4 0 0 0
+                                -3-3.87
+                            "
+                        />
+
+                        <path
+                            d="
+                                M16 3.13
+                                a4 4 0 0 1
+                                0 7.75
+                            "
+                        />
+                    </svg>
+                </div>                
+            </div>
+
+            <h3
+                id="smartofficeBukuTamuTotal"
+            >
+                <span
+                    class="
+                        smartoffice-mini-loader
+                    "
+                ></span>
+            </h3>
+        </div>
+
+        <!-- =========================
+            HARI INI
+        ========================= -->
+        <div
+            class="
+                smartoffice-cuti-stat-card
+                smartoffice-cuti-stat-orange
+            "
+        >
+            <div
+                class="
+                    smartoffice-cuti-stat-top
+                "
+            >
+                <p>
+                    Hari Ini
+                </p>
+
+                <div
+                    class="
+                        smartoffice-cuti-stat-icon
+                    "
+                >
+                    <!-- CALENDAR -->
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                        />
+
+                        <line
+                            x1="16"
+                            y1="2"
+                            x2="16"
+                            y2="6"
+                        />
+
+                        <line
+                            x1="8"
+                            y1="2"
+                            x2="8"
+                            y2="6"
+                        />
+
+                        <line
+                            x1="3"
+                            y1="10"
+                            x2="21"
+                            y2="10"
+                        />
+                    </svg>
+                </div>                
+            </div>
+
+            <h3
+                id="smartofficeBukuTamuHariIni"
+            >
+                <span
+                    class="
+                        smartoffice-mini-loader
+                    "
+                ></span>
+            </h3>
+        </div>
+
+        <!-- =========================
+            BULAN INI
+        ========================= -->
+        <div
+            class="
+                smartoffice-cuti-stat-card
+                smartoffice-cuti-stat-green
+            "
+        >
+            <div
+                class="
+                    smartoffice-cuti-stat-top
+                "
+            >
+                <p>
+                    Bulan Ini
+                </p>
+
+                <div
+                    class="
+                        smartoffice-cuti-stat-icon
+                    "
+                >
+                    <!-- CALENDAR MONTH -->
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect
+                            x="3"
+                            y="4"
+                            width="18"
+                            height="18"
+                            rx="2"
+                        />
+
+                        <line
+                            x1="16"
+                            y1="2"
+                            x2="16"
+                            y2="6"
+                        />
+
+                        <line
+                            x1="8"
+                            y1="2"
+                            x2="8"
+                            y2="6"
+                        />
+
+                        <line
+                            x1="3"
+                            y1="10"
+                            x2="21"
+                            y2="10"
+                        />
+
+                        <path
+                            d="
+                                M8 14
+                                h2
+                            "
+                        />
+
+                        <path
+                            d="
+                                M14 14
+                                h2
+                            "
+                        />
+
+                        <path
+                            d="
+                                M8 18
+                                h2
+                            "
+                        />
+
+                        <path
+                            d="
+                                M14 18
+                                h2
+                            "
+                        />
+                    </svg>
+                </div>
+                
+            </div>
+
+            <h3
+                id="smartofficeBukuTamuBulanIni"
+            >
+                <span
+                    class="
+                        smartoffice-mini-loader
+                    "
+                ></span>
+            </h3>
+        </div>
+    </div>
+
+    <!-- =========================
+        FILTER
+    ========================= -->
+    <div
+        class="
+            smartoffice-bukutamu-filter-card
+        "
+    >
+        <!-- NAMA -->
+        <div
+            class="
+                smartoffice-bukutamu-form-group
+            "
+        >
+            <label>
+                Nama
+            </label>
+
+            <input
+                type="text"
+                id="smartofficeBukuTamuFilterNama"
+                placeholder="Cari nama tamu..."
+            >
+        </div>
+
+        <!-- TANGGAL -->
+        <div
+            class="
+                smartoffice-bukutamu-form-group
+            "
+        >
+            <label>
+                Tanggal
+            </label>
+
+            <input
+                type="date"
+                id="smartofficeBukuTamuFilterTanggal"
+            >
+        </div>
+
+        <!-- BULAN -->
+        <div
+            class="
+                smartoffice-bukutamu-form-group
+            "
+        >
+            <label>
+                Bulan
+            </label>
+
+            <select
+                id="smartofficeBukuTamuFilterBulan"
+            >
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="0">
+                    Januari
+                </option>
+
+                <option value="1">
+                    Februari
+                </option>
+
+                <option value="2">
+                    Maret
+                </option>
+
+                <option value="3">
+                    April
+                </option>
+
+                <option value="4">
+                    Mei
+                </option>
+
+                <option value="5">
+                    Juni
+                </option>
+
+                <option value="6">
+                    Juli
+                </option>
+
+                <option value="7">
+                    Agustus
+                </option>
+
+                <option value="8">
+                    September
+                </option>
+
+                <option value="9">
+                    Oktober
+                </option>
+
+                <option value="10">
+                    November
+                </option>
+
+                <option value="11">
+                    Desember
+                </option>
+            </select>
+        </div>
+
+        <!-- TAHUN -->
+        <div
+            class="
+                smartoffice-bukutamu-form-group
+            "
+        >
+            <label>
+                Tahun
+            </label>
+
+            <select
+                id="smartofficeBukuTamuFilterTahun"
+            >
+                <option value="">
+                    Semua Tahun
+                </option>
+            </select>
+        </div>
+
+        <!-- CARI -->
+        <button
+            class="
+                smartoffice-bukutamu-filter-button
+            "
+            onclick="
+                smartofficeFilterBukuTamu()
+            "
+        >
+            Cari
+        </button>
+
+        <!-- RESET -->
+        <button
+            class="
+                smartoffice-bukutamu-reset-button
+            "
+            onclick="
+                smartofficeResetBukuTamu()
+            "
+        >
+            Reset
+        </button>
+
+        <!-- PRINT -->
+        <button
+            class="
+                smartoffice-bukutamu-print-button
+            "
+            onclick="
+                smartofficePrintBukuTamu()
+            "
+        >
+            🖨 Print
+        </button>
+    </div>
+
+    <!-- =========================
+       LIST
+    ========================= -->
+    <div
+      id="smartofficeBukuTamuList"
+    ></div>
+</div>
+
+
+<!-- =========================
+     DETAIL TAMU
+========================= -->
+<div
+    id="smartofficeBukuTamuDetailModal"
+    class="
+        smartoffice-bukutamu-detail-modal
+    "
+>
+    <div
+        class="
+            smartoffice-bukutamu-detail-content
+        "
+    >
+        <div
+            class="
+                smartoffice-bukutamu-detail-header
+            "
+        >
+            <h3>
+                Detail Buku Tamu
+            </h3>
+
+            <button
+                class="
+                    smartoffice-bukutamu-detail-close
+                "
+                onclick="
+                    smartofficeCloseBukuTamuDetail()
+                "
+            >
+                ✕
+            </button>
+        </div>
+
+        <div
+            id="smartofficeBukuTamuDetailBody"
+            class="
+                smartoffice-bukutamu-detail-body
+            "
+        ></div>
+    </div>
+</div>
