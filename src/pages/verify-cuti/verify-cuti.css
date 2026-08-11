@@ -434,21 +434,14 @@
     /* =========================
        APPROVAL
     ========================= */
-
     .smartoffice-verify-cuti-role{
-
-        font-size:12px;
-
+        font-size:10px;
         margin-bottom:5px;
-
     }
-
 
     .smartoffice-verify-cuti-approval-box
     .smartoffice-verify-cuti-value{
-
-        font-size:15px;
-
+        font-size:12px;
     }
 
     /* =========================
@@ -463,19 +456,43 @@
     /* =========================
        ERROR
     ========================= */
-
     .smartoffice-verify-cuti-error-page{
-
         padding:14px;
-
     }
 
-
     .smartoffice-verify-cuti-error-card{
-
         padding:24px 18px;
-
         border-radius:22px;
+    }
 
+    /* =========================
+       MOBILE LOADING
+    ========================= */
+    .smartoffice-verify-cuti-loading-page{
+        padding:16px;
+        min-height:100vh;
+    }
+
+    .smartoffice-verify-cuti-loading-card{
+        max-width:280px;
+        padding:22px 18px;
+        border-radius:20px;
+    }
+
+    .smartoffice-verify-cuti-spinner{
+        width:36px;
+        height:36px;
+        margin:
+            0 auto 14px;
+        border-width:3px;
+    }
+
+    .smartoffice-verify-cuti-loading-title{
+        font-size:14px;
+    }
+
+    .smartoffice-verify-cuti-loading-text{
+        margin-top:5px;
+        font-size:12px;
     }
 }
