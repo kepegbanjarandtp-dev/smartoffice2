@@ -18,6 +18,7 @@ import "./pages/cuti/cuti-riwayat-modal.css";
 import "./pages/approval/approval.css";
 import "./pages/approval/approval-cuti-modal.css";
 import "./pages/management-cuti/management-cuti.css";
+import "./pages/buku-tamu/buku-tamu.css";
 
 import "./components/button/button.css";
 import "./components/layout/layout.css";

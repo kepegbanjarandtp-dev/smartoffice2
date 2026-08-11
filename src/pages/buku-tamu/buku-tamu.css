@@ -1,0 +1,754 @@
+.smartoffice-bukutamu-header-icon{
+    background:#FFF8EF;
+    color:#F59E0B;
+}
+/* ======================================================
+   BUKU TAMU FILTER CARD
+====================================================== */
+
+.smartoffice-bukutamu-filter-card{
+
+    display:grid;
+
+    grid-template-columns:
+        2fr
+        1fr
+        1fr
+        1fr
+        80px
+        80px
+        100px;
+
+    gap:14px;
+
+    align-items:start;
+}
+
+
+/* ======================================================
+   FILTER GROUP
+====================================================== */
+
+.smartoffice-bukutamu-form-group{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:5px;
+
+    margin:0;
+
+    min-width:0;
+
+    margin-top:10px;
+}
+
+
+/* ======================================================
+   LABEL
+====================================================== */
+
+.smartoffice-bukutamu-form-group label{
+
+    font-size:14px;
+
+    font-weight:600;
+
+    line-height:1.2;
+
+    color:#334155;
+
+    margin:0;
+}
+
+
+/* ======================================================
+   INPUT & SELECT
+====================================================== */
+
+.smartoffice-bukutamu-form-group input,
+.smartoffice-bukutamu-form-group select{
+
+    width:100%;
+
+    height:44px;
+
+    box-sizing:border-box;
+
+    border:
+        1px solid
+        #dbe2ea;
+
+    border-radius:12px;
+
+    padding:
+        0 10px;
+
+    font-size:13px;
+
+    color:#0f172a;
+
+    background:#f8fafc;
+
+    outline:none;
+
+    transition:
+        .2s ease;
+}
+
+
+/* ======================================================
+   FOCUS
+====================================================== */
+
+.smartoffice-bukutamu-form-group input:focus,
+.smartoffice-bukutamu-form-group select:focus{
+
+    border-color:#2563eb;
+
+    background:#ffffff;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,.08);
+}
+
+
+/* ======================================================
+   BUTTON DASAR
+====================================================== */
+
+.smartoffice-bukutamu-filter-button,
+.smartoffice-bukutamu-reset-button,
+.smartoffice-bukutamu-print-button{
+
+    width:100%;
+
+    height:44px;
+
+    margin:0;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:
+        .2s ease;
+}
+
+
+/* ======================================================
+   CARI
+====================================================== */
+
+.smartoffice-bukutamu-filter-button{
+
+    width:80px;
+
+    height:44px;
+
+    margin-top:30px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#2563eb;
+
+    color:#ffffff;
+}
+
+
+.smartoffice-bukutamu-filter-button:hover{
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 24px
+        rgba(37,99,235,.22);
+}
+
+
+/* ======================================================
+   RESET
+====================================================== */
+
+.smartoffice-bukutamu-reset-button{
+
+    width:80px;
+
+    height:44px;
+
+    margin-top:30px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#334155;
+
+    color:#ffffff;
+}
+
+
+.smartoffice-bukutamu-reset-button:hover{
+
+    background:#1e293b;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 24px
+        rgba(15,23,42,.25);
+}
+
+
+/* ======================================================
+   PRINT
+====================================================== */
+
+.smartoffice-bukutamu-print-button{
+
+    width:100px;
+
+    height:44px;
+
+    margin-top:30px;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:#0f766e;
+
+    color:#ffffff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:
+        .2s ease;
+}
+
+
+.smartoffice-bukutamu-print-button:hover{
+
+    background:#115e59;
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 10px 24px
+        rgba(15,118,110,.25);
+}
+
+
+/* ======================================================
+   PRINT DISABLED
+====================================================== */
+
+.smartoffice-bukutamu-print-button:disabled{
+
+    opacity:.75;
+
+    cursor:not-allowed;
+}
+
+
+/* ======================================================
+   SPINNER PRINT
+====================================================== */
+
+.smartoffice-bukutamu-spinner-print{
+
+    display:inline-block;
+
+    width:16px;
+
+    height:16px;
+
+    border:
+        2px solid
+        rgba(255,255,255,.4);
+
+    border-top:
+        2px solid
+        #ffffff;
+
+    border-radius:50%;
+
+    animation:
+        smartofficeBukuTamuSpin
+        .8s linear infinite;
+
+    vertical-align:middle;
+
+    margin-right:8px;
+}
+
+
+@keyframes smartofficeBukuTamuSpin{
+
+    to{
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* ======================================================
+   MODAL DETAIL BUKU TAMU
+====================================================== */
+
+.smartoffice-bukutamu-detail-modal{
+
+    display:none;
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(15,23,42,.45);
+
+    backdrop-filter:
+        blur(5px);
+
+    z-index:99999;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:24px;
+
+}
+
+
+/* ======================================================
+   MODAL CONTENT
+====================================================== */
+
+.smartoffice-bukutamu-detail-content{
+
+    width:100%;
+
+    max-width:900px;
+
+    max-height:90vh;
+
+    overflow:auto;
+
+    background:#ffffff;
+
+    border-radius:28px;
+
+    box-shadow:
+        0 30px 80px
+        rgba(0,0,0,.25);
+
+    animation:
+        smartofficeBukuTamuPopup
+        .25s ease;
+
+}
+
+
+/* ======================================================
+   MODAL HEADER
+====================================================== */
+
+.smartoffice-bukutamu-detail-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px 26px;
+
+    border-bottom:
+        1px solid
+        #e2e8f0;
+
+}
+
+
+.smartoffice-bukutamu-detail-header h3{
+
+    margin:0;
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#0f172a;
+
+}
+
+
+/* ======================================================
+   CLOSE BUTTON
+====================================================== */
+
+.smartoffice-bukutamu-detail-close{
+
+    width:42px;
+
+    height:42px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#f1f5f9;
+
+    color:#334155;
+
+    cursor:pointer;
+
+    font-size:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.2s ease;
+
+}
+
+
+.smartoffice-bukutamu-detail-close:hover{
+
+    background:#e2e8f0;
+
+    transform:
+        scale(1.04);
+
+}
+
+
+/* ======================================================
+   DETAIL BODY
+====================================================== */
+
+.smartoffice-bukutamu-detail-body{
+
+    padding:24px 26px;
+
+}
+
+
+/* ======================================================
+   FOTO & TTD
+====================================================== */
+
+.smartoffice-bukutamu-image-row{
+
+    display:flex;
+
+    gap:20px;
+
+    margin-bottom:24px;
+
+}
+
+
+.smartoffice-bukutamu-image-card{
+
+    flex:1;
+
+    text-align:center;
+
+}
+
+
+.smartoffice-bukutamu-image-card h4{
+
+    margin:
+        0 0 12px;
+
+    font-size:15px;
+
+    font-weight:700;
+
+    color:#334155;
+
+}
+
+
+.smartoffice-bukutamu-image-card img{
+
+    width:100%;
+
+    max-height:260px;
+
+    object-fit:contain;
+
+    border-radius:16px;
+
+    border:
+        1px solid
+        #e2e8f0;
+
+    cursor:pointer;
+
+    background:#f8fafc;
+
+    transition:.2s ease;
+
+}
+
+
+.smartoffice-bukutamu-image-card img:hover{
+
+    transform:
+        scale(1.02);
+
+}
+
+
+/* ======================================================
+   DETAIL TABLE
+====================================================== */
+
+.smartoffice-bukutamu-detail-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+
+.smartoffice-bukutamu-detail-table td{
+
+    padding:12px 0;
+
+    border-bottom:
+        1px solid
+        #edf2f7;
+
+    vertical-align:top;
+
+    font-size:14px;
+
+    color:#334155;
+
+}
+
+
+.smartoffice-bukutamu-detail-table td:first-child{
+
+    width:170px;
+
+    font-weight:700;
+
+    color:#475569;
+
+}
+
+
+/* ======================================================
+   CARD BUKU TAMU
+====================================================== */
+
+.smartoffice-bukutamu-card{
+
+    cursor:pointer;
+
+}
+
+
+/* ======================================================
+   AVATAR
+====================================================== */
+
+.smartoffice-bukutamu-avatar{
+
+    width:58px;
+
+    height:58px;
+
+    min-width:58px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0f766e,
+            #0d9488
+        );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#ffffff;
+
+    font-size:24px;
+
+    box-shadow:
+        0 10px 24px
+        rgba(15,118,110,.25);
+
+}
+
+
+/* ======================================================
+   ANIMATION
+====================================================== */
+
+@keyframes smartofficeBukuTamuPopup{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(20px)
+            scale(.98);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width:768px){
+
+    .smartoffice-bukutamu-detail-modal{
+
+        align-items:flex-start;
+
+        padding:14px;
+
+        overflow-y:auto;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-content{
+
+        width:100%;
+
+        margin-top:20px;
+
+        margin-bottom:20px;
+
+        max-height:none;
+
+        border-radius:22px;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-header{
+
+        padding:16px 18px;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-header h3{
+
+        font-size:18px;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-close{
+
+        width:36px;
+
+        height:36px;
+
+        border-radius:10px;
+
+        font-size:16px;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-body{
+
+        padding:18px;
+
+    }
+
+
+    .smartoffice-bukutamu-image-row{
+
+        flex-direction:column;
+
+        gap:16px;
+
+    }
+
+
+    .smartoffice-bukutamu-image-card img{
+
+        max-height:220px;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-table td{
+
+        padding:10px 0;
+
+        font-size:13px;
+
+    }
+
+
+    .smartoffice-bukutamu-detail-table td:first-child{
+
+        width:110px;
+
+    }
+
+}

@@ -32,7 +32,10 @@ const smartofficeModules = {
         import("../pages/management-cuti/management-cuti.js"),
 
     "verify-cuti": () =>
-        import("../pages/verify-cuti/verify-cuti.js")
+        import("../pages/verify-cuti/verify-cuti.js"),
+
+    "buku-tamu": () =>
+    import("../pages/buku-tamu/buku-tamu.js")
 
     //smartspdBlud: () =>
     //    import("../pages/smartspd-blud/smartspd-blud.js"),
@@ -45,8 +48,7 @@ const smartofficeModules = {
 
     
 
-    //bukuTamu: () =>
-    //    import("../pages/buku-tamu/buku-tamu.js")*/
+    
 };
 
 
@@ -62,35 +64,29 @@ export async function smartofficeInitializeRouter(){
     const hash =
         window.location.hash;
 
-
     /* =========================
        VERIFY CUTI
        PUBLIC PAGE
     ========================= */
-
     if(
         hash.startsWith(
             "#verify-cuti"
         )
     ){
-
         const queryString =
             hash.includes("?")
                 ? hash.split("?")[1]
                 : "";
-
 
         const urlParams =
             new URLSearchParams(
                 queryString
             );
 
-
         const idCuti =
             urlParams.get(
                 "idCuti"
             );
-
 
         await smartofficeNavigate(
             "verify-cuti",
@@ -103,15 +99,12 @@ export async function smartofficeInitializeRouter(){
         return;
     }
 
-
     /* =========================
        DEFAULT
     ========================= */
-
     await smartofficeNavigate(
         "login"
     );
-
 }
 
 
@@ -122,7 +115,6 @@ export async function smartofficeNavigate(
     pageName,
     params = {}
 ){
-
     if(
         !pageName
     ){
@@ -132,175 +124,97 @@ export async function smartofficeNavigate(
     /* =========================
        DESTROY CURRENT PAGE
     ========================= */
-
     await smartofficeDestroyCurrentPage();
-
 
     /* =========================
        LOAD HTML
     ========================= */
-
     const html =
         await smartofficeGetPageHtml(
             pageName
         );
 
-    console.log(
-        "VERIFY HTML HAS CONTAINER:",
-        html.includes(
-            'id="smartofficeVerifyCutiPage"'
-        )
-    );
-
-    console.log(
-        "VERIFY HTML:",
-        html
-    );
-
-
     const app =
         document.getElementById(
             "app"
         );
-
     if(
         !app
     ){
-        console.error(
-            "APP CONTAINER TIDAK DITEMUKAN"
-        );
-
         return;
     }
-
     app.innerHTML =
         html;
-
-    console.log(
-        "HTML PAGE:",
-        pageName
-    );
-
-    console.log(
-        "HTML LENGTH:",
-        html.length
-    );
-
-    console.log(
-        "HTML CONTENT:",
-        html
-    );
-
-    console.log(
-        "VERIFY CONTAINER AFTER INSERT:",
-        document.getElementById(
-            "smartofficeVerifyCutiPage"
-        )
-    );
-
 
     /* =========================
        LOAD MODULE
     ========================= */
-
     const loader =
         smartofficeModules[
             pageName
         ];
-
-
     if(
         !loader
     ){
-
         throw new Error(
             `Halaman "${pageName}" tidak ditemukan`
         );
-
     }
-
 
     const module =
         await loader();
 
-    console.log(
-        "VERIFY MODULE LOADED:",
-        module
-    );
-
-
     /* =========================
        INIT PAGE
     ========================= */
-
     const loadFunction =
         module.smartofficeLoadPage ||
         module.smartofficeLoadLoginPage ||
         module.default;
 
-    console.log(
-        "VERIFY LOAD FUNCTION:",
-        loadFunction
-    );
-
     if(
         typeof loadFunction ===
         "function"
-    ){
-        console.log(
-            "CALLING VERIFY LOAD PAGE:",
-            params
-        );
-        
+    ){        
         await loadFunction(
             params
         );
-
     }
-
 
     /* =========================
        DESTROY FUNCTION
     ========================= */
-
     smartofficeCurrentDestroy =
         module.smartofficeDestroyPage ||
         module.smartofficeDestroyLoginPage ||
         null;
 
-
     smartofficeCurrentPage =
         pageName;
-
 
     /* =========================
        URL
     ========================= */
-
     const query =
         new URLSearchParams(
             params
         ).toString();
-
 
     const hash =
         query
             ? `#${pageName}?${query}`
             : `#${pageName}`;
 
-
     history.pushState(
         {
             page:
                 pageName,
-
             params:
                 params
         },
         "",
         hash
     );
-
 }
 
 

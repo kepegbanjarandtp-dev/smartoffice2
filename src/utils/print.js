@@ -1053,11 +1053,8 @@ export function smartofficeGenerateLaporanBukuTamu(
     const bodyHtml = `
 
         <div class="smartoffice-report-container">
-
             <table class="smartoffice-bukutamu-report-table">
-
                 <thead>
-
                     <tr>
                         <th>No</th>
                         <th>Tanggal</th>
@@ -1069,19 +1066,14 @@ export function smartofficeGenerateLaporanBukuTamu(
                         <th>Foto</th>
                         <th>TTD</th>
                     </tr>
-
                 </thead>
 
                 <tbody>
-
                     ${
                         data
                             .map(function(item,index){
-
                                 return `
-
                                     <tr>
-
                                         <td>
                                             ${index + 1}
                                         </td>
@@ -1125,19 +1117,13 @@ export function smartofficeGenerateLaporanBukuTamu(
                                                 class="smartoffice-report-sign"
                                             >
                                         </td>
-
                                     </tr>
-
                                 `;
-
                             })
                             .join('')
                     }
-
                 </tbody>
-
             </table>
-
 
             <div class="smartoffice-report-keterangan">
 
@@ -1149,21 +1135,16 @@ export function smartofficeGenerateLaporanBukuTamu(
                 Smart Office Puskesmas Nambo.
 
             </div>
-
         </div>
-
     `;
-
 
     /* =========================
        PERIODE
     ========================= */
-
     const bulanSelect =
         document.getElementById(
             'smartofficeBukuTamuFilterBulan'
         );
-
 
     const tahun =
         document.getElementById(
@@ -1171,39 +1152,27 @@ export function smartofficeGenerateLaporanBukuTamu(
         ).value ||
         'Semua Tahun';
 
-
     const bulanText =
         bulanSelect.options[
             bulanSelect.selectedIndex
         ].text;
-
 
     const periode =
         bulanText +
         ' ' +
         tahun;
 
-
     /* =========================
        GENERATE TEMPLATE
     ========================= */
-
     return smartofficeGenerateTemplateLaporan(
-
         'LAPORAN BUKU TAMU DIGITAL',
-
         periode,
-
         bodyHtml,
-
         data.length,
-
         kapus,
-
         qrUrl
-
     );
-
 }
 
 

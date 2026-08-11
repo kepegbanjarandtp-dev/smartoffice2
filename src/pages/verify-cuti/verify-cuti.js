@@ -8,18 +8,11 @@ import {
     smartofficeFormatTanggalIndoJamFrontend
 } from "../../utils/date.js";
 
-console.log(
-    "VERIFY-CUTI.JS LOADED"
-);
 
 /* ======================================================
    LOAD VERIFY CUTI
 ====================================================== */
 export async function smartofficeLoadPage(){
-
-    console.log(
-        "VERIFY LOAD PAGE START"
-    );
 
     /* =========================
        GET URL
@@ -49,36 +42,18 @@ export async function smartofficeLoadPage(){
     if(
         !idCuti
     ){
-
         smartofficeRenderVerifyCutiError(
             "ID dokumen tidak ditemukan."
         );
 
         return;
-
     }
-
 
     /* =========================
        LOAD DATA
     ========================= */
-
     try{
-
-        console.log(
-            "VERIFY: RENDER LOADING"
-        );
-
         smartofficeRenderVerifyCutiLoading();
-
-        console.log(
-            "VERIFY: LOADING SELESAI"
-        );
-
-        console.log(
-            "VERIFY: CALL API",
-            idCuti
-        );
 
         const response =
             await smartofficeApi(
@@ -88,69 +63,45 @@ export async function smartofficeLoadPage(){
                         idCuti
                 }
             );
-
-        console.log(
-            "VERIFY: API RESPONSE",
-            response
-        );
-
-
         if(
             !response.success
         ){
-
             smartofficeRenderVerifyCutiError(
                 response.message ||
                 "Gagal memverifikasi dokumen."
             );
 
             return;
-
         }
-
 
         if(
             !response.data ||
             !response.data.valid
         ){
-
             smartofficeRenderVerifyCutiError(
                 response.data?.message ||
                 "Dokumen tidak ditemukan."
             );
 
             return;
-
         }
-
 
         /* =========================
            DATA VALID
         ========================= */
-
         const data =
             response.data.data;
-
 
         smartofficeRenderVerifyCuti(
             data
         );
-
     }
     catch(error){
-
-        console.error(
-            "VERIFY CUTI ERROR:",
-            error
-        );
-
 
         smartofficeRenderVerifyCutiError(
             "Tidak dapat memverifikasi dokumen."
         );
-
     }
-
 }
 
 
@@ -161,32 +112,16 @@ function smartofficeRenderVerifyCuti(
     data
 ){
 
-    console.log(
-        "VERIFY: RENDER START",
-        data
-    );
-
     const container =
         document.getElementById(
             "smartofficeVerifyCutiPage"
         );
 
-    console.log(
-        "VERIFY: CONTAINER",
-        container
-    );
-
     if(
         !container
     ){
-
-        console.error(
-            "VERIFY: CONTAINER TIDAK DITEMUKAN"
-        );
-
         return;
     }
-
 
     container.innerHTML = `
 
@@ -503,11 +438,6 @@ function smartofficeRenderVerifyCuti(
         </div>
 
     `;
-
-    console.log(
-        "VERIFY: RENDER SELESAI",
-        container.innerHTML.length
-    );
 }
 
 

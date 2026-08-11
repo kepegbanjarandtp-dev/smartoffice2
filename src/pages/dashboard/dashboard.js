@@ -384,6 +384,25 @@ function smartofficeInitDashboardMenu(){
             }
         );
 
+    /* =========================
+       BUKU TAMU
+    ========================= */
+
+    document
+        .getElementById(
+            "smartofficeBukuTamuMenuCard"
+        )
+        ?.addEventListener(
+            "click",
+            async function(){
+
+                await smartofficeNavigate(
+                    "buku-tamu"
+                );
+
+            }
+        );
+
 }
 
 
