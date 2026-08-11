@@ -1404,26 +1404,22 @@ function smartofficeOpenManagementCutiDetail(
     item.status ===
     'DISETUJUI'
   ){
-
     statusText =
       'Disetujui';
 
     statusClass =
       'approved';
-
   }
 
   if(
     item.status ===
     'DITOLAK'
   ){
-
     statusText =
       'Ditolak';
 
     statusClass =
       'rejected';
-
   }
 
   /* RESET SCROLL */
@@ -1456,7 +1452,6 @@ function smartofficeOpenManagementCutiDetail(
     <div class="smartoffice-management-cuti-modal-profile">
 
         <div class="smartoffice-management-cuti-modal-profile-info">
-
             <h4>
                 ${item.nama || '-'}
             </h4>
@@ -1472,9 +1467,7 @@ function smartofficeOpenManagementCutiDetail(
             ">
                 ${statusText}
             </span>
-
         </div>
-
     </div>
 
     <!-- =========================
@@ -1511,7 +1504,6 @@ function smartofficeOpenManagementCutiDetail(
             <label>Sisa Cuti</label>
             <span>${item.sisaCuti || 0} Hari</span>
         </div>
-
     </div>
     
     <!-- =========================
@@ -1527,7 +1519,6 @@ function smartofficeOpenManagementCutiDetail(
         <span>
         ${item.keperluan || '-'}
         </span>
-
     </div>
 
     <!-- =========================
@@ -1543,7 +1534,6 @@ function smartofficeOpenManagementCutiDetail(
       <span>
         ${item.alamatSaatCuti || '-'}
       </span>
-
     </div>
 
     <!-- =========================
@@ -1588,7 +1578,6 @@ function smartofficeOpenManagementCutiDetail(
                   )
                 "
               >
-
                 <svg
                   style="
                     flex-shrink:0;
@@ -1628,7 +1617,6 @@ function smartofficeOpenManagementCutiDetail(
     <div class="
       smartoffice-cuti-riwayat-modal-grid
     ">
-
       <div class="
         smartoffice-cuti-riwayat-modal-item
       ">
@@ -1652,7 +1640,6 @@ function smartofficeOpenManagementCutiDetail(
           ${item.nipDelegasi || '-'}
         </span>
       </div>
-
     </div>
 
     <!-- =========================
@@ -1662,7 +1649,6 @@ function smartofficeOpenManagementCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         Tugas Delegasi
       </label>
@@ -1670,7 +1656,6 @@ function smartofficeOpenManagementCutiDetail(
       <span>
         ${item.tugasDelegasi || '-'}
       </span>
-
     </div>
 
     <!-- =========================
@@ -1680,13 +1665,11 @@ function smartofficeOpenManagementCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         File PDF Surat Cuti
       </label>
 
       <span>
-
         ${
           item.pdfUrl
 
@@ -1704,7 +1687,6 @@ function smartofficeOpenManagementCutiDetail(
               )
             "
           >
-
             <svg
               style="
                 flex-shrink:0;
@@ -1736,9 +1718,7 @@ function smartofficeOpenManagementCutiDetail(
           'PDF belum tersedia'
 
         }
-
       </span>
-
     </div>
 
     <!-- =========================
@@ -1748,36 +1728,35 @@ function smartofficeOpenManagementCutiDetail(
     <div class="
         smartoffice-cuti-riwayat-modal-item
         full-width
-        ">
+    ">
 
         <label>Approval 1 - PJKM</label>
 
         <div class="
-        smartoffice-cuti-riwayat-modal-approval-box
+          smartoffice-cuti-riwayat-modal-approval-box
         ">
 
         <div>
-        <small>Nama</small>
-        <strong>${item.approval1 || '-'}</strong>
+          <small>Nama</small>
+          <strong>${item.approval1 || '-'}</strong>
         </div>
 
         <div>
-        <small>Status</small>
-        ${smartofficeGetApprovalBadge(item.approval1Status)}
+          <small>Status</small>
+          ${smartofficeGetApprovalBadge(item.approval1Status)}
         </div>
 
         <div>
-        <small>Tanggal</small>
-        <strong>${item.approval1Tanggal || '-'}</strong>
+          <small>Tanggal</small>
+          <strong>${item.approval1Tanggal || '-'}</strong>
         </div>
 
         <div>
-        <small>Catatan</small>
-        <strong>${item.approval1Catatan || '-'}</strong>
+          <small>Catatan</small>
+          <strong>${item.approval1Catatan || '-'}</strong>
         </div>
 
         </div>
-
     </div>
 
     <!-- APPROVAL 2 -->
@@ -1812,13 +1791,9 @@ function smartofficeOpenManagementCutiDetail(
             ${item.approval2Tanggal || '-'}
           </strong>
         </div>
-
       </div>
-
     </div>
-
   `;
-
 }
 
 
@@ -1844,12 +1819,9 @@ export function smartofficeCloseManagementCutiDetail(){
 
     /* HIDE MODAL */
     setTimeout(function(){
-
         modal.style.display =
             "none";
-
     },200);
-
 }
 
 window.smartofficeOpenManagementCutiDetail =

@@ -387,7 +387,6 @@ function smartofficeInitDashboardMenu(){
     /* =========================
        BUKU TAMU
     ========================= */
-
     document
         .getElementById(
             "smartofficeBukuTamuMenuCard"
@@ -398,6 +397,24 @@ function smartofficeInitDashboardMenu(){
 
                 await smartofficeNavigate(
                     "buku-tamu"
+                );
+
+            }
+        );
+
+    /* =========================
+       DOKUMEN SAYA
+    ========================= */
+    document
+        .getElementById(
+            "smartofficeDokumenSayaMenuCard"
+        )
+        ?.addEventListener(
+            "click",
+            async function(){
+
+                await smartofficeNavigate(
+                    "dokumen-saya"
                 );
 
             }

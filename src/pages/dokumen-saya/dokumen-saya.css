@@ -1,0 +1,318 @@
+/* ======================================================
+   CONTENT
+====================================================== */
+
+.smartoffice-dokumen-saya-content{
+
+    animation:
+        smartofficeDokumenSayaFade
+        0.25s ease;
+
+}
+
+
+@keyframes smartofficeDokumenSayaFade{
+
+    from{
+
+        opacity:0;
+
+        transform:
+            translateY(8px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+/* ======================================================
+   FORM CARD
+====================================================== */
+
+.smartoffice-dokumen-saya-form-card{
+
+    background:#ffffff;
+
+    border-radius:26px;
+
+    padding:24px;
+
+    box-shadow:
+        0 4px 16px
+        rgba(0,0,0,0.05);
+
+}
+
+
+/* ======================================================
+   SUBTITLE
+====================================================== */
+
+.smartoffice-dokumen-saya-subtitle{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+    margin-top:28px;
+
+    margin-bottom:18px;
+
+    line-height:1;
+
+    text-transform:uppercase;
+
+    letter-spacing:0.5px;
+
+}
+
+
+.smartoffice-dokumen-saya-subtitle svg{
+
+    width:18px;
+
+    height:18px;
+
+    min-width:18px;
+
+    min-height:18px;
+
+    fill:#2563eb;
+
+    flex-shrink:0;
+
+}
+
+
+.smartoffice-dokumen-saya-subtitle:first-child{
+
+    margin-top:0;
+
+}
+
+
+/* ======================================================
+   FORM GRID
+====================================================== */
+
+.smartoffice-dokumen-saya-form-grid{
+
+    grid-template-columns:1fr;
+
+    gap:10px;
+
+}
+
+
+/* ======================================================
+   FORM GROUP
+====================================================== */
+
+.smartoffice-dokumen-saya-form-group{
+
+    margin-bottom:8px;
+
+    gap:6px;
+
+}
+
+
+/* ======================================================
+   LABEL
+====================================================== */
+
+.smartoffice-dokumen-saya-form-group label{
+
+    font-size:11px;
+
+}
+
+
+/* ======================================================
+   INPUT / SELECT / TEXTAREA
+====================================================== */
+
+.smartoffice-dokumen-saya-form-group input,
+.smartoffice-dokumen-saya-form-group select,
+.smartoffice-dokumen-saya-form-group textarea{
+
+    padding:13px;
+
+    border-radius:14px;
+
+    font-size:12px;
+
+}
+
+
+/* ======================================================
+   TEXTAREA
+====================================================== */
+
+.smartoffice-dokumen-saya-form-group textarea{
+
+    padding:
+        16px
+        13px;
+
+}
+
+
+/* ======================================================
+   FULL WIDTH
+====================================================== */
+
+.smartoffice-dokumen-saya-form-group.full-width{
+
+    margin-top:18px;
+
+    margin-bottom:12px;
+
+}
+
+
+/* ======================================================
+   UPLOAD BOX
+====================================================== */
+
+.smartoffice-dokumen-saya-upload-box{
+
+    padding:16px;
+
+    gap:12px;
+
+    border-radius:16px;
+
+}
+
+
+.smartoffice-dokumen-saya-upload-box strong{
+
+    font-size:13px;
+
+}
+
+
+.smartoffice-dokumen-saya-upload-box p{
+
+    font-size:11px;
+
+}
+
+
+/* ======================================================
+   SUBMIT BUTTON
+====================================================== */
+
+.smartoffice-dokumen-saya-submit-button{
+
+    width:70%;
+
+    margin-top:24px;
+
+    padding:14px;
+
+    border-radius:16px;
+
+    font-size:12px;
+
+    margin-bottom:8px;
+
+}
+
+
+/* ======================================================
+  SPINNER
+====================================================== */
+.smartoffice-btn-spinner{
+  flex-shrink:0;
+  width:18px;
+  height:18px;
+
+  border:2px solid
+    rgba(255,255,255,.35);
+
+  border-top-color:#fff;
+
+  border-radius:50%;
+
+  display:inline-block;
+
+  animation:
+    smartofficeBtnSpin
+    .8s
+    linear
+    infinite;
+}
+
+@keyframes smartofficeBtnSpin{
+
+  to{
+    transform:
+      rotate(360deg);
+  }
+
+}
+
+.smartoffice-btn-text{
+  font-weight:600;
+}
+
+
+
+/* ======================================================
+   MODAL UBAH DOKUMEN SAYA
+====================================================== */
+
+.smartoffice-dokumen-saya-modal-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+        rgba(15,23,42,.5);
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    z-index:9999;
+
+    padding:20px;
+
+}
+
+
+.smartoffice-dokumen-saya-modal-content{
+
+    width:100%;
+
+    max-width:500px;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:20px;
+
+}

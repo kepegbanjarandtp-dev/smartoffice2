@@ -1042,6 +1042,101 @@ export function smartofficeGenerateTemplateLaporan(
 
 
 /* ======================================================
+   FORMAT TANGGAL JAM BUKU TAMU
+   OUTPUT:
+   3 Agustus 2026 13:22
+====================================================== */
+
+function smartofficeFormatTanggalJamBukuTamu(
+    value
+){
+
+    if(!value){
+
+        return "-";
+
+    }
+
+
+    const part =
+        value.split(" ");
+
+
+    const tanggal =
+        part[0].split("/");
+
+
+    const waktu =
+        (
+            part[1] ||
+            "00:00:00"
+        ).split(":");
+
+
+    const date =
+        new Date(
+            Number(tanggal[2]),
+            Number(tanggal[1]) - 1,
+            Number(tanggal[0]),
+            Number(waktu[0]),
+            Number(waktu[1]),
+            Number(waktu[2])
+        );
+
+
+    if(
+        isNaN(
+            date.getTime()
+        )
+    ){
+
+        return "-";
+
+    }
+
+
+    const bulan = [
+
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+
+    ];
+
+
+    return (
+
+        date.getDate() +
+        " " +
+        bulan[
+            date.getMonth()
+        ] +
+        " " +
+        date.getFullYear() +
+        " " +
+        String(
+            date.getHours()
+        ).padStart(2,"0") +
+        ":" +
+        String(
+            date.getMinutes()
+        ).padStart(2,"0")
+
+    );
+
+}
+
+
+/* ======================================================
    GENERATE LAPORAN BUKU TAMU
 ====================================================== */
 export function smartofficeGenerateLaporanBukuTamu(
@@ -1079,7 +1174,7 @@ export function smartofficeGenerateLaporanBukuTamu(
                                         </td>
 
                                         <td>
-                                            ${smartofficeFormatTanggalJamFrontend(
+                                            ${smartofficeFormatTanggalJamBukuTamu(
                                                 item.timestamp
                                             )}
                                         </td>

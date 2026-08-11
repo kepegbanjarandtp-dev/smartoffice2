@@ -35,7 +35,10 @@ const smartofficeModules = {
         import("../pages/verify-cuti/verify-cuti.js"),
 
     "buku-tamu": () =>
-    import("../pages/buku-tamu/buku-tamu.js")
+        import("../pages/buku-tamu/buku-tamu.js"),
+
+    "dokumen-saya": () =>
+        import("../pages/dokumen-saya/dokumen-saya.js"),
 
     //smartspdBlud: () =>
     //    import("../pages/smartspd-blud/smartspd-blud.js"),
