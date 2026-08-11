@@ -161,15 +161,29 @@ function smartofficeRenderVerifyCuti(
     data
 ){
 
+    console.log(
+        "VERIFY: RENDER START",
+        data
+    );
+
     const container =
         document.getElementById(
             "smartofficeVerifyCutiPage"
         );
 
+    console.log(
+        "VERIFY: CONTAINER",
+        container
+    );
 
     if(
         !container
     ){
+
+        console.error(
+            "VERIFY: CONTAINER TIDAK DITEMUKAN"
+        );
+
         return;
     }
 
@@ -524,6 +538,11 @@ function smartofficeRenderVerifyCuti(
         </div>
 
     `;
+
+    console.log(
+        "VERIFY: RENDER SELESAI",
+        container.innerHTML.length
+    );
 
 }
 
