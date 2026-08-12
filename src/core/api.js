@@ -1,17 +1,16 @@
 /* ======================================================
    SMARTOFFICE API
 ====================================================== */
-import {
-    CONFIG
-} from "./config.js";
+
+import { CONFIG } from "./config.js";
 
 
 /* ======================================================
    ACTION YANG AMAN UNTUK RETRY
    READ-ONLY + LOGIN
 ====================================================== */
-const SMARTOFFICE_RETRYABLE_ACTIONS = [
 
+const SMARTOFFICE_RETRYABLE_ACTIONS = [
     "login",
 
     "smartofficeGetPegawaiByNip",
@@ -33,7 +32,6 @@ const SMARTOFFICE_RETRYABLE_ACTIONS = [
 
     "smartofficeGetMasterDokumen",
     "smartofficeGetDokumenPegawai"
-
 ];
 
 
@@ -41,86 +39,50 @@ const SMARTOFFICE_RETRYABLE_ACTIONS = [
    KONFIGURASI REQUEST
 ====================================================== */
 
-/* =========================
-   MAX RETRY
-========================= */
-const SMARTOFFICE_API_MAX_RETRY =
-    2;
+const SMARTOFFICE_API_MAX_RETRY = 2;
 
-
-/* =========================
-   TIMEOUT DEFAULT
-   API BIASA = 30 DETIK
-========================= */
-const SMARTOFFICE_API_TIMEOUT =
-    30000;
+const SMARTOFFICE_API_TIMEOUT = 30000;
 
 
 /* ======================================================
    TIMEOUT KHUSUS PER ACTION
 ====================================================== */
+
 const SMARTOFFICE_API_TIMEOUTS = {
-
-    /* =========================
-       UPLOAD / UPDATE DOKUMEN
-       60 DETIK
-    ========================= */
-    smartofficeUploadDokumen:
-        60000,
-
-
-    /* =========================
-       DEFAULT
-    ========================= */
-    default:
-        SMARTOFFICE_API_TIMEOUT
-
+    smartofficeUploadDokumen: 60000,
+    default: SMARTOFFICE_API_TIMEOUT
 };
 
 
 /* ======================================================
    DELAY RETRY
 ====================================================== */
-function smartofficeApiDelay(
-    attempt
-){
+
+function smartofficeApiDelay(attempt) {
 
     const delay =
         attempt === 1
             ? 1000
             : 2000;
 
-
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                delay
-            )
+    return new Promise(resolve =>
+        setTimeout(resolve, delay)
     );
-
 }
 
 
 /* ======================================================
    SMARTOFFICE API
 ====================================================== */
+
 export async function smartofficeApi(
     action,
     data = {}
-){
+) {
 
-    /* ==================================================
-       WAKTU TOTAL REQUEST
-    ================================================== */
-    const apiStartTime =
-        performance.now();
+    const apiStartTime = performance.now();
 
-
-    console.log(
-        "=================================================="
-    );
-
+    console.log("==================================================");
     console.log(
         "SMARTOFFICE API REQUEST:",
         action,
@@ -128,15 +90,12 @@ export async function smartofficeApi(
     );
 
 
-    /* =========================
+    /* ==================================================
        CEK BOLEH RETRY
-    ========================= */
-    const canRetry =
-        SMARTOFFICE_RETRYABLE_ACTIONS
-            .includes(
-                action
-            );
+    ================================================== */
 
+    const canRetry =
+        SMARTOFFICE_RETRYABLE_ACTIONS.includes(action);
 
     const maxAttempt =
         canRetry
@@ -147,37 +106,34 @@ export async function smartofficeApi(
     /* ==================================================
        REQUEST LOOP
     ================================================== */
-    for(
+
+    for (
         let attempt = 0;
         attempt <= maxAttempt;
         attempt++
-    ){
+    ) {
 
-        try{
+        try {
 
             /* =========================
                LOG RETRY
             ========================= */
-            if(
-                attempt > 0
-            ){
+
+            if (attempt > 0) {
 
                 console.warn(
                     `SMARTOFFICE API RETRY ${attempt}/${maxAttempt}:`,
                     action
                 );
 
-
-                await smartofficeApiDelay(
-                    attempt
-                );
-
+                await smartofficeApiDelay(attempt);
             }
 
 
             /* =========================
                WAKTU ATTEMPT
             ========================= */
+
             const attemptStartTime =
                 performance.now();
 
@@ -185,43 +141,42 @@ export async function smartofficeApi(
             /* =========================
                BUILD FORM DATA
             ========================= */
+
             const formData =
                 new URLSearchParams();
-
 
             formData.append(
                 "action",
                 action
             );
 
+            Object.entries(data).forEach(
+                ([key, value]) => {
 
-            Object.entries(data)
-                .forEach(
-                    ([key,value]) => {
+                    formData.append(
+                        key,
+                        value ?? ""
+                    );
 
-                        formData.append(
-                            key,
-                            value ?? ""
-                        );
-
-                    }
-                );
+                }
+            );
 
 
             /* =========================
                ABORT CONTROLLER
             ========================= */
+
             const controller =
                 new AbortController();
 
 
             /* =========================
-               TIMEOUT BERDASARKAN ACTION
+               TIMEOUT
             ========================= */
+
             const requestTimeout =
                 SMARTOFFICE_API_TIMEOUTS[action] ||
                 SMARTOFFICE_API_TIMEOUT;
-
 
             console.log(
                 "SMARTOFFICE API TIMEOUT:",
@@ -229,33 +184,26 @@ export async function smartofficeApi(
                 `${requestTimeout / 1000}s`
             );
 
-
-            /* =========================
-               TIMEOUT
-            ========================= */
             const timeout =
-                setTimeout(
-                    () => {
+                setTimeout(() => {
 
-                        console.warn(
-                            "SMARTOFFICE API TIMEOUT:",
-                            action,
-                            `${requestTimeout / 1000}s`
-                        );
+                    console.warn(
+                        "SMARTOFFICE API TIMEOUT:",
+                        action,
+                        `${requestTimeout / 1000}s`
+                    );
 
+                    controller.abort();
 
-                        controller.abort();
-
-                    },
-                    requestTimeout
-                );
+                }, requestTimeout);
 
 
-            try{
+            try {
 
                 /* =========================
                    FETCH START
                 ========================= */
+
                 console.log(
                     "SMARTOFFICE API FETCH START:",
                     action
@@ -265,18 +213,14 @@ export async function smartofficeApi(
                 /* =========================
                    REQUEST
                 ========================= */
+
                 const response =
                     await fetch(
                         CONFIG.API_URL,
                         {
-                            method:
-                                "POST",
-
-                            body:
-                                formData,
-
-                            signal:
-                                controller.signal
+                            method: "POST",
+                            body: formData,
+                            signal: controller.signal
                         }
                     );
 
@@ -284,10 +228,10 @@ export async function smartofficeApi(
                 /* =========================
                    RESPONSE TIME
                 ========================= */
+
                 const responseTime =
                     performance.now() -
                     attemptStartTime;
-
 
                 console.log(
                     "SMARTOFFICE API RESPONSE:",
@@ -300,9 +244,8 @@ export async function smartofficeApi(
                 /* =========================
                    HTTP ERROR
                 ========================= */
-                if(
-                    !response.ok
-                ){
+
+                if (!response.ok) {
 
                     throw new Error(
                         `HTTP ${response.status}`
@@ -312,19 +255,16 @@ export async function smartofficeApi(
 
 
                 /* =========================
-                   JSON START
+                   JSON
                 ========================= */
+
                 const jsonStartTime =
                     performance.now();
-
 
                 const result =
                     await response.json();
 
 
-                /* =========================
-                   JSON TIME
-                ========================= */
                 const jsonTime =
                     performance.now() -
                     jsonStartTime;
@@ -333,10 +273,10 @@ export async function smartofficeApi(
                 /* =========================
                    TOTAL TIME
                 ========================= */
+
                 const totalTime =
                     performance.now() -
                     apiStartTime;
-
 
                 console.log(
                     "SMARTOFFICE API JSON:",
@@ -344,20 +284,17 @@ export async function smartofficeApi(
                     `${jsonTime.toFixed(0)} ms`
                 );
 
-
                 console.log(
                     "SMARTOFFICE API SUCCESS:",
                     action,
                     result
                 );
 
-
                 console.log(
                     "SMARTOFFICE API TOTAL:",
                     action,
                     `${totalTime.toFixed(0)} ms`
                 );
-
 
                 console.log(
                     "=================================================="
@@ -367,24 +304,20 @@ export async function smartofficeApi(
                 return result;
 
             }
-            finally{
+            finally {
 
-                /* =========================
-                   SELALU HAPUS TIMEOUT
-                ========================= */
-                clearTimeout(
-                    timeout
-                );
+                clearTimeout(timeout);
 
             }
 
 
         }
-        catch(error){
+        catch (error) {
 
             /* =========================
-               TOTAL WAKTU SAAT ERROR
+               TOTAL WAKTU ERROR
             ========================= */
+
             const errorTime =
                 performance.now() -
                 apiStartTime;
@@ -396,7 +329,6 @@ export async function smartofficeApi(
                 error
             );
 
-
             console.error(
                 "SMARTOFFICE API ERROR TIME:",
                 action,
@@ -407,40 +339,28 @@ export async function smartofficeApi(
             /* =========================
                MASIH ADA RETRY
             ========================= */
-            if(
-                attempt < maxAttempt
-            ){
 
+            if (attempt < maxAttempt) {
                 continue;
-
             }
 
 
             /* =========================
                SEMUA PERCOBAAN GAGAL
             ========================= */
+
             console.error(
                 "=================================================="
             );
 
 
             return {
-
-                success:
-                    false,
+                success: false,
 
                 message:
-                    error?.name ===
-                    "AbortError"
-
-                        ?
-
-                    "Server terlalu lama merespons."
-
-                        :
-
-                    "Tidak dapat terhubung ke server."
-
+                    error?.name === "AbortError"
+                        ? "Server terlalu lama merespons."
+                        : "Tidak dapat terhubung ke server."
             };
 
         }
