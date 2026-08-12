@@ -1,3 +1,8 @@
+import {
+    smartofficeStorageGet
+} from "./storage.js";
+
+
 /* ======================================================
    SMARTOFFICE ROUTER
 ====================================================== */
@@ -59,12 +64,13 @@ export async function smartofficeInitializeRouter(){
         window.location.hash;
 
 
-    /*
-    ======================================================
-    VERIFY CUTI
-    SEMENTARA DINONAKTIFKAN UNTUK TEST
-    ======================================================
+    /* ==================================================
+       VERIFY CUTI
+       SEMENTARA DINONAKTIFKAN
+       TETAP DISIMPAN
+    ================================================== */
 
+    /*
     if(
         hash.startsWith(
             "#verify-cuti"
@@ -97,16 +103,72 @@ export async function smartofficeInitializeRouter(){
             }
         );
 
-
         return;
 
     }
     */
 
 
-    /* =========================
-       DEFAULT
-    ========================= */
+    /* ==================================================
+       CEK SESSION LANGSUNG DARI STORAGE
+    ================================================== */
+
+    let session = null;
+
+    try {
+
+        session =
+            smartofficeStorageGet(
+                "smartoffice_session"
+            );
+
+    }
+    catch(error){
+
+        console.error(
+            "SMARTOFFICE SESSION ERROR:",
+            error
+        );
+
+    }
+
+
+    /* ==================================================
+       SESSION ADA
+    ================================================== */
+
+    if(
+        session
+    ){
+
+        console.log(
+            "SmartOffice Session ditemukan"
+        );
+
+        console.log(
+            "Langsung ke Dashboard"
+        );
+
+
+        await smartofficeNavigate(
+            "dashboard"
+        );
+
+
+        return;
+
+    }
+
+
+    /* ==================================================
+       SESSION TIDAK ADA
+    ================================================== */
+
+    console.log(
+        "SmartOffice Session tidak ditemukan"
+    );
+
+
     await smartofficeNavigate(
         "login"
     );
@@ -122,9 +184,7 @@ export async function smartofficeNavigate(
     params = {}
 ){
 
-    if(
-        !pageName
-    ){
+    if(!pageName){
         return;
     }
 
@@ -145,14 +205,10 @@ export async function smartofficeNavigate(
 
 
     const app =
-        document.getElementById(
-            "app"
-        );
+        document.getElementById("app");
 
 
-    if(
-        !app
-    ){
+    if(!app){
         return;
     }
 
@@ -165,19 +221,13 @@ export async function smartofficeNavigate(
        LOAD MODULE
     ========================= */
     const loader =
-        smartofficeModules[
-            pageName
-        ];
+        smartofficeModules[pageName];
 
 
-    if(
-        !loader
-    ){
-
+    if(!loader){
         throw new Error(
             `Halaman "${pageName}" tidak ditemukan`
         );
-
     }
 
 
@@ -186,37 +236,17 @@ export async function smartofficeNavigate(
 
 
     /* =========================
-       INIT PAGE
+       SET PAGE STATE
+       DILAKUKAN SEBELUM INIT
     ========================= */
-    const loadFunction =
-        module.smartofficeLoadPage ||
-        module.smartofficeLoadLoginPage ||
-        module.default;
+    smartofficeCurrentPage =
+        pageName;
 
 
-    if(
-        typeof loadFunction ===
-        "function"
-    ){
-
-        await loadFunction(
-            params
-        );
-
-    }
-
-
-    /* =========================
-       DESTROY FUNCTION
-    ========================= */
     smartofficeCurrentDestroy =
         module.smartofficeDestroyPage ||
         module.smartofficeDestroyLoginPage ||
         null;
-
-
-    smartofficeCurrentPage =
-        pageName;
 
 
     /* =========================
@@ -236,15 +266,42 @@ export async function smartofficeNavigate(
 
     history.pushState(
         {
-            page:
-                pageName,
-
-            params:
-                params
+            page: pageName,
+            params: params
         },
         "",
         hash
     );
+
+
+    /* =========================
+       INIT PAGE
+       TIDAK MEMBLOKIR NAVIGASI
+    ========================= */
+    const loadFunction =
+        module.smartofficeLoadPage ||
+        module.smartofficeLoadLoginPage ||
+        module.default;
+
+
+    if(
+        typeof loadFunction ===
+        "function"
+    ){
+
+        Promise.resolve(
+            loadFunction(params)
+        )
+        .catch(error => {
+
+            console.error(
+                `SMARTOFFICE PAGE ERROR [${pageName}]:`,
+                error
+            );
+
+        });
+
+    }
 
 }
 
