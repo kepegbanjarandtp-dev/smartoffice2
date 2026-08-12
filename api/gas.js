@@ -138,8 +138,8 @@ export default async function handler(
                     body:
                         formData,
 
-                    redirect:
-                        "follow"
+                    //redirect:
+                        //"follow"
                 }
             );
 
