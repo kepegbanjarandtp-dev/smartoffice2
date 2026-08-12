@@ -10,251 +10,276 @@ const GAS_API_URL =
 /* ======================================================
    VERCEL API HANDLER
 ====================================================== */
-export default async function handler(
-    req,
-    res
-){
 
-    /* ==================================================
-       METHOD
-    ================================================== */
-    if(
-        req.method !== "POST"
-    ){
+export default async function handler(req, res) {
 
+    if (req.method !== "POST") {
         return res.status(405).json({
-
             success: false,
-
-            message:
-                "Method tidak diizinkan"
-
+            message: "Method tidak diizinkan"
         });
-
     }
 
+    const start = Date.now();
 
-    /* ==================================================
-       REQUEST START
-    ================================================== */
-    const start =
-        Date.now();
-
-
-    console.log(
-        "SMARTOFFICE PROXY REQUEST"
-    );
-
-
-    try{
+    try {
 
         /* ==================================================
            BODY
         ================================================== */
 
-        let body =
-            req.body;
+        let body = req.body;
 
-
-        /* ==================================================
-           JIKA BODY STRING
-        ================================================== */
-        if(
-            typeof body === "string"
-        ){
-
-            const params =
-                new URLSearchParams(
-                    body
-                );
-
-            body =
-                Object.fromEntries(
-                    params.entries()
-                );
-
+        if (typeof body === "string") {
+            body = Object.fromEntries(
+                new URLSearchParams(body).entries()
+            );
         }
 
-
-        /* ==================================================
-           VALIDASI BODY
-        ================================================== */
-        if(
-            !body ||
-            typeof body !== "object"
-        ){
-
+        if (!body || typeof body !== "object") {
             return res.status(400).json({
-
                 success: false,
-
-                message:
-                    "Request body tidak valid"
-
+                message: "Request body tidak valid"
             });
-
         }
 
 
         /* ==================================================
            BUILD FORM DATA
         ================================================== */
-        const formData =
-            new URLSearchParams();
+
+        const formData = new URLSearchParams();
+
+        Object.entries(body).forEach(([key, value]) => {
+            formData.append(key, value ?? "");
+        });
 
 
-        Object.entries(body)
-            .forEach(
-                ([key,value]) => {
-
-                    formData.append(
-                        key,
-                        value ?? ""
-                    );
-
-                }
-            );
-
-
-        /* ==================================================
-           LOG ACTION
-        ================================================== */
         console.log(
-            "SMARTOFFICE PROXY ACTION:",
+            "SMARTOFFICE PROXY REQUEST:",
             body.action
         );
 
 
         /* ==================================================
            REQUEST KE GAS
+           JANGAN AUTO FOLLOW REDIRECT
         ================================================== */
-        const response =
-            await fetch(
-                GAS_API_URL,
-                {
-                    method:
-                        "POST",
 
-                    body:
-                        formData,
-
-                    //redirect:
-                        //"follow"
-                }
-            );
-
-
-        /* ==================================================
-           RESPONSE TIME
-        ================================================== */
-        const elapsed =
-            Date.now() -
-            start;
-
-
-        console.log(
-            "SMARTOFFICE PROXY GAS RESPONSE:",
-            response.status,
-            `${elapsed} ms`
+        const gasResponse = await fetch(
+            GAS_API_URL,
+            {
+                method: "POST",
+                body: formData,
+                redirect: "manual",
+                cache: "no-store"
+            }
         );
 
 
-        /* ==================================================
-           AMBIL TEXT
-        ================================================== */
-        const text =
-            await response.text();
-
-
-        /* ==================================================
-           HTTP ERROR
-        ================================================== */
-        if(
-            !response.ok
-        ){
-
-            console.error(
-                "SMARTOFFICE PROXY GAS ERROR:",
-                response.status,
-                text
-            );
-
-
-            return res.status(
-                response.status
-            ).json({
-
-                success:
-                    false,
-
-                message:
-                    `GAS HTTP ${response.status}`,
-
-                data:
-                    {}
-
-            });
-
-        }
-
-
-        /* ==================================================
-           PARSE JSON
-        ================================================== */
-        let result;
-
-        try{
-
-            result =
-                JSON.parse(
-                    text
-                );
-
-        }
-        catch(error){
-
-            console.error(
-                "SMARTOFFICE PROXY INVALID JSON:",
-                text
-            );
-
-
-            return res.status(502).json({
-
-                success:
-                    false,
-
-                message:
-                    "Response GAS bukan JSON",
-
-                data:
-                    {}
-
-            });
-
-        }
-
-
-        /* ==================================================
-           SUCCESS
-        ================================================== */
         console.log(
-            "SMARTOFFICE PROXY SUCCESS:",
-            body.action,
+            "SMARTOFFICE GAS STATUS:",
+            gasResponse.status,
             `${Date.now() - start} ms`
         );
 
 
-        return res.status(200).json(
-            result
-        );
+        /* ==================================================
+           CEK REDIRECT GAS
+        ================================================== */
 
-    }
-    catch(error){
+        if (
+            gasResponse.status >= 300 &&
+            gasResponse.status < 400
+        ) {
+
+            const location =
+                gasResponse.headers.get("location");
+
+
+            console.log(
+                "SMARTOFFICE GAS REDIRECT:",
+                location
+            );
+
+
+            if (!location) {
+
+                return res.status(502).json({
+                    success: false,
+                    message:
+                        "GAS mengirim redirect tanpa lokasi",
+                    data: {}
+                });
+
+            }
+
+
+            /* ==============================================
+               AMBIL RESPONSE DARI GOOGLE REDIRECT
+            ============================================== */
+
+            const redirectResponse =
+                await fetch(
+                    location,
+                    {
+                        method: "GET",
+                        redirect: "manual",
+                        cache: "no-store"
+                    }
+                );
+
+
+            console.log(
+                "SMARTOFFICE REDIRECT STATUS:",
+                redirectResponse.status,
+                `${Date.now() - start} ms`
+            );
+
+
+            const text =
+                await redirectResponse.text();
+
+
+            if (!redirectResponse.ok) {
+
+                console.error(
+                    "SMARTOFFICE REDIRECT ERROR:",
+                    redirectResponse.status,
+                    text
+                );
+
+                return res.status(502).json({
+                    success: false,
+                    message:
+                        `Response Google ${redirectResponse.status}`,
+                    data: {}
+                });
+
+            }
+
+
+            /* ==============================================
+               PARSE JSON
+            ============================================== */
+
+            let result;
+
+            try {
+
+                result =
+                    JSON.parse(text);
+
+            } catch (error) {
+
+                console.error(
+                    "SMARTOFFICE INVALID JSON:",
+                    text
+                );
+
+                return res.status(502).json({
+                    success: false,
+                    message:
+                        "Response GAS bukan JSON",
+                    data: {}
+                });
+
+            }
+
+
+            console.log(
+                "SMARTOFFICE PROXY SUCCESS:",
+                body.action,
+                `${Date.now() - start} ms`
+            );
+
+
+            res.setHeader(
+                "Cache-Control",
+                "no-store, no-cache, must-revalidate"
+            );
+
+
+            return res.status(200).json(result);
+
+        }
+
 
         /* ==================================================
-           ERROR
+           JIKA GAS LANGSUNG 200
         ================================================== */
+
+        if (gasResponse.ok) {
+
+            const text =
+                await gasResponse.text();
+
+            let result;
+
+            try {
+
+                result =
+                    JSON.parse(text);
+
+            } catch (error) {
+
+                console.error(
+                    "SMARTOFFICE DIRECT INVALID JSON:",
+                    text
+                );
+
+                return res.status(502).json({
+                    success: false,
+                    message:
+                        "Response GAS bukan JSON",
+                    data: {}
+                });
+
+            }
+
+
+            console.log(
+                "SMARTOFFICE PROXY DIRECT SUCCESS:",
+                body.action,
+                `${Date.now() - start} ms`
+            );
+
+
+            res.setHeader(
+                "Cache-Control",
+                "no-store, no-cache, must-revalidate"
+            );
+
+
+            return res.status(200).json(result);
+
+        }
+
+
+        /* ==================================================
+           GAS HTTP ERROR
+        ================================================== */
+
+        const errorText =
+            await gasResponse.text();
+
+        console.error(
+            "SMARTOFFICE GAS ERROR:",
+            gasResponse.status,
+            errorText
+        );
+
+
+        return res.status(502).json({
+            success: false,
+            message:
+                `GAS HTTP ${gasResponse.status}`,
+            data: {}
+        });
+
+
+    } catch (error) {
+
         console.error(
             "SMARTOFFICE PROXY ERROR:",
             error
@@ -262,16 +287,10 @@ export default async function handler(
 
 
         return res.status(500).json({
-
-            success:
-                false,
-
+            success: false,
             message:
                 "Proxy gagal menghubungi server GAS",
-
-            data:
-                {}
-
+            data: {}
         });
 
     }
