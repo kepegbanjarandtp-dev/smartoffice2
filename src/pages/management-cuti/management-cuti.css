@@ -10,7 +10,6 @@
 /* ======================================================
    MANAGEMENT CUTI - MODAL PROFILE
 ====================================================== */
-
 .smartoffice-management-cuti-modal-profile{
     display:flex;
     flex-direction:column;
@@ -22,14 +21,12 @@
 /* ======================================================
    PROFILE INFO
 ====================================================== */
-
 .smartoffice-management-cuti-modal-profile-info{
     display:flex;
     flex-direction:column;
     align-items:flex-start;
     gap:0;
 }
-
 
 .smartoffice-management-cuti-modal-profile-info h4{
     margin:0;
@@ -38,7 +35,6 @@
     line-height:1.25;
     color:#0f172a;
 }
-
 
 .smartoffice-management-cuti-modal-profile-info small{
     display:block;
@@ -70,12 +66,10 @@
     color:#f97316;
 }
 
-
 .smartoffice-management-cuti-modal-status.approved{
     background:rgba(34,197,94,.12);
     color:#16a34a;
 }
-
 
 .smartoffice-management-cuti-modal-status.rejected{
     background:rgba(239,68,68,.12);
@@ -280,7 +274,6 @@
     transform:
       translateY(8px);
   }
-
   to{
     opacity:1;
     transform:
@@ -448,11 +441,8 @@ MANAGEMENT RIWAYAT CARD-CONTENT
     border-radius:12px;
     padding:0 10px;
     font-size:13px;
-
     color:#0f172a;
-
     background:#f8fafc;
-
     outline:none;
 }
 
@@ -795,9 +785,7 @@ MANAGEMENT RIWAYAT CARD-CONTENT
     padding:8px 6px;
     gap:2px;
     min-width:0;
-
     width:100%;
-
     box-sizing:border-box;
     display:flex;
     flex-direction:column;
@@ -879,7 +867,6 @@ MANAGEMENT RIWAYAT CARD-CONTENT
   /* =========================
        BUTTON
   ========================= */
-
   .smartoffice-management-filter-button,
   .smartoffice-management-reset-button,
   .smartoffice-management-print-button{
@@ -965,7 +952,6 @@ MANAGEMENT RIWAYAT CARD-CONTENT
   /* =========================
    SUMMARY RIWAYAT
   ========================= */
-
   .smartoffice-management-riwayat-summary{
     display:flex;
     flex-direction:column;

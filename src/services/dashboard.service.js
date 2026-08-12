@@ -39,5 +39,4 @@ export async function smartofficeGetTotalPendingApproval(
        RETURN TOTAL
     ========================= */
     return response.data;
-
 }

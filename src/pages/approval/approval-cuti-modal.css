@@ -36,26 +36,19 @@
 .smartoffice-approval-detail-content{
     width:100%;
     max-width:880px;
-
     display:flex;
     flex-direction:column;
-
     max-height:90vh;
-
     background:#fff;
     border-radius:28px;
     overflow:hidden;
-
     box-shadow:
         0 24px 70px rgba(15,23,42,.14),
         0 8px 24px rgba(15,23,42,.08);
-
     opacity:0;
-
     transform:
         translateY(20px)
         scale(.97);
-
     transition:
         opacity .28s ease,
         transform .28s cubic-bezier(.22,.61,.36,1);

@@ -413,10 +413,12 @@ function smartofficeInitDashboardMenu(){
             "click",
             async function(){
 
+                console.log(
+                "DOKUMEN SAYA DIKLIK");
+
                 await smartofficeNavigate(
                     "dokumen-saya"
                 );
-
             }
         );
 

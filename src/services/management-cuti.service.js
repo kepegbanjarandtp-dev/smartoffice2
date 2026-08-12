@@ -19,7 +19,6 @@ export async function smartofficeGetRekapPegawai(){
     }
 
     return response.data;
-
 }
 
 /* ======================================================
@@ -39,7 +38,6 @@ export async function smartofficeGetAllRiwayatCuti(){
     }
 
     return response.data;
-
 }
 
 /* ======================================================

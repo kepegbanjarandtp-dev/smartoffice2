@@ -11,7 +11,6 @@ import {
 export async function smartofficeGetApprovalCuti(
     nip
 ){
-
     const result =
         await smartofficeApi(
             "smartofficeGetApprovalCuti",
@@ -27,7 +26,6 @@ export async function smartofficeGetApprovalCuti(
     }
 
     return result.data;
-
 }
 
 /* ================================================================================
@@ -39,7 +37,6 @@ export async function smartofficeProcessApprovalCuti(
     nip,
     catatan
 ){
-
     const result =
         await smartofficeApi(
             "smartofficeProcessApprovalCuti",
@@ -58,5 +55,4 @@ export async function smartofficeProcessApprovalCuti(
     }
 
     return result;
-
 }

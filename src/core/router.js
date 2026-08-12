@@ -10,7 +10,7 @@ let smartofficeCurrentDestroy =
 const smartofficePageCache =
     new Map();
 
-    
+
 /* ======================================================
    PAGE MODULES
 ====================================================== */
@@ -31,8 +31,10 @@ const smartofficeModules = {
     "management-cuti": () =>
         import("../pages/management-cuti/management-cuti.js"),
 
+    /*
     "verify-cuti": () =>
         import("../pages/verify-cuti/verify-cuti.js"),
+    */
 
     "buku-tamu": () =>
         import("../pages/buku-tamu/buku-tamu.js"),
@@ -40,18 +42,6 @@ const smartofficeModules = {
     "dokumen-saya": () =>
         import("../pages/dokumen-saya/dokumen-saya.js"),
 
-    //smartspdBlud: () =>
-    //    import("../pages/smartspd-blud/smartspd-blud.js"),
-
-    //dokumenSaya: () =>
-    //    import("../pages/dokumen-saya/dokumen-saya.js"),
-
-    //arsipKepegawaian: () =>
-    //    import("../pages/arsip-kepegawaian/arsip-kepegawaian.js"),
-
-    
-
-    
 };
 
 
@@ -64,32 +54,40 @@ export async function smartofficeInitializeRouter(){
         "SmartOffice Router Ready"
     );
 
+
     const hash =
         window.location.hash;
 
-    /* =========================
-       VERIFY CUTI
-       PUBLIC PAGE
-    ========================= */
+
+    /*
+    ======================================================
+    VERIFY CUTI
+    SEMENTARA DINONAKTIFKAN UNTUK TEST
+    ======================================================
+
     if(
         hash.startsWith(
             "#verify-cuti"
         )
     ){
+
         const queryString =
             hash.includes("?")
                 ? hash.split("?")[1]
                 : "";
+
 
         const urlParams =
             new URLSearchParams(
                 queryString
             );
 
+
         const idCuti =
             urlParams.get(
                 "idCuti"
             );
+
 
         await smartofficeNavigate(
             "verify-cuti",
@@ -99,8 +97,12 @@ export async function smartofficeInitializeRouter(){
             }
         );
 
+
         return;
+
     }
+    */
+
 
     /* =========================
        DEFAULT
@@ -108,6 +110,7 @@ export async function smartofficeInitializeRouter(){
     await smartofficeNavigate(
         "login"
     );
+
 }
 
 
@@ -118,16 +121,19 @@ export async function smartofficeNavigate(
     pageName,
     params = {}
 ){
+
     if(
         !pageName
     ){
         return;
     }
 
+
     /* =========================
        DESTROY CURRENT PAGE
     ========================= */
     await smartofficeDestroyCurrentPage();
+
 
     /* =========================
        LOAD HTML
@@ -137,17 +143,23 @@ export async function smartofficeNavigate(
             pageName
         );
 
+
     const app =
         document.getElementById(
             "app"
         );
+
+
     if(
         !app
     ){
         return;
     }
+
+
     app.innerHTML =
         html;
+
 
     /* =========================
        LOAD MODULE
@@ -156,16 +168,22 @@ export async function smartofficeNavigate(
         smartofficeModules[
             pageName
         ];
+
+
     if(
         !loader
     ){
+
         throw new Error(
             `Halaman "${pageName}" tidak ditemukan`
         );
+
     }
+
 
     const module =
         await loader();
+
 
     /* =========================
        INIT PAGE
@@ -175,14 +193,18 @@ export async function smartofficeNavigate(
         module.smartofficeLoadLoginPage ||
         module.default;
 
+
     if(
         typeof loadFunction ===
         "function"
-    ){        
+    ){
+
         await loadFunction(
             params
         );
+
     }
+
 
     /* =========================
        DESTROY FUNCTION
@@ -192,8 +214,10 @@ export async function smartofficeNavigate(
         module.smartofficeDestroyLoginPage ||
         null;
 
+
     smartofficeCurrentPage =
         pageName;
+
 
     /* =========================
        URL
@@ -203,21 +227,25 @@ export async function smartofficeNavigate(
             params
         ).toString();
 
+
     const hash =
         query
             ? `#${pageName}?${query}`
             : `#${pageName}`;
 
+
     history.pushState(
         {
             page:
                 pageName,
+
             params:
                 params
         },
         "",
         hash
     );
+
 }
 
 
@@ -225,15 +253,20 @@ export async function smartofficeNavigate(
    DESTROY CURRENT PAGE
 ====================================================== */
 export async function smartofficeDestroyCurrentPage(){
+
     if(
         typeof smartofficeCurrentDestroy ===
         "function"
     ){
+
         await smartofficeCurrentDestroy();
+
     }
+
 
     smartofficeCurrentDestroy =
         null;
+
 }
 
 
@@ -243,30 +276,38 @@ export async function smartofficeDestroyCurrentPage(){
 async function smartofficeGetPageHtml(
     pageName
 ){
+
     if(
         smartofficePageCache.has(
             pageName
         )
     ){
+
         return smartofficePageCache.get(
             pageName
         );
+
     }
+
 
     const response =
         await fetch(
             `/pages/${pageName}/${pageName}.html`
         );
 
+
     const html =
         await response.text();
+
 
     smartofficePageCache.set(
         pageName,
         html
     );
 
+
     return html;
+
 }
 
 

@@ -431,9 +431,7 @@ function smartofficeRenderRekapPegawai(
                                 Sisa Cuti Tahunan
                             </span>
                         </div>
-
                     </div>
-
                 </div>
 
                 <!-- STATUS -->
@@ -1513,9 +1511,7 @@ function smartofficeOpenManagementCutiDetail(
         smartoffice-cuti-riwayat-modal-item
         full-width
         ">
-
         <label>Keperluan</label>
-
         <span>
         ${item.keperluan || '-'}
         </span>
@@ -1528,9 +1524,7 @@ function smartofficeOpenManagementCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>Alamat Selama Menjalani Cuti</label>
-
       <span>
         ${item.alamatSaatCuti || '-'}
       </span>
@@ -1709,7 +1703,6 @@ function smartofficeOpenManagementCutiDetail(
             <span>
               Lihat PDF
             </span>
-
           </button>
           `
 
@@ -1729,7 +1722,6 @@ function smartofficeOpenManagementCutiDetail(
         smartoffice-cuti-riwayat-modal-item
         full-width
     ">
-
         <label>Approval 1 - PJKM</label>
 
         <div class="
@@ -1764,7 +1756,6 @@ function smartofficeOpenManagementCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         Approval 2 - Kepala Puskesmas
       </label>

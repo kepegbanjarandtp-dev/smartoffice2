@@ -38,7 +38,6 @@ export async function smartofficeLoadPage(){
     /* =========================
        VALIDASI ID
     ========================= */
-
     if(
         !idCuti
     ){
@@ -97,7 +96,6 @@ export async function smartofficeLoadPage(){
         );
     }
     catch(error){
-
         smartofficeRenderVerifyCutiError(
             "Tidak dapat memverifikasi dokumen."
         );
@@ -124,7 +122,6 @@ function smartofficeRenderVerifyCuti(
     }
 
     container.innerHTML = `
-
         <div class="smartoffice-verify-cuti-page">
             <div class="smartoffice-verify-cuti-card">
                 <div
@@ -160,12 +157,10 @@ function smartofficeRenderVerifyCuti(
                         smartoffice-verify-cuti-subtitle
                     "
                 >
-
                     Dokumen Smart Office
                     berhasil diverifikasi
                     dan tercatat resmi
                     dalam sistem.
-
                 </div>
 
                 <!-- =========================
@@ -383,7 +378,6 @@ function smartofficeRenderVerifyCuti(
                     </div>
                 </div>
 
-
                 <!-- =========================
                     DISETUJUI
                 ========================= -->
@@ -426,9 +420,7 @@ function smartofficeRenderVerifyCuti(
                         smartoffice-verify-cuti-footer
                     "
                 >
-
                     Smart Office System<br>
-
                     Dokumen dipindai pada:
                     ${smartofficeFormatTanggalIndoJamFrontend(
                         new Date()
@@ -436,7 +428,6 @@ function smartofficeRenderVerifyCuti(
                 </div>
             </div>
         </div>
-
     `;
 }
 
@@ -458,19 +449,16 @@ function smartofficeRenderVerifyCutiLoading(){
     }
 
     container.innerHTML = `
-
         <div
             class="
                 smartoffice-verify-cuti-loading-page
             "
         >
-
             <div
                 class="
                     smartoffice-verify-cuti-loading-card
                 "
             >
-
                 <div
                     class="
                         smartoffice-verify-cuti-spinner
@@ -492,11 +480,8 @@ function smartofficeRenderVerifyCutiLoading(){
                 >
                     Mohon tunggu sebentar...
                 </div>
-
             </div>
-
         </div>
-
     `;
 }
 
