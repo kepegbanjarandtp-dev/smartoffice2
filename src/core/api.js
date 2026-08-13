@@ -1,92 +1,88 @@
 /* ======================================================
-   SMART OFFICE API
+   SMARTOFFICE API
 ====================================================== */
 
-import { CONFIG } from "./config.js";
+import { CONFIG }
+from "./config.js";
 
 
-/* ======================================================
-   REQUEST API
-====================================================== */
-async function smartofficeRequest(
-    action,
-    data = {}
-){
-
-    console.log(
-        "START REQUEST",
-        action
-    );
-
-
-    const body =
-        new URLSearchParams();
-
-
-    body.append(
-        "action",
-        action
-    );
-
-
-    Object.entries(data).forEach(
-        ([key, value]) => {
-
-            body.append(
-                key,
-                value ?? ""
-            );
-
-        }
-    );
-
-
-    console.log(
-        "BEFORE FETCH"
-    );
-
-
-    const response =
-        await fetch(
-            CONFIG.API_URL,
-            {
-                method: "POST",
-                body
-            }
-        );
-
-
-    console.log(
-        "AFTER FETCH",
-        response.status
-    );
-
-
-    const text =
-        await response.text();
-
-
-    console.log(
-        "RAW RESPONSE",
-        text
-    );
-
-
-    return JSON.parse(text);
-}
-
-
-/* ======================================================
-   GENERIC API
-====================================================== */
 export async function smartofficeApi(
     action,
     data = {}
 ){
 
-    return await smartofficeRequest(
-        action,
-        data
-    );
+    try{
+
+        /* =========================
+           BUILD FORM DATA
+        ========================= */
+
+        const formData =
+            new URLSearchParams();
+
+        formData.append(
+            "action",
+            action
+        );
+
+
+        Object.entries(data)
+            .forEach(
+                ([key, value]) => {
+
+                    formData.append(
+                        key,
+                        value ?? ""
+                    );
+
+                }
+            );
+
+
+        /* =========================
+           REQUEST
+        ========================= */
+        console.time("SMARTOFFICE FETCH");
+
+        const response =
+            await fetch(
+                CONFIG.API_URL,
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+            
+        console.timeEnd("SMARTOFFICE FETCH");
+
+        /* =========================
+           RESPONSE
+        ========================= */
+
+        const result =
+            await response.json();
+
+
+        return result;
+
+    }
+    catch(error){
+
+        console.error(
+            "SMARTOFFICE API ERROR",
+            error
+        );
+
+
+        return {
+
+            success: false,
+
+            message:
+                "Tidak dapat terhubung ke server."
+
+        };
+
+    }
 
 }

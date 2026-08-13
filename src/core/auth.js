@@ -5,7 +5,7 @@ import {
     smartofficeSaveSession,
     smartofficeGetSession,
     smartofficeClearSession,
-    smartofficeIsLogin
+    smartofficeCheckSession
 }
 from "./session.js";
 

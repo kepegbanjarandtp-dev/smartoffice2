@@ -192,12 +192,14 @@ export async function smartofficeNavigate(
     /* =========================
        DESTROY CURRENT PAGE
     ========================= */
+
     await smartofficeDestroyCurrentPage();
 
 
     /* =========================
        LOAD HTML
     ========================= */
+
     const html =
         await smartofficeGetPageHtml(
             pageName
@@ -205,7 +207,9 @@ export async function smartofficeNavigate(
 
 
     const app =
-        document.getElementById("app");
+        document.getElementById(
+            "app"
+        );
 
 
     if(!app){
@@ -220,14 +224,19 @@ export async function smartofficeNavigate(
     /* =========================
        LOAD MODULE
     ========================= */
+
     const loader =
-        smartofficeModules[pageName];
+        smartofficeModules[
+            pageName
+        ];
 
 
     if(!loader){
+
         throw new Error(
             `Halaman "${pageName}" tidak ditemukan`
         );
+
     }
 
 
@@ -236,12 +245,30 @@ export async function smartofficeNavigate(
 
 
     /* =========================
-       SET PAGE STATE
-       DILAKUKAN SEBELUM INIT
+       INIT PAGE
     ========================= */
-    smartofficeCurrentPage =
-        pageName;
 
+    const loadFunction =
+        module.smartofficeLoadPage ||
+        module.smartofficeLoadLoginPage ||
+        module.default;
+
+
+    if(
+        typeof loadFunction ===
+        "function"
+    ){
+
+        await loadFunction(
+            params
+        );
+
+    }
+
+
+    /* =========================
+       DESTROY FUNCTION
+    ========================= */
 
     smartofficeCurrentDestroy =
         module.smartofficeDestroyPage ||
@@ -249,9 +276,14 @@ export async function smartofficeNavigate(
         null;
 
 
+    smartofficeCurrentPage =
+        pageName;
+
+
     /* =========================
        URL
     ========================= */
+
     const query =
         new URLSearchParams(
             params
@@ -272,36 +304,6 @@ export async function smartofficeNavigate(
         "",
         hash
     );
-
-
-    /* =========================
-       INIT PAGE
-       TIDAK MEMBLOKIR NAVIGASI
-    ========================= */
-    const loadFunction =
-        module.smartofficeLoadPage ||
-        module.smartofficeLoadLoginPage ||
-        module.default;
-
-
-    if(
-        typeof loadFunction ===
-        "function"
-    ){
-
-        Promise.resolve(
-            loadFunction(params)
-        )
-        .catch(error => {
-
-            console.error(
-                `SMARTOFFICE PAGE ERROR [${pageName}]:`,
-                error
-            );
-
-        });
-
-    }
 
 }
 
