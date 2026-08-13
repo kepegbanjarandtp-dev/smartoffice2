@@ -1,6 +1,11 @@
 import {
-    smartofficeStorageGet
+    smartofficeStorageGet,
+    smartofficeStorageRemove
 } from "./storage.js";
+
+import {
+    smartofficeAbortAllRequests
+} from "./api.js";
 
 
 /* ======================================================
@@ -14,6 +19,9 @@ let smartofficeCurrentDestroy =
 
 const smartofficePageCache =
     new Map();
+
+let smartofficeIsNavigating =
+    false;
 
 
 /* ======================================================
@@ -59,11 +67,6 @@ export async function smartofficeInitializeRouter(){
         "SmartOffice Router Ready"
     );
 
-
-    const hash =
-        window.location.hash;
-
-
     /* ==================================================
        VERIFY CUTI
        SEMENTARA DINONAKTIFKAN
@@ -71,6 +74,9 @@ export async function smartofficeInitializeRouter(){
     ================================================== */
 
     /*
+    const hash =
+        window.location.hash;
+
     if(
         hash.startsWith(
             "#verify-cuti"
@@ -110,68 +116,89 @@ export async function smartofficeInitializeRouter(){
 
 
     /* ==================================================
-       CEK SESSION LANGSUNG DARI STORAGE
+       RESET SESSION SETIAP REFRESH
     ================================================== */
-
-    let session = null;
-
-    try {
-
-        session =
-            smartofficeStorageGet(
-                "smartoffice_session"
-            );
-
-    }
-    catch(error){
-
-        console.error(
-            "SMARTOFFICE SESSION ERROR:",
-            error
-        );
-
-    }
-
-
-    /* ==================================================
-       SESSION ADA
-    ================================================== */
-
-    if(
-        session
-    ){
-
-        console.log(
-            "SmartOffice Session ditemukan"
-        );
-
-        console.log(
-            "Langsung ke Dashboard"
-        );
-
-
-        await smartofficeNavigate(
-            "dashboard"
-        );
-
-
-        return;
-
-    }
-
-
-    /* ==================================================
-       SESSION TIDAK ADA
-    ================================================== */
-
-    console.log(
-        "SmartOffice Session tidak ditemukan"
+    smartofficeStorageRemove(
+        "smartoffice_session"
     );
 
+    console.log(
+        "SmartOffice Session dihapus karena refresh"
+    );
 
+    /* ==================================================
+       DENGARKAN TOMBOL BACK/FORWARD BROWSER
+    ================================================== */
+    window.addEventListener(
+        "popstate",
+        smartofficeHandlePopState
+    );
+
+    /* ==================================================
+       LANGSUNG KE LOGIN
+    ================================================== */
     await smartofficeNavigate(
         "login"
     );
+}
+
+
+/* ======================================================
+   HANDLE POPSTATE (TOMBOL BACK/FORWARD)
+====================================================== */
+async function smartofficeHandlePopState(
+    event
+){
+
+    const state =
+        event.state;
+
+    if(
+        state &&
+        state.page
+    ){
+
+        await smartofficeNavigate(
+            state.page,
+            state.params || {},
+            {
+                pushState: false
+            }
+        );
+
+    }
+    else{
+
+        /* =========================
+           FALLBACK KALAU STATE
+           KOSONG (MISAL LOAD AWAL)
+        ========================= */
+
+        const hash =
+            window.location.hash
+                .replace("#", "");
+
+        const [pageName, queryString] =
+            hash.split("?");
+
+        const params =
+            queryString
+                ? Object.fromEntries(
+                    new URLSearchParams(
+                        queryString
+                    )
+                )
+                : {};
+
+        await smartofficeNavigate(
+            pageName || "login",
+            params,
+            {
+                pushState: false
+            }
+        );
+
+    }
 
 }
 
@@ -181,55 +208,91 @@ export async function smartofficeInitializeRouter(){
 ====================================================== */
 export async function smartofficeNavigate(
     pageName,
-    params = {}
+    params = {},
+    options = {}
 ){
 
     if(!pageName){
         return;
     }
 
+    const {
+        pushState = true
+    } = options;
 
-    /* =========================
+
+    /* ==================================================
+       ABORT SEMUA REQUEST LAMA
+       REQUEST HALAMAN SEBELUMNYA TIDAK BOLEH
+       MENGHALANGI NAVIGASI HALAMAN BARU
+    ================================================== */
+
+    smartofficeAbortAllRequests();
+
+
+    /* ==================================================
        DESTROY CURRENT PAGE
-    ========================= */
+    ================================================== */
 
     await smartofficeDestroyCurrentPage();
 
 
-    /* =========================
+    /* ==================================================
        LOAD HTML
-    ========================= */
-
-    const html =
-        await smartofficeGetPageHtml(
-            pageName
-        );
-
+    ================================================== */
 
     const app =
         document.getElementById(
             "app"
         );
 
-
     if(!app){
         return;
     }
 
+    let html;
+
+    try{
+
+        html =
+            await smartofficeGetPageHtml(
+                pageName
+            );
+
+    }
+    catch(error){
+
+        console.error(
+            "SMARTOFFICE GAGAL MEMUAT HALAMAN:",
+            pageName,
+            error
+        );
+
+        app.innerHTML =
+            smartofficeGetErrorHtml(
+                pageName
+            );
+
+        return;
+    }
+
+
+    /* ==================================================
+       RENDER HTML
+    ================================================== */
 
     app.innerHTML =
         html;
 
 
-    /* =========================
+    /* ==================================================
        LOAD MODULE
-    ========================= */
+    ================================================== */
 
     const loader =
         smartofficeModules[
             pageName
         ];
-
 
     if(!loader){
 
@@ -244,15 +307,14 @@ export async function smartofficeNavigate(
         await loader();
 
 
-    /* =========================
+    /* ==================================================
        INIT PAGE
-    ========================= */
+    ================================================== */
 
     const loadFunction =
         module.smartofficeLoadPage ||
         module.smartofficeLoadLoginPage ||
         module.default;
-
 
     if(
         typeof loadFunction ===
@@ -266,44 +328,48 @@ export async function smartofficeNavigate(
     }
 
 
-    /* =========================
+    /* ==================================================
        DESTROY FUNCTION
-    ========================= */
+    ================================================== */
 
     smartofficeCurrentDestroy =
         module.smartofficeDestroyPage ||
         module.smartofficeDestroyLoginPage ||
         null;
 
-
     smartofficeCurrentPage =
         pageName;
 
 
-    /* =========================
+    /* ==================================================
        URL
-    ========================= */
+    ================================================== */
 
-    const query =
-        new URLSearchParams(
-            params
-        ).toString();
+    if(pushState){
 
+        const query =
+            new URLSearchParams(
+                params
+            ).toString();
 
-    const hash =
-        query
-            ? `#${pageName}?${query}`
-            : `#${pageName}`;
+        const hash =
+            query
+                ? `#${pageName}?${query}`
+                : `#${pageName}`;
 
+        history.pushState(
+            {
+                page:
+                    pageName,
 
-    history.pushState(
-        {
-            page: pageName,
-            params: params
-        },
-        "",
-        hash
-    );
+                params:
+                    params
+            },
+            "",
+            hash
+        );
+
+    }
 
 }
 
@@ -312,20 +378,15 @@ export async function smartofficeNavigate(
    DESTROY CURRENT PAGE
 ====================================================== */
 export async function smartofficeDestroyCurrentPage(){
-
     if(
         typeof smartofficeCurrentDestroy ===
         "function"
     ){
-
         await smartofficeCurrentDestroy();
-
     }
-
 
     smartofficeCurrentDestroy =
         null;
-
 }
 
 
@@ -335,37 +396,69 @@ export async function smartofficeDestroyCurrentPage(){
 async function smartofficeGetPageHtml(
     pageName
 ){
-
     if(
         smartofficePageCache.has(
             pageName
         )
     ){
-
         return smartofficePageCache.get(
             pageName
         );
-
     }
-
 
     const response =
         await fetch(
             `/pages/${pageName}/${pageName}.html`
         );
 
+    /* =========================
+       JANGAN CACHE KALAU GAGAL
+       (404, 500, DLL)
+    ========================= */
+
+    if(!response.ok){
+
+        throw new Error(
+            `Gagal memuat halaman "${pageName}" (status ${response.status})`
+        );
+
+    }
 
     const html =
         await response.text();
-
 
     smartofficePageCache.set(
         pageName,
         html
     );
 
-
     return html;
+}
+
+
+/* ======================================================
+   ERROR HTML (FALLBACK UI)
+====================================================== */
+function smartofficeGetErrorHtml(
+    pageName
+){
+
+    return `
+        <div style="padding: 40px; text-align: center;">
+            <p style="font-weight: bold; margin-bottom: 8px;">
+                Gagal memuat halaman "${pageName}"
+            </p>
+            <p style="margin-bottom: 16px; color: #666;">
+                Periksa koneksi internet kamu, lalu coba lagi.
+            </p>
+            <button
+                onclick="window.smartofficeLoadPage('${pageName}')"
+                style="padding: 8px 16px; cursor: pointer;"
+            >
+                Coba Lagi
+            </button>
+        </div>
+    `;
 
 }
 

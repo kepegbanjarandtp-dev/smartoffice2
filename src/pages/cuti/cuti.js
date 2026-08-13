@@ -74,6 +74,8 @@ import {
 let smartofficePegawaiCache = [];
 let smartofficeSubmitting = false;
 let smartofficeLampiranFile = null;
+let smartofficeCutiAutoHitungHandler =
+    null;
 
 /* ======================================================
    MEMORY
@@ -156,6 +158,24 @@ export async function smartofficeLoadPage(){
 ====================================================== */
 export async function smartofficeDestroyPage(){
 
+    /* =========================
+       REMOVE AUTO HITUNG LISTENER
+    ========================= */
+
+    if(
+        smartofficeCutiAutoHitungHandler
+    ){
+
+        document.removeEventListener(
+            "change",
+            smartofficeCutiAutoHitungHandler
+        );
+
+        smartofficeCutiAutoHitungHandler =
+            null;
+
+    }
+    
     /* RESET CACHE */
     smartofficePegawaiCache = [];
     smartofficeRiwayatCutiCache = null;
@@ -781,9 +801,23 @@ function smartofficeRenderRiwayatCuti(){
 ====================================================== */
 export function smartofficeInitAutoHitungCuti(){
 
-    document.addEventListener(
-        "change",
+    /* =========================
+       PREVENT DUPLICATE LISTENER
+    ========================= */
 
+    if(
+        smartofficeCutiAutoHitungHandler
+    ){
+
+        document.removeEventListener(
+            "change",
+            smartofficeCutiAutoHitungHandler
+        );
+
+    }
+
+
+    smartofficeCutiAutoHitungHandler =
         async function(event){
 
             /* HANYA JIKA TANGGAL BERUBAH */
@@ -1079,8 +1113,13 @@ export function smartofficeInitAutoHitungCuti(){
                     "error"
                 );
             }
-        }
+        };
+
+    document.addEventListener(
+        "change",
+        smartofficeCutiAutoHitungHandler
     );
+
 }
 
 /* ======================================================

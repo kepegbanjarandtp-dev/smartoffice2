@@ -142,17 +142,6 @@ async function smartofficeLoadBukuTamu(){
                             item.ttdUrl
                         );
 
-                    console.log(
-            "BUKU TAMU MEDIA:",
-            {
-                nama: item.nama,
-                fotoUrl: item.fotoUrl,
-                ttdUrl: item.ttdUrl,
-                foto: item.foto,
-                ttd: item.ttd
-            }
-        );
-
                     return item;
                 }
             );
@@ -185,6 +174,17 @@ async function smartofficeLoadBukuTamu(){
         smartofficeFilterBukuTamu();
     }
     catch(error){
+        /* =========================
+           REQUEST DIBATALKAN
+           KARENA PINDAH HALAMAN
+        ========================= */
+        if(
+            error?.message ===
+            "Request dibatalkan."
+        ){
+            return;
+        }
+
         console.error(
             "BUKU TAMU ERROR:",
             error
@@ -1642,14 +1642,23 @@ export async function smartofficePrintBukuTamu(){
 /* ======================================================
    DESTROY PAGE
 ====================================================== */
-
 export function smartofficeDestroyPage(){
 
+    /* RESET DATA */
     smartofficeBukuTamuData = [];
-
     smartofficeBukuTamuFilteredData = [];
 
+    /* CLOSE DETAIL MODAL */
+    const modal =
+        document.getElementById(
+            "smartofficeBukuTamuDetailModal"
+        );
+
+    if(modal){
+        modal.style.display = "none";
+    }
 }
+
 
 /* ======================================================
    GLOBAL WINDOW BINDING

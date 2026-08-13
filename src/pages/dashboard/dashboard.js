@@ -28,9 +28,25 @@ import {
 
 
 /* ======================================================
+   DASHBOARD STATE
+====================================================== */
+let smartofficeDashboardMenuHandlers = {};
+let smartofficeDashboardDestroyed = false;
+
+
+/* ======================================================
    1. LOAD PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
+
+    /* =========================
+       RESET LIFECYCLE
+    ========================= */
+    smartofficeDashboardDestroyed =
+        false;
+
+    smartofficeDashboardMenuHandlers =
+        {};
 
     /* =========================
        CHECK LOGIN SESSION
@@ -54,7 +70,6 @@ export async function smartofficeLoadPage(){
         !sessionData
     ){
         await smartofficeLogout();
-
         return;
     }
 
@@ -85,7 +100,25 @@ export async function smartofficeLoadPage(){
     ========================= */
     smartofficeLoadApprovalBadge(
         sessionData
-    );    
+    ).catch(
+        error => {
+
+            console.warn(
+                "Load Approval Badge Error:",
+                error
+            );
+
+        }
+    );
+
+    /* =========================
+       PAGE MAY HAVE BEEN DESTROYED
+    ========================= */
+    if(
+        smartofficeDashboardDestroyed
+    ){
+        return;
+    }
 
     /* =========================
        INITIALIZE MENU
@@ -97,7 +130,105 @@ export async function smartofficeLoadPage(){
 /* ======================================================
    DESTROY PAGE
 ====================================================== */
+/* ======================================================
+   DESTROY PAGE
+====================================================== */
 export async function smartofficeDestroyPage(){
+
+    /* =========================
+       MARK PAGE DESTROYED
+    ========================= */
+    smartofficeDashboardDestroyed =
+        true;
+
+
+    /* =========================
+       REMOVE MENU LISTENERS
+    ========================= */
+    const handlers =
+        smartofficeDashboardMenuHandlers;
+
+
+    const menuIds = [
+        "smartofficeCutiMenuCard",
+        "smartofficeApprovalMenuCard",
+        "smartofficeManagementCutiMenuCard",
+        "smartofficeBukuTamuMenuCard",
+        "smartofficeDokumenSayaMenuCard"
+    ];
+
+
+    menuIds.forEach(
+        function(id){
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+            const handler =
+                handlers[id];
+
+            if(
+                element &&
+                handler
+            ){
+
+                element.removeEventListener(
+                    "click",
+                    handler
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =========================
+       RESET HANDLERS
+    ========================= */
+    smartofficeDashboardMenuHandlers =
+        {};
+
+
+    /* =========================
+       RESET APPROVAL BADGE
+    ========================= */
+    const badge =
+        document.getElementById(
+            "smartofficeApprovalBadge"
+        );
+
+    if(
+        badge
+    ){
+
+        badge.textContent =
+            "0";
+
+        badge.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    /* =========================
+       REMOVE MOBILE NAVBAR
+    ========================= */
+    const navbar =
+        document.getElementById(
+            "smartofficeMobileNavbarFixed"
+        );
+
+    if(
+        navbar
+    ){
+
+        navbar.remove();
+
+    }
 }
 
 
@@ -331,97 +462,252 @@ function smartofficeUpdateApprovalBadge(
 function smartofficeInitDashboardMenu(){
 
     /* =========================
+       PREVENT DUPLICATE INIT
+    ========================= */
+    smartofficeDestroyDashboardMenuListeners();
+
+
+    /* =========================
        E-CUTI
     ========================= */
-    document
-        .getElementById(
+    const cutiMenu =
+        document.getElementById(
             "smartofficeCutiMenuCard"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(
+        cutiMenu
+    ){
+
+        const handler =
             async function(){
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
 
                 await smartofficeNavigate(
                     "cuti"
                 );
 
-            }
+            };
+
+        cutiMenu.addEventListener(
+            "click",
+            handler
         );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeCutiMenuCard"
+        ] =
+            handler;
+
+    }
+
 
     /* =========================
        APPROVAL
     ========================= */
-    document
-        .getElementById(
+    const approvalMenu =
+        document.getElementById(
             "smartofficeApprovalMenuCard"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(
+        approvalMenu
+    ){
+
+        const handler =
             async function(){
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
 
                 await smartofficeNavigate(
                     "approval"
                 );
 
-            }
+            };
+
+        approvalMenu.addEventListener(
+            "click",
+            handler
         );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeApprovalMenuCard"
+        ] =
+            handler;
+
+    }
+
 
     /* =========================
        MANAGEMENT CUTI
     ========================= */
-    document
-        .getElementById(
+    const managementCutiMenu =
+        document.getElementById(
             "smartofficeManagementCutiMenuCard"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(
+        managementCutiMenu
+    ){
+
+        const handler =
             async function(){
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
 
                 await smartofficeNavigate(
                     "management-cuti"
                 );
 
-            }
+            };
+
+        managementCutiMenu.addEventListener(
+            "click",
+            handler
         );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeManagementCutiMenuCard"
+        ] =
+            handler;
+
+    }
+
 
     /* =========================
        BUKU TAMU
     ========================= */
-    document
-        .getElementById(
+    const bukuTamuMenu =
+        document.getElementById(
             "smartofficeBukuTamuMenuCard"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(
+        bukuTamuMenu
+    ){
+
+        const handler =
             async function(){
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
 
                 await smartofficeNavigate(
                     "buku-tamu"
                 );
 
-            }
+            };
+
+        bukuTamuMenu.addEventListener(
+            "click",
+            handler
         );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeBukuTamuMenuCard"
+        ] =
+            handler;
+
+    }
+
 
     /* =========================
        DOKUMEN SAYA
     ========================= */
-    document
-        .getElementById(
+    const dokumenSayaMenu =
+        document.getElementById(
             "smartofficeDokumenSayaMenuCard"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(
+        dokumenSayaMenu
+    ){
+
+        const handler =
             async function(){
 
-                console.log(
-                "DOKUMEN SAYA DIKLIK");
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
 
                 await smartofficeNavigate(
                     "dokumen-saya"
                 );
-            }
+
+            };
+
+        dokumenSayaMenu.addEventListener(
+            "click",
+            handler
         );
 
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDokumenSayaMenuCard"
+        ] =
+            handler;
+
+    }
+}
+
+
+/* ======================================================
+   DESTROY DASHBOARD MENU LISTENERS
+====================================================== */
+function smartofficeDestroyDashboardMenuListeners(){
+
+    const handlers =
+        smartofficeDashboardMenuHandlers;
+
+
+    Object.keys(
+        handlers
+    ).forEach(
+        function(id){
+
+            const element =
+                document.getElementById(
+                    id
+                );
+
+            const handler =
+                handlers[id];
+
+            if(
+                element &&
+                handler
+            ){
+
+                element.removeEventListener(
+                    "click",
+                    handler
+                );
+
+            }
+
+        }
+    );
+
+
+    smartofficeDashboardMenuHandlers =
+        {};
 }
 
 

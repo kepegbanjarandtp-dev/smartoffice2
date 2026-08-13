@@ -71,12 +71,25 @@ const smartofficeApprovalState = {
 
 };
 
+
 let smartofficeApprovalAction =
   'APPROVE';
+
 
 let smartofficeSubmittingApproval =
   false;
 
+
+/* ======================================================
+   LIFECYCLE STATE
+====================================================== */
+
+let smartofficeApprovalDestroyed =
+  false;
+
+
+const smartofficeApprovalHandlers =
+  new Map();
 
 
 /* ================================================================================
@@ -87,6 +100,15 @@ let smartofficeSubmittingApproval =
    SMART OFFICE LOAD APPROVAL PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
+
+    /* =========================
+       RESET LIFECYCLE
+    ========================= */
+
+    smartofficeApprovalDestroyed =
+        false;
+
+    smartofficeApprovalHandlers.clear();
 
     /* =========================
        SESSION
@@ -132,88 +154,217 @@ export async function smartofficeLoadPage(){
     }
 
     /* =========================
-       EVENT
+      EVENT
     ========================= */
 
-    // BACK
-    document
-        .getElementById(
+    /* =========================
+      BACK
+    ========================= */
+
+    const backButton =
+        document.getElementById(
             "smartofficeApprovalBackButton"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(backButton){
+
+        const handler =
             async function(){
+
+                if(
+                    smartofficeApprovalDestroyed
+                ){
+                    return;
+                }
 
                 await smartofficeNavigate(
                     "dashboard"
                 );
-            }
+
+            };
+
+        backButton.addEventListener(
+            "click",
+            handler
         );
 
-    // REFRESH
-    document
-        .getElementById(
+        smartofficeApprovalHandlers.set(
+            backButton,
+            handler
+        );
+
+    }
+
+
+    /* =========================
+      REFRESH
+    ========================= */
+
+    const refreshButton =
+        document.getElementById(
             "smartofficeApprovalRefreshButton"
-        )
-        ?.addEventListener(
-            "click",
-            smartofficeRefreshApproval
         );
 
-    // TAB CUTI
-    document
-        .getElementById(
-            "smartofficeTabApprovalCuti"
-        )
-        ?.addEventListener(
+    if(refreshButton){
+
+        const handler =
+            smartofficeRefreshApproval;
+
+        refreshButton.addEventListener(
             "click",
+            handler
+        );
+
+        smartofficeApprovalHandlers.set(
+            refreshButton,
+            handler
+        );
+
+    }
+
+
+    /* =========================
+      TAB CUTI
+    ========================= */
+
+    const tabCuti =
+        document.getElementById(
+            "smartofficeTabApprovalCuti"
+        );
+
+    if(tabCuti){
+
+        const handler =
             function(){
+
+                if(
+                    smartofficeApprovalDestroyed
+                ){
+                    return;
+                }
 
                 smartofficeSwitchApprovalTab(
                     "cuti"
                 );
-            }
+
+            };
+
+        tabCuti.addEventListener(
+            "click",
+            handler
         );
 
-    // TAB SPD
-    document
-        .getElementById(
+        smartofficeApprovalHandlers.set(
+            tabCuti,
+            handler
+        );
+
+    }
+
+
+    /* =========================
+      TAB SPD
+    ========================= */
+
+    const tabSpd =
+        document.getElementById(
             "smartofficeTabApprovalSpd"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(tabSpd){
+
+        const handler =
             function(){
+
+                if(
+                    smartofficeApprovalDestroyed
+                ){
+                    return;
+                }
 
                 smartofficeSwitchApprovalTab(
                     "spd"
                 );
-            }
+
+            };
+
+        tabSpd.addEventListener(
+            "click",
+            handler
         );
 
-    // TAB DOKUMEN
-    document
-        .getElementById(
+        smartofficeApprovalHandlers.set(
+            tabSpd,
+            handler
+        );
+
+    }
+
+
+    /* =========================
+      TAB DOKUMEN
+    ========================= */
+
+    const tabDokumen =
+        document.getElementById(
             "smartofficeTabApprovalDokumen"
-        )
-        ?.addEventListener(
-            "click",
+        );
+
+    if(tabDokumen){
+
+        const handler =
             function(){
+
+                if(
+                    smartofficeApprovalDestroyed
+                ){
+                    return;
+                }
 
                 smartofficeSwitchApprovalTab(
                     "dokumen"
                 );
-            }
+
+            };
+
+        tabDokumen.addEventListener(
+            "click",
+            handler
         );
 
-    // CLOSE MODAL
-    document
-        .getElementById(
-            "smartofficeApprovalDetailCloseButton"
-        )
-        ?.addEventListener(
-            "click",
-            smartofficeCloseApprovalDetail
+        smartofficeApprovalHandlers.set(
+            tabDokumen,
+            handler
         );
+
+    }
+
+
+    /* =========================
+      CLOSE MODAL
+    ========================= */
+
+    const closeButton =
+        document.getElementById(
+            "smartofficeApprovalDetailCloseButton"
+        );
+
+    if(closeButton){
+
+        const handler =
+            smartofficeCloseApprovalDetail;
+
+        closeButton.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeApprovalHandlers.set(
+            closeButton,
+            handler
+        );
+
+    }
 
     /* =========================
        LOAD DATA
@@ -567,21 +718,43 @@ export async function smartofficeLoadApprovalCuti(){
                ".smartoffice-approval-detail-button"
             );
 
-         buttons.forEach((button)=>{
-            button.addEventListener(
-               "click",
-               function(){
-                     const index =
-                        Number(
-                           button.dataset.index
+         buttons.forEach(
+            function(button){
+
+                const handler =
+                    function(){
+
+                        if(
+                            smartofficeApprovalDestroyed
+                        ){
+                            return;
+                        }
+
+                        const index =
+                            Number(
+                                button.dataset.index
+                            );
+
+                        smartofficeOpenApprovalDetail(
+                            data[index]
                         );
 
-                     smartofficeOpenApprovalDetail(
-                        data[index]
-                     );
-               }
-            );
-         });
+                    };
+
+
+                button.addEventListener(
+                    "click",
+                    handler
+                );
+
+
+                smartofficeApprovalHandlers.set(
+                    button,
+                    handler
+                );
+
+            }
+        );
    }
    catch (error) {
       console.error(error);
@@ -1170,6 +1343,111 @@ function smartofficeCloseApprovalDetail(){
     modal.style.display =
       "none";
   },250);
+}
+
+/* ======================================================
+   DESTROY APPROVAL PAGE
+====================================================== */
+export async function smartofficeDestroyPage(){
+
+    /* =========================
+       MARK DESTROYED
+    ========================= */
+
+    smartofficeApprovalDestroyed =
+        true;
+
+
+    /* =========================
+       REMOVE ALL EVENT LISTENERS
+    ========================= */
+
+    smartofficeApprovalHandlers
+        .forEach(
+            function(
+                handler,
+                element
+            ){
+
+                if(
+                    element &&
+                    handler
+                ){
+
+                    element.removeEventListener(
+                        "click",
+                        handler
+                    );
+
+                }
+
+            }
+        );
+
+
+    smartofficeApprovalHandlers.clear();
+
+
+    /* =========================
+       CLOSE MODAL
+    ========================= */
+
+    const modal =
+        document.getElementById(
+            "smartofficeApprovalDetailModal"
+        );
+
+    if(modal){
+
+        modal.classList.remove(
+            "show"
+        );
+
+        modal.style.display =
+            "none";
+
+    }
+
+
+    /* =========================
+       RESET STATE
+    ========================= */
+
+    smartofficeApprovalState.idCuti =
+        "";
+
+    smartofficeApprovalAction =
+        "APPROVE";
+
+    smartofficeSubmittingApproval =
+        false;
+
+
+    /* =========================
+       REMOVE MOBILE NAVBAR
+    ========================= */
+
+    document
+        .getElementById(
+            "smartofficeMobileNavbarFixed"
+        )
+        ?.remove();
+
+
+    /* =========================
+       REMOVE GLOBAL FUNCTION
+    ========================= */
+
+    if(
+        window.smartofficeCloseApprovalDetail ===
+        smartofficeCloseApprovalDetail
+    ){
+
+        delete window
+            .smartofficeCloseApprovalDetail;
+
+    }
+
 }
 
 window.smartofficeCloseApprovalDetail =

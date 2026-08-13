@@ -133,15 +133,20 @@ export async function smartofficeLoadPage(){
 
     /* =========================
        LOAD DATA
-       Tetap berurutan
+       BERJALAN PARALEL
     ========================= */
-    await smartofficeLoadDataPegawaiDokumen(
-        sessionData.nip
-    );
 
-    await smartofficeLoadDokumenSaya(
-        sessionData.nip
-    );
+    await Promise.all([
+        smartofficeLoadDataPegawaiDokumen(
+            sessionData.nip
+        ),
+
+        smartofficeLoadMasterDokumen(),
+
+        smartofficeLoadDokumenSaya(
+            sessionData.nip
+        )
+    ]);
 
     /* =========================
        PAGE LOADED
@@ -252,9 +257,20 @@ async function smartofficeLoadDataPegawaiDokumen(
         /* =========================
            LOAD MASTER DOKUMEN
         ========================= */
-        await smartofficeLoadMasterDokumen();
+        //await smartofficeLoadMasterDokumen();
     }
     catch(error){
+
+        /* =========================
+           REQUEST DIBATALKAN
+           KARENA PINDAH HALAMAN
+        ========================= */
+        if(
+            error?.message ===
+            "Request dibatalkan."
+        ){
+            return;
+        }
 
         console.error(
             "Gagal memuat data pegawai:",
@@ -336,6 +352,17 @@ async function smartofficeLoadMasterDokumen(){
     }
     catch(error){
 
+        /* =========================
+           REQUEST DIBATALKAN
+           KARENA PINDAH HALAMAN
+        ========================= */
+        if(
+            error?.message ===
+            "Request dibatalkan."
+        ){
+            return;
+        }
+
         console.error(
             "Gagal memuat master dokumen:",
             error
@@ -389,6 +416,17 @@ async function smartofficeLoadDokumenSaya(){
             true;
     }
     catch(error){
+
+        /* =========================
+        REQUEST DIBATALKAN
+        KARENA PINDAH HALAMAN
+        ========================= */
+        if(
+            error?.message ===
+            "Request dibatalkan."
+        ){
+            return;
+        }
 
         console.error(
             error

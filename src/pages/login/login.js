@@ -36,6 +36,11 @@ import {
 }
 from "../../components/loader/loader.js";
 
+import {
+    smartofficeShowGlobalLoading,
+    smartofficeHideGlobalLoading
+} from "../../components/loading/loading.js";
+
 
 /* ==========================================================
    LOGIN ELEMENT
@@ -442,101 +447,149 @@ async function smartofficeProcessLogin(
 ){
 
     /* =========================
-    LOGIN TIMER START - LOG
+       GLOBAL LOADING
+    ========================= */
+    smartofficeShowGlobalLoading(
+        "Memverifikasi akun..."
+    );
+
+
+    /* =========================
+       LOGIN TIMER START - LOG
     ========================= */
     const t0 =
         performance.now();
 
-    /* =========================
-    LOGIN REQUEST
-    ========================= */
-    const response =
-        await smartofficeLogin(
+
+    try{
+
+        /* =========================
+           LOGIN REQUEST
+        ========================= */
+        const response =
+            await smartofficeLogin(
+                nip,
+                password
+            );
+
+
+        /* =========================
+           LOGIN TIMER API - LOG
+        ========================= */
+        const t1 =
+            performance.now();
+
+
+        /* =========================
+           VALIDASI RESPONSE
+        ========================= */
+        if(
+            !response ||
+            !response.success
+        ){
+
+            smartofficeShowToast(
+                response?.message ||
+                "Login gagal.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        /* =========================
+           SAVE SESSION
+        ========================= */
+        smartofficeSaveSession(
+            response.data
+        );
+
+
+        /* =========================
+           LOGIN TIMER SESSION - LOG
+        ========================= */
+        const t2 =
+            performance.now();
+
+
+        console.log(
+            "API      :",
+            ((t1 - t0) / 1000).toFixed(2),
+            "detik"
+        );
+
+
+        console.log(
+            "Session  :",
+            ((t2 - t1) / 1000).toFixed(2),
+            "detik"
+        );
+
+
+        console.log(
+            "Total    :",
+            ((t2 - t0) / 1000).toFixed(2),
+            "detik"
+        );
+
+
+        /* =========================
+           START ACTIVITY MONITOR
+        ========================= */
+        smartofficeStartActivityMonitor();
+
+
+        /* =========================
+           REMEMBER ME
+        ========================= */
+        smartofficeSaveRememberMe(
+            rememberMe,
             nip,
             password
         );
 
-    /* =========================
-    LOGIN TIMER API - LOG
-    ========================= */
-    const t1 =
-        performance.now();
 
-    /* =========================
-       VALIDASI RESPONSE
-    ========================= */
-    if(
-        !response ||
-        !response.success
-    ){
+        /* =========================
+           LOGIN SUCCESS
+        ========================= */
         smartofficeShowToast(
-            response?.message ||
-            "Login gagal.",
+            "Login berhasil.",
+            "success"
+        );
+
+
+        /* =========================
+           LOAD DASHBOARD
+        ========================= */
+        await smartofficeNavigate(
+            "dashboard"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "SMARTOFFICE LOGIN ERROR:",
+            error
+        );
+
+        smartofficeShowToast(
+            error?.message ||
+            "Terjadi kesalahan saat login.",
             "error"
         );
 
-        return;
+    }
+    finally{
+
+        /* =========================
+           HIDE GLOBAL LOADING
+        ========================= */
+        smartofficeHideGlobalLoading();
+
     }
 
-    /* =========================
-       SAVE SESSION
-    ========================= */
-    smartofficeSaveSession(
-        response.data
-    );
-
-    /* =========================
-    LOGIN TIMER SESSION - LOG
-    ========================= */
-    const t2 =
-        performance.now();
-
-    console.log(
-        "API      :",
-        ((t1 - t0) / 1000).toFixed(2),
-        "detik"
-    );
-
-    console.log(
-        "Session  :",
-        ((t2 - t1) / 1000).toFixed(2),
-        "detik"
-    );
-
-    console.log(
-        "Total    :",
-        ((t2 - t0) / 1000).toFixed(2),
-        "detik"
-    );
-
-    /* =========================
-       START ACTIVITY MONITOR
-    ========================= */
-    smartofficeStartActivityMonitor();
-
-    /* =========================
-       REMEMBER ME
-    ========================= */
-    smartofficeSaveRememberMe(
-        rememberMe,
-        nip,
-        password
-    );
-
-    /* =========================
-       LOGIN SUCCESS
-    ========================= */
-    smartofficeShowToast(
-        "Login berhasil.",
-        "success"
-    );
-
-    /* =========================
-       LOAD DASHBOARD
-    ========================= */
-    await smartofficeNavigate(
-        "dashboard"
-    );
 }
 
 
