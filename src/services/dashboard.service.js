@@ -40,3 +40,34 @@ export async function smartofficeGetTotalPendingApproval(
     ========================= */
     return response.data;
 }
+
+
+/* ======================================================
+   GET TOTAL PENDING SEMUA APPROVAL
+   CUTI + DOKUMEN
+====================================================== */
+export async function smartofficeGetTotalPendingApprovalAll(
+    nip,
+    role
+){
+
+    const response =
+        await smartofficeApi(
+            "smartofficeGetTotalPendingApprovalAll",
+            {
+                nip,
+                role
+            }
+        );
+
+    if(!response.success){
+        throw new Error(
+            response.message ||
+            "Gagal memuat total pending approval."
+        );
+    }
+
+    return Number(
+        response.data
+    ) || 0;
+}

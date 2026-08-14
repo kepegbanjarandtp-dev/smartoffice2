@@ -56,3 +56,74 @@ export async function smartofficeProcessApprovalCuti(
 
     return result;
 }
+
+
+
+/* ======================================================
+   GET DOKUMEN VERIFIKASI
+====================================================== */
+export async function smartofficeGetDokumenVerifikasi(){
+
+    const result =
+        await smartofficeApi(
+            "smartofficeGetDokumenVerifikasi"
+        );
+
+    if(!result.success){
+        throw new Error(
+            result.message ||
+            "Gagal memuat dokumen approval."
+        );
+    }
+    return result.data || [];
+}
+
+
+/* ======================================================
+   VERIFIKASI DOKUMEN
+====================================================== */
+export async function smartofficeVerifikasiDokumenApi(
+    idDokumen
+){
+    const result =
+        await smartofficeApi(
+            "smartofficeVerifikasiDokumen",
+            {
+                idDokumen
+            }
+        );
+
+    if(!result.success){
+        throw new Error(
+            result.message ||
+            "Gagal memverifikasi dokumen."
+        );
+    }
+    return result;
+}
+
+
+/* ======================================================
+   TOLAK DOKUMEN
+====================================================== */
+export async function smartofficeTolakDokumenApi(
+    idDokumen,
+    alasan
+){
+    const result =
+        await smartofficeApi(
+            "smartofficeTolakDokumen",
+            {
+                idDokumen,
+                alasan
+            }
+        );
+
+    if(!result.success){
+        throw new Error(
+            result.message ||
+            "Gagal menolak dokumen."
+        );
+    }
+    return result;
+}

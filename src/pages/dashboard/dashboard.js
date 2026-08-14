@@ -26,6 +26,10 @@ import {
     smartofficeGetTotalPendingApproval
 } from "../../services/dashboard.service.js";
 
+import {
+    smartofficeGetDokumenVerifikasi
+} from "../../services/approval.service.js";
+
 
 /* ======================================================
    DASHBOARD STATE
@@ -416,7 +420,8 @@ async function smartofficeLoadApprovalBadge(
 ){
 
     /* =========================
-       USER CANNOT APPROVE
+       USER
+       TIDAK PERLU REQUEST
     ========================= */
     if(
         sessionData.role === "USER"
@@ -424,20 +429,73 @@ async function smartofficeLoadApprovalBadge(
         return;
     }
 
-    /* =========================
-       LOAD BADGE
-    ========================= */
     try{
-        const total =
-            await smartofficeGetTotalPendingApproval(
-                sessionData.nip
-            );
+        let total = 0;
 
+        /* =========================
+           PJ
+           CUTI + DOKUMEN
+        ========================= */
+        if(sessionData.role === "PJ"){
+
+            const [
+                totalCuti,
+                dokumen
+            ] = await Promise.all([
+
+                smartofficeGetTotalPendingApproval(
+                    sessionData.nip
+                ),
+
+                smartofficeGetDokumenVerifikasi()
+
+            ]);
+
+            total =
+                Number(totalCuti || 0) +
+                (
+                    Array.isArray(dokumen)
+                        ? dokumen.length
+                        : 0
+                );
+        }
+
+        /* =========================
+           ADMIN
+           DOKUMEN SAJA
+        ========================= */
+        else if(
+            sessionData.role === "ADMIN"
+        ){
+            const dokumen =
+                await smartofficeGetDokumenVerifikasi();
+
+            total =
+                Array.isArray(dokumen)
+                    ? dokumen.length
+                    : 0;
+        }
+
+        /* =========================
+           KAPUS
+           CUTI SAJA
+        ========================= */
+        else if(
+            sessionData.role === "KAPUS"
+        ){
+            total =
+                await smartofficeGetTotalPendingApproval(
+                    sessionData.nip
+                );
+        }
+
+        /* =========================
+           UPDATE BADGE
+        ========================= */
         smartofficeUpdateApprovalBadge(
             total
         );
     }
-
     catch(error){
         console.error(
             "Load Approval Badge Error:",
