@@ -14,6 +14,15 @@ const smartofficeActiveRequests =
 
 
 /* ======================================================
+   API TIMEOUT
+   Request maksimal menunggu 20 detik.
+   Jika lewat, request otomatis dibatalkan.
+====================================================== */
+const SMARTOFFICE_API_TIMEOUT_MS =
+    20000;
+
+
+/* ======================================================
    RETRY CONFIG
    Apps Script kadang balikin 404 sesaat karena race
    condition di redirect script.googleusercontent.com
@@ -75,6 +84,12 @@ export async function smartofficeApi(
         controller
     );
 
+    /* ==================================================
+       REQUEST TIMEOUT
+       Timer dibuat per request.
+    ================================================== */
+    let timeoutId = null;
+
     try{
 
         /* =========================
@@ -106,6 +121,28 @@ export async function smartofficeApi(
             `${action}-${Date.now()}-${Math.random()
                 .toString(36)
                 .slice(2, 7)}`;
+        
+        /* =========================
+           REQUEST TIMEOUT
+           
+           Jika request tidak selesai
+           dalam 20 detik, otomatis
+           dibatalkan.
+        ========================= */
+        timeoutId =
+            setTimeout(
+                function(){
+
+                    console.warn(
+                        "SMARTOFFICE API TIMEOUT:",
+                        action
+                    );
+
+                    controller.abort();
+
+                },
+                SMARTOFFICE_API_TIMEOUT_MS
+            );
 
         /* =========================
            REQUEST DENGAN RETRY
@@ -162,6 +199,17 @@ export async function smartofficeApi(
                 }
 
                 if(!response.ok){
+                    throw new Error(
+                        `Server Error: ${response.status}`
+                    );
+                }
+
+                /* =========================
+                   SERVER ERROR
+                ========================= */
+                if(
+                    !response.ok
+                ){
                     throw new Error(
                         `Server Error: ${response.status}`
                     );
@@ -273,6 +321,24 @@ export async function smartofficeApi(
 
     }
     finally{
+
+        /* ==========================================
+           HENTIKAN TIMEOUT
+           
+           Kalau request selesai normal,
+           timer 20 detik tidak perlu
+           berjalan lagi.
+        ========================================== */
+        if(
+            timeoutId
+        ){
+            clearTimeout(
+                timeoutId
+            );
+
+            timeoutId =
+                null;
+        }
 
         /* ==========================================
            HAPUS REQUEST YANG SUDAH SELESAI

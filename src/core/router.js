@@ -226,10 +226,19 @@ export async function smartofficeNavigate(
 
     /* ==================================================
        GLOBAL PAGE LOADING
+       Login tidak memakai global loading saat
+       pertama kali dibuka.
     ================================================== */
-    smartofficeShowGlobalLoading(
-        "Memuat halaman..."
-    );
+    const useGlobalLoading =
+        pageName !== "login";
+
+    if(useGlobalLoading){
+
+        smartofficeShowGlobalLoading(
+            "Memuat halaman..."
+        );
+
+    }
 
     try{
 
@@ -388,8 +397,11 @@ export async function smartofficeNavigate(
 
         /* ==================================================
            GLOBAL PAGE LOADING OFF
+           Login tidak memiliki global loading router.
         ================================================== */
-        smartofficeHideGlobalLoading();
+        if(useGlobalLoading){
+            smartofficeHideGlobalLoading();
+        }
     }
 }
 

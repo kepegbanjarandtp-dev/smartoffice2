@@ -3174,7 +3174,7 @@ export function smartofficeOpenRiwayatCutiDetail(
     ">
 
       <label>
-        Approval 1
+        Approval 1 - PJ Klaster Manajemen
       </label>
 
       <div class="
@@ -3219,7 +3219,7 @@ export function smartofficeOpenRiwayatCutiDetail(
       full-width
     ">
       <label>
-        Approval 2
+        Approval 2 - Kepala Puskesmas
       </label>
 
       <div class="

@@ -1938,7 +1938,7 @@ function smartofficeOpenManagementCutiDetail(
         smartoffice-cuti-riwayat-modal-item
         full-width
     ">
-        <label>Approval 1 - PJKM</label>
+        <label>Approval 1 - PJ Klaster Manajemen</label>
 
         <div class="
           smartoffice-cuti-riwayat-modal-approval-box
