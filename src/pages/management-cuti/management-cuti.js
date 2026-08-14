@@ -172,22 +172,17 @@ export async function smartofficeDestroyPage(){
                 "click",
                 handler
             );
-
         }
     );
 
     smartofficeManagementHandlers.clear();
 
-
     /* =========================
        RESET CACHE
     ========================= */
     smartofficeManagementRekapData = [];
-
     smartofficeManagementRiwayatData = [];
-
     window.smartofficeManagementRiwayatFilteredData = [];
-
 }
 
 
@@ -1364,7 +1359,9 @@ async function smartofficeRefreshManagementCuti(){
         );
 
     if(searchPegawai){
+
         searchPegawai.value = "";
+
     }
 
 
@@ -1377,7 +1374,9 @@ async function smartofficeRefreshManagementCuti(){
         );
 
     if(filterStatus){
+
         filterStatus.value = "";
+
     }
 
 
@@ -1388,7 +1387,7 @@ async function smartofficeRefreshManagementCuti(){
 
 
     /* =========================
-       GLOBAL LOADING
+       LOADING LIST
     ========================= */
     smartofficeShowLoading(
         "smartofficeManagementRekapList",
@@ -1419,19 +1418,28 @@ async function smartofficeRefreshManagementCuti(){
             "smartofficeManagementDisetujui"
         );
 
+
     if(totalPegawai){
+
         totalPegawai.innerHTML =
             '<span class="smartoffice-mini-loader"></span>';
+
     }
+
 
     if(menunggu){
+
         menunggu.innerHTML =
             '<span class="smartoffice-mini-loader"></span>';
+
     }
 
+
     if(disetujui){
+
         disetujui.innerHTML =
             '<span class="smartoffice-mini-loader"></span>';
+
     }
 
 
@@ -1441,10 +1449,17 @@ async function smartofficeRefreshManagementCuti(){
     try{
 
         await Promise.all([
+
             smartofficeLoadRekapPegawai(),
+
             smartofficeLoadAllRiwayatCuti()
+
         ]);
 
+
+        /* =========================
+           LOAD FILTER PEGAWAI
+        ========================= */
         smartofficeLoadPegawaiFilter();
 
 
@@ -1459,19 +1474,25 @@ async function smartofficeRefreshManagementCuti(){
     }
     catch(error){
 
-        /* REQUEST DIBATALKAN
-           KARENA PINDAH HALAMAN */
+        /* =========================
+           REQUEST DIBATALKAN
+           KARENA PINDAH HALAMAN
+        ========================= */
         if(
             error?.message ===
             "Request dibatalkan."
         ){
+
             return;
+
         }
+
 
         console.error(
             "REFRESH MANAGEMENT CUTI ERROR:",
             error
         );
+
 
         smartofficeShowToast(
             "Gagal memperbarui data",

@@ -20,21 +20,16 @@
 
 /* OPEN */
 .smartoffice-preview-overlay.show{
-
     opacity:1;
     visibility:visible;
-
 }
 
 .smartoffice-preview-overlay.show
 .smartoffice-preview-card{
-
     opacity:1;
-
     transform:
         translateY(0)
         scale(1);
-
 }
 
 

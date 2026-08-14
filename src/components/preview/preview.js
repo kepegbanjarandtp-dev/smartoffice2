@@ -208,7 +208,6 @@ export function smartofficeZoomOut(){
 /* ======================================================
    GLOBAL WINDOW
 ====================================================== */
-
 window.smartofficeOpenPreviewDokumen =
   smartofficeOpenPreviewDokumen;
 

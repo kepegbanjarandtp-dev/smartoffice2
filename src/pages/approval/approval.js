@@ -66,27 +66,20 @@ import {
    APPROVAL STATE
 ====================================================== */
 const smartofficeApprovalState = {
-
   idCuti : ''
-
 };
-
 
 let smartofficeApprovalAction =
   'APPROVE';
 
-
 let smartofficeSubmittingApproval =
   false;
-
 
 /* ======================================================
    LIFECYCLE STATE
 ====================================================== */
-
 let smartofficeApprovalDestroyed =
   false;
-
 
 const smartofficeApprovalHandlers =
   new Map();
@@ -104,10 +97,8 @@ export async function smartofficeLoadPage(){
     /* =========================
        RESET LIFECYCLE
     ========================= */
-
     smartofficeApprovalDestroyed =
         false;
-
     smartofficeApprovalHandlers.clear();
 
     /* =========================
@@ -154,23 +145,16 @@ export async function smartofficeLoadPage(){
     }
 
     /* =========================
-      EVENT
-    ========================= */
-
-    /* =========================
       BACK
     ========================= */
-
     const backButton =
         document.getElementById(
             "smartofficeApprovalBackButton"
         );
 
     if(backButton){
-
         const handler =
             async function(){
-
                 if(
                     smartofficeApprovalDestroyed
                 ){
@@ -180,9 +164,7 @@ export async function smartofficeLoadPage(){
                 await smartofficeNavigate(
                     "dashboard"
                 );
-
             };
-
         backButton.addEventListener(
             "click",
             handler
@@ -192,21 +174,17 @@ export async function smartofficeLoadPage(){
             backButton,
             handler
         );
-
     }
-
 
     /* =========================
       REFRESH
     ========================= */
-
     const refreshButton =
         document.getElementById(
             "smartofficeApprovalRefreshButton"
         );
 
     if(refreshButton){
-
         const handler =
             smartofficeRefreshApproval;
 
@@ -219,24 +197,19 @@ export async function smartofficeLoadPage(){
             refreshButton,
             handler
         );
-
     }
-
 
     /* =========================
       TAB CUTI
     ========================= */
-
     const tabCuti =
         document.getElementById(
             "smartofficeTabApprovalCuti"
         );
 
     if(tabCuti){
-
         const handler =
             function(){
-
                 if(
                     smartofficeApprovalDestroyed
                 ){
@@ -246,7 +219,6 @@ export async function smartofficeLoadPage(){
                 smartofficeSwitchApprovalTab(
                     "cuti"
                 );
-
             };
 
         tabCuti.addEventListener(
@@ -258,24 +230,19 @@ export async function smartofficeLoadPage(){
             tabCuti,
             handler
         );
-
     }
-
 
     /* =========================
       TAB SPD
     ========================= */
-
     const tabSpd =
         document.getElementById(
             "smartofficeTabApprovalSpd"
         );
 
     if(tabSpd){
-
         const handler =
             function(){
-
                 if(
                     smartofficeApprovalDestroyed
                 ){
@@ -285,9 +252,7 @@ export async function smartofficeLoadPage(){
                 smartofficeSwitchApprovalTab(
                     "spd"
                 );
-
             };
-
         tabSpd.addEventListener(
             "click",
             handler
@@ -297,24 +262,19 @@ export async function smartofficeLoadPage(){
             tabSpd,
             handler
         );
-
     }
-
 
     /* =========================
       TAB DOKUMEN
     ========================= */
-
     const tabDokumen =
         document.getElementById(
             "smartofficeTabApprovalDokumen"
         );
 
     if(tabDokumen){
-
         const handler =
             function(){
-
                 if(
                     smartofficeApprovalDestroyed
                 ){
@@ -324,7 +284,6 @@ export async function smartofficeLoadPage(){
                 smartofficeSwitchApprovalTab(
                     "dokumen"
                 );
-
             };
 
         tabDokumen.addEventListener(
@@ -336,21 +295,17 @@ export async function smartofficeLoadPage(){
             tabDokumen,
             handler
         );
-
     }
-
 
     /* =========================
       CLOSE MODAL
     ========================= */
-
     const closeButton =
         document.getElementById(
             "smartofficeApprovalDetailCloseButton"
         );
 
     if(closeButton){
-
         const handler =
             smartofficeCloseApprovalDetail;
 
@@ -363,7 +318,6 @@ export async function smartofficeLoadPage(){
             closeButton,
             handler
         );
-
     }
 
     /* =========================
@@ -1353,66 +1307,50 @@ export async function smartofficeDestroyPage(){
     /* =========================
        MARK DESTROYED
     ========================= */
-
     smartofficeApprovalDestroyed =
         true;
-
 
     /* =========================
        REMOVE ALL EVENT LISTENERS
     ========================= */
-
     smartofficeApprovalHandlers
         .forEach(
             function(
                 handler,
                 element
             ){
-
                 if(
                     element &&
                     handler
                 ){
-
                     element.removeEventListener(
                         "click",
                         handler
                     );
-
                 }
-
             }
         );
 
-
     smartofficeApprovalHandlers.clear();
-
 
     /* =========================
        CLOSE MODAL
     ========================= */
-
     const modal =
         document.getElementById(
             "smartofficeApprovalDetailModal"
         );
-
     if(modal){
-
         modal.classList.remove(
             "show"
         );
-
         modal.style.display =
             "none";
-
     }
-
 
     /* =========================
        RESET STATE
     ========================= */
-
     smartofficeApprovalState.idCuti =
         "";
 
@@ -1422,32 +1360,16 @@ export async function smartofficeDestroyPage(){
     smartofficeSubmittingApproval =
         false;
 
-
-    /* =========================
-       REMOVE MOBILE NAVBAR
-    ========================= */
-
-    document
-        .getElementById(
-            "smartofficeMobileNavbarFixed"
-        )
-        ?.remove();
-
-
     /* =========================
        REMOVE GLOBAL FUNCTION
     ========================= */
-
     if(
         window.smartofficeCloseApprovalDetail ===
         smartofficeCloseApprovalDetail
     ){
-
         delete window
             .smartofficeCloseApprovalDetail;
-
     }
-
 }
 
 window.smartofficeCloseApprovalDetail =

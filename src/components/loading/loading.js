@@ -1,6 +1,5 @@
 import "./loading.css";
 
-
 /* ======================================================
    SHOW LOADING
    Loading di dalam container / card
@@ -9,7 +8,6 @@ export function smartofficeShowLoading(
     containerId,
     text = "Memuat data..."
 ){
-
     const container =
         document.getElementById(
             containerId
@@ -19,13 +17,10 @@ export function smartofficeShowLoading(
 
     container.innerHTML = `
         <div class="smartoffice-loading">
-
             <div class="smartoffice-loading-spinner"></div>
-
             <div class="smartoffice-loading-text">
                 ${text}
             </div>
-
         </div>
     `;
 }
@@ -34,7 +29,6 @@ export function smartofficeShowLoading(
 /* ======================================================
    GLOBAL LOADING OVERLAY
 ====================================================== */
-
 let smartofficeGlobalLoadingCount = 0;
 
 
@@ -44,15 +38,12 @@ let smartofficeGlobalLoadingCount = 0;
 export function smartofficeShowGlobalLoading(
     text = "Memuat data..."
 ){
-
     smartofficeGlobalLoadingCount++;
-
 
     let overlay =
         document.getElementById(
             "smartofficeGlobalLoading"
         );
-
 
     /* =========================
        CREATE OVERLAY
@@ -70,13 +61,10 @@ export function smartofficeShowGlobalLoading(
         overlay.className =
             "smartoffice-global-loading";
 
-
         overlay.innerHTML = `
-
             <div class="
                 smartoffice-global-loading-content
             ">
-
                 <div class="
                     smartoffice-global-loading-spinner
                 "></div>
@@ -86,48 +74,35 @@ export function smartofficeShowGlobalLoading(
                 ">
                     ${text}
                 </div>
-
             </div>
-
         `;
-
 
         document.body.appendChild(
             overlay
         );
-
     }
     else{
-
         const textElement =
             overlay.querySelector(
                 ".smartoffice-global-loading-text"
             );
 
         if(textElement){
-
             textElement.textContent =
                 text;
-
         }
-
     }
-
 
     /* =========================
        SHOW
     ========================= */
-
     requestAnimationFrame(
         function(){
-
             overlay.classList.add(
                 "is-visible"
             );
-
         }
     );
-
 }
 
 
@@ -135,72 +110,53 @@ export function smartofficeShowGlobalLoading(
    HIDE GLOBAL LOADING
 ====================================================== */
 export function smartofficeHideGlobalLoading(){
-
     if(
         smartofficeGlobalLoadingCount <= 0
     ){
-
         smartofficeGlobalLoadingCount = 0;
-
         return;
-
     }
 
-
     smartofficeGlobalLoadingCount--;
-
 
     /* =========================
        MASIH ADA PROSES
     ========================= */
-
     if(
         smartofficeGlobalLoadingCount > 0
     ){
-
         return;
-
     }
-
 
     const overlay =
         document.getElementById(
             "smartofficeGlobalLoading"
         );
 
-
     if(!overlay){
         return;
     }
-
 
     overlay.classList.remove(
         "is-visible"
     );
 
-
     /* =========================
        REMOVE SETELAH ANIMASI
     ========================= */
-
     setTimeout(
         function(){
-
             if(
                 overlay &&
                 !overlay.classList.contains(
                     "is-visible"
                 )
             ){
-
                 overlay.remove();
-
             }
-
         },
         200
     );
-
 }
 
 
@@ -209,21 +165,15 @@ export function smartofficeHideGlobalLoading(){
    Untuk logout / destroy aplikasi
 ====================================================== */
 export function smartofficeForceHideGlobalLoading(){
-
     smartofficeGlobalLoadingCount =
         0;
-
 
     const overlay =
         document.getElementById(
             "smartofficeGlobalLoading"
         );
 
-
     if(overlay){
-
         overlay.remove();
-
     }
-
 }

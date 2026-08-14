@@ -7,6 +7,11 @@ import {
     smartofficeAbortAllRequests
 } from "./api.js";
 
+import {
+    smartofficeShowGlobalLoading,
+    smartofficeHideGlobalLoading
+} from "../components/loading/loading.js";
+
 
 /* ======================================================
    SMARTOFFICE ROUTER
@@ -211,7 +216,6 @@ export async function smartofficeNavigate(
     params = {},
     options = {}
 ){
-
     if(!pageName){
         return;
     }
@@ -220,157 +224,173 @@ export async function smartofficeNavigate(
         pushState = true
     } = options;
 
-
     /* ==================================================
-       ABORT SEMUA REQUEST LAMA
-       REQUEST HALAMAN SEBELUMNYA TIDAK BOLEH
-       MENGHALANGI NAVIGASI HALAMAN BARU
+       GLOBAL PAGE LOADING
     ================================================== */
-
-    smartofficeAbortAllRequests();
-
-
-    /* ==================================================
-       DESTROY CURRENT PAGE
-    ================================================== */
-
-    await smartofficeDestroyCurrentPage();
-
-
-    /* ==================================================
-       LOAD HTML
-    ================================================== */
-
-    const app =
-        document.getElementById(
-            "app"
-        );
-
-    if(!app){
-        return;
-    }
-
-    let html;
+    smartofficeShowGlobalLoading(
+        "Memuat halaman..."
+    );
 
     try{
 
-        html =
-            await smartofficeGetPageHtml(
-                pageName
+        /* ==================================================
+           ABORT SEMUA REQUEST LAMA
+           REQUEST HALAMAN SEBELUMNYA TIDAK BOLEH
+           MENGHALANGI HALAMAN BARU
+        ================================================== */
+        smartofficeAbortAllRequests();
+
+        /* ==================================================
+           DESTROY CURRENT PAGE
+        ================================================== */
+        await smartofficeDestroyCurrentPage();
+
+        /* ==================================================
+           LOAD HTML
+        ================================================== */
+        const app =
+            document.getElementById(
+                "app"
             );
 
+        if(!app){
+            return;
+        }
+
+        let html;
+
+        try{
+            html =
+                await smartofficeGetPageHtml(
+                    pageName
+                );
+        }
+        catch(error){
+            console.error(
+                "SMARTOFFICE GAGAL MEMUAT HALAMAN:",
+                pageName,
+                error
+            );
+
+            app.innerHTML =
+                smartofficeGetErrorHtml(
+                    pageName
+                );
+
+            return;
+        }
+
+        /* ==================================================
+           RENDER HTML
+        ================================================== */
+        app.innerHTML =
+            html;
+
+        /* ==================================================
+           LOAD MODULE
+        ================================================== */
+        const loader =
+            smartofficeModules[
+                pageName
+            ];
+
+        if(!loader){
+            throw new Error(
+                `Halaman "${pageName}" tidak ditemukan`
+            );
+        }
+
+        const module =
+            await loader();
+
+        /* ==================================================
+           INIT PAGE
+        ================================================== */
+        const loadFunction =
+            module.smartofficeLoadPage ||
+            module.smartofficeLoadLoginPage ||
+            module.default;
+
+        if(
+            typeof loadFunction ===
+            "function"
+        ){
+            await loadFunction(
+                params
+            );
+        }
+
+        /* ==================================================
+           SIMPAN DESTROY FUNCTION
+        ================================================== */
+        smartofficeCurrentDestroy =
+            module.smartofficeDestroyPage ||
+            module.smartofficeDestroyLoginPage ||
+            null;
+
+        /* ==================================================
+           CURRENT PAGE
+        ================================================== */
+        smartofficeCurrentPage =
+            pageName;
+
+        /* ==================================================
+           URL
+        ================================================== */
+        if(pushState){
+
+            const query =
+                new URLSearchParams(
+                    params
+                ).toString();
+
+            const hash =
+                query
+                    ? `#${pageName}?${query}`
+                    : `#${pageName}`;
+
+            history.pushState(
+                {
+                    page:
+                        pageName,
+                    params:
+                        params
+                },
+                "",
+                hash
+            );
+        }
     }
     catch(error){
 
+        /* ==================================================
+           NAVIGATION ERROR
+        ================================================== */
         console.error(
-            "SMARTOFFICE GAGAL MEMUAT HALAMAN:",
+            "SMARTOFFICE NAVIGATE ERROR:",
             pageName,
             error
         );
 
-        app.innerHTML =
-            smartofficeGetErrorHtml(
-                pageName
+        const app =
+            document.getElementById(
+                "app"
             );
 
-        return;
+        if(app){
+            app.innerHTML =
+                smartofficeGetErrorHtml(
+                    pageName
+                );
+        }
     }
+    finally{
 
-
-    /* ==================================================
-       RENDER HTML
-    ================================================== */
-
-    app.innerHTML =
-        html;
-
-
-    /* ==================================================
-       LOAD MODULE
-    ================================================== */
-
-    const loader =
-        smartofficeModules[
-            pageName
-        ];
-
-    if(!loader){
-
-        throw new Error(
-            `Halaman "${pageName}" tidak ditemukan`
-        );
-
+        /* ==================================================
+           GLOBAL PAGE LOADING OFF
+        ================================================== */
+        smartofficeHideGlobalLoading();
     }
-
-
-    const module =
-        await loader();
-
-
-    /* ==================================================
-       INIT PAGE
-    ================================================== */
-
-    const loadFunction =
-        module.smartofficeLoadPage ||
-        module.smartofficeLoadLoginPage ||
-        module.default;
-
-    if(
-        typeof loadFunction ===
-        "function"
-    ){
-
-        await loadFunction(
-            params
-        );
-
-    }
-
-
-    /* ==================================================
-       DESTROY FUNCTION
-    ================================================== */
-
-    smartofficeCurrentDestroy =
-        module.smartofficeDestroyPage ||
-        module.smartofficeDestroyLoginPage ||
-        null;
-
-    smartofficeCurrentPage =
-        pageName;
-
-
-    /* ==================================================
-       URL
-    ================================================== */
-
-    if(pushState){
-
-        const query =
-            new URLSearchParams(
-                params
-            ).toString();
-
-        const hash =
-            query
-                ? `#${pageName}?${query}`
-                : `#${pageName}`;
-
-        history.pushState(
-            {
-                page:
-                    pageName,
-
-                params:
-                    params
-            },
-            "",
-            hash
-        );
-
-    }
-
 }
 
 
@@ -415,13 +435,10 @@ async function smartofficeGetPageHtml(
        JANGAN CACHE KALAU GAGAL
        (404, 500, DLL)
     ========================= */
-
     if(!response.ok){
-
         throw new Error(
             `Gagal memuat halaman "${pageName}" (status ${response.status})`
         );
-
     }
 
     const html =
@@ -459,7 +476,6 @@ function smartofficeGetErrorHtml(
             </button>
         </div>
     `;
-
 }
 
 

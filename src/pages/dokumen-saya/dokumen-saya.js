@@ -172,15 +172,6 @@ export async function smartofficeDestroyPage(){
 
     smartofficeEditDokumenId =
         null;
-
-    /* =========================
-       REMOVE MOBILE NAVBAR
-    ========================= */
-    document
-        .getElementById(
-            "smartofficeMobileNavbarFixed"
-        )
-        ?.remove();
 }
 
 

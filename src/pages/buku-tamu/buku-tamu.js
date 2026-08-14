@@ -21,6 +21,10 @@ import {
     smartofficeShowLoading
 } from "../../components/loading/loading.js";
 
+import {
+    smartofficeRenderMobileNavbar
+} from "../../components/navbar/navbar.js";
+
 
 /* ======================================================
    GLOBAL DATA
@@ -33,6 +37,14 @@ let smartofficeBukuTamuFilteredData = [];
    LOAD PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
+
+    /* =========================
+       MOBILE NAVBAR
+    ========================= */
+    smartofficeRenderMobileNavbar(
+        null,
+        "buku-tamu"
+    );
 
     /* =========================
        RESET DATA
@@ -611,9 +623,7 @@ export function smartofficeResetBukuTamu(){
     KEMBALI KE FILTER DEFAULT
     BULAN + TAHUN SEKARANG
     ========================= */
-
     smartofficeSetDefaultFilterBukuTamu();
-
     smartofficeFilterBukuTamu();
 }
 
@@ -636,7 +646,6 @@ function smartofficeRenderBukuTamu(){
         !smartofficeBukuTamuFilteredData.length
     ){
         container.innerHTML = `
-
             <div class="
                 smartoffice-empty-state
             ">
@@ -654,30 +663,22 @@ function smartofficeRenderBukuTamu(){
                     Tidak ada data Buku Tamu
                     sesuai filter yang dipilih
                 </p>
-
             </div>
-
         `;
-
         return;
-
     }
-
 
     container.innerHTML =
         smartofficeBukuTamuFilteredData
             .map(
                 function(item,index){
-
                     const date =
                         smartofficeParseTanggalBukuTamu(
                             item.timestamp
                         );
 
-
                     const tanggal =
                         date.getDate();
-
 
                     const bulan =
                         date
@@ -689,15 +690,12 @@ function smartofficeRenderBukuTamu(){
                             )
                             .toUpperCase();
 
-
                     const tanggalLengkap =
                         smartofficeFormatTanggalJamFrontend(
                             item.timestamp
                         );
 
-
                     return `
-
                         <div
                             class="
                                 smartoffice-bukutamu-card
@@ -708,17 +706,14 @@ function smartofficeRenderBukuTamu(){
                                 )
                             "
                         >
-
                             <!-- =========================
                                 DATE PANEL
                             ========================= -->
-
                             <div
                                 class="
                                     smartoffice-bukutamu-date
                                 "
                             >
-
                                 <small>
                                     ${bulan}
                                 </small>
@@ -726,28 +721,22 @@ function smartofficeRenderBukuTamu(){
                                 <strong>
                                     ${tanggal}
                                 </strong>
-
                             </div>
-
 
                             <!-- =========================
                                 CARD CONTENT
                             ========================= -->
-
                             <div
                                 class="
                                     smartoffice-bukutamu-card-content
                                 "
                             >
-
                                 <div
                                     class="
                                         smartoffice-bukutamu-card-heading
                                     "
                                 >
-
                                     <div>
-
                                         <h3>
                                             ${item.nama || "-"}
                                         </h3>
@@ -755,11 +744,8 @@ function smartofficeRenderBukuTamu(){
                                         <small>
                                             ${item.alamatInstansi || "-"}
                                         </small>
-
                                     </div>
-
                                 </div>
-
 
                                 <div
                                     class="
@@ -767,32 +753,26 @@ function smartofficeRenderBukuTamu(){
                                     "
                                 ></div>
 
-
                                 <!-- =========================
                                     DATE + PHONE
                                 ========================= -->
-
                                 <div
                                     class="
                                         smartoffice-bukutamu-info-row
                                     "
                                 >
-
                                     <!-- TANGGAL -->
-
                                     <div
                                         class="
                                             smartoffice-bukutamu-info-box
                                             smartoffice-bukutamu-info-date
                                         "
                                     >
-
                                         <div
                                             class="
                                                 smartoffice-bukutamu-info-icon
                                             "
                                         >
-
                                             <svg
                                                 viewBox="0 0 24 24"
                                                 fill="none"
@@ -830,7 +810,6 @@ function smartofficeRenderBukuTamu(){
                                                     y2="10"
                                                 />
                                             </svg>
-
                                         </div>
 
                                         <div
@@ -838,7 +817,6 @@ function smartofficeRenderBukuTamu(){
                                                 smartoffice-bukutamu-info-text
                                             "
                                         >
-
                                             <span>
                                                 Tanggal
                                             </span>
@@ -846,27 +824,21 @@ function smartofficeRenderBukuTamu(){
                                             <strong>
                                                 ${tanggalLengkap}
                                             </strong>
-
                                         </div>
-
                                     </div>
 
-
                                     <!-- NO HP -->
-
                                     <div
                                         class="
                                             smartoffice-bukutamu-info-box
                                             smartoffice-bukutamu-info-phone
                                         "
                                     >
-
                                         <div
                                             class="
                                                 smartoffice-bukutamu-info-icon
                                             "
                                         >
-
                                             <svg
                                                 viewBox="0 0 24 24"
                                                 fill="none"
@@ -908,7 +880,6 @@ function smartofficeRenderBukuTamu(){
                                                     "
                                                 />
                                             </svg>
-
                                         </div>
 
                                         <div
@@ -916,7 +887,6 @@ function smartofficeRenderBukuTamu(){
                                                 smartoffice-bukutamu-info-text
                                             "
                                         >
-
                                             <span>
                                                 No HP
                                             </span>
@@ -924,25 +894,19 @@ function smartofficeRenderBukuTamu(){
                                             <strong>
                                                 ${item.noHp || "-"}
                                             </strong>
-
                                         </div>
-
                                     </div>
-
                                 </div>
-
 
                                 <!-- =========================
                                     KEPERLUAN
                                 ========================= -->
-
                                 <div
                                     class="
                                         smartoffice-bukutamu-info-box
                                         smartoffice-bukutamu-info-purpose
                                     "
                                 >
-
                                     <div
                                         class="
                                             smartoffice-bukutamu-info-icon
@@ -993,7 +957,6 @@ function smartofficeRenderBukuTamu(){
                                                 y2="17"
                                             />
                                         </svg>
-
                                     </div>
 
                                     <div
@@ -1001,7 +964,6 @@ function smartofficeRenderBukuTamu(){
                                             smartoffice-bukutamu-info-text
                                         "
                                     >
-
                                         <span>
                                             Keperluan
                                         </span>
@@ -1009,78 +971,57 @@ function smartofficeRenderBukuTamu(){
                                         <strong>
                                             ${item.keperluan || "-"}
                                         </strong>
-
                                     </div>
-
                                 </div>
-
                             </div>
-
                         </div>
-
                     `;
-
                 }
             )
             .join("");
-
 }
 
 
 /* ======================================================
    OPEN DETAIL
 ====================================================== */
-
 export function smartofficeOpenBukuTamuDetail(
     index
 ){
-
     const data =
         smartofficeBukuTamuFilteredData[
             index
         ];
 
-
     if(!data){
-
         return;
-
     }
-
 
     const body =
         document.getElementById(
             "smartofficeBukuTamuDetailBody"
         );
 
-
     if(!body){
-
         return;
-
     }
 
-
     body.innerHTML = `
-
         <div
             class="
                 smartoffice-bukutamu-detail-wrapper
             "
         >
-
             <div
                 class="
                     smartoffice-bukutamu-image-row
                 "
             >
-
                 <div
                     class="
                         smartoffice-bukutamu-image-card
                     "
                 >
-
                     <h4>
                         Foto Tamu
                     </h4>
@@ -1094,16 +1035,13 @@ export function smartofficeOpenBukuTamuDetail(
                             )
                         "
                     >
-
                 </div>
-
 
                 <div
                     class="
                         smartoffice-bukutamu-image-card
                     "
                 >
-
                     <h4>
                         Tanda Tangan
                     </h4>
@@ -1124,11 +1062,8 @@ export function smartofficeOpenBukuTamuDetail(
                             )
                         "
                     >
-
                 </div>
-
             </div>
-
 
             <div
                 class="
@@ -1136,13 +1071,11 @@ export function smartofficeOpenBukuTamuDetail(
                 "
             ></div>
 
-
             <table
                 class="
                     smartoffice-bukutamu-detail-table
                 "
             >
-
                 <tr>
                     <td>Nama</td>
                     <td>
@@ -1188,79 +1121,56 @@ export function smartofficeOpenBukuTamuDetail(
                         ${data.pesanKesan || "-"}
                     </td>
                 </tr>
-
             </table>
-
         </div>
-
     `;
-
 
     const modal =
         document.getElementById(
             "smartofficeBukuTamuDetailModal"
         );
 
-
     if(modal){
-
         modal.style.display =
             "flex";
-
     }
-
 }
 
 
 /* ======================================================
    CLOSE DETAIL
 ====================================================== */
-
 export function smartofficeCloseBukuTamuDetail(){
-
     const modal =
         document.getElementById(
             "smartofficeBukuTamuDetailModal"
         );
 
-
     if(modal){
-
         modal.style.display =
             "none";
-
     }
-
 }
 
 
 /* ======================================================
    CONVERT DRIVE URL
 ====================================================== */
-
 function smartofficeConvertDriveUrl(
     url
 ){
-
     if(!url){
-
         return "";
-
     }
-
 
     const match =
         url.match(
             /\/d\/(.*?)\//
         );
 
-
     if(!match){
-
         return url;
-
     }
-
 
     return (
         "https://drive.google.com/thumbnail" +
@@ -1268,43 +1178,32 @@ function smartofficeConvertDriveUrl(
         match[1] +
         "&sz=w1000"
     );
-
 }
+
 
 /* ======================================================
    DRIVE IMAGE FALLBACK
    Digunakan jika thumbnail gagal dimuat
 ====================================================== */
-
 function smartofficeConvertDriveUrlDirect(url){
-
     if(!url){
-
         return "";
-
     }
-
 
     const match =
         url.match(/\/d\/(.*?)\//);
 
-
     if(!match){
-
         return url;
-
     }
-
 
     const fileId =
         match[1];
-
 
     return (
         "https://lh3.googleusercontent.com/d/" +
         fileId
     );
-
 }
 
 
@@ -1313,25 +1212,18 @@ function smartofficeConvertDriveUrlDirect(url){
    FORMAT:
    DD/MM/YYYY HH:mm:ss
 ====================================================== */
-
 function smartofficeParseTanggalBukuTamu(
     value
 ){
-
     if(!value){
-
         return null;
-
     }
-
 
     const part =
         value.split(' ');
 
-
     const tanggal =
         part[0].split('/');
-
 
     const waktu =
         (
@@ -1339,9 +1231,7 @@ function smartofficeParseTanggalBukuTamu(
             '00:00:00'
         ).split(':');
 
-
     return new Date(
-
         Number(
             tanggal[2]
         ),
@@ -1365,9 +1255,7 @@ function smartofficeParseTanggalBukuTamu(
         Number(
             waktu[2]
         )
-
     );
-
 }
 
 
@@ -1376,23 +1264,17 @@ function smartofficeParseTanggalBukuTamu(
    OUTPUT:
    3 Agustus 2026 13:22
 ====================================================== */
-
 function smartofficeFormatTanggalJamFrontend(
     value
 ){
-
     if(!value){
-
         return '-';
-
     }
-
 
     const date =
         smartofficeParseTanggalBukuTamu(
             value
         );
-
 
     if(
         !date ||
@@ -1402,12 +1284,9 @@ function smartofficeFormatTanggalJamFrontend(
     ){
 
         return '-';
-
     }
 
-
     const bulan = [
-
         'Januari',
         'Februari',
         'Maret',
@@ -1420,12 +1299,9 @@ function smartofficeFormatTanggalJamFrontend(
         'Oktober',
         'November',
         'Desember'
-
     ];
 
-
     return (
-
         date.getDate() +
         ' ' +
         bulan[
@@ -1441,65 +1317,50 @@ function smartofficeFormatTanggalJamFrontend(
         String(
             date.getMinutes()
         ).padStart(2,'0')
-
     );
-
 }
 
 
 /* ======================================================
    PRINT BUKU TAMU
 ====================================================== */
-
 export async function smartofficePrintBukuTamu(){
 
     const data =
         smartofficeBukuTamuFilteredData || [];
 
-
     /* =========================
        VALIDASI DATA
     ========================= */
-
     if(!data.length){
-
         if(
             typeof window.smartofficeShowToast ===
             "function"
         ){
-
             window.smartofficeShowToast(
                 "Tidak ada data untuk dicetak",
                 "error"
             );
-
         }
 
         return;
-
     }
-
 
     /* =========================
        BUTTON
     ========================= */
-
     const btn =
         document.querySelector(
             ".smartoffice-bukutamu-print-button"
         );
-
 
     const oldHtml =
         btn
             ? btn.innerHTML
             : "🖨 Print";
 
-
     if(btn){
-
         btn.disabled = true;
-
         btn.innerHTML = `
             <span
                 class="
@@ -1508,43 +1369,34 @@ export async function smartofficePrintBukuTamu(){
             ></span>
             Cetak
         `;
-
     }
-
 
     try{
 
         /* =========================
            GET KAPUS
         ========================= */
-
         const response =
             await smartofficeApi(
                 "smartofficeGetKapus"
             );
 
-
         if(
             !response ||
             !response.success
         ){
-
             throw new Error(
                 response?.message ||
                 "Gagal mengambil data Kepala Puskesmas."
             );
-
         }
-
 
         const kapus =
             response.data || "";
 
-
         /* =========================
            GENERATE LAPORAN
         ========================= */
-
         const laporanHtml =
             smartofficeGenerateLaporanBukuTamu(
                 data,
@@ -1552,90 +1404,67 @@ export async function smartofficePrintBukuTamu(){
                 ""
             );
 
-
         /* =========================
            OPEN PRINT
         ========================= */
-
         const win =
             window.open(
                 "",
                 "_blank"
             );
 
-
         if(!win){
-
             throw new Error(
                 "Popup diblokir browser."
             );
-
         }
 
-
         win.document.open();
-
         win.document.write(
             laporanHtml
         );
 
         win.document.close();
 
-
         /* =========================
            RESET BUTTON
         ========================= */
-
         win.onload =
             function(){
-
                 if(btn){
-
                     btn.disabled =
                         false;
 
                     btn.innerHTML =
                         oldHtml;
-
                 }
-
             };
-
     }
     catch(error){
-
         console.error(
             "PRINT BUKU TAMU ERROR:",
             error
         );
 
-
         if(btn){
-
             btn.disabled =
                 false;
 
             btn.innerHTML =
                 oldHtml;
-
         }
-
 
         if(
             typeof window.smartofficeShowToast ===
             "function"
         ){
-
             window.smartofficeShowToast(
                 error.message ||
                 "Gagal menyiapkan laporan",
                 "error"
             );
-
         }
-
     }
-
 }
 
 

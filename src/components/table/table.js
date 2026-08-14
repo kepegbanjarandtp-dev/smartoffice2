@@ -1,7 +1,6 @@
 /* ======================================================
    SMARTOFFICE TABLE
 ====================================================== */
-
 let smartofficeTableBody =
     null;
 
@@ -9,97 +8,69 @@ let smartofficeTableBody =
 /* ======================================================
    INITIALIZE TABLE
 ====================================================== */
-
 export function smartofficeInitializeTable(
     tableBodyId
 ){
-
     smartofficeTableBody =
         document.getElementById(
             tableBodyId
         );
-
 }
 
 
 /* ======================================================
    RENDER TABLE
 ====================================================== */
-
 export function smartofficeRenderTable(
-
     data = [],
-
     renderRow
-
 ){
-
     if(
-
         !smartofficeTableBody ||
-
         typeof renderRow !==
         "function"
-
     ){
         return;
     }
 
     smartofficeTableBody.innerHTML =
-
         data.length
-
             ? data
                 .map(
                     renderRow
                 )
                 .join("")
-
             : smartofficeRenderEmpty();
-
 }
 
 
 /* ======================================================
    EMPTY TABLE
 ====================================================== */
-
 export function smartofficeRenderEmpty(
-
     message =
         "Data tidak tersedia."
-
 ){
 
     return `
-
         <tr>
-
             <td
                 colspan="100%"
                 class="smartoffice-table-empty"
             >
-
                 ${message}
-
             </td>
-
         </tr>
-
     `;
-
 }
 
 
 /* ======================================================
    LOADING TABLE
 ====================================================== */
-
 export function smartofficeRenderLoading(
-
     message =
         "Memuat data..."
-
 ){
 
     if(
@@ -109,20 +80,16 @@ export function smartofficeRenderLoading(
     }
 
     smartofficeTableBody.innerHTML =
-
         smartofficeRenderEmpty(
             message
         );
-
 }
 
 
 /* ======================================================
    CLEAR TABLE
 ====================================================== */
-
 export function smartofficeClearTable(){
-
     if(
         !smartofficeTableBody
     ){
@@ -131,19 +98,14 @@ export function smartofficeClearTable(){
 
     smartofficeTableBody.innerHTML =
         "";
-
 }
 
 
 /* ======================================================
    DESTROY TABLE
 ====================================================== */
-
 export function smartofficeDestroyTable(){
-
     smartofficeClearTable();
-
     smartofficeTableBody =
         null;
-
 }

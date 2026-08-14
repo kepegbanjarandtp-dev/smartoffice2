@@ -96,6 +96,25 @@ export async function smartofficeLoadPage(){
     );
 
     /* =========================
+       LOGOUT BUTTON
+    ========================= */
+    const logoutButton =
+        document.getElementById(
+            "smartofficeLogoutButton"
+        );
+
+    if(logoutButton){
+
+        logoutButton.onclick =
+            async function(){
+
+                await smartofficeLogout();
+
+            };
+
+    }
+
+    /* =========================
        LOAD APPROVAL BADGE
     ========================= */
     smartofficeLoadApprovalBadge(
@@ -213,22 +232,6 @@ export async function smartofficeDestroyPage(){
 
     }
 
-
-    /* =========================
-       REMOVE MOBILE NAVBAR
-    ========================= */
-    const navbar =
-        document.getElementById(
-            "smartofficeMobileNavbarFixed"
-        );
-
-    if(
-        navbar
-    ){
-
-        navbar.remove();
-
-    }
 }
 
 
@@ -334,6 +337,11 @@ function smartofficeFilterMenuByRole(
             "smartofficeArsipMenuCard"
         );
 
+    const masterDataMenu =
+        document.getElementById(
+            "smartofficeMasterDataMenuCard"
+        );
+
     /* =========================
        RESET MENU
     ========================= */
@@ -342,8 +350,11 @@ function smartofficeFilterMenuByRole(
             ".smartoffice-dashboard-menu-card"
         )
         .forEach(function(menu){
+
             menu.style.display = "";
+
         });
+
 
     /* =========================
        USER
@@ -351,6 +362,7 @@ function smartofficeFilterMenuByRole(
     if(
         role === "USER"
     ){
+
         approvalMenu &&
             (approvalMenu.style.display = "none");
 
@@ -359,7 +371,40 @@ function smartofficeFilterMenuByRole(
 
         arsipMenu &&
             (arsipMenu.style.display = "none");
-    } 
+
+        masterDataMenu &&
+            (masterDataMenu.style.display = "none");
+
+    }
+
+
+    /* =========================
+       PJ
+       Master Data TETAP TAMPIL
+    ========================= */
+    else if(
+        role === "PJ"
+    ){
+
+        masterDataMenu &&
+            (masterDataMenu.style.display = "");
+
+    }
+
+
+    /* =========================
+       ADMIN
+       Master Data TETAP TAMPIL
+    ========================= */
+    else if(
+        role === "ADMIN"
+    ){
+
+        masterDataMenu &&
+            (masterDataMenu.style.display = "");
+
+    }
+
 }
 
 

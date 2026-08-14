@@ -112,6 +112,15 @@ export async function smartofficeLoadPage(){
         return;
     }
 
+    /* =========================
+       MOBILE NAVBAR
+       RENDER SEBELUM API
+    ========================= */
+    smartofficeRenderMobileNavbar(
+        sessionData.role,
+        "cuti"
+    );
+
     /* LOAD DATA PEGAWAI & CACHE PEGAWAI */
     await Promise.all([
         smartofficeLoadPegawai(sessionData.nip),
@@ -144,12 +153,6 @@ export async function smartofficeLoadPage(){
     /* DEFAULT TAB */
     smartofficeSwitchCutiTab(
         "form"
-    );
-
-    /* MOBILE NAVBAR */
-    smartofficeRenderMobileNavbar(
-        sessionData.role,
-        "cuti"
     );
 }
 
