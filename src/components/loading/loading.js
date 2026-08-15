@@ -40,6 +40,10 @@ export function smartofficeShowGlobalLoading(
 ){
     smartofficeGlobalLoadingCount++;
 
+    document.body.classList.add(
+        "smartoffice-global-loading-active"
+    );
+
     let overlay =
         document.getElementById(
             "smartofficeGlobalLoading"
@@ -128,6 +132,10 @@ export function smartofficeHideGlobalLoading(){
         return;
     }
 
+    document.body.classList.remove(
+        "smartoffice-global-loading-active"
+    );
+
     const overlay =
         document.getElementById(
             "smartofficeGlobalLoading"
@@ -168,6 +176,10 @@ export function smartofficeForceHideGlobalLoading(){
     smartofficeGlobalLoadingCount =
         0;
 
+    document.body.classList.remove(
+        "smartoffice-global-loading-active"
+    );
+    
     const overlay =
         document.getElementById(
             "smartofficeGlobalLoading"

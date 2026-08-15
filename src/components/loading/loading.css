@@ -93,8 +93,8 @@
   /*
    * Blur ringan seperti V3
    */
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
   opacity:0;
   visibility:hidden;
   pointer-events:none;
@@ -217,6 +217,18 @@
 
 
 /* ======================================================
+   GLOBAL LOADING - MOBILE SAFE BLUR
+====================================================== */
+body.smartoffice-global-loading-active
+> *:not(#smartofficeGlobalLoading){
+
+    filter: blur(14px);
+
+    transition:
+        filter .18s ease;
+}
+
+/* ======================================================
    MOBILE
 ====================================================== */
 @media(max-width:768px){
@@ -243,9 +255,9 @@
     /*
      * Lebih transparan di HP
      */
-    background:rgba(15,23,42,.40);
-    backdrop-filter:blur(12px);
-    -webkit-backdrop-filter:blur(12px);
+    background:rgba(15,23,42,.30);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
   }
 
   .smartoffice-global-loading-content{
