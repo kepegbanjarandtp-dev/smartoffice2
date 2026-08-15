@@ -30,7 +30,6 @@
 
       <!-- ICON -->
       <div class="smartoffice-header-icon smartoffice-approval-header-icon">
-
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -43,20 +42,15 @@
           <path d="M9 11l3 3L22 4"/>
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
         </svg>
-
       </div>
 
       <!-- TITLE -->
       <div class="smartoffice-header-title">
-
         <h2>Approval</h2>
-
         <p>
           Persetujuan pengajuan pegawai
         </p>
-
       </div>
-
     </div>
 
     <!-- REFRESH -->
@@ -80,7 +74,6 @@
         <polyline points="21 3 21 9 15 9"/>
       </svg>
     </button>
-
 </div>
 
   <!-- ======================================================
@@ -115,39 +108,30 @@
 
     <!-- TAB DOKUMEN -->
     <button
-      id="smartofficeTabApprovalDokumen"
-      class="smartoffice-tab-button"
-      type="button"
-      onclick="
-        smartofficeSwitchApprovalTab('dokumen')
-      "
+        id="smartofficeTabApprovalDokumen"
+        class="smartoffice-tab-button"
+        type="button"
     >
-      <span>
-        Approval Dokumen
-      </span>
+        <span>Approval Dokumen</span>
 
-      <span
-        id="smartofficeApprovalDokumenBadge"
-        class="smartoffice-tab-badge"
-        style="display:none;"
-      >
-        0
-      </span>
+        <span
+            id="smartofficeApprovalDokumenBadge"
+            class="smartoffice-tab-badge"
+        >
+            0
+        </span>
     </button>
-
   </div>
 
   <!-- ======================================================
       APPROVAL CUTI
   ====================================================== -->
   <div id="smartofficeApprovalCutiContent">
-
     <div
       id="smartofficeApprovalCutiList"
       class="smartoffice-approval-list"
     >
     </div>
-
   </div>
 
   <!-- ======================================================
@@ -157,11 +141,9 @@
     id="smartofficeApprovalSpdContent"
     style="display:none;"
   >
-
     <div class="smartoffice-empty-state">
       Belum ada approval SPD
     </div>
-
   </div>
 
   <!-- ======================================================
@@ -171,25 +153,23 @@
     id="smartofficeApprovalDokumenContent"
     style="display:none;"
   >
-
     <div
         id="smartofficeApprovalDokumenList"
     >
     </div>
-
   </div>
 
-<!-- APPROVAL DETAIL MODAL -->
+<!-- ======================================================
+     APPROVAL CUTI DETAIL MODAL
+====================================================== -->
 <div
   id="smartofficeApprovalDetailModal"
   class="smartoffice-approval-detail-modal"
 >
-
   <div class="smartoffice-approval-detail-content">
 
     <!-- HEADER -->
     <div class="smartoffice-approval-detail-header">
-
       <h3>
         Detail Approval
       </h3>
@@ -198,7 +178,6 @@
         class="smartoffice-approval-detail-close"
         onclick="smartofficeCloseApprovalDetail()"
       >
-
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -210,20 +189,32 @@
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-
           <path d="M18 6L6 18"/>
-
           <path d="M6 6l12 12"/>
-
         </svg>
-
       </button>
-
     </div>
 
     <!-- BODY -->
     <div id="smartofficeApprovalDetailBody"></div>
-
   </div>
+</div>
 
+
+<!-- ======================================================
+     APPROVAL DOKUMEN ACTION MODAL
+====================================================== -->
+<div
+  id="smartofficeApprovalDokumenActionModal"
+  class="smartoffice-approval-dokumen-modal"
+  style="display:none;"
+>
+  <div
+    class="smartoffice-approval-dokumen-modal-content"
+  >
+    <div
+      id="smartofficeApprovalDokumenActionBody"
+    >
+    </div>
+  </div>
 </div>
