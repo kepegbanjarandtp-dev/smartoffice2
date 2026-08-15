@@ -17,6 +17,7 @@ import "./pages/cuti/cuti.css";
 import "./pages/cuti/cuti-riwayat-modal.css";
 import "./pages/approval/approval.css";
 import "./pages/approval/approval-cuti-modal.css";
+import "./pages/approval/approval-dokumen.css";
 import "./pages/management-cuti/management-cuti.css";
 import "./pages/buku-tamu/buku-tamu.css";
 import "./pages/dokumen-saya/dokumen-saya.css";

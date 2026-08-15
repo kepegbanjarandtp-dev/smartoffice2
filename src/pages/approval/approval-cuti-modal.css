@@ -14,7 +14,7 @@
     rgba(15,23,42,.45);
   backdrop-filter:
     blur(2px);
-  z-index:9999;
+  z-index:100000;
   opacity:0;
   visibility:hidden;
   transition:
@@ -534,19 +534,32 @@
 ====================================================== */
 @media (max-width:768px){
 
-  /* OVERLAY */
+  /* =========================
+     OVERLAY
+  ========================= */
   .smartoffice-approval-detail-modal{
-    align-items:flex-start;
-    padding:12px 12px 88px;
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+    box-sizing:border-box;
   }
 
-  /* MODAL */
+
+  /* =========================
+    MODAL
+  ========================= */
   .smartoffice-approval-detail-content{
+    width:100%;
     max-width:100%;
-    max-height:calc(100vh - 100px);
+    max-height:
+      calc(100vh - 24px);
     display:flex;
     flex-direction:column;
     border-radius:22px;
+    overflow:hidden;
   }
 
   /* HEADER */

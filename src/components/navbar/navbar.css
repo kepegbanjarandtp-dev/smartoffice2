@@ -18,7 +18,7 @@
         0 -8px 28px rgba(0,0,0,.08);
     backdrop-filter:blur(20px);
     padding-bottom:env(safe-area-inset-bottom);
-    z-index:999999;
+    z-index:1000;
     animation:
         smartofficeNavbarAppear
         .35s ease;

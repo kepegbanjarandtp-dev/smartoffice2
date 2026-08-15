@@ -327,26 +327,6 @@ background:#ffffff;
   border-left:4px solid #cbd5e1;
 }
 
-.smartoffice-dokumen-link{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:8px;
-  padding:10px 14px;
-  border-radius:12px;
-  background:#eff6ff;
-  color:#2563eb;
-  font-size:13px;
-  font-weight:600;
-  text-decoration:none;
-  cursor:pointer;
-  border:none !important;
-}
-
-.smartoffice-dokumen-link:hover{
-  background:#dbeafe;
-}
-
 .smartoffice-dokumen-title{
   display:flex;
   align-items:center;
@@ -371,26 +351,7 @@ background:#ffffff;
   padding-top:12px;
 }
 
-.smartoffice-dokumen-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-  padding:8px 0;
-}
-
-.smartoffice-dokumen-row span{
-  color:#64748b;
-  font-size:13px;
-}
-
-.smartoffice-dokumen-row strong{
-  color:#0f172a;
-  font-size:13px;
-  text-align:right;
-  max-width:60%;
-  word-break:break-word;
-}
+C
 
 .smartoffice-dokumen-footer{
   margin-top:14px;
@@ -540,7 +501,7 @@ background:#ffffff;
 
     justify-content:center;
 
-    z-index:9999;
+    z-index:100000;
 
     padding:20px;
 

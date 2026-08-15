@@ -35,7 +35,9 @@ import {
 } from "../../components/preview/preview.js";
 
 import {
-    smartofficeShowLoading
+    smartofficeShowLoading,
+    smartofficeShowGlobalLoading,
+    smartofficeHideGlobalLoading
 } from "../../components/loading/loading.js";
 
 /* ======================================================
@@ -1229,7 +1231,7 @@ function smartofficeOpenApprovalDetail(
 /* ======================================================
    SMART OFFICE CLOSE APPROVAL DETAIL
 ====================================================== */
-function smartofficeCloseApprovalDetail(){
+export function smartofficeCloseApprovalDetail(){
 
   const modal =
     document.getElementById(
@@ -1389,7 +1391,7 @@ export async function smartofficeDestroyPage(){
     ========================= */
     const dokumenModal =
         document.getElementById(
-            "smartofficeArsipActionModal"
+            "smartofficeApprovalDokumenActionModal"
         );
 
     if(dokumenModal){
@@ -2000,149 +2002,348 @@ export function smartofficeRenderApprovalDokumen(
     data.forEach(
         function(item){
             html += `
-                <div class="smartoffice-verifikasi-card">
-                    <div class="smartoffice-verifikasi-header">
-                        <h4 class="smartoffice-verifikasi-title">
-                            ${item.namaDokumen || "-"}
-                        </h4>
+              <div class="smartoffice-approval-dokumen-card">
 
-                        <div class="smartoffice-verifikasi-subtitle">
-                            ${item.nama || "-"}
-                        </div>
-                    </div>
+                  <!-- ==================================================
+                      HEADER
+                  ================================================== -->
+                  <div class="smartoffice-approval-dokumen-header">
+                      <div class="smartoffice-approval-dokumen-title">
+                          <!-- ICON DOKUMEN -->
+                          <div class="smartoffice-approval-dokumen-icon">
+                              <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="24"
+                                  height="24"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M14 2H6a2 2 0 0 0-2 2v16
+                                          a2 2 0 0 0 2 2h12
+                                          a2 2 0 0 0 2-2V8z"/>
 
-                    <div class="smartoffice-verifikasi-body">
-                        <div class="smartoffice-dokumen-row">
-                            <span>
-                                Nomor Dokumen
-                            </span>
+                                  <polyline points="14 2 14 8 20 8"/>
 
-                            <strong>
-                                ${item.nomorDokumen || "-"}
-                            </strong>
-                        </div>
+                                  <line
+                                      x1="16"
+                                      y1="13"
+                                      x2="8"
+                                      y2="13"
+                                  />
 
-                        ${
-                            item.keterangan
-                            ?
-                            `
-                            <div class="smartoffice-dokumen-row">
-                                <span>
-                                    Keterangan
-                                </span>
+                                  <line
+                                      x1="16"
+                                      y1="17"
+                                      x2="8"
+                                      y2="17"
+                                  />
 
-                                <strong>
-                                    ${item.keterangan}
-                                </strong>
-                            </div>
-                            `
-                            :
-                            ""
-                        }
+                                  <line
+                                      x1="10"
+                                      y1="9"
+                                      x2="8"
+                                      y2="9"
+                                  />
+                              </svg>
+                          </div>
 
-                        <div class="smartoffice-dokumen-row">
-                            <span>
-                                File
-                            </span>
+                          <!-- NAMA DOKUMEN + PEGAWAI -->
+                          <div class="smartoffice-approval-dokumen-title-text">
+                              <h4>
+                                  ${item.namaDokumen || "-"}
+                              </h4>
 
-                            <strong>
-                                ${item.fileName || "-"}
-                            </strong>
-                        </div>
-                    </div>
+                              <div class="smartoffice-approval-dokumen-pegawai">
+                                  ${item.nama || "-"}
+                              </div>
+                          </div>
+                      </div>
 
-                    <div class="smartoffice-verifikasi-footer">
+                      <!-- STATUS -->
+                      <div class="smartoffice-approval-dokumen-status">
+                          Menunggu Verifikasi
+                      </div>
+                  </div>
 
-                        <!-- LIHAT DOKUMEN -->
-                        <button
-                            type="button"
-                            class="smartoffice-dokumen-link"
-                            onclick="
-                                smartofficeOpenPreviewDokumen(
-                                    '${item.fileId}',
-                                    '${item.fileName || ""}'
-                                )
-                            "
-                        >
-                            <svg
-                                style="flex-shrink:0;"
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path d="
-                                    M14 2H6
-                                    a2 2 0 0 0-2 2v16
-                                    a2 2 0 0 0 2 2h12
-                                    a2 2 0 0 0 2-2V8z
-                                "/>
+                  <!-- ==================================================
+                      BODY
+                  ================================================== -->
+                  <div class="smartoffice-approval-dokumen-body">
+                      <!-- NOMOR DOKUMEN -->
+                      <div class="smartoffice-approval-dokumen-info">
+                          <div class="smartoffice-approval-dokumen-info-icon">
+                              <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M14 2H6a2 2 0 0 0-2 2v16
+                                          a2 2 0 0 0 2 2h12
+                                          a2 2 0 0 0 2-2V8z"/>
 
-                                <polyline points="
-                                    14 2
-                                    14 8
-                                    20 8
-                                "/>
+                                  <polyline points="14 2 14 8 20 8"/>
 
-                                <line
-                                    x1="16"
-                                    y1="13"
-                                    x2="8"
-                                    y2="13"
-                                />
+                                  <line
+                                      x1="16"
+                                      y1="13"
+                                      x2="8"
+                                      y2="13"
+                                  />
 
-                                <line
-                                    x1="16"
-                                    y1="17"
-                                    x2="8"
-                                    y2="17"
-                                />
+                                  <line
+                                      x1="16"
+                                      y1="17"
+                                      x2="8"
+                                      y2="17"
+                                  />
+                              </svg>
+                          </div>
 
-                                <line
-                                    x1="10"
-                                    y1="9"
-                                    x2="8"
-                                    y2="9"
-                                />
-                            </svg>
+                          <span>
+                              Nomor Dokumen
+                          </span>
 
-                            <span>
-                                Lihat Dokumen
-                            </span>
-                        </button>
+                          <strong>
+                              ${item.nomorDokumen || "-"}
+                          </strong>
+                      </div>
 
-                        <!-- ACTION -->
-                        <div class="smartoffice-verifikasi-action">
-                            <button
-                                type="button"
-                                class="smartoffice-button-success"
-                                onclick="
-                                    smartofficeVerifikasiDokumen(
-                                        '${item.idDokumen}'
-                                    )
-                                "
-                            >
-                                Verifikasi
-                            </button>
+                      <!-- KETERANGAN -->
+                      ${
+                          item.keterangan
+                          ?
+                          `
+                          <div class="smartoffice-approval-dokumen-info">
+                              <div class="smartoffice-approval-dokumen-info-icon">
+                                  <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="18"
+                                      height="18"
+                                      viewBox="0 0 24 24"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      stroke-width="1.8"
+                                      stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                  >
+                                      <circle
+                                          cx="12"
+                                          cy="12"
+                                          r="9"
+                                      />
 
-                            <button
-                                type="button"
-                                class="smartoffice-button-danger"
-                                onclick="
-                                    smartofficeTolakDokumen(
-                                        '${item.idDokumen}'
-                                    )
-                                "
-                            >
-                                Tolak
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+                                      <line
+                                          x1="12"
+                                          y1="8"
+                                          x2="12"
+                                          y2="12"
+                                      />
+
+                                      <line
+                                          x1="12"
+                                          y1="16"
+                                          x2="12.01"
+                                          y2="16"
+                                      />
+                                  </svg>
+                              </div>
+
+                              <span>
+                                  Keterangan
+                              </span>
+
+                              <strong>
+                                  ${item.keterangan}
+                              </strong>
+                          </div>
+                          `
+                          :
+                          ""
+                      }
+
+                      <!-- FILE -->
+                      <div class="smartoffice-approval-dokumen-info">
+                          <div class="smartoffice-approval-dokumen-info-icon">
+                              <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="18"
+                                  height="18"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <path d="M21 12.5V7a2 2 0 0 0-2-2h-7l-2-2H5a2 2 0 0 0-2 2v14
+                                          a2 2 0 0 0 2 2h12.5"/>
+
+                                  <path d="M15 15l3 3 3-3"/>
+
+                                  <path d="M18 12v6"/>
+                              </svg>
+                          </div>
+
+                          <span>
+                              File
+                          </span>
+
+                          <strong>
+                              ${item.fileName || "-"}
+                          </strong>
+                      </div>
+                  </div>
+
+                  <!-- ==================================================
+                      FOOTER
+                  ================================================== -->
+                  <div class="smartoffice-approval-dokumen-footer">
+                      <!-- LIHAT DOKUMEN -->
+                      <button
+                          type="button"
+                          class="smartoffice-approval-dokumen-preview"
+                          onclick="
+                              smartofficeOpenPreviewDokumen(
+                                  '${item.fileId}',
+                                  '${item.fileName || ""}'
+                              )
+                          "
+                      >
+                          <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="18"
+                              height="18"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                          >
+                              <path d="M14 2H6a2 2 0 0 0-2 2v16
+                                      a2 2 0 0 0 2 2h12
+                                      a2 2 0 0 0 2-2V8z"/>
+
+                              <polyline points="14 2 14 8 20 8"/>
+
+                              <line
+                                  x1="16"
+                                  y1="13"
+                                  x2="8"
+                                  y2="13"
+                              />
+
+                              <line
+                                  x1="16"
+                                  y1="17"
+                                  x2="8"
+                                  y2="17"
+                              />
+
+                              <line
+                                  x1="10"
+                                  y1="9"
+                                  x2="8"
+                                  y2="9"
+                              />
+                          </svg>
+
+                          <span>
+                              Lihat Dokumen
+                          </span>
+                      </button>
+
+                      <!-- ACTION -->
+                      <div class="smartoffice-approval-dokumen-actions">
+                          <!-- VERIFIKASI -->
+                          <button
+                              type="button"
+                              class="smartoffice-approval-dokumen-verify"
+                              onclick="
+                                  smartofficeVerifikasiDokumen(
+                                      '${item.idDokumen}'
+                                  )
+                              "
+                          >
+                              <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="17"
+                                  height="17"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2.5"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <polyline points="20 6 9 17 4 12"/>
+                              </svg>
+
+                              <span>
+                                  Verifikasi
+                              </span>
+                          </button>
+
+                          <!-- TOLAK -->
+                          <button
+                              type="button"
+                              class="smartoffice-approval-dokumen-reject"
+                              onclick="
+                                  smartofficeTolakDokumen(
+                                      '${item.idDokumen}'
+                                  )
+                              "
+                          >
+                              <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="17"
+                                  height="17"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="2.5"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                              >
+                                  <circle
+                                      cx="12"
+                                      cy="12"
+                                      r="9"
+                                  />
+
+                                  <line
+                                      x1="9"
+                                      y1="9"
+                                      x2="15"
+                                      y2="15"
+                                  />
+
+                                  <line
+                                      x1="15"
+                                      y1="9"
+                                      x2="9"
+                                      y2="15"
+                                  />
+                              </svg>
+
+                              <span>
+                                  Tolak
+                              </span>
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          `;
         }
     );
 
@@ -2189,7 +2390,7 @@ export function smartofficeOpenVerifikasiDokumenModal(
 
     const body =
         document.getElementById(
-            "smartofficeArsipActionBody"
+            "smartofficeApprovalDokumenActionBody"
         );
 
     if(!body){
@@ -2197,45 +2398,78 @@ export function smartofficeOpenVerifikasiDokumenModal(
     }
 
     body.innerHTML = `
-        <div class="smartoffice-arsip-modal-icon">
-            ✓
+        <div class="smartoffice-approval-dokumen-modal-icon">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
         </div>
 
-        <div class="smartoffice-arsip-modal-title">
+        <div class="smartoffice-approval-dokumen-modal-title">
             Verifikasi Dokumen
         </div>
 
-        <div class="smartoffice-arsip-modal-text">
+        <div class="smartoffice-approval-dokumen-modal-text">
             Dokumen akan dikunci setelah diverifikasi.
+            Pastikan dokumen telah diperiksa dengan benar.
         </div>
 
-        <div class="smartoffice-arsip-modal-footer">
+        <div class="smartoffice-approval-dokumen-modal-footer">
+
             <button
                 id="smartofficeVerifikasiSubmitButton"
-                class="smartoffice-management-filter-button"
+                type="button"
+                class="smartoffice-approval-dokumen-modal-primary"
                 onclick="
                     smartofficeSubmitVerifikasiDokumen(
                         '${idDokumen}'
                     )
                 "
             >
-                Verifikasi
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="17"
+                    height="17"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+
+                <span>
+                    Verifikasi
+                </span>
             </button>
 
             <button
-                class="smartoffice-management-reset-button"
+                type="button"
+                class="smartoffice-approval-dokumen-modal-secondary"
                 onclick="
-                    smartofficeCloseArsipModal()
+                    smartofficeCloseApprovalDokumenModal()
                 "
             >
                 Batal
             </button>
+
         </div>
     `;
 
     const modal =
         document.getElementById(
-            "smartofficeArsipActionModal"
+            "smartofficeApprovalDokumenActionModal"
         );
     if(!modal){
         return;
@@ -2264,7 +2498,7 @@ export function smartofficeOpenTolakDokumenModal(
 
     const body =
         document.getElementById(
-            "smartofficeArsipActionBody"
+            "smartofficeApprovalDokumenActionBody"
         );
 
     if(!body){
@@ -2272,51 +2506,85 @@ export function smartofficeOpenTolakDokumenModal(
     }
 
     body.innerHTML = `
-        <div class="smartoffice-arsip-modal-icon danger">
-            ✕
+        <div class="smartoffice-approval-dokumen-modal-icon danger">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M18 6L6 18"/>
+                <path d="M6 6L18 18"/>
+            </svg>
         </div>
 
-        <div class="smartoffice-arsip-modal-title">
+        <div class="smartoffice-approval-dokumen-modal-title">
             Tolak Dokumen
         </div>
 
-        <div class="smartoffice-arsip-modal-text">
+        <div class="smartoffice-approval-dokumen-modal-text">
             Alasan penolakan wajib diisi.
         </div>
 
         <textarea
-            id="smartofficeTolakDokumenAlasan"
-            class="smartoffice-arsip-textarea"
+            id="smartofficeApprovalDokumenRejectReason"
+            class="smartoffice-approval-dokumen-modal-textarea"
             placeholder="Tulis alasan penolakan..."
         ></textarea>
 
-        <div class="smartoffice-arsip-modal-footer">
+        <div class="smartoffice-approval-dokumen-modal-footer">
+
             <button
-                id="smartofficeTolakSubmitButton"
-                class="smartoffice-management-filter-button"
+                id="smartofficeApprovalDokumenRejectSubmitButton"
+                type="button"
+                class="smartoffice-approval-dokumen-modal-danger"
                 onclick="
                     smartofficeSubmitTolakDokumen(
                         '${idDokumen}'
                     )
                 "
             >
-                Tolak
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M18 6L6 18"/>
+                    <path d="M6 6l12 12"/>
+                </svg>
+
+                <span>
+                    Tolak Dokumen
+                </span>
             </button>
 
             <button
-                class="smartoffice-management-reset-button"
+                type="button"
+                class="smartoffice-approval-dokumen-modal-secondary"
                 onclick="
-                    smartofficeCloseArsipModal()
+                    smartofficeCloseApprovalDokumenModal()
                 "
             >
                 Batal
             </button>
+
         </div>
     `;
 
     const modal =
         document.getElementById(
-            "smartofficeArsipActionModal"
+            "smartofficeApprovalDokumenActionModal"
         );
     if(!modal){
         return;
@@ -2347,6 +2615,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
        VALIDASI
     ========================= */
     if(!idDokumen){
+
         smartofficeShowToast(
             "ID dokumen tidak ditemukan.",
             "error"
@@ -2354,6 +2623,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
 
         return;
     }
+
 
     /* =========================
        BUTTON
@@ -2364,18 +2634,19 @@ export async function smartofficeSubmitVerifikasiDokumen(
         );
 
     if(button){
+
         button.disabled =
             true;
 
         button.innerHTML = `
             <span
-                class="
-                    smartofficearsip-btn-spinner
-                "
+                class="smartoffice-approval-dokumen-btn-spinner"
             ></span>
+
             Memverifikasi...
         `;
     }
+
 
     /* =========================
        GLOBAL LOADING
@@ -2384,17 +2655,26 @@ export async function smartofficeSubmitVerifikasiDokumen(
         "Memverifikasi dokumen..."
     );
 
+
+    /* =========================
+       TOAST RESULT
+       Ditampilkan setelah
+       global loading ditutup
+    ========================= */
+    let toastMessage = "";
+    let toastType = "";
+
+
     try{
+
         /* =========================
            API
         ========================= */
         const response =
-            await smartofficeApi(
-                "smartofficeVerifikasiDokumen",
-                {
-                    idDokumen
-                }
+            await smartofficeVerifikasiDokumenApi(
+                idDokumen
             );
+
 
         /* =========================
            REQUEST DIBATALKAN
@@ -2405,6 +2685,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
             return;
         }
 
+
         /* =========================
            API ERROR
         ========================= */
@@ -2412,45 +2693,38 @@ export async function smartofficeSubmitVerifikasiDokumen(
             !response ||
             !response.success
         ){
+
             throw new Error(
                 response?.message ||
                 "Gagal memverifikasi dokumen."
             );
         }
 
+
         /* =========================
            CLOSE MODAL
         ========================= */
-        smartofficeCloseArsipModal();
+        smartofficeCloseApprovalDokumenModal();
+
 
         /* =========================
-           SUCCESS
-        ========================= */
-        smartofficeShowToast(
-            "Dokumen berhasil diverifikasi",
-            "success"
-        );
-
-        /* =========================
-           LOAD ULANG DATA
-           CUTI + DOKUMEN
+           REFRESH
         ========================= */
         await smartofficeRefreshAllApprovalData();
 
 
         /* =========================
-           UPDATE BADGE APPROVAL
+           SUCCESS TOAST
         ========================= */
+        toastMessage =
+            "Dokumen berhasil diverifikasi";
 
-        /*
-         * Badge approval dashboard tidak perlu
-         * dipanggil dari sini secara langsung.
-         *
-         * Badge akan diperbarui ketika kembali
-         * ke dashboard.
-         */
+        toastType =
+            "success";
+
     }
     catch(error){
+
         /* =========================
            REQUEST DIBATALKAN
         ========================= */
@@ -2461,18 +2735,26 @@ export async function smartofficeSubmitVerifikasiDokumen(
             return;
         }
 
+
         console.error(
             "SUBMIT VERIFIKASI DOKUMEN ERROR:",
             error
         );
 
-        smartofficeShowToast(
+
+        /* =========================
+           ERROR TOAST
+        ========================= */
+        toastMessage =
             error.message ||
-            "Gagal memverifikasi dokumen.",
-            "error"
-        );
+            "Gagal memverifikasi dokumen.";
+
+        toastType =
+            "error";
+
     }
     finally{
+
         /* =========================
            STOP GLOBAL LOADING
         ========================= */
@@ -2485,9 +2767,39 @@ export async function smartofficeSubmitVerifikasiDokumen(
             button.disabled =
                 false;
 
-            button.innerHTML =
-                "Verifikasi";
+            button.innerHTML = `
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+
+                <span>
+                    Verifikasi
+                </span>
+            `;
         }
+    }
+
+    /* =========================
+       TOAST
+       Overlay sudah ditutup
+    ========================= */
+    if(
+        toastMessage
+    ){
+        smartofficeShowToast(
+            toastMessage,
+            toastType
+        );
     }
 }
 
@@ -2504,7 +2816,7 @@ export async function smartofficeSubmitTolakDokumen(
     ========================= */
     const alasanElement =
         document.getElementById(
-            "smartofficeTolakDokumenAlasan"
+            "smartofficeApprovalDokumenRejectReason"
         );
 
     const alasan =
@@ -2529,7 +2841,7 @@ export async function smartofficeSubmitTolakDokumen(
     ========================= */
     const button =
         document.getElementById(
-            "smartofficeTolakSubmitButton"
+            "smartofficeApprovalDokumenRejectSubmitButton"
         );
 
     if(button){
@@ -2538,7 +2850,7 @@ export async function smartofficeSubmitTolakDokumen(
 
         button.innerHTML = `
             <span
-                class="smartofficearsip-btn-spinner"
+                class="smartoffice-approval-dokumen-btn-spinner"
             ></span>
             Menolak...
         `;
@@ -2551,17 +2863,23 @@ export async function smartofficeSubmitTolakDokumen(
         "Menolak dokumen..."
     );
 
+    /* =========================
+       TOAST RESULT
+       Ditampilkan SETELAH
+       global loading ditutup
+    ========================= */
+    let toastMessage = "";
+    let toastType = "";
+
     try{
+
         /* =========================
            API
         ========================= */
         const response =
-            await smartofficeApi(
-                "smartofficeTolakDokumen",
-                {
-                    idDokumen,
-                    alasan
-                }
+            await smartofficeTolakDokumenApi(
+                idDokumen,
+                alasan
             );
 
         /* =========================
@@ -2589,23 +2907,24 @@ export async function smartofficeSubmitTolakDokumen(
         /* =========================
            CLOSE MODAL
         ========================= */
-        smartofficeCloseArsipModal();
+        smartofficeCloseApprovalDokumenModal();
 
         /* =========================
-           SUCCESS
-        ========================= */
-        smartofficeShowToast(
-            "Dokumen ditolak",
-            "success"
-        );
-
-        /* =========================
-           LOAD ULANG 
-           LIST APPROVAL + CUTI
+           REFRESH
         ========================= */
         await smartofficeRefreshAllApprovalData();
+
+        /* =========================
+           SUCCESS TOAST
+        ========================= */
+        toastMessage =
+            "Dokumen ditolak";
+
+        toastType =
+            "success";
     }
     catch(error){
+
         /* =========================
            REQUEST DIBATALKAN
         ========================= */
@@ -2621,13 +2940,18 @@ export async function smartofficeSubmitTolakDokumen(
             error
         );
 
-        smartofficeShowToast(
+        /* =========================
+           ERROR TOAST
+        ========================= */
+        toastMessage =
             error.message ||
-            "Gagal menolak dokumen.",
-            "error"
-        );
+            "Gagal menolak dokumen.";
+
+        toastType =
+            "error";
     }
     finally{
+
         /* =========================
            STOP GLOBAL LOADING
         ========================= */
@@ -2639,34 +2963,77 @@ export async function smartofficeSubmitTolakDokumen(
         if(button){
             button.disabled =
                 false;
-            button.innerHTML =
-                "Tolak";
+
+            button.innerHTML = `
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M18 6L6 18"/>
+                    <path d="M6 6L18 18"/>
+                </svg>
+
+                <span>
+                    Tolak Dokumen
+                </span>
+            `;
         }
+    }
+
+    /* =========================
+       TOAST
+       SEKARANG overlay sudah
+       di-hide
+    ========================= */
+    if(
+        toastMessage
+    ){
+        smartofficeShowToast(
+            toastMessage,
+            toastType
+        );
     }
 }
 
 
-/* =========================
-   CLOSE MODAL ARSIP
-========================= */
-export function smartofficeCloseArsipModal(){
+/* ======================================================
+   CLOSE MODAL APPROVAL DOKUMEN
+====================================================== */
+export function smartofficeCloseApprovalDokumenModal(){
 
-  const modal =
-    document.getElementById(
-      'smartofficeArsipActionModal'
+    const modal =
+        document.getElementById(
+            'smartofficeApprovalDokumenActionModal'
+        );
+    if(!modal){
+        return;
+    }
+
+    modal.classList.remove(
+        'show'
     );
 
-  modal.classList.remove(
-    'show'
-  );
-
-  setTimeout(
-    function(){
-      modal.style.display =
-        'none';
-    },
-    250
-  );
+    setTimeout(
+        function(){
+            if(
+                modal &&
+                !modal.classList.contains(
+                    'show'
+                )
+            ){
+                modal.style.display =
+                    'none';
+            }
+        },
+        250
+    );
 }
 
 
@@ -2692,8 +3059,8 @@ window.smartofficeSubmitVerifikasiDokumen =
 window.smartofficeSubmitTolakDokumen =
     smartofficeSubmitTolakDokumen;
 
-window.smartofficeCloseArsipModal =
-    smartofficeCloseArsipModal;
+window.smartofficeCloseApprovalDokumenModal =
+    smartofficeCloseApprovalDokumenModal;
 
 
 
