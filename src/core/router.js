@@ -60,6 +60,9 @@ const smartofficeModules = {
     "dokumen-saya": () =>
         import("../pages/dokumen-saya/dokumen-saya.js"),
 
+    "arsip-pegawai": () =>
+        import("../pages/arsip-pegawai/arsip-pegawai.js"),
+
 };
 
 
@@ -154,7 +157,6 @@ export async function smartofficeInitializeRouter(){
 async function smartofficeHandlePopState(
     event
 ){
-
     const state =
         event.state;
 
@@ -162,7 +164,6 @@ async function smartofficeHandlePopState(
         state &&
         state.page
     ){
-
         await smartofficeNavigate(
             state.page,
             state.params || {},
@@ -170,7 +171,6 @@ async function smartofficeHandlePopState(
                 pushState: false
             }
         );
-
     }
     else{
 
@@ -178,7 +178,6 @@ async function smartofficeHandlePopState(
            FALLBACK KALAU STATE
            KOSONG (MISAL LOAD AWAL)
         ========================= */
-
         const hash =
             window.location.hash
                 .replace("#", "");
@@ -202,9 +201,7 @@ async function smartofficeHandlePopState(
                 pushState: false
             }
         );
-
     }
-
 }
 
 
@@ -233,13 +230,10 @@ export async function smartofficeNavigate(
         pageName !== "login";
 
     if(useGlobalLoading){
-
         smartofficeShowGlobalLoading(
             "Memuat halaman..."
         );
-
     }
-
     try{
 
         /* ==================================================
@@ -471,7 +465,6 @@ async function smartofficeGetPageHtml(
 function smartofficeGetErrorHtml(
     pageName
 ){
-
     return `
         <div style="padding: 40px; text-align: center;">
             <p style="font-weight: bold; margin-bottom: 8px;">

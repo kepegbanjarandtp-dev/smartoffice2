@@ -1,4 +1,12 @@
 /* ======================================================
+   HEADER
+====================================================== */
+.smartoffice-dokumen-saya-header-icon{
+  background:#F4ECFF;
+  color:#8B5CF6; 
+}
+
+/* ======================================================
    CONTENT
 ====================================================== */
 .smartoffice-dokumen-saya-content{
@@ -27,7 +35,7 @@
 ====================================================== */
 
 .smartoffice-dokumen-saya-form-card{
-background:#ffffff;
+  background:#ffffff;
   border-radius:26px;
   padding:24px;
   box-shadow:

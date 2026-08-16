@@ -1357,27 +1357,22 @@ function smartofficeResetDokumenForm(){
         "smartofficeDokumenJenisDokumen"
     ).value = "";
 
-
     document.getElementById(
         "smartofficeDokumenNomor"
     ).value = "";
-
 
     document.getElementById(
         "smartofficeDokumenKeterangan"
     ).value = "";
 
-
     document.getElementById(
         "smartofficeDokumenFile"
     ).value = "";
-
 
     document.getElementById(
         "smartofficeDokumenFileName"
     ).innerText =
         "Belum ada file dipilih";
-
 }
 
 
@@ -1394,18 +1389,15 @@ async function smartofficeRefreshDokumen(){
     ).innerHTML =
         '<span class="smartoffice-mini-loader"></span>';
 
-
     document.getElementById(
         "smartofficeDokumenTerverifikasi"
     ).innerHTML =
         '<span class="smartoffice-mini-loader"></span>';
 
-
     document.getElementById(
         "smartofficeDokumenProgress"
     ).innerHTML =
         '<span class="smartoffice-mini-loader"></span>';
-
 
     /* =========================
        LIST LOADING
@@ -1418,7 +1410,6 @@ async function smartofficeRefreshDokumen(){
                 smartoffice-dokumen-loading
             "
         >
-
             <div
                 class="
                     smartoffice-dokumen-spinner
@@ -1428,10 +1419,8 @@ async function smartofficeRefreshDokumen(){
             <p>
                 Memuat dokumen...
             </p>
-
         </div>
     `;
-
 
     try{
 
@@ -1440,7 +1429,6 @@ async function smartofficeRefreshDokumen(){
         ========================= */
         await smartofficeLoadDokumenSaya();
 
-
         /* =========================
            TOAST
         ========================= */
@@ -1448,7 +1436,6 @@ async function smartofficeRefreshDokumen(){
             "Data berhasil diperbarui",
             "success"
         );
-
     }
     catch(error){
 
@@ -1462,9 +1449,7 @@ async function smartofficeRefreshDokumen(){
             "Gagal memperbarui data dokumen",
             "error"
         );
-
     }
-
 }
 
 

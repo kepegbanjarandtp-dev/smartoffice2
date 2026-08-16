@@ -2615,7 +2615,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
        VALIDASI
     ========================= */
     if(!idDokumen){
-
         smartofficeShowToast(
             "ID dokumen tidak ditemukan.",
             "error"
@@ -2623,7 +2622,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
 
         return;
     }
-
 
     /* =========================
        BUTTON
@@ -2634,7 +2632,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
         );
 
     if(button){
-
         button.disabled =
             true;
 
@@ -2647,14 +2644,12 @@ export async function smartofficeSubmitVerifikasiDokumen(
         `;
     }
 
-
     /* =========================
        GLOBAL LOADING
     ========================= */
     smartofficeShowGlobalLoading(
         "Memverifikasi dokumen..."
     );
-
 
     /* =========================
        TOAST RESULT
@@ -2663,7 +2658,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
     ========================= */
     let toastMessage = "";
     let toastType = "";
-
 
     try{
 
@@ -2675,7 +2669,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
                 idDokumen
             );
 
-
         /* =========================
            REQUEST DIBATALKAN
         ========================= */
@@ -2685,7 +2678,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
             return;
         }
 
-
         /* =========================
            API ERROR
         ========================= */
@@ -2693,25 +2685,21 @@ export async function smartofficeSubmitVerifikasiDokumen(
             !response ||
             !response.success
         ){
-
             throw new Error(
                 response?.message ||
                 "Gagal memverifikasi dokumen."
             );
         }
 
-
         /* =========================
            CLOSE MODAL
         ========================= */
         smartofficeCloseApprovalDokumenModal();
 
-
         /* =========================
            REFRESH
         ========================= */
         await smartofficeRefreshAllApprovalData();
-
 
         /* =========================
            SUCCESS TOAST
@@ -2721,7 +2709,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
 
         toastType =
             "success";
-
     }
     catch(error){
 
@@ -2735,12 +2722,10 @@ export async function smartofficeSubmitVerifikasiDokumen(
             return;
         }
 
-
         console.error(
             "SUBMIT VERIFIKASI DOKUMEN ERROR:",
             error
         );
-
 
         /* =========================
            ERROR TOAST
@@ -2751,7 +2736,6 @@ export async function smartofficeSubmitVerifikasiDokumen(
 
         toastType =
             "error";
-
     }
     finally{
 

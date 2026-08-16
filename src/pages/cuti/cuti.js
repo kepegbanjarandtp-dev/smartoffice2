@@ -1780,9 +1780,6 @@ export function smartofficeFilterRiwayatCuti(
     html;
 }
 
-window.smartofficeFilterRiwayatCuti =
-  smartofficeFilterRiwayatCuti;
-
 
 /* ================================================================================
    TAB
@@ -3356,6 +3353,9 @@ export function smartofficeCloseRiwayatCutiDetail(){
 /* ======================================================
    GLOBAL WINDOW
 ====================================================== */
+window.smartofficeFilterRiwayatCuti =
+  smartofficeFilterRiwayatCuti;
+
 window.smartofficeOpenRiwayatCutiDetail =
     smartofficeOpenRiwayatCutiDetail;
 

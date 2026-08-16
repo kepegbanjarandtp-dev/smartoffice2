@@ -2,6 +2,14 @@ import {
     smartofficeNavigate
 } from "./router.js";
 
+import {
+    smartofficeAbortAllRequests
+} from "./api.js";
+
+import {
+    smartofficeForceHideGlobalLoading
+} from "../components/loading/loading.js";
+
 /* ======================================================
    SMARTOFFICE SESSION
 ====================================================== */
@@ -69,6 +77,17 @@ export async function smartofficeLogout(){
     }
 
     /* =========================
+       ABORT SEMUA REQUEST AKTIF
+       USER LAMA
+    ========================= */
+    smartofficeAbortAllRequests();
+
+    /* =========================
+       RESET GLOBAL LOADING
+    ========================= */
+    smartofficeForceHideGlobalLoading();
+
+    /* =========================
        CLEAR SESSION
     ========================= */
     smartofficeClearSession();
@@ -88,5 +107,4 @@ export async function smartofficeLogout(){
     await smartofficeNavigate(
         "login"
     );
-
 }

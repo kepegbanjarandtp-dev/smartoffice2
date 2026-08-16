@@ -108,14 +108,10 @@ export async function smartofficeLoadPage(){
         );
 
     if(logoutButton){
-
         logoutButton.onclick =
             async function(){
-
                 await smartofficeLogout();
-
             };
-
     }
 
     /* =========================
@@ -125,12 +121,10 @@ export async function smartofficeLoadPage(){
         sessionData
     ).catch(
         error => {
-
             console.warn(
                 "Load Approval Badge Error:",
                 error
             );
-
         }
     );
 
@@ -153,9 +147,6 @@ export async function smartofficeLoadPage(){
 /* ======================================================
    DESTROY PAGE
 ====================================================== */
-/* ======================================================
-   DESTROY PAGE
-====================================================== */
 export async function smartofficeDestroyPage(){
 
     /* =========================
@@ -164,13 +155,11 @@ export async function smartofficeDestroyPage(){
     smartofficeDashboardDestroyed =
         true;
 
-
     /* =========================
        REMOVE MENU LISTENERS
     ========================= */
     const handlers =
         smartofficeDashboardMenuHandlers;
-
 
     const menuIds = [
         "smartofficeCutiMenuCard",
@@ -180,10 +169,8 @@ export async function smartofficeDestroyPage(){
         "smartofficeDokumenSayaMenuCard"
     ];
 
-
     menuIds.forEach(
         function(id){
-
             const element =
                 document.getElementById(
                     id
@@ -191,29 +178,23 @@ export async function smartofficeDestroyPage(){
 
             const handler =
                 handlers[id];
-
             if(
                 element &&
                 handler
             ){
-
                 element.removeEventListener(
                     "click",
                     handler
                 );
-
             }
-
         }
     );
-
 
     /* =========================
        RESET HANDLERS
     ========================= */
     smartofficeDashboardMenuHandlers =
         {};
-
 
     /* =========================
        RESET APPROVAL BADGE
@@ -222,20 +203,16 @@ export async function smartofficeDestroyPage(){
         document.getElementById(
             "smartofficeApprovalBadge"
         );
-
     if(
         badge
     ){
-
         badge.textContent =
             "0";
 
         badge.classList.remove(
             "show"
         );
-
     }
-
 }
 
 
@@ -354,11 +331,8 @@ function smartofficeFilterMenuByRole(
             ".smartoffice-dashboard-menu-card"
         )
         .forEach(function(menu){
-
             menu.style.display = "";
-
         });
-
 
     /* =========================
        USER
@@ -366,7 +340,6 @@ function smartofficeFilterMenuByRole(
     if(
         role === "USER"
     ){
-
         approvalMenu &&
             (approvalMenu.style.display = "none");
 
@@ -378,9 +351,7 @@ function smartofficeFilterMenuByRole(
 
         masterDataMenu &&
             (masterDataMenu.style.display = "none");
-
     }
-
 
     /* =========================
        PJ
@@ -389,12 +360,9 @@ function smartofficeFilterMenuByRole(
     else if(
         role === "PJ"
     ){
-
         masterDataMenu &&
             (masterDataMenu.style.display = "");
-
     }
-
 
     /* =========================
        ADMIN
@@ -403,12 +371,9 @@ function smartofficeFilterMenuByRole(
     else if(
         role === "ADMIN"
     ){
-
         masterDataMenu &&
             (masterDataMenu.style.display = "");
-
     }
-
 }
 
 
@@ -569,7 +534,6 @@ function smartofficeInitDashboardMenu(){
     ========================= */
     smartofficeDestroyDashboardMenuListeners();
 
-
     /* =========================
        E-CUTI
     ========================= */
@@ -577,14 +541,11 @@ function smartofficeInitDashboardMenu(){
         document.getElementById(
             "smartofficeCutiMenuCard"
         );
-
     if(
         cutiMenu
     ){
-
         const handler =
             async function(){
-
                 if(
                     smartofficeDashboardDestroyed
                 ){
@@ -594,9 +555,7 @@ function smartofficeInitDashboardMenu(){
                 await smartofficeNavigate(
                     "cuti"
                 );
-
             };
-
         cutiMenu.addEventListener(
             "click",
             handler
@@ -606,9 +565,7 @@ function smartofficeInitDashboardMenu(){
             "smartofficeCutiMenuCard"
         ] =
             handler;
-
     }
-
 
     /* =========================
        APPROVAL
@@ -617,14 +574,11 @@ function smartofficeInitDashboardMenu(){
         document.getElementById(
             "smartofficeApprovalMenuCard"
         );
-
     if(
         approvalMenu
     ){
-
         const handler =
             async function(){
-
                 if(
                     smartofficeDashboardDestroyed
                 ){
@@ -634,9 +588,7 @@ function smartofficeInitDashboardMenu(){
                 await smartofficeNavigate(
                     "approval"
                 );
-
             };
-
         approvalMenu.addEventListener(
             "click",
             handler
@@ -646,9 +598,7 @@ function smartofficeInitDashboardMenu(){
             "smartofficeApprovalMenuCard"
         ] =
             handler;
-
     }
-
 
     /* =========================
        MANAGEMENT CUTI
@@ -657,14 +607,11 @@ function smartofficeInitDashboardMenu(){
         document.getElementById(
             "smartofficeManagementCutiMenuCard"
         );
-
     if(
         managementCutiMenu
     ){
-
         const handler =
             async function(){
-
                 if(
                     smartofficeDashboardDestroyed
                 ){
@@ -674,9 +621,7 @@ function smartofficeInitDashboardMenu(){
                 await smartofficeNavigate(
                     "management-cuti"
                 );
-
             };
-
         managementCutiMenu.addEventListener(
             "click",
             handler
@@ -686,9 +631,7 @@ function smartofficeInitDashboardMenu(){
             "smartofficeManagementCutiMenuCard"
         ] =
             handler;
-
     }
-
 
     /* =========================
        BUKU TAMU
@@ -697,14 +640,11 @@ function smartofficeInitDashboardMenu(){
         document.getElementById(
             "smartofficeBukuTamuMenuCard"
         );
-
     if(
         bukuTamuMenu
     ){
-
         const handler =
             async function(){
-
                 if(
                     smartofficeDashboardDestroyed
                 ){
@@ -714,9 +654,7 @@ function smartofficeInitDashboardMenu(){
                 await smartofficeNavigate(
                     "buku-tamu"
                 );
-
             };
-
         bukuTamuMenu.addEventListener(
             "click",
             handler
@@ -726,9 +664,7 @@ function smartofficeInitDashboardMenu(){
             "smartofficeBukuTamuMenuCard"
         ] =
             handler;
-
     }
-
 
     /* =========================
        DOKUMEN SAYA
@@ -737,14 +673,11 @@ function smartofficeInitDashboardMenu(){
         document.getElementById(
             "smartofficeDokumenSayaMenuCard"
         );
-
     if(
         dokumenSayaMenu
     ){
-
         const handler =
             async function(){
-
                 if(
                     smartofficeDashboardDestroyed
                 ){
@@ -754,9 +687,7 @@ function smartofficeInitDashboardMenu(){
                 await smartofficeNavigate(
                     "dokumen-saya"
                 );
-
             };
-
         dokumenSayaMenu.addEventListener(
             "click",
             handler
@@ -766,7 +697,39 @@ function smartofficeInitDashboardMenu(){
             "smartofficeDokumenSayaMenuCard"
         ] =
             handler;
+    }
 
+    /* =========================
+       ARSIP KEPEGAWAIAN
+    ========================= */
+    const arsipPegawaiMenu =
+        document.getElementById(
+            "smartofficeArsipPegawaiMenuCard"
+        );
+    if(
+        arsipPegawaiMenu
+    ){
+        const handler =
+            async function(){
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
+
+                await smartofficeNavigate(
+                    "arsip-pegawai"
+                );
+            };
+        arsipPegawaiMenu.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeArsipPegawaiMenuCard"
+        ] =
+            handler;
     }
 }
 
@@ -779,12 +742,10 @@ function smartofficeDestroyDashboardMenuListeners(){
     const handlers =
         smartofficeDashboardMenuHandlers;
 
-
     Object.keys(
         handlers
     ).forEach(
         function(id){
-
             const element =
                 document.getElementById(
                     id
@@ -797,17 +758,13 @@ function smartofficeDestroyDashboardMenuListeners(){
                 element &&
                 handler
             ){
-
                 element.removeEventListener(
                     "click",
                     handler
                 );
-
             }
-
         }
     );
-
 
     smartofficeDashboardMenuHandlers =
         {};

@@ -21,6 +21,7 @@ import "./pages/approval/approval-dokumen.css";
 import "./pages/management-cuti/management-cuti.css";
 import "./pages/buku-tamu/buku-tamu.css";
 import "./pages/dokumen-saya/dokumen-saya.css";
+import "./pages/arsip-pegawai/arsip-pegawai.css";
 
 import "./components/button/button.css";
 import "./components/layout/layout.css";
