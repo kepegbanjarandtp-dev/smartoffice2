@@ -456,170 +456,243 @@
   </div>
 
   <!-- ======================================================
-       TAB ARSIP PEGAWAI
+      TAB ARSIP PEGAWAI
   ====================================================== -->
   <div
-    id="smartofficeArsipPegawaiContent"
-    style="display:none;"
+      id="smartofficeArsipPegawaiContent"
+      class="smartoffice-arsippegawai-content"
+      style="display:none;"
   >
 
-    <!-- ==================================================
-         FILTER ARSIP
-    ================================================== -->
-    <div class="smartoffice-arsip-filter-card">
+      <!-- ==================================================
+          FILTER ARSIP PEGAWAI
+      ================================================== -->
+      <div class="smartoffice-arsippegawai-filter-card">
 
-      <!-- NAMA PEGAWAI -->
+          <!-- HEADER FILTER -->
+          <div class="smartoffice-arsippegawai-filter-header">
+              <div class="smartoffice-arsippegawai-filter-title">
+                  <div class="smartoffice-arsippegawai-filter-title-icon">
+                      <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                      >
+                          <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>
+                      </svg>
+                  </div>
+
+                  <div>
+                      <h3>
+                          Filter Arsip Pegawai
+                      </h3>
+
+                      <p>
+                          Pilih pegawai untuk melihat kelengkapan arsip
+                      </p>
+                  </div>
+              </div>
+          </div>
+
+          <!-- FILTER BODY -->
+          <div class="smartoffice-arsippegawai-filter-body">
+
+              <!-- NAMA PEGAWAI -->
+              <div class="smartoffice-arsippegawai-filter-group">
+
+                  <label>
+                      Nama Pegawai
+                  </label>
+
+                  <select
+                      id="smartofficeArsipPegawaiSelect"
+                      class="smartoffice-input"
+                  >
+                      <option value="">
+                          Pilih Pegawai
+                      </option>
+                  </select>
+              </div>
+
+              <!-- STATUS KEPEGAWAIAN -->
+              <div class="smartoffice-arsippegawai-filter-group">
+                  <label>
+                      Status Kepegawaian
+                  </label>
+
+                  <select
+                      id="smartofficeArsipStatusSelect"
+                      class="smartoffice-input"
+                  >
+                      <option value="">
+                          Semua Status
+                      </option>
+
+                      <option value="BLUD">
+                          BLUD
+                      </option>
+
+                      <option value="PPPK">
+                          PPPK
+                      </option>
+
+                      <option value="PPPK PARUH WAKTU">
+                          PPPK PARUH WAKTU
+                      </option>
+
+                      <option value="PNS">
+                          PNS
+                      </option>
+                  </select>
+              </div>
+              
+              <!-- ACTION -->
+              <div class="smartoffice-arsippegawai-filter-action">
+                  <button
+                      type="button"
+                      class="smartoffice-arsippegawai-search-button"
+                      onclick="
+                          smartofficeCariArsipPegawai()
+                      "
+                  >
+                      <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                      >
+                          <circle
+                              cx="11"
+                              cy="11"
+                              r="7"
+                          />
+
+                          <path
+                              d="m20 20-4-4"
+                          />
+                      </svg>
+
+                      <span>
+                          Cari
+                      </span>
+                  </button>
+
+                  <button
+                      type="button"
+                      class="smartoffice-arsippegawai-reset-button"
+                      onclick="
+                          smartofficeResetArsipPegawai()
+                      "
+                  >
+                      <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                      >
+                          <path
+                              d="
+                                  M3 12
+                                  a9 9 0 1 0 3-6.7
+                              "
+                          />
+
+                          <polyline
+                              points="3 3 3 9 9 9"
+                          />
+                      </svg>
+
+                      <span>
+                          Reset
+                      </span>
+                  </button>
+              </div>
+          </div>
+      </div>
+
+      <!-- ==================================================
+          INFO PEGAWAI
+          DIISI OLEH smartofficeRenderArsipPegawai()
+      ================================================== -->
       <div
-        class="
-          smartoffice-cuti-form-group
-          smartoffice-arsip-filter-pegawai
-        "
+          id="smartofficeArsipPegawaiInfo"
+          class="smartoffice-arsippegawai-info"
       >
-
-        <label>
-          Nama Pegawai
-        </label>
-
-        <select
-          id="smartofficeArsipPegawaiSelect"
-          class="smartoffice-input"
-        >
-          <option value="">
-            Pilih Pegawai
-          </option>
-        </select>
-
       </div>
 
 
-      <!-- STATUS KEPEGAWAIAN -->
+      <!-- ==================================================
+          LIST ARSIP
+          DIISI OLEH smartofficeRenderArsipPegawai()
+      ================================================== -->
       <div
-        class="
-          smartoffice-cuti-form-group
-          smartoffice-arsip-filter-status
-        "
+          id="smartofficeArsipPegawaiList"
+          class="smartoffice-arsippegawai-document-wrapper"
       >
+          <!-- EMPTY STATE -->
+          <div class="smartoffice-arsippegawai-empty">
+              <div class="smartoffice-arsippegawai-empty-icon">
+                  <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                  >
+                      <path
+                          d="
+                              M3 7
+                              a2 2 0 0 1 2-2
+                              h5
+                              l2 2
+                              h7
+                              a2 2 0 0 1 2 2
+                              v9
+                              a2 2 0 0 1-2 2
+                              H5
+                              a2 2 0 0 1-2-2z
+                          "
+                      />
+                  </svg>
+              </div>
 
-        <label>
-          Status Kepegawaian
-        </label>
+              <h3>
+                  Belum ada arsip dipilih
+              </h3>
 
-        <select
-          id="smartofficeArsipStatusSelect"
-          class="smartoffice-input"
-        >
-
-          <option value="">
-            Semua Status
-          </option>
-
-          <option value="BLUD">
-            BLUD
-          </option>
-
-          <option value="PPPK">
-            PPPK
-          </option>
-
-          <option value="PPPK PARUH WAKTU">
-            PPPK PARUH WAKTU
-          </option>
-
-          <option value="PNS">
-            PNS
-          </option>
-
-        </select>
-
+              <p>
+                  Pilih pegawai lalu klik Cari
+                  untuk melihat arsip pegawai
+              </p>
+          </div>
       </div>
-
-
-      <!-- ACTION -->
-      <div class="smartoffice-arsip-filter-action">
-
-        <button
-          type="button"
-          class="smartoffice-management-filter-button"
-          onclick="
-            smartofficeCariArsipPegawai()
-          "
-        >
-          Cari
-        </button>
-
-        <button
-          type="button"
-          class="smartoffice-management-reset-button"
-          onclick="
-            smartofficeResetArsipPegawai()
-          "
-        >
-          Reset
-        </button>
-
-      </div>
-
-    </div>
-
-
-    <!-- ==================================================
-         INFO PEGAWAI
-    ================================================== -->
-    <div
-      id="smartofficeArsipPegawaiInfo"
-    >
-    </div>
-
-
-    <!-- ==================================================
-         LIST ARSIP
-    ================================================== -->
-    <div
-      id="smartofficeArsipPegawaiList"
-    >
-
-      <div class="smartoffice-arsip-empty">
-
-        <div class="smartoffice-arsip-empty-icon">
-          🗂️
-        </div>
-
-        <h3>
-          Belum ada arsip dipilih
-        </h3>
-
-        <p>
-          Pilih pegawai lalu klik Cari
-          untuk melihat arsip pegawai
-        </p>
-
-      </div>
-
-    </div>
-
   </div>
-
 </div>
 
 
 <!-- ======================================================
-     MODAL AKSI ARSIP
+     MODAL AKSI ARSIP PEGAWAI
 ====================================================== -->
 <div
   id="smartofficeArsipActionModal"
-  class="smartoffice-arsip-modal-wrapper"
+  class="smartoffice-arsippegawai-modal-wrapper"
   style="display:none;"
 >
-
   <div
-    class="smartoffice-arsip-modal-content"
+    class="smartoffice-arsippegawai-modal-content"
   >
-
     <div
       id="smartofficeArsipActionBody"
+      class="smartoffice-arsippegawai-modal-body"
     >
     </div>
-
   </div>
-
 </div>
