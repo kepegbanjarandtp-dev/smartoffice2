@@ -3,25 +3,6 @@
 =============================================================================== */
 
 /* ======================================================
-   DASHBOARD WRAPPER
-====================================================== 
-.smartoffice-dashboard-wrapper{
-    width:100%;
-    max-width:1400px;
-    margin:auto;
-    min-height:100vh;
-    padding:24px;
-    padding-bottom:100px;
-    background:
-        linear-gradient(
-            180deg,
-            #F7FAFF 0%,
-            #F3F7FD 50%,
-            #EEF4FF 100%
-        );
-}*/
-
-/* ======================================================
    BRAND INFO
 ====================================================== */
 .smartoffice-dashboard-brand-info{
@@ -356,18 +337,107 @@ smartofficeDashboardHeaderFade{
 }
 
 /* ======================================================
-   MENU UTAMA
+   DASHBOARD CATEGORY
 ====================================================== */
-.smartoffice-dashboard-section-header{
-    margin:32px 0 18px;
+.smartoffice-dashboard-category{
+    width:100%;
+    margin-top:22px;
+    padding:18px;
+    background:#ffffff;
+    border:1px solid #e6ecf7;
+    border-radius:20px;
+    box-sizing:border-box;
 }
 
-.smartoffice-dashboard-section-header h2{
+/* ======================================================
+   CATEGORY HEADER
+====================================================== */
+.smartoffice-dashboard-category-header{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:14px;
+}
+
+.smartoffice-dashboard-category-header h2{
     margin:0;
-    font-size:28px;
+    font-size:16px;
     font-weight:800;
+    line-height:1.2;
     color:#172554;
-    letter-spacing:-.5px;
+    letter-spacing:-.2px;
+}
+
+/* ======================================================
+   CATEGORY MORE
+====================================================== */
+.smartoffice-dashboard-category-more{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:#2563eb;
+    font-family:inherit;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+}
+
+.smartoffice-dashboard-category-more svg{
+    width:15px;
+    height:15px;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   ROLE CATEGORY
+====================================================== */
+.smartoffice-dashboard-role-category{
+    background:#fffaf0;
+    border-color:#f3dfb5;
+}
+
+.smartoffice-dashboard-category-title-wrap{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:0;
+}
+
+.smartoffice-dashboard-category-lock{
+    width:34px;
+    height:34px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:9px;
+    background:#fff1d6;
+    color:#c98513;
+}
+
+.smartoffice-dashboard-category-lock svg{
+    width:18px;
+    height:18px;
+}
+
+.smartoffice-dashboard-role-badge{
+    display:inline-flex;
+    align-items:center;
+    margin-top:4px;
+    padding:3px 7px;
+    border-radius:999px;
+    background:#fff0d4;
+    color:#9a6510;
+    font-size:10px;
+    font-weight:700;
+    line-height:1;
 }
 
 /* ======================================================
@@ -379,7 +449,6 @@ smartofficeDashboardHeaderFade{
         repeat(4,minmax(220px,1fr));
     gap:20px;
 }
-
 
 /* ======================================================
    DASHBOARD MENU CARD
@@ -571,6 +640,328 @@ smartofficeDashboardHeaderFade{
 
 
 /* ======================================================
+   TIPS SMART OFFICE
+====================================================== */
+
+.smartoffice-dashboard-tips-card{
+
+    width:100%;
+
+    min-height:155px;
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    overflow:hidden;
+
+    margin-top:18px;
+
+    padding:22px 24px;
+
+    border:1px solid #dcefe7;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f3fff9 0%,
+            #f8fffc 55%,
+            #ffffff 100%
+        );
+
+    box-sizing:border-box;
+}
+
+
+/* ======================================================
+   CONTENT
+====================================================== */
+
+.smartoffice-dashboard-tips-content{
+
+    position:relative;
+
+    z-index:2;
+
+    width:65%;
+
+    min-width:0;
+}
+
+
+.smartoffice-dashboard-tips-label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin-bottom:9px;
+
+    color:#16a34a;
+
+    font-size:16px;
+
+    font-weight:700;
+}
+
+
+.smartoffice-dashboard-tips-label-icon{
+
+    width:34px;
+
+    height:34px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:9px;
+
+    background:#dcfce7;
+
+    color:#16a34a;
+}
+
+
+.smartoffice-dashboard-tips-label-icon svg{
+
+    width:18px;
+
+    height:18px;
+}
+
+
+/* ======================================================
+   TITLE
+====================================================== */
+
+.smartoffice-dashboard-tips-content h3{
+
+    margin:0;
+
+    max-width:420px;
+
+    font-size:22px;
+
+    line-height:1.25;
+
+    font-weight:800;
+
+    letter-spacing:-.3px;
+
+    color:#173b32;
+}
+
+
+.smartoffice-dashboard-tips-content h3 span{
+
+    color:#16a34a;
+}
+
+
+/* ======================================================
+   DESCRIPTION
+====================================================== */
+
+.smartoffice-dashboard-tips-content p{
+
+    max-width:430px;
+
+    margin:7px 0 0;
+
+    font-size:12px;
+
+    line-height:1.55;
+
+    color:#64748b;
+}
+
+
+/* ======================================================
+   FOOTER
+====================================================== */
+
+.smartoffice-dashboard-tips-footer{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:5px;
+
+    margin-top:12px;
+
+    color:#16a34a;
+
+    font-size:10px;
+
+    font-weight:700;
+}
+
+
+.smartoffice-dashboard-tips-footer svg{
+
+    width:15px;
+
+    height:15px;
+}
+
+
+/* ======================================================
+   VISUAL
+====================================================== */
+
+.smartoffice-dashboard-tips-visual{
+
+    position:absolute;
+
+    right:18px;
+
+    top:0;
+
+    bottom:0;
+
+    width:34%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+/* ======================================================
+   GLOW
+====================================================== */
+
+.smartoffice-dashboard-tips-glow{
+
+    position:absolute;
+
+    width:125px;
+
+    height:125px;
+
+    border-radius:50%;
+
+    background:#dcfce7;
+
+    opacity:.75;
+
+    filter:blur(2px);
+}
+
+
+/* ======================================================
+   BULB
+====================================================== */
+
+.smartoffice-dashboard-tips-bulb{
+
+    position:relative;
+
+    z-index:2;
+
+    width:72px;
+
+    height:72px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #ecfdf5
+        );
+
+    color:#16a34a;
+
+    box-shadow:
+        0 12px 30px
+        rgba(22,163,74,.12);
+
+    transform:rotate(4deg);
+}
+
+
+.smartoffice-dashboard-tips-bulb svg{
+
+    width:39px;
+
+    height:39px;
+}
+
+
+/* ======================================================
+   SPARK
+====================================================== */
+
+.smartoffice-dashboard-tips-spark{
+
+    position:absolute;
+
+    z-index:3;
+
+    width:7px;
+
+    height:7px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+}
+
+
+.smartoffice-dashboard-tips-spark.spark-1{
+
+    top:30px;
+
+    right:35px;
+}
+
+
+.smartoffice-dashboard-tips-spark.spark-2{
+
+    top:58px;
+
+    right:18px;
+
+    width:5px;
+
+    height:5px;
+}
+
+
+.smartoffice-dashboard-tips-spark.spark-3{
+
+    bottom:38px;
+
+    right:48px;
+
+    width:4px;
+
+    height:4px;
+}
+
+
+/* ======================================================
    MOBILE
 ====================================================== */
 @media(max-width:768px){
@@ -651,7 +1042,7 @@ smartofficeDashboardHeaderFade{
     WELCOME
   ========================= */
   .smartoffice-dashboard-welcome{
-    gap:16px;
+    gap:10px;
     padding:12px;
     margin-bottom:12px;
     border-radius:22px;
@@ -661,7 +1052,7 @@ smartofficeDashboardHeaderFade{
     width:52px;
     height:52px;
     font-size:22px;
-    margin-left:8px;
+    margin-left:4px;
   }
 
   .smartoffice-dashboard-welcome-label{
@@ -683,20 +1074,62 @@ smartofficeDashboardHeaderFade{
     font-size:10px;
   }
 
-  /* =========================
-    MENU UTAMA
-  ========================= */
-  .smartoffice-dashboard-section-header{
-      margin:18px 0 12px;
+  /* ======================================================
+    MOBILE — DASHBOARD CATEGORY
+  ====================================================== */
+  .smartoffice-dashboard-category{
+      margin-top:10px;
+      padding:12px;
+      border-radius:16px;
   }
 
-  .smartoffice-dashboard-section-header h2{
-      margin:0;
+  /* ======================================================
+    CATEGORY HEADER
+  ====================================================== */
+  .smartoffice-dashboard-category-header{
+      gap:8px;
+      margin-bottom:10px;
+  }
+
+  .smartoffice-dashboard-category-header h2{
       font-size:12px;
-      font-weight:800;
-      color:#172554;
-      letter-spacing:-0.2px;
       line-height:1.2;
+      letter-spacing:-.15px;
+  }
+
+  .smartoffice-dashboard-category-more{
+      gap:3px;
+      font-size:9px;
+      font-weight:700;
+  }
+
+  .smartoffice-dashboard-category-more svg{
+      width:13px;
+      height:13px;
+  }
+
+  /* ======================================================
+    ROLE CATEGORY
+  ====================================================== */
+  .smartoffice-dashboard-category-title-wrap{
+      gap:7px;
+  }
+
+  .smartoffice-dashboard-category-lock{
+      width:25px;
+      height:25px;
+      border-radius:8px;
+  }
+
+  .smartoffice-dashboard-category-lock svg{
+      width:14px;
+      height:14px;
+  }
+
+  .smartoffice-dashboard-role-badge{
+      margin-top:3px;
+      padding:3px 6px;
+      font-size:7px;
   }
 
   /* =========================
@@ -710,8 +1143,8 @@ smartofficeDashboardHeaderFade{
 
   /* =========================
    MENU CARD
-========================= */
-.smartoffice-dashboard-menu-card{
+  ========================= */
+  .smartoffice-dashboard-menu-card{
       display:flex;
       flex-direction:column;
       align-items:center;
@@ -772,4 +1205,74 @@ smartofficeDashboardHeaderFade{
     height:18px;
     font-size:10px;
   }
+
+  /* =========================
+    TIPS
+  ========================= */
+  .smartoffice-dashboard-tips-card{
+    min-height:130px;
+    padding:16px;
+    margin-top:14px;
+    border-radius:16px;
+  }
+
+  .smartoffice-dashboard-tips-content{
+    width:72%;
+  }
+
+  .smartoffice-dashboard-tips-label{
+    gap:6px;
+    margin-bottom:7px;
+    font-size:10px;
+  }
+
+  .smartoffice-dashboard-tips-label-icon{
+    width:24px;
+    height:24px;
+    border-radius:7px;
+  }
+
+  .smartoffice-dashboard-tips-label-icon svg{
+    width:14px;
+    height:14px;
+  }
+
+  .smartoffice-dashboard-tips-content h3{
+    font-size:13px;
+    line-height:1.25;
+  }
+
+  .smartoffice-dashboard-tips-content p{
+    margin-top:5px;
+    font-size:8px;
+    line-height:1.45;
+    max-width:260px;
+  }
+
+  .smartoffice-dashboard-tips-footer{
+    margin-top:8px;
+    font-size:8px;
+  }
+
+  .smartoffice-dashboard-tips-visual{
+    right:4px;
+    width:30%;
+  }
+
+  .smartoffice-dashboard-tips-glow{
+    width:85px;
+    height:85px;
+  }
+
+  .smartoffice-dashboard-tips-bulb{
+    width:52px;
+    height:52px;
+    border-radius:16px;
+  }
+
+  .smartoffice-dashboard-tips-bulb svg{
+    width:29px;
+    height:29px;
+  }
+
 }

@@ -329,7 +329,6 @@ async function smartofficeLoadMasterDokumen(){
         ========================= */
         data.forEach(
             function(item){
-
                 select.innerHTML +=
                     `
                     <option
@@ -431,435 +430,596 @@ async function smartofficeLoadDokumenSaya(){
 }
 
 
-/* =========================
+/* ======================================================
    RENDER DOKUMEN SAYA
-========================= */
-/* =========================
-   RENDER DOKUMEN SAYA
-
-   FLOW:
-   1. Validasi data
-   2. Loop dokumen
-   3. Render card
-   4. Tampilkan ke halaman
-========================= */
+   FINAL — PREMIUM COMPACT 2 COLUMN
+====================================================== */
 function smartofficeRenderDokumenSaya(
-  data
+    data
 ){
 
-    /* =========================
-     CONTAINER
-  ========================= */
-  const container =
-    document.getElementById(
-      'smartofficeDokumenSayaList'
-    );
-
-  /* =========================
-     EMPTY STATE
-  ========================= */
-  if(
-    !data ||
-    !data.length
-  ){
-    container.innerHTML =
-      `
-      <div
-        class="
-          smartoffice-empty-state
-        "
-      >
-        Belum ada dokumen
-      </div>
-      `;
-
-    return;
-  }
-
-  /* =========================
-     HTML
-  ========================= */
-  let html = '';
-
-  /* =========================
-     LOOP DATA
-  ========================= */
-  data.forEach(
-    function(item){
-      let cardClass =
-        'empty';
-
-      if(
-        item.statusVerifikasi
-        ===
-        'MENUNGGU_VERIFIKASI'
-      ){
-        cardClass =
-          'waiting';
-      }
-      else if(
-        item.statusVerifikasi
-        ===
-        'TERVERIFIKASI'
-      ){
-        cardClass =
-          'approved';
-      }
-      else if(
-        item.statusVerifikasi
-        ===
-        'DITOLAK'
-      ){
-        cardClass =
-          'rejected';
-      }
-
-      const bolehUbah =
-        item.statusVerifikasi ===
-        'DITOLAK'
-        ||
-        (
-          item.isLock ===
-          'TIDAK'
-          &&
-          item.alasanBukaLock
+    /* ==================================================
+       CONTAINER
+    ================================================== */
+    const container =
+        document.getElementById(
+            "smartofficeDokumenSayaList"
         );
 
-      html +=
-      `
-      <div
-        class="
-          smartoffice-dokumen-card
-          ${cardClass}
-        "
-      >
-        <div
-          class="
-            smartoffice-dokumen-header
-          "
-        >
-          <h4
-            class="
-              smartoffice-dokumen-title
-            "
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-              <polyline points="14 2 14 8 20 8"/>
-            </svg>
-            ${item.namaDokumen}
-          </h4>
-        </div>
+    if(!container){
+        return;
+    }
 
+    /* ==================================================
+       EMPTY STATE
+    ================================================== */
+    if(
+        !Array.isArray(data) ||
+        data.length === 0
+    ){
+        container.innerHTML =
+        `
         <div
-          class="
-            smartoffice-dokumen-info
-          "
-        >
-          <div
             class="
-              smartoffice-dokumen-row
+                smartoffice-dokumensaya-empty
             "
-          >
-            <span>
-              Upload
-            </span>
+        >
+            <div
+                class="
+                    smartoffice-dokumensaya-empty-icon
+                "
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path
+                        d="
+                            M14 2H6
+                            a2 2 0 0 0-2 2v16
+                            a2 2 0 0 0 2 2h12
+                            a2 2 0 0 0 2-2V8z
+                        "
+                    />
+
+                    <polyline
+                        points="
+                            14 2
+                            14 8
+                            20 8
+                        "
+                    />
+                </svg>
+            </div>
 
             <strong>
-              ${
-                item.uploaded
-                ?
-                '✅ Sudah Upload'
-                :
-                '❌ Belum Upload'
-              }
+                Belum ada dokumen
             </strong>
-          </div>
 
-          <div
-            class="
-              smartoffice-dokumen-row
-            "
-          >
             <span>
-              Status
+                Belum terdapat dokumen kepegawaian
+                yang dapat ditampilkan.
             </span>
-
-            <span
-              class="
-                smartoffice-dokumen-status
-                ${cardClass}
-              "
-            >
-              ${item.statusVerifikasi}
-            </span>
-          </div>
-
-          ${
-            item.statusVerifikasi ===
-            'DITOLAK'
-            &&
-            item.catatanVerifikator
-            ?
-            `
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                Catatan Verifikator
-              </span>
-
-              <strong>
-                ${item.catatanVerifikator}
-              </strong>
-            </div>
-            `
-            :
-            ''
-          }
-
-          ${
-            item.nomorDokumen
-            ?
-            `
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                Nomor Dokumen
-              </span>
-
-              <strong>
-                ${item.nomorDokumen}
-              </strong>
-            </div>
-            `
-            :
-            ''
-          }
-
-          ${
-            item.keterangan
-            ?
-            `
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                Keterangan
-              </span>
-
-              <strong
-                style="
-                  color:#64748b;
-                  font-weight:500;
-                "
-              >
-                ${item.keterangan}
-              </strong>
-            </div>
-            `
-            :
-            ''
-          }
-
-          ${
-            item.fileName
-            ?
-            `
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                File
-              </span>
-
-              <strong>
-                ${item.fileName}
-              </strong>
-            </div>
-            `
-            :
-            ''
-          }
-
-          ${
-            item.isLock ===
-            'TIDAK'
-            &&
-            item.alasanBukaLock
-            ?
-            `
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                Alasan Lock Dibuka
-              </span>
-
-              <strong>
-                ${item.alasanBukaLock}
-              </strong>
-            </div>
-
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                Dibuka Oleh
-              </span>
-
-              <strong>
-                ${item.openLockBy || '-'}
-              </strong>
-            </div>
-
-            <div
-              class="
-                smartoffice-dokumen-row
-              "
-            >
-              <span>
-                Tanggal
-              </span>
-
-              <strong>
-                ${item.openLockAt || '-'}
-              </strong>
-            </div>
-            `
-            :
-            ''
-          }
         </div>
+        `;
 
-        ${
-          item.fileUrl
-          ?
-          `
-          <div
-            class="
-              smartoffice-dokumen-footer
-              smartoffice-dokumen-saya-footer
-            "
-          >
-            <button
-              class="
-                smartoffice-dokumen-link
-              "
-              onclick="
-                smartofficeOpenPreviewDokumen(
-                  '${item.fileId}',
-                  '${item.fileName}'
-                )
-              "
-            >
-              <svg
-                style="
-                  flex-shrink:0;
-                "
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <line x1="10" y1="9" x2="8" y2="9"/>
-              </svg>
-
-              <span>
-                Lihat Dokumen
-              </span>
-            </button>
-
-            ${
-              bolehUbah
-              ?
-              `
-              <button
-                class="
-                  smartoffice-dokumen-edit-btn
-                "
-                onclick="
-                  smartofficeUbahDokumen(
-                    '${item.idDokumen}'
-                  )
-                "
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  style="
-                    flex-shrink:0;
-                  "
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14 2 14 8 20 8"/>
-                  <path d="M12 18h-1l-1-1 6-6 2 2-6 6z"/>
-                </svg>
-
-                <span>
-                  Ubah Dokumen
-                </span>
-              </button>
-              `
-              :
-              ''
-            }
-          </div>
-          `
-          :
-          ''
-        }
-      </div>
-      `;
+        return;
     }
-  );
 
-  /* =========================
-    RENDER
-  ========================= */
-  container.innerHTML =
+    /* ==================================================
+       HTML
+    ================================================== */
+    let html = "";
+
+    /* ==================================================
+       LOOP
+    ================================================== */
+    data.forEach(
+        function(item){
+
+            /* ==========================================
+               STATUS
+            ========================================== */
+            let cardClass =
+                "missing";
+
+            let statusText =
+                "Belum Upload";
+
+            if(
+                item.statusVerifikasi ===
+                "MENUNGGU_VERIFIKASI"
+            ){
+                cardClass =
+                    "waiting";
+
+                statusText =
+                    "Menunggu Verifikasi";
+            }
+
+            else if(
+                item.statusVerifikasi ===
+                "TERVERIFIKASI"
+            ){
+                cardClass =
+                    "verified";
+
+                statusText =
+                    "Terverifikasi";
+            }
+
+            else if(
+                item.statusVerifikasi ===
+                "DITOLAK"
+            ){
+                cardClass =
+                    "rejected";
+
+                statusText =
+                    "Ditolak";
+            }
+
+            /* ==========================================
+               FILE NAME
+            ========================================== */
+            const fileName =
+                item.fileName ||
+                "Belum ada file";
+
+            /* ==========================================
+               NOMOR DOKUMEN
+            ========================================== */
+            const nomor =
+                item.nomorDokumen ||
+                "-";
+
+            /* ==========================================
+               BOLEH UBAH
+            ========================================== */
+            const bolehUbah =
+                item.statusVerifikasi ===
+                "DITOLAK"
+                ||
+                (
+                    item.isLock ===
+                    "TIDAK"
+                    &&
+                    item.alasanBukaLock
+                );
+
+            /* ==========================================
+               STATUS DESCRIPTION
+            ========================================== */
+            let statusDescription =
+                "Dokumen belum tersedia";
+
+            if(
+                cardClass ===
+                "verified"
+            ){
+                statusDescription =
+                    "Dokumen sudah diverifikasi";
+            }
+
+            else if(
+                cardClass ===
+                "waiting"
+            ){
+                statusDescription =
+                    "Menunggu pemeriksaan";
+            }
+
+            else if(
+                cardClass ===
+                "rejected"
+            ){
+                statusDescription =
+                    "Dokumen ditolak";
+            }
+
+            /* ==========================================
+               INFORMATION BLOCK
+            ========================================== */
+            let informationHtml = "";
+
+            /* NOMOR */
+            informationHtml +=
+            `
+            <div
+                class="
+                    smartoffice-dokumensaya-meta
+                "
+            >
+                <span
+                    class="
+                        smartoffice-dokumensaya-meta-label
+                    "
+                >
+                    Nomor Dokumen
+                </span>
+
+                <strong
+                    class="
+                        smartoffice-dokumensaya-meta-value
+                    "
+                >
+                    ${item.nomorDokumen || "-"}
+                </strong>
+            </div>
+            `;
+            
+            /* KETERANGAN */
+            informationHtml +=
+            `
+            <div
+                class="
+                    smartoffice-dokumensaya-meta
+                "
+            >
+                <span
+                    class="
+                        smartoffice-dokumensaya-meta-label
+                    "
+                >
+                    Keterangan
+                </span>
+
+                <strong
+                    class="
+                        smartoffice-dokumensaya-meta-value
+                        note
+                    "
+                >
+                    ${item.keterangan || "-"}
+                </strong>
+            </div>
+            `;
+
+            /* CATATAN VERIFIKATOR */
+            if(
+                item.catatanVerifikator &&
+                cardClass ===
+                "rejected"
+            ){
+                informationHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-dokumensaya-meta
+                        full
+                        rejected-note
+                    "
+                >
+                    <span
+                        class="
+                            smartoffice-dokumensaya-meta-label
+                        "
+                    >
+                        Catatan Verifikator
+                    </span>
+
+                    <strong
+                        class="
+                            smartoffice-dokumensaya-meta-value
+                            rejected-text
+                        "
+                    >
+                        ${item.catatanVerifikator}
+                    </strong>
+                </div>
+                `;
+            }
+
+            /* LOCK DIBUKA */
+            if(
+                item.isLock ===
+                "TIDAK"
+                &&
+                item.alasanBukaLock
+            ){
+                informationHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-dokumensaya-meta
+                        full
+                        lock-info
+                    "
+                >
+                    <span
+                        class="
+                            smartoffice-dokumensaya-meta-label
+                        "
+                    >
+                        Status Lock
+                    </span>
+
+                    <strong
+                        class="
+                            smartoffice-dokumensaya-meta-value
+                        "
+                    >
+                        🔓 Lock dibuka
+                    </strong>
+
+                </div>
+                `;
+            }
+
+            /* ==========================================
+               ACTION
+            ========================================== */
+            let actionHtml = "";
+
+            if(
+                item.fileUrl
+            ){
+                actionHtml +=
+                `
+                <button
+                    type="button"
+                    class="
+                        smartoffice-dokumensaya-action
+                    "
+                    onclick="
+                        smartofficeOpenPreviewDokumen(
+                            '${item.fileId}',
+                            '${item.fileName}'
+                        )
+                    "
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="
+                                M14 2H6
+                                a2 2 0 0 0-2 2v16
+                                a2 2 0 0 0 2 2h12
+                                a2 2 0 0 0 2-2V8z
+                            "
+                        />
+
+                        <polyline
+                            points="
+                                14 2
+                                14 8
+                                20 8
+                            "
+                        />
+                    </svg>
+
+                    <span>
+                        Lihat Dokumen
+                    </span>
+                </button>
+                `;
+
+                if(
+                    bolehUbah
+                ){
+                    actionHtml +=
+                    `
+                    <button
+                        type="button"
+                        class="
+                            smartoffice-dokumensaya-action
+                            edit
+                        "
+                        onclick="
+                            smartofficeUbahDokumen(
+                                '${item.idDokumen}'
+                            )
+                        "
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="
+                                    M14 2H6
+                                    a2 2 0 0 0-2 2v16
+                                    a2 2 0 0 0 2 2h12
+                                    a2 2 0 0 0 2-2V8z
+                                "
+                            />
+
+                            <polyline
+                                points="
+                                    14 2
+                                    14 8
+                                    20 8
+                                "
+                            />
+
+                            <path
+                                d="
+                                    M12 18h-1l-1-1
+                                    6-6 2 2-6 6z
+                                "
+                            />
+                        </svg>
+
+                        <span>
+                            Ubah Dokumen
+                        </span>
+                    </button>
+                    `;
+                }
+            }
+
+            /* ==========================================
+               RENDER CARD
+            ========================================== */
+            html +=
+            `
+            <article
+                class="
+                    smartoffice-dokumensaya-card
+                    ${cardClass}
+                "
+            >
+
+                <!-- ==================================
+                     TOP
+                ================================== -->
+                <div
+                    class="
+                        smartoffice-dokumensaya-top
+                    "
+                >
+                    <!-- ICON -->
+                    <div
+                        class="
+                            smartoffice-dokumensaya-icon
+                        "
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="
+                                    M14 2H6
+                                    a2 2 0 0 0-2 2v16
+                                    a2 2 0 0 0 2 2h12
+                                    a2 2 0 0 0 2-2V8z
+                                "
+                            />
+
+                            <polyline
+                                points="
+                                    14 2
+                                    14 8
+                                    20 8
+                                "
+                            />
+                        </svg>
+                    </div>
+
+                    <!-- DOCUMENT -->
+                    <div
+                        class="
+                            smartoffice-dokumensaya-document
+                        "
+                    >
+                        <strong
+                            class="
+                                smartoffice-dokumensaya-name
+                            "
+                        >
+                            ${item.namaDokumen}
+                        </strong>
+
+                        <span
+                            class="
+                                smartoffice-dokumensaya-file
+                            "
+                        >
+                            ${fileName}
+                        </span>
+                    </div>
+
+                    <!-- STATUS -->
+                    <div
+                        class="
+                            smartoffice-dokumensaya-status
+                            ${cardClass}
+                        "
+                    >
+                        <div
+                            class="
+                                smartoffice-dokumensaya-status-title
+                            "
+                        >
+                            <span
+                                class="
+                                    smartoffice-dokumensaya-status-dot
+                                "
+                            ></span>
+
+                            <strong>
+                                ${statusText}
+                            </strong>
+                        </div>
+
+                        <small>
+                            ${statusDescription}
+                        </small>
+                    </div>
+                </div>
+
+                <!-- ==================================
+                     INFORMATION
+                ================================== -->
+                ${
+                    informationHtml
+                    ?
+                    `
+                    <div
+                        class="
+                            smartoffice-dokumensaya-information
+                        "
+                    >
+                        ${informationHtml}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+
+                <!-- ==================================
+                     ACTION
+                ================================== -->
+                ${
+                    actionHtml
+                    ?
+                    `
+                    <div
+                        class="
+                            smartoffice-dokumensaya-actions
+                        "
+                    >
+                        ${actionHtml}
+                    </div>
+                    `
+                    :
+                    ""
+                }
+            </article>
+            `;
+        }
+    );
+
+    /* ==================================================
+       RENDER LIST
+    ================================================== */
+    container.innerHTML =
     `
     <div
-      class="
-        smartoffice-dokumen-list
-      "
+        class="
+            smartoffice-dokumensaya-list
+        "
     >
-      ${html}
+        ${html}
     </div>
     `;
 }
@@ -1504,11 +1664,11 @@ function smartofficeUbahDokumen(
     body.innerHTML = `
 
         <div
-            class="smartoffice-edit-dokumen-card"
+            class="smartoffice-dokumensaya-edit-card"
         >
             <h3
                 class="
-                    smartoffice-edit-dokumen-title
+                    smartoffice-dokumensaya-edit-title
                 "
             >
                 ✏️ Ubah Dokumen
@@ -1516,7 +1676,7 @@ function smartofficeUbahDokumen(
 
             <!-- ID DOKUMEN -->
             <div
-                class="smartoffice-cuti-form-group"
+                class="smartoffice-dokumensaya-edit-group"
             >
                 <label>
                     ID Dokumen
@@ -1531,7 +1691,7 @@ function smartofficeUbahDokumen(
 
             <!-- DOKUMEN -->
             <div
-                class="smartoffice-cuti-form-group"
+                class="smartoffice-dokumensaya-edit-group"
             >
                 <label>
                     Dokumen
@@ -1546,7 +1706,7 @@ function smartofficeUbahDokumen(
 
             <!-- NOMOR DOKUMEN -->
             <div
-                class="smartoffice-cuti-form-group"
+                class="smartoffice-dokumensaya-edit-group"
             >
                 <label>
                     Nomor Dokumen
@@ -1561,7 +1721,7 @@ function smartofficeUbahDokumen(
 
             <!-- KETERANGAN -->
             <div
-                class="smartoffice-cuti-form-group"
+                class="smartoffice-dokumensaya-edit-group"
             >
                 <label>
                     Keterangan
@@ -1576,7 +1736,7 @@ function smartofficeUbahDokumen(
 
             <!-- FILE LAMA -->
             <div
-                class="smartoffice-cuti-form-group"
+                class="smartoffice-dokumensaya-edit-group"
             >
                 <label>
                     File Lama
@@ -1591,14 +1751,14 @@ function smartofficeUbahDokumen(
 
             <!-- FILE BARU -->
             <div
-                class="smartoffice-cuti-form-group"
+                class="smartoffice-dokumensaya-edit-group"
             >
                 <label>
                     File Baru
                 </label>
 
                 <div
-                    class="smartoffice-edit-upload-box"
+                    class="smartoffice-dokumensaya-edit-upload-box"
                 >
                     <input
                         type="file"
@@ -1612,7 +1772,7 @@ function smartofficeUbahDokumen(
                     <label
                         for="smartofficeEditFile"
                         class="
-                            smartoffice-edit-upload-btn
+                            smartoffice-dokumensaya-edit-upload-btn
                         "
                     >
                         <svg
@@ -1650,7 +1810,7 @@ function smartofficeUbahDokumen(
                     <div
                         id="smartofficeEditFileName"
                         class="
-                            smartoffice-edit-upload-name
+                            smartoffice-dokumensaya-edit-upload-name
                         "
                     >
                         Belum ada file dipilih
@@ -1660,13 +1820,13 @@ function smartofficeUbahDokumen(
 
             <!-- FOOTER -->
             <div
-                class="smartoffice-modal-footer"
+                class="smartoffice-dokumensaya-edit-footer"
             >
                 <!-- UPDATE -->
                 <button
                     id="smartofficeEditDokumenSubmitButton"
                     class="
-                        smartoffice-approval-submit-button
+                        smartoffice-dokumensaya-edit-submit
                     "
                     onclick="
                         smartofficeSubmitEditDokumen()
@@ -1674,7 +1834,7 @@ function smartofficeUbahDokumen(
                 >
                     <span
                         class="
-                            smartoffice-btn-spinner
+                            smartoffice-dokumensaya-edit-spinner
                         "
                         style="
                             display:none;
@@ -1693,7 +1853,7 @@ function smartofficeUbahDokumen(
                 <!-- BATAL -->
                 <button
                     class="
-                        smartoffice-approval-cancel-button
+                        smartoffice-dokumensaya-edit-cancel
                     "
                     onclick="
                         smartofficeCloseEditDokumenModal()

@@ -37,6 +37,10 @@ import {
     smartofficeOpenPreviewDokumen
 } from "../../components/preview/preview.js";
 
+import {
+    smartofficeShowLoading
+} from "../../components/loading/loading.js";
+
 
 /* ======================================================
    GLOBAL STATE
@@ -296,34 +300,16 @@ export async function smartofficeCariArsipPegawai(){
     }
 
     /* LOADING INFO */
-    if(infoContainer){
-        infoContainer.innerHTML =
-        `
-        <div class="smartoffice-arsip-loading">
-            <div class="smartoffice-arsip-spinner">
-            </div>
-
-            <div class="smartoffice-arsip-loading-text">
-                Memuat data pegawai...
-            </div>
-        </div>
-        `;
-    }
+    smartofficeShowLoading(
+        "smartofficeArsipPegawaiInfo",
+        "Memuat data pegawai..."
+    );
 
     /* LOADING LIST */
-    if(listContainer){
-        listContainer.innerHTML =
-        `
-        <div class="smartoffice-arsip-loading">
-            <div class="smartoffice-arsip-spinner">
-            </div>
-
-            <div class="smartoffice-arsip-loading-text">
-                Memuat arsip pegawai...
-            </div>
-        </div>
-        `;
-    }
+    smartofficeShowLoading(
+        "smartofficeArsipPegawaiList",
+        "Memuat arsip pegawai..."
+    );
 
     try{
         const data =
@@ -352,10 +338,20 @@ export async function smartofficeCariArsipPegawai(){
 
 /* ======================================================
    RENDER ARSIP PEGAWAI
+   FINAL — STRUKTUR SAMA DENGAN DOKUMEN SAYA
+   CLASS TETAP ARSIP PEGAWAI
 ====================================================== */
 export function smartofficeRenderArsipPegawai(
     result
 ){
+    console.log(
+        "SMARTOFFICE ARSIP PEGAWAI: RENDER",
+        result
+    );
+
+    /* ==================================================
+       CONTAINER
+    ================================================== */
     const infoContainer =
         document.getElementById(
             "smartofficeArsipPegawaiInfo"
@@ -366,9 +362,6 @@ export function smartofficeRenderArsipPegawai(
             "smartofficeArsipPegawaiList"
         );
 
-    /* =========================
-       VALIDASI CONTAINER
-    ========================= */
     if(
         !infoContainer ||
         !listContainer
@@ -376,24 +369,38 @@ export function smartofficeRenderArsipPegawai(
         return;
     }
 
-    /* =========================
-       DOKUMEN WAJIB SAJA
-    ========================= */
+    /* ==================================================
+       DOKUMEN
+    ================================================== */
+    const dokumen =
+        Array.isArray(result?.dokumen)
+            ? result.dokumen
+            : [];
+
     const dokumenWajib =
-        result.dokumen.filter(
-            item =>
-                item.wajibUpload ===
-                "YA"
+        dokumen.filter(
+            function(item){
+                return (
+                    item.wajibUpload ===
+                    "YA"
+                );
+            }
         );
 
+    /* ==================================================
+       PROGRESS
+    ================================================== */
     const totalDokumen =
         dokumenWajib.length;
 
     const totalTerverifikasi =
         dokumenWajib.filter(
-            item =>
-                item.statusVerifikasi ===
-                "TERVERIFIKASI"
+            function(item){
+                return (
+                    item.statusVerifikasi ===
+                    "TERVERIFIKASI"
+                );
+            }
         ).length;
 
     const progress =
@@ -408,70 +415,78 @@ export function smartofficeRenderArsipPegawai(
             :
             0;
 
-    /* =========================
+    /* ==================================================
        INISIAL
-    ========================= */
+    ================================================== */
+    const nama =
+        result?.pegawai?.nama ||
+        "-";
+
     const namaParts =
-        result.pegawai.nama
+        nama
             .trim()
-            .split(" ")
+            .split(/\s+/)
             .filter(Boolean);
 
-    const inisial =
+    let inisial = "-";
+
+    if(
         namaParts.length >= 2
-            ?
+    ){
+        inisial =
             (
                 namaParts[0][0] +
                 namaParts[1][0]
-            ).toUpperCase()
-            :
-            namaParts[0][0].toUpperCase();
+            ).toUpperCase();
+    }
 
-    /* =========================
-       PROGRESS COLOR
-    ========================= */
+    else if(
+        namaParts.length === 1
+    ){
+        inisial =
+            namaParts[0][0]
+                .toUpperCase();
+    }
+
+    /* ==================================================
+       WARNA PROGRESS
+       SAMA DENGAN PROGRESS ARSIP
+    ================================================== */
     let progressColor =
-        "#ef4444";
-
-    if(
-        progress >= 25
-    ){
-        progressColor =
-            "#f97316";
-    }
-
-    if(
-        progress >= 50
-    ){
-        progressColor =
-            "#3b82f6";
-    }
+        "#EF4444";
 
     if(
         progress >= 75
     ){
         progressColor =
-            "#22c55e";
+            "#3B82F6";
     }
 
     if(
         progress === 100
     ){
         progressColor =
-            "#16a34a";
+            "#22C55E";
     }
 
-    /* =========================
-       STATUS
-    ========================= */
+    /* ==================================================
+       STATUS PEGAWAI
+    ================================================== */
     let status =
         "Belum Lengkap";
 
+    let statusClass =
+        "danger";
+
     if(
-        progress >= 75
+        progress >= 75 &&
+        progress < 100
     ){
         status =
             "Hampir Lengkap";
+
+        statusClass =
+            "warning";
     }
 
     if(
@@ -479,73 +494,156 @@ export function smartofficeRenderArsipPegawai(
     ){
         status =
             "Lengkap";
+
+        statusClass =
+            "success";
     }
 
-    /* =========================
+    /* ==================================================
        INFO PEGAWAI
-    ========================= */
+       TETAP PAKAI STRUKTUR YANG SEKARANG
+    ================================================== */
     infoContainer.innerHTML =
     `
-    <div class="smartoffice-arsip-summary-card">
-        <div class="smartoffice-progress-header">
-            <div class="smartoffice-progress-avatar">
+    <div
+        class="
+            smartoffice-arsippegawai-progress-card
+            smartoffice-arsippegawai-info-progress-card
+        "
+    >
+        <!-- EMPLOYEE -->
+        <div
+            class="
+                smartoffice-arsippegawai-progress-employee
+            "
+        >
+            <div
+                class="
+                    smartoffice-arsippegawai-progress-avatar
+                "
+            >
                 ${inisial}
             </div>
 
-            <div class="smartoffice-progress-user">
-                <div class="smartoffice-progress-name">
-                    ${result.pegawai.nama}
-                </div>
-
-                <div class="smartoffice-progress-position">
-                    ${result.pegawai.jabatan}
-                </div>
-            </div>
-        </div>
-
-        <div class="smartoffice-progress-status-row">
-            <div class="smartoffice-arsip-summary-label">
-                ${status}
-            </div>
-
-            <div class="smartoffice-progress-percent">
-                ${progress}%
-            </div>
-        </div>
-
-        <div class="smartoffice-arsip-progress">
             <div
-                class="smartoffice-arsip-progress-bar"
-                style="
-                    width:${progress}%;
-                    background:${progressColor};
+                class="
+                    smartoffice-arsippegawai-progress-employee-info
                 "
-            ></div>
+            >
+                <div
+                    class="
+                        smartoffice-arsippegawai-progress-name
+                    "
+                >
+                    ${nama}
+                </div>
 
+                <div
+                    class="
+                        smartoffice-arsippegawai-progress-position
+                    "
+                >
+                    ${result?.pegawai?.jabatan || "-"}
+                </div>
+            </div>
         </div>
 
-        <div class="smartoffice-arsip-summary-info">
-            ${totalTerverifikasi}
-            dari
-            ${totalDokumen}
-            dokumen terverifikasi
+        <!-- PROGRESS -->
+        <div
+            class="
+                smartoffice-arsippegawai-progress-detail
+            "
+        >
+            <div
+                class="
+                    smartoffice-arsippegawai-progress-label
+            "
+            >
+                Kelengkapan Arsip
+            </div>
+
+            <div
+                class="
+                    smartoffice-arsippegawai-progress-track
+                "
+            >
+                <div
+                    class="
+                        smartoffice-arsippegawai-progress-fill
+                    "
+                    style="
+                        width:${progress}%;
+                        background:${progressColor};
+                    "
+                ></div>
+            </div>
+
+            <div
+                class="
+                    smartoffice-arsippegawai-progress-info
+                "
+            >
+                ${totalTerverifikasi}
+                dari
+                ${totalDokumen}
+                dokumen terverifikasi
+            </div>
+        </div>
+
+        <!-- RING -->
+        <div
+            class="
+                smartoffice-arsippegawai-progress-percent
+            "
+            style="
+                --progress:${progress}%;
+                --progress-color:${progressColor};
+            "
+        >
+            ${progress}%
+        </div>
+
+        <!-- STATUS -->
+        <div
+            class="
+                smartoffice-arsippegawai-progress-status
+                ${statusClass}
+            "
+        >
+            <span
+                class="
+                    smartoffice-arsippegawai-progress-status-dot
+                "
+            ></span>
+            ${status}
         </div>
     </div>
     `;
 
-    /* =========================
-       RENDER LIST
-    ========================= */
+    /* ==================================================
+       SESSION
+    ================================================== */
     const sessionData =
         smartofficeGetSession();
 
+    /* ==================================================
+       RENDER DOCUMENT
+    ================================================== */
     let html = "";
 
-    result.dokumen.forEach(
+    dokumen.forEach(
         function(item){
-
+            /* ==========================================
+               STATUS
+            ========================================== */
             let cardClass =
-                "empty";
+                "missing";
+
+            let statusText =
+                "Belum Upload";
+
+            let statusDescription =
+                "Dokumen belum tersedia";
 
             if(
                 item.statusVerifikasi ===
@@ -553,6 +651,12 @@ export function smartofficeRenderArsipPegawai(
             ){
                 cardClass =
                     "waiting";
+
+                statusText =
+                    "Menunggu Verifikasi";
+
+                statusDescription =
+                    "Menunggu pemeriksaan";
             }
 
             else if(
@@ -560,7 +664,13 @@ export function smartofficeRenderArsipPegawai(
                 "TERVERIFIKASI"
             ){
                 cardClass =
-                    "approved";
+                    "verified";
+
+                statusText =
+                    "Terverifikasi";
+
+                statusDescription =
+                    "Dokumen sudah diverifikasi";
             }
 
             else if(
@@ -568,416 +678,493 @@ export function smartofficeRenderArsipPegawai(
                 "DITOLAK"
             ){
                 cardClass =
-                    "rejected";
+                    "missing";
+
+                statusText =
+                    "Ditolak";
+
+                statusDescription =
+                    "Dokumen perlu diperbaiki";
             }
 
+            /* ==========================================
+               FILE
+            ========================================== */
+            const fileDescription =
+                item.fileName
+                    ?
+                    item.fileName
+                    :
+                    "Belum ada file";
+
+            /* ==========================================
+               INFORMATION
+            ========================================== */
+            let informationHtml = "";
+
+            /* NOMOR DOKUMEN
+               SELALU MUNCUL
+            */
+            informationHtml +=
+            `
+            <div
+                class="
+                    smartoffice-arsippegawai-status-extra
+                    number
+                "
+            >
+                <span
+                    class="
+                        smartoffice-arsippegawai-detail-label
+                    "
+                >
+                    Nomor Dokumen
+                </span>
+
+                <strong
+                    class="
+                        smartoffice-arsippegawai-detail-value
+                    "
+                >
+                    ${item.nomorDokumen || "-"}
+                </strong>
+            </div>
+            `;
+
+            /* KETERANGAN
+               SELALU MUNCUL
+            */
+            informationHtml +=
+            `
+            <div
+                class="
+                    smartoffice-arsippegawai-status-extra
+                    note
+                "
+            >
+                <span
+                    class="
+                        smartoffice-arsippegawai-detail-label
+                    "
+                >
+                    Keterangan
+                </span>
+
+                <strong
+                    class="
+                        smartoffice-arsippegawai-detail-value
+                    "
+                >
+                    ${item.keterangan || "-"}
+                </strong>
+            </div>
+            `;
+
+            /* CATATAN VERIFIKATOR */
+            if(
+                item.statusVerifikasi ===
+                "DITOLAK"
+                &&
+                item.catatanVerifikator
+            ){
+                informationHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-arsippegawai-status-extra
+                        rejected-note
+                    "
+                >
+                    <span
+                        class="
+                            smartoffice-arsippegawai-detail-label
+                        "
+                    >
+                        Catatan Verifikator
+                    </span>
+
+                    <strong
+                        class="
+                            smartoffice-arsippegawai-detail-value
+                            rejected-text
+                        "
+                    >
+                        ${item.catatanVerifikator}
+                    </strong>
+                </div>
+                `;
+            }
+
+            /* LOCK INFO */
+            if(
+                item.alasanBukaLock
+            ){
+                informationHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-arsippegawai-status-extra
+                        lock-info
+                    "
+                >
+                    <span
+                        class="
+                            smartoffice-arsippegawai-detail-label
+                        "
+                    >
+                        Status Lock
+                    </span>
+
+                    <strong
+                        class="
+                            smartoffice-arsippegawai-detail-value
+                        "
+                    >
+                        🔓 Lock dibuka
+                    </strong>
+                </div>
+                `;
+
+                informationHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-arsippegawai-status-extra
+                        lock-info
+                    "
+                >
+                    <span
+                        class="
+                            smartoffice-arsippegawai-detail-label
+                        "
+                    >
+                        Dibuka Oleh
+                    </span>
+
+                    <strong
+                        class="
+                            smartoffice-arsippegawai-detail-value
+                        "
+                    >
+                        ${item.openLockBy || "-"}
+                    </strong>
+
+                </div>
+                `;
+
+                informationHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-arsippegawai-status-extra
+                        lock-info
+                    "
+                >
+                    <span
+                        class="
+                            smartoffice-arsippegawai-detail-label
+                        "
+                    >
+                        Tanggal Buka Lock
+                    </span>
+
+                    <strong
+                        class="
+                            smartoffice-arsippegawai-detail-value
+                        "
+                    >
+                        ${item.openLockAt || "-"}
+                    </strong>
+                </div>
+                `;
+            }
+
+            /* ==========================================
+               ACTION
+            ========================================== */
+            let actionHtml = "";
+
+            /* LIHAT DOKUMEN */
+            if(
+                item.fileUrl
+            ){
+                actionHtml +=
+                `
+                <button
+                    type="button"
+                    class="
+                        smartoffice-arsippegawai-document-action
+                    "
+                    onclick="
+                        smartofficeOpenPreviewDokumen(
+                            '${item.fileId}',
+                            '${item.fileName || ""}'
+                        )
+                    "
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="
+                                M14 2H6
+                                a2 2 0 0 0-2 2v16
+                                a2 2 0 0 0 2 2h12
+                                a2 2 0 0 0 2-2V8z
+                            "
+                        />
+
+                        <polyline
+                            points="
+                                14 2
+                                14 8
+                                20 8
+                            "
+                        />
+
+                    </svg>
+
+                    <span>
+                        Lihat
+                    </span>
+
+                </button>
+                `;
+            }
+
+            /* LOCK */
+            if(
+                item.alasanBukaLock
+            ){
+                actionHtml +=
+                `
+                <div
+                    class="
+                        smartoffice-arsippegawai-lock-open
+                    "
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect
+                            x="3"
+                            y="11"
+                            width="18"
+                            height="10"
+                            rx="2"
+                        />
+
+                        <path
+                            d="
+                                M7 11V7
+                                a5 5 0 0 1 10 0
+                            "
+                        />
+                    </svg>
+
+                    <div>
+                        <strong>
+                            Lock Terbuka
+                        </strong>
+
+                        <small>
+                            Dapat Upload Ulang
+                        </small>
+                    </div>
+                </div>
+                `;
+            }
+
+            else if(
+                item.statusVerifikasi ===
+                "TERVERIFIKASI"
+                &&
+                item.isLock ===
+                "YA"
+                &&
+                sessionData
+                &&
+                [
+                    "ADMIN",
+                    "KAPUS",
+                    "PJ"
+                ].includes(
+                    sessionData.role
+                )
+            ){
+                actionHtml +=
+                `
+                <button
+                    type="button"
+                    class="
+                        smartoffice-arsippegawai-lock-button
+                    "
+                    onclick="
+                        smartofficeBukaLockDokumenPrompt(
+                            '${item.idDokumen}'
+                        )
+                    "
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect
+                            x="3"
+                            y="11"
+                            width="18"
+                            height="10"
+                            rx="2"
+                        />
+
+                        <path
+                            d="
+                                M7 11V7
+                                a5 5 0 0 1 10 0
+                                v1
+                            "
+                        />
+                    </svg>
+
+                    <span>
+                        Buka Lock
+                    </span>
+                </button>
+                `;
+            }
+
+            /* ==========================================
+               CARD
+               STRUKTUR SAMA DENGAN DOKUMEN SAYA
+            ========================================== */
             html +=
             `
             <div
                 class="
-                    smartoffice-dokumen-card
+                    smartoffice-arsippegawai-document-item
                     ${cardClass}
                 "
             >
+                <!-- ==================================
+                     ICON
+                ================================== -->
                 <div
                     class="
-                        smartoffice-dokumen-header
+                        smartoffice-arsippegawai-document-icon
                     "
                 >
-                    <h4
-                        class="
-                            smartoffice-dokumen-title
-                        "
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
                     >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                d="
-                                    M14 2H6
-                                    a2 2 0 0 0-2 2v16
-                                    a2 2 0 0 0 2 2h12
-                                    a2 2 0 0 0 2-2V8z
-                                "
-                            />
+                        <path
+                            d="
+                                M14 2H6
+                                a2 2 0 0 0-2 2v16
+                                a2 2 0 0 0 2 2h12
+                                a2 2 0 0 0 2-2V8z
+                            "
+                        />
 
-                            <polyline
-                                points="14 2 14 8 20 8"
-                            />
-                        </svg>
-                        ${item.namaDokumen}
-                    </h4>
+                        <polyline
+                            points="
+                                14 2
+                                14 8
+                                20 8
+                            "
+                        />
+                    </svg>
                 </div>
 
+                <!-- ==================================
+                     DOCUMENT
+                ================================== -->
                 <div
                     class="
-                        smartoffice-dokumen-info
+                        smartoffice-arsippegawai-document-name
+                    "
+                >
+                    <strong>
+                        ${item.namaDokumen}
+                    </strong>
+
+                    <span>
+                        ${fileDescription}
+                    </span>
+                </div>
+
+                <!-- ==================================
+                     STATUS
+                ================================== -->
+                <div
+                    class="
+                        smartoffice-arsippegawai-document-status
+                        ${cardClass}
                     "
                 >
                     <div
                         class="
-                            smartoffice-dokumen-row
+                            smartoffice-arsippegawai-status-title
                         "
                     >
-                        <span>
-                            Upload
-                        </span>
+                        <span
+                            class="
+                                smartoffice-arsippegawai-status-dot
+                            "
+                        ></span>
 
                         <strong>
-                            ${
-                                item.uploaded
-                                    ?
-                                    "✅ Sudah Upload"
-                                    :
-                                    "❌ Belum Upload"
-                            }
+                            ${statusText}
                         </strong>
                     </div>
 
-                    <div
-                        class="
-                            smartoffice-dokumen-row
-                        "
-                    >
-                        <span>
-                            Status
-                        </span>
-
-                        <span
-                            class="
-                                smartoffice-dokumen-status
-                                ${cardClass}
-                            "
-                        >
-                            ${item.statusVerifikasi}
-                        </span>
-
-                    </div>
-
-                    ${
-                        item.statusVerifikasi === "DITOLAK"
-                        &&
-                        item.catatanVerifikator
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Alasan Penolakan
-                            </span>
-
-                            <strong
-                                style="
-                                    color:#dc2626;
-                                "
-                            >
-                                ${item.catatanVerifikator}
-                            </strong>
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.alasanBukaLock
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Status Lock
-                            </span>
-
-                            <strong>
-                                🔓 TERBUKA
-                            </strong>
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.alasanBukaLock
-                        &&
-                        item.openLockBy
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Alasan Lock Dibuka
-                            </span>
-
-                            <strong>
-                                ${item.alasanBukaLock}
-                            </strong>
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.nomorDokumen
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Nomor Dokumen
-                            </span>
-
-                            <strong>
-                                ${item.nomorDokumen}
-                            </strong>
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.keterangan
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Keterangan
-                            </span>
-
-                            <strong
-                                style="
-                                    color:#64748b;
-                                    font-weight:500;
-                                "
-                            >
-                                ${item.keterangan}
-                            </strong>
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.fileName
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                File
-                            </span>
-
-                            <strong>
-                                ${item.fileName}
-                            </strong>
-
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.openLockBy
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Dibuka Oleh
-                            </span>
-
-                            <strong>
-                                ${item.openLockBy}
-                            </strong>
-
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-                    ${
-                        item.openLockAt
-                        ?
-                        `
-                        <div
-                            class="
-                                smartoffice-dokumen-row
-                            "
-                        >
-                            <span>
-                                Tanggal Buka Lock
-                            </span>
-
-                            <strong>
-                                ${item.openLockAt}
-                            </strong>
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
+                    <small>
+                        ${statusDescription}
+                    </small>
                 </div>
 
+                <!-- ==================================
+                     INFORMATION
+                ================================== -->
+                <div
+                    class="
+                        smartoffice-arsippegawai-document-information
+                    "
+                >
+                    ${informationHtml}
+                </div>
+
+                <!-- ==================================
+                     ACTION
+                ================================== -->
                 ${
-                    item.fileUrl
+                    actionHtml
                     ?
                     `
                     <div
-                        class="smartoffice-arsip-footer"
+                        class="
+                            smartoffice-arsippegawai-document-actions
+                        "
                     >
-                        <button
-                            type="button"
-                            class="
-                                smartoffice-dokumen-link
-                            "
-                            onclick="
-                                smartofficeOpenPreviewDokumen(
-                                    '${item.fileId}',
-                                    '${item.fileName}'
-                                )
-                            "
-                        >
-                            <svg
-                                style="
-                                    flex-shrink:0;
-                                "
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="14"
-                                height="14"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    d="
-                                        M14 2H6
-                                        a2 2 0 0 0-2 2v16
-                                        a2 2 0 0 0 2 2h12
-                                        a2 2 0 0 0 2-2V8z
-                                    "
-                                />
-
-                                <polyline
-                                    points="14 2 14 8 20 8"
-                                />
-
-                                <line
-                                    x1="16"
-                                    y1="13"
-                                    x2="8"
-                                    y2="13"
-                                />
-
-                                <line
-                                    x1="16"
-                                    y1="17"
-                                    x2="8"
-                                    y2="17"
-                                />
-
-                                <line
-                                    x1="10"
-                                    y1="9"
-                                    x2="8"
-                                    y2="9"
-                                />
-                            </svg>
-
-                            <span>
-                                Lihat Dokumen
-                            </span>
-                        </button>
-
-                        <div
-                            class="
-                                smartoffice-arsip-action
-                            "
-                        >
-                            ${
-                                item.alasanBukaLock
-                                ?
-                                `
-                                <span
-                                    class="
-                                        smartoffice-arsip-lock-open
-                                    "
-                                >
-                                    🔓 Dapat Upload Ulang
-                                </span>
-                                `
-                                :
-                                (
-                                    item.statusVerifikasi ===
-                                    "TERVERIFIKASI"
-                                    &&
-                                    item.isLock === "YA"
-                                    &&
-                                    sessionData
-                                    &&
-                                    [
-                                        "ADMIN",
-                                        "KAPUS",
-                                        "PJ"
-                                    ].includes(
-                                        sessionData.role
-                                    )
-                                    ?
-                                    `
-                                    <button
-                                        type="button"
-                                        class="
-                                            smartoffice-arsip-button-lock
-                                        "
-                                        onclick="
-                                            smartofficeBukaLockDokumenPrompt(
-                                                '${item.idDokumen}'
-                                            )
-                                        "
-                                    >
-                                        🔓 Buka Lock
-                                    </button>
-                                    `
-                                    :
-                                    ""
-                                )
-                            }
-                        </div>
+                        ${actionHtml}
                     </div>
                     `
                     :
@@ -988,14 +1175,146 @@ export function smartofficeRenderArsipPegawai(
         }
     );
 
+    /* ==================================================
+       EMPTY
+    ================================================== */
+    if(
+        dokumen.length === 0
+    ){
+        listContainer.innerHTML =
+        `
+        <div
+            class="
+                smartoffice-arsippegawai-empty
+            "
+        >
+            <div
+                class="
+                    smartoffice-arsippegawai-empty-icon
+                "
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path
+                        d="
+                            M3 7
+                            a2 2 0 0 1 2-2h5
+                            l2 2h7
+                            a2 2 0 0 1 2 2v8
+                            a2 2 0 0 1-2 2H5
+                            a2 2 0 0 1-2-2z
+                        "
+                    />
+                </svg>
+            </div>
+
+            <h3>
+                Belum ada arsip
+            </h3>
+
+            <p>
+                Belum terdapat dokumen arsip
+                untuk pegawai ini.
+            </p>
+        </div>
+        `;
+
+        return;
+    }
+
+    /* ==================================================
+       LIST
+       WRAPPER TETAP DIPERTAHANKAN
+    ================================================== */
     listContainer.innerHTML =
     `
     <div
         class="
-            smartoffice-dokumen-list
+            smartoffice-arsippegawai-document-card
         "
     >
-        ${html}
+        <div
+            class="
+                smartoffice-arsippegawai-document-header
+            "
+        >
+            <div
+                class="
+                    smartoffice-arsippegawai-document-title
+                "
+            >
+                <div
+                    class="
+                        smartoffice-arsippegawai-document-title-icon
+                    "
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="
+                                M14 2H6
+                                a2 2 0 0 0-2 2v16
+                                a2 2 0 0 0 2 2h12
+                                a2 2 0 0 0 2-2V8z
+                            "
+                        />
+
+                        <polyline
+                            points="
+                                14 2
+                                14 8
+                                20 8
+                            "
+                        />
+                    </svg>
+                </div>
+
+                <span>
+                    Dokumen Arsip Pegawai
+                </span>
+            </div>
+
+            <div
+                class="
+                    smartoffice-arsippegawai-document-legend
+                "
+            >
+                <span class="verified">
+                    <i></i>
+                    Terverifikasi
+                </span>
+
+                <span class="waiting">
+                    <i></i>
+                    Menunggu Verifikasi
+                </span>
+
+                <span class="missing">
+                    <i></i>
+                    Belum Upload
+                </span>
+            </div>
+        </div>
+
+        <div
+            class="
+                smartoffice-arsippegawai-document-list
+            "
+        >
+            ${html}
+        </div>
     </div>
     `;
 }
@@ -1047,19 +1366,18 @@ export async function smartofficeLoadProgressArsip(){
         return;
     }
 
-    container.innerHTML =
-    `
-    <div class="smartoffice-arsip-loading">
-        <div class="smartoffice-arsip-spinner">
-        </div>
+    /* =========================
+       GLOBAL LOADING
+    ========================= */
+    smartofficeShowLoading(
+        "smartofficeProgressArsipList",
+        "Memuat progres arsip..."
+    );
 
-        <div class="smartoffice-arsip-loading-text">
-            Memuat progres arsip...
-        </div>
-    </div>
-    `;
-
-    try{
+    try{    
+        /* =========================
+           SERVICE
+        ========================= */    
         const data =
             await smartofficeGetProgressArsip();
 
@@ -1071,6 +1389,9 @@ export async function smartofficeLoadProgressArsip(){
             );
         }
 
+        /* =========================
+           RENDER
+        ========================= */
         smartofficeRenderProgressArsip(
             data
         );
@@ -1083,8 +1404,8 @@ export async function smartofficeLoadProgressArsip(){
 
         container.innerHTML =
         `
-        <div class="smartoffice-arsip-empty">
-            <div class="smartoffice-arsip-empty-icon">
+        <div class="smartoffice-arsippegawai-empty">
+            <div class="smartoffice-arsippegawai-empty-icon">
                 ⚠️
             </div>
 
@@ -1573,6 +1894,7 @@ export function smartofficeBukaLockDokumenPrompt(
 export function smartofficeOpenBukaLockDokumenModal(
     idDokumen
 ){
+
     const body =
         document.getElementById(
             "smartofficeArsipActionBody"
@@ -1584,28 +1906,62 @@ export function smartofficeOpenBukaLockDokumenModal(
 
     body.innerHTML =
     `
-    <div class="smartoffice-arsip-modal-icon warning">
-        🔓
+    <div class="smartoffice-arsippegawai-modal-icon warning">
+
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        >
+            <rect
+                x="5"
+                y="11"
+                width="14"
+                height="10"
+                rx="2"
+            />
+
+            <path
+                d="
+                    M8 11V7
+                    a4 4 0 0 1
+                    8 0v4
+                "
+            />
+
+            <path
+                d="M12 15v3"
+            />
+        </svg>
+
     </div>
 
-    <div class="smartoffice-arsip-modal-title">
+
+    <div class="smartoffice-arsippegawai-modal-title">
         Buka Lock Dokumen
     </div>
 
-    <div class="smartoffice-arsip-modal-text">
+
+    <div class="smartoffice-arsippegawai-modal-text">
         Alasan membuka lock wajib diisi.
     </div>
 
+
     <textarea
         id="smartofficeBukaLockAlasan"
-        class="smartoffice-arsip-textarea"
+        class="smartoffice-arsippegawai-modal-textarea"
         placeholder="Tulis alasan membuka lock..."
     ></textarea>
 
-    <div class="smartoffice-arsip-modal-footer">
+
+    <div class="smartoffice-arsippegawai-modal-footer">
+
         <button
             id="smartofficeBukaLockSubmitButton"
-            class="smartoffice-management-filter-button"
+            class="smartoffice-arsippegawai-modal-submit"
             type="button"
             onclick="
                 smartofficeSubmitBukaLockDokumen(
@@ -1613,11 +1969,41 @@ export function smartofficeOpenBukaLockDokumenModal(
                 )
             "
         >
-            Buka Lock
+
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <rect
+                    x="5"
+                    y="11"
+                    width="14"
+                    height="10"
+                    rx="2"
+                />
+
+                <path
+                    d="
+                        M8 11V7
+                        a4 4 0 0 1
+                        8 0v4
+                    "
+                />
+            </svg>
+
+            <span>
+                Buka Lock
+            </span>
+
         </button>
 
+
         <button
-            class="smartoffice-management-reset-button"
+            class="smartoffice-arsippegawai-modal-cancel"
             type="button"
             onclick="
                 smartofficeCloseArsipModal()
@@ -1625,8 +2011,10 @@ export function smartofficeOpenBukaLockDokumenModal(
         >
             Batal
         </button>
+
     </div>
     `;
+
 
     const modal =
         document.getElementById(
@@ -1637,14 +2025,18 @@ export function smartofficeOpenBukaLockDokumenModal(
         return;
     }
 
+
     modal.style.display =
         "flex";
 
+
     setTimeout(
         function(){
+
             modal.classList.add(
                 "show"
             );
+
         },
         10
     );
@@ -1696,9 +2088,7 @@ export async function smartofficeSubmitBukaLockDokumen(
         button.innerHTML =
         `
         <span
-            class="
-                smartofficearsip-btn-spinner
-            "
+            class="smartoffice-arsippegawai-btn-spinner"
         ></span>
         Membuka Lock...
         `;
@@ -1774,6 +2164,49 @@ export async function smartofficeSubmitBukaLockDokumen(
 
 
 /* ======================================================
+   CLOSE MODAL AKSI ARSIP PEGAWAI
+====================================================== */
+export function smartofficeCloseArsipModal(){
+    const modal =
+        document.getElementById(
+            "smartofficeArsipActionModal"
+        );
+    if(!modal){
+        return;
+    }
+
+    /* =========================
+       CLOSE ANIMATION
+    ========================= */
+    modal.classList.remove(
+        "show"
+    );
+
+    /* =========================
+       HIDE
+    ========================= */
+    setTimeout(
+        function(){
+            modal.style.display =
+                "none";
+
+            /* Bersihkan isi modal */
+            const body =
+                document.getElementById(
+                    "smartofficeArsipActionBody"
+                );
+
+            if(body){
+                body.innerHTML =
+                    "";
+            }
+        },
+        200
+    );
+}
+
+
+/* ======================================================
    RESET ARSIP PEGAWAI
 ====================================================== */
 export function smartofficeResetArsipPegawai(){
@@ -1794,8 +2227,8 @@ export function smartofficeResetArsipPegawai(){
         "smartofficeArsipPegawaiList"
     ).innerHTML =
     `
-    <div class="smartoffice-arsip-empty">
-        <div class="smartoffice-arsip-empty-icon">
+    <div class="smartoffice-arsippegawai-empty">
+        <div class="smartoffice-arsippegawai-empty-icon">
             🗂️
         </div>
 
@@ -1859,8 +2292,8 @@ export async function smartofficeRefreshArsip(){
         "smartofficeArsipPegawaiList"
     ).innerHTML =
     `
-    <div class="smartoffice-arsip-empty">
-        <div class="smartoffice-arsip-empty-icon">
+    <div class="smartoffice-arsippegawai-empty">
+        <div class="smartoffice-arsippegawai-empty-icon">
             🗂️
         </div>
 
@@ -1909,17 +2342,10 @@ export async function smartofficeRefreshProgressArsip(){
         return;
     }
 
-    container.innerHTML =
-    `
-    <div class="smartoffice-arsip-loading">
-        <div class="smartoffice-arsip-spinner">
-        </div>
-
-        <div class="smartoffice-arsip-loading-text">
-            Memuat progress arsip...
-        </div>
-    </div>
-    `;
+    smartofficeShowLoading(
+        "smartofficeProgressArsipList",
+        "Memuat progres arsip..."
+    );
 
     await smartofficeLoadProgressArsip();
 
@@ -1955,6 +2381,9 @@ window.smartofficeOpenBukaLockDokumenModal =
 
 window.smartofficeSubmitBukaLockDokumen =
     smartofficeSubmitBukaLockDokumen;
+
+window.smartofficeCloseArsipModal =
+    smartofficeCloseArsipModal;
 
 window.smartofficeBukaArsipPegawai =
     smartofficeBukaArsipPegawai;

@@ -6,6 +6,9 @@
   color:#8B5CF6; 
 }
 
+/* =====================================================================
+   TAB UPLOAD
+===================================================================== */
 /* ======================================================
    CONTENT
 ====================================================== */
@@ -33,7 +36,6 @@
 /* ======================================================
    FORM CARD
 ====================================================== */
-
 .smartoffice-dokumen-saya-form-card{
   background:#ffffff;
   border-radius:26px;
@@ -72,7 +74,6 @@
     margin-top:0;
 }
 
-
 /* ======================================================
    FORM GRID
 ====================================================== */
@@ -102,7 +103,6 @@
   margin-bottom:16px;
 }
 
-
 /* ======================================================
    LABEL
 ====================================================== */
@@ -112,7 +112,6 @@
   line-height:1.5;
   margin-bottom:0;
 }
-
 
 /* ======================================================
    INPUT / SELECT / TEXTAREA
@@ -133,11 +132,9 @@
   background:#f8fafc;
 }
 
-
 /* ======================================================
    TEXTAREA
 ====================================================== */
-
 .smartoffice-dokumen-saya-form-group textarea{
   padding:18px 14px;
   line-height:1.6;
@@ -152,14 +149,12 @@
   background:#ffffff;
 }
 
-
 /* ======================================================
    FULL WIDTH
 ====================================================== */
 .smartoffice-dokumen-saya-form-group.full-width{
    margin-top:28px;
 }
-
 
 /* ======================================================
    UPLOAD BOX
@@ -210,7 +205,6 @@
   word-break:break-word;
 }
 
-
 /* ======================================================
    SUBMIT BUTTON
 ====================================================== */
@@ -242,7 +236,6 @@
     rgba(37,99,235,0.25);
 }
 
-
 /* ======================================================
   SPINNER
 ====================================================== */
@@ -250,16 +243,11 @@
   flex-shrink:0;
   width:18px;
   height:18px;
-
   border:2px solid
     rgba(255,255,255,.35);
-
   border-top-color:#fff;
-
   border-radius:50%;
-
   display:inline-block;
-
   animation:
     smartofficeBtnSpin
     .8s
@@ -268,12 +256,10 @@
 }
 
 @keyframes smartofficeBtnSpin{
-
   to{
     transform:
       rotate(360deg);
   }
-
 }
 
 .smartoffice-btn-text{
@@ -281,251 +267,791 @@
 }
 
 
+
 /* =======================================================================
    TAB RIWAYAT DOKUMEN
 ======================================================================= */
 /* ======================================================
-   DOKUMEN CARD
+   DOKUMEN SAYA
+   FINAL — PREMIUM COMPACT
 ====================================================== */
-.smartoffice-dokumen-card{
-  position:relative;
-  background:#ffffff;
-  border:2px solid #cbd5e1;
-  border-radius:22px;
-  padding:18px;
-  margin-bottom:0px;
-  box-shadow:
-    0 4px 16px rgba(0,0,0,0.05);
-  transition:0.2s ease;
-}
-
-.smartoffice-dokumen-card:hover{
-  transform:
-    translateY(-2px);
-  border-color:
-    #bfdbfe;
-}
-
-.smartoffice-dokumen-card h4{
-  font-size:15px;
-  font-weight:700;
-  color:#0f172a;
-  margin-bottom:10px;
-}
-
-.smartoffice-dokumen-card p{
-  font-size:13px;
-  color:#64748b;
-  margin-bottom:8px;
-}
-
-.smartoffice-dokumen-card.approved{
-  border-left:4px solid #22c55e;
-}
-
-.smartoffice-dokumen-card.rejected{
-  border-left:4px solid #ef4444;
-}
-
-.smartoffice-dokumen-card.waiting{
-  border-left:4px solid #f59e0b;
-}
-
-.smartoffice-dokumen-card.empty{
-  border-left:4px solid #cbd5e1;
-}
-
-.smartoffice-dokumen-title{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-size:15px;
-  font-weight:700;
-  color:#0f172a;
-  margin-bottom:12px;
-}
-
-.smartoffice-dokumen-title svg{
-  width:18px;
-  height:18px;
-  color:#2563eb;
-  flex-shrink:0;
-}
-
-.smartoffice-dokumen-info{
-  margin-top:12px;
-  border-top:
-    1px solid #e2e8f0;
-  padding-top:12px;
-}
-
-C
-
-.smartoffice-dokumen-footer{
-  margin-top:14px;
-  padding-top:14px;
-  border-top:1px solid #e2e8f0;
-}
-
-.smartoffice-dokumen-saya-footer{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.smartoffice-dokumen-edit-btn{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  white-space:nowrap;
-  border:none;
-  outline:none;
-  padding:10px 14px;
-  border-radius:10px;
-  background:#f59e0b;
-  color:#fff;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:all .2s ease;
-}
-
-.smartoffice-dokumen-edit-btn:hover{
-  background:#d97706;
-}
-
-.smartoffice-dokumen-edit-btn:active{
-  transform:scale(.98);
-}
-
-
-/* ======================================================
-   DOKUMEN STATUS
-====================================================== */
-.smartoffice-dokumen-status{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  padding:6px 12px;
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-  text-transform:uppercase;
-}
-
-.smartoffice-dokumen-status.waiting{
-  background:
-    rgba(249,115,22,0.12);
-  color:#f97316;
-}
-
-.smartoffice-dokumen-status.approved{
-  background:
-    rgba(34,197,94,0.12);
-  color:#16a34a;
-}
-
-.smartoffice-dokumen-status.rejected{
-  background:
-    rgba(239,68,68,0.12);
-  color:#dc2626;
-}
-
-.smartoffice-dokumen-status.empty{
-  background:
-    rgba(148,163,184,0.12);
-  color:#64748b;
-}
-
-
-/* ======================================================
-   DOKUMEN LIST
-====================================================== */
-.smartoffice-dokumen-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  margin-top:8px;
-}
-
-
-/* ======================================================
-   DOKUMEN LOADING
-====================================================== */
-.smartoffice-dokumen-loading{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:50px 20px;
-  gap:14px;
-}
-
-.smartoffice-dokumen-loading p{
-  color:#64748b;
-  font-size:14px;
-  margin:0;
-}
-
-.smartoffice-dokumen-spinner{
-  width:38px;
-  height:38px;
-  border:
-    3px solid #dbeafe;
-  border-top:
-    3px solid #2563eb;
-  border-radius:50%;
-  animation:
-    smartofficeDokumenSpin
-    0.8s linear infinite;
-}
-
-@keyframes smartofficeDokumenSpin{
-  to{
-    transform:
-      rotate(360deg);
-  }
-}
-
-
-/* ======================================================
-   MODAL UBAH DOKUMEN SAYA
-====================================================== */
-
-.smartoffice-dokumen-saya-modal-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-        rgba(15,23,42,.5);
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    z-index:100000;
-
-    padding:20px;
-
-}
-
-
-.smartoffice-dokumen-saya-modal-content{
-
+.smartoffice-dokumensaya-list{
     width:100%;
+    display:grid;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    gap:14px;
+    box-sizing:border-box; 
+}
 
-    max-width:500px;
+/* ======================================================
+   CARD
+====================================================== */
+.smartoffice-dokumensaya-card{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    padding:16px;
+    background:#ffffff;
+    border:1px solid #e4ebf5;
+    border-radius:15px;
+    box-sizing:border-box;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+    margin-top:4px;
+}
 
-    background:#fff;
+.smartoffice-dokumensaya-card:hover{
+    border-color:#c9d9f3;
+    box-shadow:
+        0 8px 22px
+        rgba(37,99,235,.07);
+    transform:translateY(-1px);
+}
 
-    border-radius:20px;
+/* ======================================================
+   TOP
+====================================================== */
+.smartoffice-dokumensaya-top{
+    min-width:0;
+    display:grid;
+    grid-template-columns:
+        40px
+        minmax(0,1fr)
+        minmax(140px,auto);
+    align-items:center;
+    column-gap:12px;
+}
 
+/* ======================================================
+   ICON
+====================================================== */
+.smartoffice-dokumensaya-icon{
+    width:40px;
+    height:40px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:11px;
+    background:#eff5ff;
+    color:#2563eb;
+    flex-shrink:0;
+}
+
+.smartoffice-dokumensaya-icon svg{
+    width:20px;
+    height:20px;
+}
+
+/* ======================================================
+   DOCUMENT
+====================================================== */
+.smartoffice-dokumensaya-document{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.smartoffice-dokumensaya-name{
+    display:block;
+    min-width:0;
+    color:#102a56;
+    font-size:14px;
+    line-height:1.35;
+    font-weight:700;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+.smartoffice-dokumensaya-file{
+    display:block;
+    margin-top:2px;
+    color:#71809a;
+    font-size:10px;
+    line-height:1.35;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+/* ======================================================
+   STATUS
+====================================================== */
+.smartoffice-dokumensaya-status{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+}
+
+.smartoffice-dokumensaya-status-title{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    min-width:0;
+}
+
+.smartoffice-dokumensaya-status-title strong{
+    font-size:12px;
+    line-height:1.3;
+    font-weight:700;
+    white-space:normal;
+}
+
+.smartoffice-dokumensaya-status > small{
+    margin-top:2px;
+    font-size:10px;
+    line-height:1.3;
+    color:#71809a;
+}
+
+/* DOT */
+.smartoffice-dokumensaya-status-dot{
+    width:7px;
+    height:7px;
+    flex-shrink:0;
+    border-radius:50%;
+}
+
+/* VERIFIED */
+.smartoffice-dokumensaya-status.verified{
+    color:#16a34a;
+}
+
+.smartoffice-dokumensaya-status.verified
+.smartoffice-dokumensaya-status-dot{
+    background:#16a34a;
+}
+
+/* WAITING */
+.smartoffice-dokumensaya-status.waiting{
+    color:#d97706;
+}
+
+.smartoffice-dokumensaya-status.waiting
+.smartoffice-dokumensaya-status-dot{
+    background:#f59e0b;
+}
+
+/* REJECTED */
+.smartoffice-dokumensaya-status.rejected{
+    color:#dc2626;
+}
+
+.smartoffice-dokumensaya-status.rejected
+.smartoffice-dokumensaya-status-dot{
+    background:#ef4444;
+}
+
+/* MISSING */
+.smartoffice-dokumensaya-status.missing{
+    color:#dc2626;
+}
+
+.smartoffice-dokumensaya-status.missing
+.smartoffice-dokumensaya-status-dot{
+    background:#ef4444;
+}
+
+/* ======================================================
+   INFORMATION
+====================================================== */
+.smartoffice-dokumensaya-information{
+    display:grid;
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+    gap:10px 20px;
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid #edf1f7;
+}
+
+/* ======================================================
+   META
+====================================================== */
+.smartoffice-dokumensaya-meta{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.smartoffice-dokumensaya-meta.full{
+    grid-column:1 / -1;
+}
+
+.smartoffice-dokumensaya-meta-label{
+    font-size:11px;
+    line-height:1.25;
+    color:#8190a8;
+    font-weight:500;
+}
+
+.smartoffice-dokumensaya-meta-value{
+    min-width:0;
+    color:#20375d;
+    font-size:13px;
+    line-height:1.35;
+    font-weight:650;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+}
+
+.smartoffice-dokumensaya-meta-value.note{
+    color:#64748b;
+    font-weight:500;
+}
+
+/* ======================================================
+   CATATAN VERIFIKATOR
+====================================================== */
+.smartoffice-dokumensaya-meta.rejected-note{
+    padding:9px 10px;
+    border:1px solid #fee2e2;
+    border-radius:9px;
+    background:#fff7f7;
+}
+
+.smartoffice-dokumensaya-rejected-text{
+    color:#dc2626;
+    font-weight:600;
+}
+
+/* ======================================================
+   LOCK
+====================================================== */
+.smartoffice-dokumensaya-meta.lock-info{
+    padding:8px 10px;
+    border:1px solid #d9f0e2;
+    border-radius:9px;
+    background:#f0faf4;
+}
+
+.smartoffice-dokumensaya-meta.lock-info
+.smartoffice-dokumensaya-meta-value{
+    color:#16a34a;
+}
+
+/* ======================================================
+   ACTION
+====================================================== */
+.smartoffice-dokumensaya-actions{
+    display:flex;
+    gap:8px;
+    margin-top:14px;
+}
+
+.smartoffice-dokumensaya-action{
+    flex:1;
+    min-width:0;
+    height:34px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:0 10px;
+    border:1px solid #d5e3fa;
+    border-radius:9px;
+    background:#f8fbff;
+    color:#2563eb;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .15s ease;
+}
+
+.smartoffice-dokumensaya-action:hover{
+    background:#eff6ff;
+    border-color:#bcd2f3;
+    transform:translateY(-1px);
+}
+
+.smartoffice-dokumensaya-action svg{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   UBAH
+====================================================== */
+.smartoffice-dokumensaya-action.edit{
+    color:#d97706;
+    border-color:#fed7aa;
+    background:#fffaf2;
+}
+
+.smartoffice-dokumensaya-action.edit:hover{
+    background:#fff7ed;
+    border-color:#fdba74;
+}
+
+/* ======================================================
+   EMPTY
+====================================================== */
+.smartoffice-dokumensaya-empty{
+    grid-column:1 / -1;
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:30px 20px;
+    background:#ffffff;
+    border:1px solid #e4ebf5;
+    border-radius:15px;
+    box-sizing:border-box;
+}
+
+.smartoffice-dokumensaya-empty-icon{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:10px;
+    border-radius:13px;
+    background:#eff5ff;
+    color:#2563eb;
+}
+
+.smartoffice-dokumensaya-empty-icon svg{
+    width:23px;
+    height:23px;
+}
+
+.smartoffice-dokumensaya-empty strong{
+    color:#334155;
+    font-size:13px;
+    font-weight:700;
+}
+
+.smartoffice-dokumensaya-empty span{
+    max-width:340px;
+    margin-top:5px;
+    color:#71809a;
+    font-size:10px;
+    line-height:1.5;
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media(max-width:768px){
+    .smartoffice-dokumensaya-list{
+        grid-template-columns:
+            minmax(0,1fr);
+        gap:10px;
+    }
+
+    .smartoffice-dokumensaya-card{
+        padding:13px;
+        border-radius:13px;
+        margin-top:0px;
+    }
+
+    .smartoffice-dokumensaya-top{
+        grid-template-columns:
+            38px
+            minmax(0,1fr);
+        column-gap:10px;
+    }
+
+    .smartoffice-dokumensaya-icon{
+        width:34px;
+        height:34px;
+    }
+
+    .smartoffice-dokumensaya-icon svg{
+        width:18px;
+        height:18px;
+    }
+
+    .smartoffice-dokumensaya-name{
+        font-size:12px;
+    }
+
+    .smartoffice-dokumensaya-file{
+        font-size:10px;
+    }
+
+    .smartoffice-dokumensaya-status{
+        grid-column:2;
+        margin-top:4px;
+    }
+
+    .smartoffice-dokumensaya-status-title strong{
+        font-size:11px;
+    }
+
+    .smartoffice-dokumensaya-status > small{
+        font-size:9px;
+    }
+
+    .smartoffice-dokumensaya-status-dot{
+        width:5px;
+        height:5px;
+    }
+
+    .smartoffice-dokumensaya-information{
+        grid-template-columns:
+            minmax(0,1fr);
+        gap:9px;
+        margin-top:12px;
+        padding-top:11px;
+    }
+
+    .smartoffice-dokumensaya-meta.full{
+        grid-column:auto;
+    }
+
+    .smartoffice-dokumensaya-meta-label{
+        font-size:10px;
+    }
+
+    .smartoffice-dokumensaya-meta-value{
+        font-size:11px;
+    }
+    
+    .smartoffice-dokumensaya-meta-value.note{
+        font-size:10px;
+    }
+
+    .smartoffice-dokumensaya-actions{
+        flex-direction:row;
+        gap:7px;
+    }
+
+    .smartoffice-dokumensaya-action{
+        height:34px;
+    }
+}
+
+
+/* =======================================================================
+   MODAL DOKUMEN SAYA
+======================================================================= */
+/* ======================================================
+   MODAL OVERLAY
+====================================================== */
+.smartoffice-dokumensaya-modal-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     padding:20px;
+    background:
+        rgba(15,23,42,.52);
+    z-index:100000;
+    box-sizing:border-box;
+}
+
+/* ======================================================
+   MODAL CONTENT
+====================================================== */
+.smartoffice-dokumensaya-modal-content{
+    width:100%;
+    max-width:520px;
+    max-height:
+        calc(100vh - 40px);
+    overflow-y:auto;
+    background:#ffffff;
+    border:
+        1px solid #e5ebf4;
+    border-radius:18px;
+    padding:20px;
+    box-sizing:border-box;
+    box-shadow:
+        0 20px 50px
+        rgba(15,23,42,.18);
+    animation:
+        smartofficeDokumenSayaModalIn
+        .2s ease;
+}
+
+
+/* ======================================================
+   EDIT CARD
+====================================================== */
+.smartoffice-dokumensaya-edit-card{
+    width:100%;
+}
+
+/* ======================================================
+   TITLE
+====================================================== */
+.smartoffice-dokumensaya-edit-title{
+    margin:0 0 18px;
+    font-size:16px;
+    line-height:1.3;
+    font-weight:700;
+    color:#102a56;
+}
+
+/* ======================================================
+   FORM GROUP
+====================================================== */
+.smartoffice-dokumensaya-edit-group{
+    margin-bottom:13px;
+}
+
+.smartoffice-dokumensaya-edit-group label{
+    display:block;
+    margin-bottom:6px;
+    font-size:10px;
+    line-height:1.3;
+    font-weight:600;
+    color:#475569;
+}
+
+/* ======================================================
+   INPUT
+====================================================== */
+.smartoffice-dokumensaya-edit-group input{
+    width:100%;
+    height:38px;
+    padding:
+        0 11px;
+    border:
+        1px solid #dce5f1;
+    border-radius:9px;
+    background:#ffffff;
+    color:#1e293b;
+    font-family:inherit;
+    font-size:10px;
+    outline:none;
+    box-sizing:border-box;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-dokumensaya-edit-group input:focus{
+    border-color:#93b4e8;
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,.08);
+}
+
+.smartoffice-dokumensaya-edit-group input[readonly]{
+    background:#f8fafc;
+    color:#64748b;
+    cursor:default;
+}
+
+/* ======================================================
+   UPLOAD BOX
+====================================================== */
+.smartoffice-dokumensaya-edit-upload-box{
+    padding:11px;
+    border:
+        1px dashed #cbd9ee;
+    border-radius:11px;
+    background:#f8fbff;
+}
+
+/* ======================================================
+   UPLOAD BUTTON
+====================================================== */
+.smartoffice-dokumensaya-edit-upload-btn{
+    width:100%;
+    height:46px;
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:flex-start !important;
+    gap:7px;
+    padding:0 14px;
+    border:1px solid #d5e3fa;
+    border-radius:9px;
+    background:#ffffff;
+    color:#2563eb;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:600;
+    line-height:1;
+    cursor:pointer;
+    box-sizing:border-box;
+}
+
+/* ======================================================
+   ICON
+====================================================== */
+.smartoffice-dokumensaya-edit-upload-btn svg{
+    width:16px !important;
+    height:16px !important;
+    display:block !important;
+    flex:0 0 16px !important;
+    margin:0 !important;
+}
+
+/* ======================================================
+   TEXT
+====================================================== */
+.smartoffice-dokumensaya-edit-upload-btn span{
+    display:block !important;
+    margin:0 !important;
+    padding:0 !important;
+    line-height:1 !important;
+}
+
+/* ======================================================
+   FILE NAME
+====================================================== */
+.smartoffice-dokumensaya-edit-upload-name{
+    margin-top:8px;
+    font-size:9px;
+    line-height:1.4;
+    color:#71809a;
+    overflow-wrap:anywhere;
+}
+
+/* ======================================================
+   MODAL FOOTER
+====================================================== */
+.smartoffice-dokumensaya-edit-footer{
+    display:flex;
+    gap:8px;
+    margin-top:18px;
+}
+
+.smartoffice-dokumensaya-edit-footer button{
+    flex:1;
+    min-width:0;
+    height:37px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border-radius:9px;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:600;
+    cursor:pointer;
+    box-sizing:border-box;
+}
+
+/* ======================================================
+   UPDATE
+====================================================== */
+.smartoffice-dokumensaya-edit-submit{
+    border:
+        1px solid #2563eb;
+    background:#2563eb;
+    color:#ffffff;
+}
+
+.smartoffice-dokumensaya-edit-submit:hover{
+    background:#1d4ed8;
+    border-color:#1d4ed8;
+}
+
+.smartoffice-dokumensaya-edit-submit:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+}
+
+/* ======================================================
+   BATAL
+====================================================== */
+.smartoffice-dokumensaya-edit-cancel{
+    border:
+        1px solid #dce5f1;
+    background:#ffffff;
+    color:#475569;
+}
+
+.smartoffice-dokumensaya-edit-cancel:hover{
+    background:#f8fafc;
+}
+
+/* ======================================================
+   SPINNER
+====================================================== */
+.smartoffice-dokumensaya-edit-spinner{
+    width:14px;
+    height:14px;
+    border:
+        2px solid
+        rgba(255,255,255,.45);
+    border-top-color:#ffffff;
+    border-radius:50%;
+    animation:
+        smartofficeDokumenSayaSpin
+        .7s linear infinite;
+}
+
+/* ======================================================
+   ANIMATION
+====================================================== */
+@keyframes smartofficeDokumenSayaModalIn{
+    from{
+        opacity:0;
+        transform:
+            translateY(8px)
+            scale(.98);
+    }
+    to{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+@keyframes smartofficeDokumenSayaSpin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media(max-width:768px){
+
+    .smartoffice-dokumensaya-modal-overlay{
+
+        align-items:flex-end;
+
+        padding:10px;
+    }
+
+
+    .smartoffice-dokumensaya-modal-content{
+
+        max-height:
+            calc(100vh - 20px);
+
+        padding:16px;
+
+        border-radius:
+            17px;
+    }
+
+
+    .smartoffice-dokumensaya-edit-title{
+
+        font-size:14px;
+
+        margin-bottom:15px;
+    }
+
+
+    .smartoffice-dokumensaya-edit-footer{
+
+        flex-direction:row;
+    }
 
 }

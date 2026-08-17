@@ -315,12 +315,20 @@ function smartofficeFilterMenuByRole(
 
     const arsipMenu =
         document.getElementById(
-            "smartofficeArsipMenuCard"
+            "smartofficeArsipPegawaiMenuCard"
         );
 
     const masterDataMenu =
         document.getElementById(
             "smartofficeMasterDataMenuCard"
+        );
+
+    /* =========================
+       ROLE CATEGORY
+    ========================= */
+    const roleCategory =
+        document.getElementById(
+            "smartofficeDashboardRoleCategory"
         );
 
     /* =========================
@@ -334,12 +342,23 @@ function smartofficeFilterMenuByRole(
             menu.style.display = "";
         });
 
+    if(roleCategory){
+        roleCategory.style.display = "";
+    }
+
     /* =========================
        USER
     ========================= */
     if(
         role === "USER"
     ){
+        /* HIDE CONTAINER */
+        if(roleCategory){
+            roleCategory.style.display =
+                "none";
+        }
+
+        /* HIDE MENU CARD */
         approvalMenu &&
             (approvalMenu.style.display = "none");
 
