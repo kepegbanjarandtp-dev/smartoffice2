@@ -1,0 +1,2280 @@
+/* =====================================================================
+   HEADER
+===================================================================== */
+.smartoffice-arsip-pegawai-header-icon{
+    background:#E9F8F7;
+    color:#14B8A6;
+}
+
+/* =====================================================================
+   SMART OFFICE
+   ARSIP PEGAWAI — PROGRESS MONITORING
+===================================================================== */
+
+/* ======================================================
+   MONITORING PROGRESS CARD
+====================================================== */
+.smartoffice-arsippegawai-progress-content{
+    width:100%;
+    padding:22px;
+    background:#ffffff;
+    border:1px solid #e5ebf5;
+    border-radius:22px;
+    box-shadow:
+        0 10px 30px rgba(30,64,175,.06);
+}
+
+
+/* ======================================================
+   TOOLBAR
+====================================================== */
+.smartoffice-arsippegawai-progress-toolbar{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:18px;
+    padding-bottom:16px;
+    border-bottom:1px solid #edf1f7;
+}
+
+/* LEFT */
+.smartoffice-arsippegawai-progress-toolbar-left{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* ICON */
+.smartoffice-arsippegawai-progress-toolbar-icon{
+    width:42px;
+    height:42px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:12px;
+    background:#eff6ff;
+    color:#2563eb;
+    border:1px solid #dbeafe;
+}
+
+.smartoffice-arsippegawai-progress-toolbar-icon svg{
+    width:21px;
+    height:21px;
+}
+
+/* TITLE */
+.smartoffice-arsippegawai-progress-toolbar-title{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.smartoffice-arsippegawai-progress-toolbar-title h3{
+    margin:0;
+    font-size:19px;
+    line-height:1.2;
+    font-weight:700;
+    color:#102a56;
+}
+
+.smartoffice-arsippegawai-progress-toolbar-title p{
+    margin:4px 0 0;
+    font-size:12px;
+    line-height:1.4;
+    color:#71809a;
+}
+
+
+/* ======================================================
+   REFRESH
+====================================================== */
+.smartoffice-arsippegawai-progress-refresh-btn{
+    width:40px;
+    height:40px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #e3eaf5;
+    border-radius:11px;
+    background:#ffffff;
+    color:#2563eb;
+    cursor:pointer;
+    box-shadow:
+        0 3px 10px rgba(30,64,175,.06);
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+}
+
+.smartoffice-arsippegawai-progress-refresh-btn:hover{
+    transform:translateY(-1px);
+    background:#f8fbff;
+    box-shadow:
+        0 6px 16px rgba(30,64,175,.1);
+}
+
+.smartoffice-arsippegawai-progress-refresh-btn:active{
+    transform:scale(.96);
+}
+
+
+/* ======================================================
+   LIST
+====================================================== */
+.smartoffice-arsippegawai-progress-list{
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+
+/* ======================================================
+   PROGRESS CARD
+====================================================== */
+.smartoffice-arsippegawai-progress-card{
+    width:100%;
+    min-width:0;
+    display:grid;
+    grid-template-columns:
+        minmax(280px, 1.35fr)
+        minmax(260px, 1.55fr)
+        70px
+        130px
+        48px;
+    align-items:center;
+    gap:22px;
+    padding:18px 20px;
+    background:#ffffff;
+    border:1px solid #e5ecf6;
+    border-radius:18px;
+    box-shadow:
+        0 5px 18px rgba(31,65,114,.045);
+    border:1px solid rgba(226,232,240,.9);
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.smartoffice-arsippegawai-progress-card:hover{
+    transform:translateY(-1px);
+    border-color:#d6e3f7;
+    box-shadow:
+        0 10px 28px rgba(31,65,114,.08);
+}
+
+
+/* ======================================================
+   EMPLOYEE
+====================================================== */
+.smartoffice-arsippegawai-progress-employee{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+/* AVATAR */
+.smartoffice-arsippegawai-progress-avatar{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    border-radius:50%;
+    background:
+        linear-gradient(
+            145deg,
+            #3478f6,
+            #1d5fe2
+        );
+    color:#ffffff;
+    font-size:14px;
+    font-weight:700;
+    box-shadow:
+        0 5px 12px rgba(37,99,235,.20);
+}
+
+/* EMPLOYEE INFO */
+.smartoffice-arsippegawai-progress-employee-info{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+/* NAME */
+.smartoffice-arsippegawai-progress-name{
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:14px;
+    line-height:1.3;
+    font-weight:700;
+    color:#142c55;
+}
+
+/* POSITION */
+.smartoffice-arsippegawai-progress-position{
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    font-size:11px;
+    line-height:1.3;
+    color:#71809a;
+}
+
+
+/* ======================================================
+   PROGRESS DETAIL
+====================================================== */
+.smartoffice-arsippegawai-progress-detail{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+
+/* LABEL */
+.smartoffice-arsippegawai-progress-label{
+    font-size:11px;
+    line-height:1.2;
+    color:#71809a;
+}
+
+/* TRACK */
+.smartoffice-arsippegawai-progress-track{
+    width:100%;
+    height:7px;
+    overflow:hidden;
+    border-radius:999px;
+    background:#e7edf5;
+}
+
+/* FILL */
+.smartoffice-arsippegawai-progress-fill{
+    height:100%;
+    min-width:0;
+    border-radius:999px;
+    transition:
+        width .5s ease;
+}
+
+/* INFO */
+.smartoffice-arsippegawai-progress-info{
+    font-size:11px;
+    line-height:1.3;
+    color:#526783;
+}
+
+
+/* ======================================================
+   PERCENT CIRCLE
+====================================================== */
+.smartoffice-arsippegawai-progress-percent{
+    width:58px;
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    flex-shrink:0;
+    border-radius:50%;
+    background:
+        conic-gradient(
+            var(--progress-color) 0%,
+            var(--progress-color) var(--progress),
+            #e8eef7 var(--progress),
+            #e8eef7 100%
+        );
+    color:#102a56;
+    font-size:12px;
+    font-weight:700;
+    isolation:isolate;
+}
+
+/* LINGKARAN TENGAH */
+.smartoffice-arsippegawai-progress-percent::before{
+    content:"";
+    position:absolute;
+    inset:7px;
+    border-radius:50%;
+    background:#ffffff;
+    z-index:-1;
+}
+
+
+/* ======================================================
+   STATUS
+====================================================== */
+.smartoffice-arsippegawai-progress-status{
+    width:max-content;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+    padding:7px 11px;
+    border-radius:8px;
+    white-space:nowrap;
+    font-size:11px;
+    line-height:1;
+    font-weight:600;
+}
+
+/* DOT */
+.smartoffice-arsippegawai-progress-status-dot{
+    width:7px;
+    height:7px;
+    flex-shrink:0;
+    border-radius:50%;
+    background:currentColor;
+}
+
+/* DANGER */
+.smartoffice-arsippegawai-progress-status.danger{
+    color:#ef4444;
+    background:#fff0f0;
+}
+
+/* WARNING */
+.smartoffice-arsippegawai-progress-status.warning{
+    color:#2563eb;
+    background:#edf4ff;
+}
+
+/* SUCCESS */
+.smartoffice-arsippegawai-progress-status.success{
+    color:#16a34a;
+    background:#eaf9f0;
+}
+
+
+/* ======================================================
+   DETAIL BUTTON
+====================================================== */
+.smartoffice-arsippegawai-progress-detail-btn{
+    width:42px;
+    height:42px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    padding:0;
+    border:1px solid #e5ecf6;
+    border-radius:12px;
+    background:#ffffff;
+    color:#17345f;
+    cursor:pointer;
+    box-shadow:
+        0 4px 10px rgba(31,65,114,.05);
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .2s ease;
+}
+
+.smartoffice-arsippegawai-progress-detail-btn svg{
+    width:18px;
+    height:18px;
+}
+
+.smartoffice-arsippegawai-progress-detail-btn:hover{
+    background:#f5f9ff;
+    border-color:#cdddf5;
+    transform:translateX(2px);
+}
+
+.smartoffice-arsippegawai-progress-detail-btn:active{
+    transform:scale(.94);
+}
+
+
+/* ======================================================
+   EMPTY STATE
+====================================================== */
+.smartoffice-arsippegawai-progress-empty{
+    width:100%;
+    padding:48px 20px;
+    text-align:center;
+    border:1px dashed #d8e2ef;
+    border-radius:18px;
+    background:#ffffff;
+    color:#71809a;
+    font-size:13px;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media(max-width:768px){
+
+    .smartoffice-arsippegawai-progress-content{ 
+        padding:10px;
+        border-radius:18px;
+        box-shadow:
+            0 6px 20px rgba(30,64,175,.05);
+    }
+
+    /* ======================================================
+      PROGRESS TOOLBAR - MOBILE
+    ====================================================== */
+    .smartoffice-arsippegawai-progress-toolbar{
+        gap:10px;
+        margin-bottom:12px;
+        padding-bottom:12px;
+    }
+
+    .smartoffice-arsippegawai-progress-toolbar-left{
+        gap:9px;
+    }
+
+    .smartoffice-arsippegawai-progress-toolbar-icon{
+        width:34px;
+        height:34px;
+        border-radius:9px;
+    }
+
+    .smartoffice-arsippegawai-progress-toolbar-icon svg{
+        width:17px;
+        height:17px;
+    }
+
+    .smartoffice-arsippegawai-progress-toolbar-title h3{
+        font-size:14px;
+        line-height:1.2;
+    }
+
+    .smartoffice-arsippegawai-progress-toolbar-title p{
+        margin-top:2px;
+        font-size:8px;
+        line-height:1.3;
+    }
+
+    .smartoffice-arsippegawai-progress-refresh-btn{
+        width:34px;
+        height:34px;
+        border-radius:9px;
+    }
+
+    .smartoffice-arsippegawai-progress-refresh-btn svg{
+        width:15px;
+        height:15px;
+    }
+
+    /* ==============================================
+       LIST
+    ============================================== */
+    #smartofficeProgressArsipList{
+        gap:9px;
+    }
+
+     /* ==============================================
+       CARD
+    ============================================== */
+    .smartoffice-arsippegawai-progress-card{
+        width:100%;
+        display:grid;
+        grid-template-columns:
+            minmax(0,1fr)
+            52px;
+        grid-template-rows:
+            auto
+            auto
+            8px
+            auto
+            auto;
+        column-gap:10px;
+        row-gap:8px;
+        padding:14px;
+        border-radius:16px;
+    }
+
+    /* ==============================================
+       EMPLOYEE
+    ============================================== */
+    .smartoffice-arsippegawai-progress-employee{
+        grid-column:1 / -1;
+        grid-row:1;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        min-width:0;
+    }
+
+    .smartoffice-arsippegawai-progress-avatar{
+        width:30px;
+        height:30px;
+        flex-shrink:0;
+        font-size:10px;
+    }
+
+    .smartoffice-arsippegawai-progress-employee-info{
+        min-width:0;
+        flex:1;
+    }
+
+    .smartoffice-arsippegawai-progress-name{
+        width:100%;
+        white-space:normal;
+        overflow:visible;
+        text-overflow:clip;
+        font-size:12px;
+        line-height:1.3;
+    }
+
+    .smartoffice-arsippegawai-progress-position{
+        width:100%;
+        white-space:normal;
+        overflow:visible;
+        text-overflow:clip;
+        font-size:9px;
+        line-height:1.3;
+    }
+
+    /* ==============================================
+       STATUS ROW
+       
+       HANYA SEBAGAI PEMBUNGKUS
+       ANAKNYA MASUK KE GRID CARD
+    ============================================== */
+    .smartoffice-arsippegawai-progress-status-row{
+        display:contents;
+    }
+
+    /* ==============================================
+       LABEL
+    ============================================== */
+    .smartoffice-arsippegawai-progress-label{
+        grid-column:1;
+        grid-row:2;
+        font-size:9px;
+        line-height:1.2;
+        margin:0;
+    }
+
+    /* ==============================================
+       PROGRESS BAR
+    ============================================== */
+    .smartoffice-arsippegawai-progress-track{
+        grid-column:1;
+        grid-row:3;
+        width:100%;
+        height:6px;
+        min-width:0;
+    }
+
+    /* ==============================================
+       INFO
+    ============================================== */
+    .smartoffice-arsippegawai-progress-info{
+        grid-column:1;
+        grid-row:4;
+        font-size:9px;
+        line-height:1.3;
+        margin:0;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+    }
+
+    /* ==============================================
+       RING PERCENT
+        
+       SEKARANG BENAR-BENAR SEJAJAR
+       DENGAN AREA PROGRESS
+    ============================================== */
+    .smartoffice-arsippegawai-progress-percent{
+        grid-column:2;
+        align-self:center;
+        justify-self:end;
+        width:38px;
+        height:38px;
+        flex-shrink:0;
+        font-size:9px;
+    }
+
+    .smartoffice-arsippegawai-progress-percent::before{
+        inset:6px;
+    }
+
+    /* ==============================================
+       STATUS + BUTTON
+    ============================================== */
+    .smartoffice-arsippegawai-progress-status{
+        grid-column:1;
+        grid-row:3;
+        justify-self:start;
+        align-self:center;
+        padding:6px 9px;
+        font-size:9px;
+        margin:0;
+        margin-top:16px;
+    }
+
+    .smartoffice-arsippegawai-progress-detail-btn{
+        grid-column:2;
+        grid-row:3;
+        justify-self:end;
+        align-self:center;
+        width:28px;
+        height:28px;
+        border-radius:10px;
+        margin:0;
+        margin-top:16px;
+    }
+
+    .smartoffice-arsippegawai-progress-detail-btn svg{
+        width:12px;
+        height:12px;
+    }
+
+    /* ==============================================
+       EMPTY
+    ============================================== */
+    .smartoffice-arsippegawai-progress-empty{
+        padding:40px 16px;
+        font-size:12px;
+        border-radius:16px;
+    }
+}
+
+
+
+/* =====================================================================
+   SMART OFFICE — ARSIP PEGAWAI
+   FILTER + RESULT
+===================================================================== */
+.smartoffice-arsippegawai-content{
+    width:100%;
+    min-width:0;
+}
+
+/* ======================================================
+   FILTER ARSIP PEGAWAI
+====================================================== */
+.smartoffice-arsippegawai-filter-card{
+    width:100%;
+    padding:16px 18px;
+    background:#ffffff;
+    border:1px solid #e3eaf5;
+    border-radius:16px;
+    box-sizing:border-box;
+    box-shadow:
+        0 4px 16px rgba(30,64,175,.04);
+    margin-bottom:14px;
+}
+
+/* ======================================================
+   FILTER HEADER
+====================================================== */
+.smartoffice-arsippegawai-filter-header{
+    margin-bottom:14px;
+}
+
+.smartoffice-arsippegawai-filter-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.smartoffice-arsippegawai-filter-title-icon{
+    width:34px;
+    height:34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    border-radius:10px;
+    background:#f1f6ff;
+    color:#2563eb;
+}
+
+.smartoffice-arsippegawai-filter-title-icon svg{
+    width:17px;
+    height:17px;
+    display:block;
+}
+
+.smartoffice-arsippegawai-filter-title h3{
+    margin:0;
+    font-size:13px;
+    line-height:1.3;
+    font-weight:700;
+    color:#102a56;
+}
+
+.smartoffice-arsippegawai-filter-title p{
+    margin:3px 0 0;
+    font-size:9px;
+    line-height:1.3;
+    color:#71809a;
+}
+
+/* ======================================================
+   FILTER BODY
+====================================================== */
+.smartoffice-arsippegawai-filter-body{
+    width:100%;
+    display:grid;
+    grid-template-columns:
+        minmax(0,1.35fr)
+        minmax(170px,.85fr)
+        auto;
+    align-items:end;
+    gap:12px;
+    box-sizing:border-box;
+}
+
+/* ======================================================
+   FILTER GROUP
+====================================================== */
+.smartoffice-arsippegawai-filter-group{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+}
+
+.smartoffice-arsippegawai-filter-group label{
+    margin-bottom:6px;
+    font-size:9px;
+    line-height:1.2;
+    font-weight:600;
+    color:#334155;
+}
+
+/* ======================================================
+   SELECT
+====================================================== */
+.smartoffice-arsippegawai-filter-group .smartoffice-input{
+    width:100%;
+    height:36px;
+    min-width:0;
+    box-sizing:border-box;
+    padding:
+        0 34px 0 11px;
+    border:1px solid #d9e2ef;
+    border-radius:9px;
+    background:#ffffff;
+    color:#334155;
+    font-family:inherit;
+    font-size:10px;
+    outline:none;
+}
+
+.smartoffice-arsippegawai-filter-group .smartoffice-input:focus{
+    border-color:#2563eb;
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.08);
+}
+
+/* ======================================================
+   ACTION
+====================================================== */
+.smartoffice-arsippegawai-filter-action{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   CARI
+====================================================== */
+.smartoffice-arsippegawai-search-button{
+    width:72px;
+    height:36px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:0 10px;
+    border:1px solid #2563eb;
+    border-radius:9px;
+    background:#2563eb;
+    color:#ffffff;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+    box-sizing:border-box;
+    box-shadow:
+        0 4px 10px rgba(37,99,235,.15);
+}
+
+.smartoffice-arsippegawai-search-button svg{
+    width:14px;
+    height:14px;
+    display:block;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   RESET
+====================================================== */
+.smartoffice-arsippegawai-reset-button{
+    width:72px;
+    height:36px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:0 10px;
+    border:1px solid #d9e2ef;
+    border-radius:9px;
+    background:#ffffff;
+    color:#475569;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+    box-sizing:border-box;
+}
+
+.smartoffice-arsippegawai-reset-button svg{
+    width:14px;
+    height:14px;
+    display:block;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   HOVER
+====================================================== */
+.smartoffice-arsippegawai-search-button:hover{
+    background:#1d4ed8;
+}
+
+.smartoffice-arsippegawai-reset-button:hover{
+    background:#f8fafc;
+    border-color:#cbd5e1;
+}
+
+
+/* ======================================================
+   DOCUMENT CARD
+====================================================== */
+.smartoffice-arsippegawai-document-card{
+    width:100%;
+    min-width:0;
+    overflow:hidden;
+    background:#ffffff;
+    border:1px solid #e4ebf5;
+    border-radius:16px;
+    box-shadow:
+        0 5px 18px rgba(30,64,175,.05);
+    box-sizing:border-box;
+    margin-top:14px;
+}
+
+/* ======================================================
+   DOCUMENT HEADER
+====================================================== */
+.smartoffice-arsippegawai-document-header{
+    min-height:56px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    padding:
+        0 16px;
+    border-bottom:1px solid #edf1f6;
+}
+
+.smartoffice-arsippegawai-document-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:#102a56;
+    font-size:15px;
+    font-weight:700;
+}
+
+.smartoffice-arsippegawai-document-title-icon{
+    width:30px;
+    height:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:9px;
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.smartoffice-arsippegawai-document-title-icon svg{
+    width:16px;
+    height:16px;
+}
+
+/* ======================================================
+   LEGEND
+====================================================== */
+.smartoffice-arsippegawai-document-legend{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+}
+
+.smartoffice-arsippegawai-document-legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    font-size:9px;
+    color:#64748b;
+    white-space:nowrap;
+}
+
+.smartoffice-arsippegawai-document-legend i{
+    width:6px;
+    height:6px;
+    display:block;
+    border-radius:50%;
+}
+
+.smartoffice-arsippegawai-document-legend
+.verified i{
+    background:#16a34a;
+}
+
+.smartoffice-arsippegawai-document-legend
+.waiting i{
+    background:#f59e0b;
+}
+
+.smartoffice-arsippegawai-document-legend
+.missing i{
+    background:#ef4444;
+}
+
+
+/* ======================================================
+   DOCUMENT LIST
+   SAMA DENGAN DOKUMEN SAYA
+====================================================== */
+
+.smartoffice-arsippegawai-document-list{
+
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:14px;
+
+    padding:14px;
+
+    box-sizing:border-box;
+}
+
+
+/* ======================================================
+   DOCUMENT ITEM
+====================================================== */
+
+.smartoffice-arsippegawai-document-item{
+
+    min-width:0;
+
+    display:grid;
+
+    grid-template-columns:
+        40px
+        minmax(0,1fr)
+        minmax(145px,auto);
+
+    grid-template-areas:
+
+        "icon document status"
+        "icon information information"
+        "icon actions actions";
+
+    align-items:start;
+
+    column-gap:12px;
+
+    row-gap:12px;
+
+    padding:16px;
+
+    background:#ffffff;
+
+    border:1px solid #e4ebf5;
+
+    border-radius:15px;
+
+    box-sizing:border-box;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+
+.smartoffice-arsippegawai-document-item:hover{
+
+    border-color:#c9d9f3;
+
+    box-shadow:
+        0 8px 22px
+        rgba(37,99,235,.07);
+
+    transform:translateY(-1px);
+}
+
+
+/* ======================================================
+   ICON
+====================================================== */
+
+.smartoffice-arsippegawai-document-icon{
+
+    grid-area:icon;
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:#eff5ff;
+
+    color:#2563eb;
+
+    flex-shrink:0;
+}
+
+
+.smartoffice-arsippegawai-document-icon svg{
+
+    width:19px;
+    height:19px;
+}
+
+
+/* ======================================================
+   DOCUMENT NAME / FILE
+====================================================== */
+
+.smartoffice-arsippegawai-document-name{
+
+    grid-area:document;
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+}
+
+
+.smartoffice-arsippegawai-document-name strong{
+
+    display:block;
+
+    min-width:0;
+
+    color:#102a56;
+
+    font-size:12px;
+
+    line-height:1.35;
+
+    font-weight:700;
+
+    white-space:normal;
+
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+}
+
+
+.smartoffice-arsippegawai-document-name span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#71809a;
+
+    font-size:9px;
+
+    line-height:1.35;
+
+    white-space:normal;
+
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+}
+
+
+/* ======================================================
+   STATUS
+====================================================== */
+
+.smartoffice-arsippegawai-document-status{
+
+    grid-area:status;
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    justify-content:center;
+}
+
+
+.smartoffice-arsippegawai-status-title{
+
+    min-width:0;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+}
+
+
+.smartoffice-arsippegawai-document-status strong{
+
+    font-size:10px;
+
+    line-height:1.3;
+
+    font-weight:700;
+
+    white-space:normal;
+}
+
+
+.smartoffice-arsippegawai-document-status small{
+
+    margin-top:3px;
+
+    font-size:8px;
+
+    line-height:1.3;
+
+    color:#71809a;
+}
+
+
+.smartoffice-arsippegawai-status-dot{
+
+    width:7px;
+    height:7px;
+
+    flex-shrink:0;
+
+    border-radius:50%;
+}
+
+
+/* VERIFIED */
+
+.smartoffice-arsippegawai-document-status.verified{
+
+    color:#16a34a;
+}
+
+
+.smartoffice-arsippegawai-document-status.verified
+.smartoffice-arsippegawai-status-dot{
+
+    background:#16a34a;
+}
+
+
+/* WAITING */
+
+.smartoffice-arsippegawai-document-status.waiting{
+
+    color:#d97706;
+}
+
+
+.smartoffice-arsippegawai-document-status.waiting
+.smartoffice-arsippegawai-status-dot{
+
+    background:#f59e0b;
+}
+
+
+/* MISSING / DITOLAK */
+
+.smartoffice-arsippegawai-document-status.missing{
+
+    color:#ef4444;
+}
+
+
+.smartoffice-arsippegawai-document-status.missing
+.smartoffice-arsippegawai-status-dot{
+
+    background:#ef4444;
+}
+
+
+/* ======================================================
+   INFORMATION
+====================================================== */
+
+.smartoffice-arsippegawai-document-information{
+
+    grid-area:information;
+
+    min-width:0;
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:10px 20px;
+
+    padding-top:12px;
+
+    border-top:1px solid #edf1f7;
+}
+
+
+/* ======================================================
+   EXTRA INFORMATION
+   CLASS LAMA TETAP DIPERTAHANKAN
+====================================================== */
+
+.smartoffice-arsippegawai-status-extra{
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:3px;
+}
+
+
+.smartoffice-arsippegawai-status-extra.number{
+
+    color:#102a56;
+}
+
+
+.smartoffice-arsippegawai-status-extra.note{
+
+    color:#64748b;
+}
+
+
+.smartoffice-arsippegawai-status-extra.rejected-note{
+
+    grid-column:1 / -1;
+
+    padding:9px 10px;
+
+    border:1px solid #fee2e2;
+
+    border-radius:9px;
+
+    background:#fff7f7;
+}
+
+
+.smartoffice-arsippegawai-status-extra.lock-info{
+
+    color:#16a34a;
+}
+
+
+/* ======================================================
+   DETAIL LABEL
+====================================================== */
+
+.smartoffice-arsippegawai-detail-label{
+
+    font-size:8px;
+
+    line-height:1.25;
+
+    font-weight:600;
+
+    color:#8190a8;
+}
+
+
+/* ======================================================
+   DETAIL VALUE
+====================================================== */
+
+.smartoffice-arsippegawai-detail-value{
+
+    min-width:0;
+
+    font-size:10px;
+
+    line-height:1.35;
+
+    font-weight:650;
+
+    color:#20375d;
+
+    white-space:normal;
+
+    overflow-wrap:anywhere;
+
+    word-break:break-word;
+}
+
+
+/* NOMOR */
+
+.smartoffice-arsippegawai-status-extra.number
+.smartoffice-arsippegawai-detail-value{
+
+    color:#20375d;
+
+    font-weight:700;
+}
+
+
+/* KETERANGAN */
+
+.smartoffice-arsippegawai-status-extra.note
+.smartoffice-arsippegawai-detail-value{
+
+    color:#64748b;
+
+    font-weight:500;
+}
+
+
+/* CATATAN VERIFIKATOR */
+
+.smartoffice-arsippegawai-detail-value.rejected-text{
+
+    color:#dc2626;
+
+    font-weight:600;
+}
+
+
+/* LOCK */
+
+.smartoffice-arsippegawai-status-extra.lock-info
+.smartoffice-arsippegawai-detail-value{
+
+    color:#16a34a;
+}
+
+
+/* ======================================================
+   ACTIONS
+====================================================== */
+
+.smartoffice-arsippegawai-document-actions{
+
+    grid-area:actions;
+
+    min-width:0;
+
+    display:flex;
+
+    gap:8px;
+
+    margin-top:2px;
+}
+
+
+/* ======================================================
+   LIHAT
+====================================================== */
+
+.smartoffice-arsippegawai-document-action{
+
+    flex:1;
+
+    min-width:0;
+
+    height:34px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    padding:0 10px;
+
+    border:1px solid #d5e3fa;
+
+    border-radius:9px;
+
+    background:#f8fbff;
+
+    color:#2563eb;
+
+    font-family:inherit;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    box-sizing:border-box;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .15s ease;
+}
+
+
+.smartoffice-arsippegawai-document-action:hover{
+
+    background:#eff6ff;
+
+    border-color:#bcd2f3;
+
+    transform:translateY(-1px);
+}
+
+
+.smartoffice-arsippegawai-document-action svg{
+
+    width:14px;
+    height:14px;
+
+    flex-shrink:0;
+}
+
+
+/* ======================================================
+   BUKA LOCK
+====================================================== */
+
+.smartoffice-arsippegawai-lock-button{
+
+    flex:1;
+
+    min-width:0;
+
+    height:34px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    padding:0 10px;
+
+    border:1px solid #d5e3fa;
+
+    border-radius:9px;
+
+    background:#f8fbff;
+
+    color:#2563eb;
+
+    font-family:inherit;
+
+    font-size:9px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    box-sizing:border-box;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .15s ease;
+}
+
+
+.smartoffice-arsippegawai-lock-button:hover{
+
+    background:#eff6ff;
+
+    border-color:#bcd2f3;
+
+    transform:translateY(-1px);
+}
+
+
+.smartoffice-arsippegawai-lock-button svg{
+
+    width:14px;
+    height:14px;
+
+    flex-shrink:0;
+}
+
+
+/* ======================================================
+   LOCK TERBUKA
+====================================================== */
+
+.smartoffice-arsippegawai-lock-open{
+
+    flex:1;
+
+    min-width:0;
+
+    min-height:34px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    padding:5px 9px;
+
+    border:1px solid #d9f0e2;
+
+    border-radius:9px;
+
+    background:#effaf3;
+
+    color:#16a34a;
+
+    box-sizing:border-box;
+}
+
+
+.smartoffice-arsippegawai-lock-open svg{
+
+    width:14px;
+    height:14px;
+
+    flex-shrink:0;
+}
+
+
+.smartoffice-arsippegawai-lock-open div{
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+}
+
+
+.smartoffice-arsippegawai-lock-open strong{
+
+    font-size:9px;
+
+    line-height:1.2;
+
+    white-space:nowrap;
+}
+
+
+.smartoffice-arsippegawai-lock-open small{
+
+    margin-top:2px;
+
+    font-size:7px;
+
+    line-height:1.2;
+
+    white-space:nowrap;
+}
+
+
+/* ======================================================
+   EMPTY
+====================================================== */
+
+.smartoffice-arsippegawai-empty{
+
+    width:100%;
+
+    padding:50px 20px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    background:#ffffff;
+
+    border:1px solid #e4ebf5;
+
+    border-radius:15px;
+
+    box-sizing:border-box;
+}
+
+
+.smartoffice-arsippegawai-empty-icon{
+
+    width:48px;
+    height:48px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    margin-bottom:10px;
+
+    border-radius:13px;
+
+    background:#eff5ff;
+
+    color:#2563eb;
+}
+
+
+.smartoffice-arsippegawai-empty-icon svg{
+
+    width:23px;
+    height:23px;
+}
+
+
+.smartoffice-arsippegawai-empty h3{
+
+    margin:0;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#334155;
+}
+
+
+.smartoffice-arsippegawai-empty p{
+
+    max-width:340px;
+
+    margin:5px 0 0;
+
+    font-size:10px;
+
+    line-height:1.5;
+
+    color:#71809a;
+}
+
+
+/* ======================================================
+   MOBILE FILTER
+====================================================== */
+@media(max-width:768px){
+
+    /* =========================
+       FILTER
+    ========================= */
+
+    .smartoffice-arsippegawai-filter-card{
+
+        padding:14px;
+
+        margin-top:14px;
+        margin-bottom:12px;
+
+        border-radius:16px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-header{
+
+        margin-bottom:13px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-title{
+
+        gap:9px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-title-icon{
+
+        width:32px;
+        height:32px;
+
+        border-radius:9px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-title-icon svg{
+
+        width:16px;
+        height:16px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-title h3{
+
+        font-size:13px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-title p{
+
+        font-size:9px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-body{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-group{
+
+        gap:5px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-group label{
+
+        font-size:10px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-group
+    .smartoffice-input{
+
+        height:40px;
+
+        font-size:11px;
+
+        border-radius:10px;
+    }
+
+
+    .smartoffice-arsippegawai-filter-action{
+
+        width:100%;
+
+        display:grid;
+
+        grid-template-columns:1fr 1fr;
+
+        gap:8px;
+
+        margin-top:2px;
+    }
+
+
+    .smartoffice-arsippegawai-search-button,
+    .smartoffice-arsippegawai-reset-button{
+
+        width:100%;
+
+        height:40px;
+
+        font-size:11px;
+
+        border-radius:10px;
+    }
+
+
+ 
+}
+
+
+/* ======================================================
+   MOBILE CARD ARSIP
+====================================================== */
+
+@media(
+    max-width:640px
+){
+
+    .smartoffice-arsippegawai-document-list{
+
+        grid-template-columns:
+            minmax(0,1fr);
+
+        gap:10px;
+
+        padding:10px;
+    }
+
+
+    .smartoffice-arsippegawai-document-item{
+
+        grid-template-columns:
+            38px
+            minmax(0,1fr);
+
+        grid-template-areas:
+
+            "icon document"
+            "icon status"
+            "icon information"
+            "icon actions";
+
+        column-gap:10px;
+
+        row-gap:10px;
+
+        padding:13px;
+
+        border-radius:13px;
+    }
+
+
+    .smartoffice-arsippegawai-document-icon{
+
+        width:38px;
+        height:38px;
+    }
+
+
+    .smartoffice-arsippegawai-document-name strong{
+
+        font-size:11px;
+    }
+
+
+    .smartoffice-arsippegawai-document-name span{
+
+        font-size:8px;
+    }
+
+
+    .smartoffice-arsippegawai-document-status strong{
+
+        font-size:9px;
+    }
+
+
+    .smartoffice-arsippegawai-document-status small{
+
+        font-size:8px;
+    }
+
+
+    .smartoffice-arsippegawai-document-information{
+
+        grid-template-columns:
+            minmax(0,1fr);
+
+        gap:9px;
+
+        padding-top:10px;
+    }
+
+
+    .smartoffice-arsippegawai-status-extra.rejected-note{
+
+        grid-column:auto;
+    }
+
+
+    .smartoffice-arsippegawai-document-actions{
+
+        flex-direction:row;
+
+        gap:7px;
+    }
+
+
+    .smartoffice-arsippegawai-document-action,
+    .smartoffice-arsippegawai-lock-button,
+    .smartoffice-arsippegawai-lock-open{
+
+        min-height:35px;
+    }
+
+}
+
+
+
+
+
+
+/* ======================================================
+   MODAL AKSI ARSIP PEGAWAI
+====================================================== */
+.smartoffice-arsippegawai-modal-wrapper{
+    position:fixed;
+    inset:0;
+    z-index:100000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+        rgba(15,23,42,.42);
+    backdrop-filter:
+        blur(4px);
+    -webkit-backdrop-filter:
+        blur(4px);
+    opacity:0;
+    visibility:hidden;
+    transition:
+        opacity .2s ease,
+        visibility .2s ease;
+    box-sizing:border-box;
+}
+
+.smartoffice-arsippegawai-modal-wrapper.show{
+    opacity:1;
+    visibility:visible;
+}
+
+/* ======================================================
+   CONTENT
+====================================================== */
+.smartoffice-arsippegawai-modal-content{
+    width:100%;
+    max-width:430px;
+    background:#ffffff;
+    border:1px solid #e4ebf5;
+    border-radius:18px;
+    box-shadow:
+        0 20px 55px rgba(15,23,42,.18);
+    overflow:hidden;
+    transform:
+        translateY(10px)
+        scale(.98);
+    transition:
+        transform .22s ease;
+}
+
+.smartoffice-arsippegawai-modal-wrapper.show
+.smartoffice-arsippegawai-modal-content{
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+/* ======================================================
+   BODY
+====================================================== */
+.smartoffice-arsippegawai-modal-body{
+    padding:24px;
+    text-align:center;
+    box-sizing:border-box;
+}
+
+/* ======================================================
+   ICON
+====================================================== */
+.smartoffice-arsippegawai-modal-icon{
+    width:52px;
+    height:52px;
+    margin:0 auto 13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    box-sizing:border-box;
+}
+
+.smartoffice-arsippegawai-modal-icon svg{
+    width:25px;
+    height:25px;
+}
+
+/* WARNING */
+.smartoffice-arsippegawai-modal-icon.warning{
+    background:#fff7ed;
+    color:#d97706;
+    border:
+        1px solid #fed7aa;
+}
+
+/* ======================================================
+   TITLE
+====================================================== */
+.smartoffice-arsippegawai-modal-title{
+    margin:0;
+    font-size:16px;
+    line-height:1.3;
+    font-weight:700;
+    color:#102a56;
+}
+
+/* ======================================================
+   DESCRIPTION
+====================================================== */
+.smartoffice-arsippegawai-modal-text{
+    margin:
+        7px
+        0
+        16px;
+    font-size:11px;
+    line-height:1.5;
+    color:#71809a;
+}
+
+/* ======================================================
+   TEXTAREA
+====================================================== */
+.smartoffice-arsippegawai-modal-textarea{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+    display:block;
+    padding:11px 12px;
+    border:
+        1px solid #d9e2ef;
+    border-radius:11px;
+    background:#ffffff;
+    color:#334155;
+    font-family:inherit;
+    font-size:11px;
+    line-height:1.5;
+    outline:none;
+    box-sizing:border-box;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-arsippegawai-modal-textarea::placeholder{
+    color:#94a3b8;
+}
+
+.smartoffice-arsippegawai-modal-textarea:focus{
+    border-color:#2563eb;
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,.08);
+}
+
+/* ======================================================
+   FOOTER
+====================================================== */
+.smartoffice-arsippegawai-modal-footer{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:14px;
+}
+
+/* ======================================================
+   SUBMIT
+====================================================== */
+.smartoffice-arsippegawai-modal-submit{
+    min-width:108px;
+    height:36px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:
+        0 12px;
+    border:
+        1px solid #2563eb;
+    border-radius:9px;
+    background:#2563eb;
+    color:#ffffff;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+    box-sizing:border-box;
+    box-shadow:
+        0 4px 10px
+        rgba(37,99,235,.15);
+    transition:
+        background .2s ease,
+        transform .15s ease,
+        opacity .2s ease;
+}
+
+.smartoffice-arsippegawai-modal-submit:hover{
+    background:#1d4ed8;
+    transform:
+        translateY(-1px);
+}
+
+.smartoffice-arsippegawai-modal-submit:disabled{
+    cursor:not-allowed;
+    opacity:.7;
+    transform:none;
+}
+
+.smartoffice-arsippegawai-modal-submit svg{
+    width:14px;
+    height:14px;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   CANCEL
+====================================================== */
+.smartoffice-arsippegawai-modal-cancel{
+    min-width:72px;
+    height:36px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:
+        0 12px;
+    border:
+        1px solid #d9e2ef;
+    border-radius:9px;
+    background:#ffffff;
+    color:#475569;
+    font-family:inherit;
+    font-size:10px;
+    font-weight:600;
+    cursor:pointer;
+    white-space:nowrap;
+    box-sizing:border-box;
+    transition:
+        background .2s ease,
+        border-color .2s ease;
+}
+
+.smartoffice-arsippegawai-modal-cancel:hover{
+    background:#f8fafc;
+    border-color:#cbd5e1;
+}
+
+/* ======================================================
+   SPINNER
+====================================================== */
+.smartoffice-arsippegawai-btn-spinner{
+    width:13px;
+    height:13px;
+    display:inline-block;
+    flex-shrink:0;
+    border:
+        2px solid
+        rgba(255,255,255,.4);
+    border-top-color:
+        #ffffff;
+    border-radius:50%;
+    animation:
+        smartofficeArsipPegawaiSpin
+        .7s linear infinite;
+}
+
+@keyframes smartofficeArsipPegawaiSpin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ======================================================
+   MOBILE MODAL ARSIP PEGAWAI
+====================================================== */
+
+@media(max-width:768px){
+
+    .smartoffice-arsippegawai-modal-wrapper{
+
+        padding:
+            16px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-content{
+
+        max-width:none;
+
+        border-radius:17px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-body{
+
+        padding:20px 16px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-title{
+
+        font-size:15px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-text{
+
+        font-size:10px;
+
+        margin-bottom:14px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-textarea{
+
+        min-height:95px;
+
+        font-size:10px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-footer{
+
+        gap:7px;
+    }
+
+
+    .smartoffice-arsippegawai-modal-submit{
+
+        flex:1;
+
+        min-width:0;
+    }
+
+
+    .smartoffice-arsippegawai-modal-cancel{
+
+        flex:0 0 72px;
+    }
+
+}

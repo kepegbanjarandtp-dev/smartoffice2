@@ -1,0 +1,1047 @@
+/* ======================================================
+   HEADER
+====================================================== */
+.smartoffice-management-header-icon{
+    background:#FFECEF;
+    color:#F43F5E;
+}
+
+
+/* ======================================================
+   MANAGEMENT CUTI - MODAL PROFILE
+====================================================== */
+.smartoffice-management-cuti-modal-profile{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    margin-bottom:20px;
+}
+
+
+/* ======================================================
+   PROFILE INFO
+====================================================== */
+.smartoffice-management-cuti-modal-profile-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:0;
+}
+
+.smartoffice-management-cuti-modal-profile-info h4{
+    margin:0;
+    font-size:20px;
+    font-weight:700;
+    line-height:1.25;
+    color:#0f172a;
+}
+
+.smartoffice-management-cuti-modal-profile-info small{
+    display:block;
+    margin:2px 0 0;
+    padding:0;
+    font-size:16px;
+    font-weight:500;
+    line-height:1.3;
+    color:#64748b;
+}
+
+
+/* ======================================================
+   STATUS
+====================================================== */
+.smartoffice-management-cuti-modal-status{
+    display:inline-flex;
+    align-items:center;
+    padding:5px 9px;
+    border-radius:999px;
+    margin-top:8px;
+    font-size:14px;
+    font-weight:700;
+    line-height:1;
+}
+
+.smartoffice-management-cuti-modal-status.waiting{
+    background:rgba(249,115,22,.12);
+    color:#f97316;
+}
+
+.smartoffice-management-cuti-modal-status.approved{
+    background:rgba(34,197,94,.12);
+    color:#16a34a;
+}
+
+.smartoffice-management-cuti-modal-status.rejected{
+    background:rgba(239,68,68,.12);
+    color:#dc2626;
+}
+
+
+/* ======================================================
+   SEARCH CARD
+====================================================== */
+.smartoffice-management-search-card{
+  display:grid;
+  grid-template-columns:
+    2fr
+    1fr;
+  gap:14px;
+  background:#ffffff;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:22px;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.05);
+}
+
+.smartoffice-management-search-card input,
+.smartoffice-management-search-card select{
+  width:100%;
+  border:
+    1px solid #dbe2ea;
+  border-radius:16px;
+  padding:14px;
+  font-size:14px;
+  background:#f8fafc;
+  outline:none;
+  transition:0.2s ease;
+}
+
+.smartoffice-management-search-card input:focus,
+.smartoffice-management-search-card select:focus{
+  background:#ffffff;
+  border-color:#2563eb;
+}
+
+
+/* ======================================================
+   MANAGEMENT CARD
+====================================================== */
+.smartoffice-management-card{
+  background:#ffffff;
+  border:1px solid #dbeafe;
+  border-radius:24px;
+  padding:18px;
+  margin-bottom:16px;
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.05);
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+.smartoffice-management-card:hover{
+  transform:
+    translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.08);
+}
+
+.smartoffice-management-jabatan{
+  margin-bottom:12px !important;
+}
+
+.smartoffice-management-divider{
+  width:100%;
+  height:1px;
+  background:#e2e8f0;
+  margin:12px 0;
+}
+
+/* ======================================================
+   AVATAR
+====================================================== */
+.smartoffice-management-avatar{
+  width:58px;
+  height:58px;
+  min-width:58px;
+  border-radius:18px;
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+  color:#ffffff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+  font-weight:800;
+  box-shadow:
+    0 10px 24px
+    rgba(37,99,235,0.25);
+}
+
+/* ======================================================
+   MANAGEMENT CARD CONTENT
+====================================================== */
+.smartoffice-management-card-content{
+  flex:1;
+}
+
+.smartoffice-management-card-content h3{
+  font-size:16px;
+  font-weight:700;
+  color:#0f172a;
+  margin:0 0 8px;
+}
+
+.smartoffice-management-card-content small{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:#64748b;
+  margin-bottom:4px;
+}
+
+.smartoffice-management-card-content p{
+  font-size:13px;
+  color:#64748b;
+  margin:4px 0;
+}
+
+/* ======================================================
+   STATUS BADGE
+====================================================== */
+
+/* ==================================
+   STATUS KEPEGAWAIAN
+================================== */
+.smartoffice-management-status-badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 14px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:700;
+  white-space:nowrap;
+  margin-left:auto;
+}
+
+/* ==================================
+   PNS
+================================== */
+.smartoffice-management-status-badge.pns{
+  background:
+    rgba(37,99,235,0.12);
+  color:#2563eb;
+}
+
+/* ==================================
+   PPPK
+================================== */
+.smartoffice-management-status-badge.pppk{
+  background:
+    rgba(34,197,94,0.12);
+  color:#16a34a;
+}
+
+/* ==================================
+   PPPK PARUH WAKTU
+================================== */
+.smartoffice-management-status-badge.pppk-paruh-waktu{
+  background:
+    rgba(249,115,22,0.12);
+  color:#ea580c;
+}
+
+/* ==================================
+   BLUD
+================================== */
+.smartoffice-management-status-badge.blud{
+  background:
+    rgba(168,85,247,0.12);
+  color:#9333ea;
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+.smartoffice-management-content{
+  animation:
+    smartofficeManagementFade
+    0.25s ease;
+}
+
+@keyframes smartofficeManagementFade{
+  from{
+    opacity:0;
+    transform:
+      translateY(8px);
+  }
+  to{
+    opacity:1;
+    transform:
+      translateY(0);
+  }
+}
+
+
+/* =========================
+   SUMMARY REKAP PEGAWAI
+========================= */
+.smartoffice-management-summary{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:14px;
+    flex-wrap:wrap;
+}
+
+.smartoffice-management-summary-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    min-width:180px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    transition:.2s ease;
+}
+
+.smartoffice-management-summary-item:hover{
+    border-color:#bfdbfe;
+    box-shadow:
+        0 4px 12px rgba(37,99,235,.08);
+}
+
+.smartoffice-management-summary-item svg{
+    width:18px;
+    height:18px;
+    stroke:#2563eb;
+    fill:none;
+    stroke-width:2;
+    flex-shrink:0;
+}
+
+.smartoffice-management-summary-item > div{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+}
+
+.smartoffice-management-summary-item strong{ 
+    font-size:15px;
+    font-weight:700;
+    color:#0f172a;
+    line-height:1.2;
+    margin:0;
+}
+
+.smartoffice-management-summary-item span{
+    font-size:11px;
+    color:#64748b;
+    line-height:1.2;
+    margin:0;
+    white-space:nowrap;
+}
+
+/* ======================================================
+MANAGEMENT RIWAYAT CARD-CONTENT
+====================================================== */
+.smartoffice-management-riwayat-card{
+  background:#ffffff;
+  border:1px solid #dbeafe;
+  border-radius:24px;
+  padding:18px;
+  margin-bottom:16px;
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.05);
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+.smartoffice-management-riwayat-card:hover{
+  transform:
+    translateY(-2px);
+  box-shadow:
+    0 8px 24px rgba(0,0,0,0.08);
+}
+
+.smartoffice-management-riwayat-content{
+  flex:1;
+}
+
+.smartoffice-management-riwayat-content h3{
+  font-size:16px;
+  font-weight:700;
+  color:#0f172a;
+  margin:0 0 8px;
+}
+
+.smartoffice-management-riwayat-content small{
+  display:block;
+  font-size:13px;
+  font-weight:600;
+  color:#64748b;
+  margin-bottom:4px;
+}
+
+.smartoffice-management-riwayat-content p{
+  font-size:14px;
+  font-weight:600;
+  color:#64748b;
+  margin:4px 0;
+}
+
+
+/* ======================================================
+   MANAGEMENT FILTER RIWAYAT CARD
+====================================================== */
+.smartoffice-management-filter-card{
+    display:grid;
+    grid-template-columns:
+        2fr
+        1fr
+        1fr
+        1fr
+        80px
+        80px
+        100px;
+    gap:14px;
+    align-items:start;
+}
+
+
+/* ======================================================
+   FILTER GROUP
+====================================================== */
+.smartoffice-management-riwayat-filter-group{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    margin:0;
+    min-width:0;
+    margin-top:
+    10px;
+}
+
+.smartoffice-management-riwayat-filter-group label{
+    font-size:14px;
+    font-weight:600;
+    line-height:1.2;
+    color:#334155;
+    margin:0;
+}
+
+.smartoffice-management-riwayat-filter-group select{
+    width:100%;
+    height:44px;
+    box-sizing:border-box;
+    border:1px solid #dbe2ea;
+    border-radius:12px;
+    padding:0 10px;
+    font-size:13px;
+    color:#0f172a;
+    background:#f8fafc;
+    outline:none;
+}
+
+
+/* ======================================================
+   BUTTON
+====================================================== */
+.smartoffice-management-filter-button,
+.smartoffice-management-reset-button,
+.smartoffice-management-print-button{
+    width:100%;
+    height:44px;
+    margin:0;
+    border:none;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+
+/* ======================================================
+   FILTER BUTTON
+====================================================== */
+.smartoffice-management-filter-button{
+  background:#2563eb;
+  color:#fff;
+}
+
+.smartoffice-management-filter-button:hover{
+  transform:translateY(-2px);
+  box-shadow:
+    0 10px 24px
+    rgba(37,99,235,.22);
+} 
+
+/* ======================================================
+   RESET BUTTON
+====================================================== */
+.smartoffice-management-reset-button{
+  background:#334155;
+  color:#ffffff;
+  border:none;
+}
+
+.smartoffice-management-reset-button:hover{
+  background:#1e293b;
+  transform:translateY(-2px);
+  box-shadow:
+    0 10px 24px
+    rgba(15,23,42,0.25);
+}
+
+.smartoffice-management-filter-button,
+.smartoffice-management-reset-button{
+  width:
+    80px;
+  height:
+    44px;
+  border:
+    none;
+  border-radius:
+    16px;
+  font-size:
+    14px;
+  font-weight:
+    600;
+  cursor:
+    pointer;
+  transition:
+    .2s ease;
+  margin-top:
+    30px;
+}
+
+/* ======================================================
+   PRINT BUTTON
+====================================================== */
+.smartoffice-management-print-button{
+  width:
+    100px;
+  height:
+    44px;
+  margin-top:
+    30px;
+  border:
+    none;
+  border-radius:
+    16px;
+  background:
+    #0f766e;
+  color:
+    #ffffff;
+  display:
+    flex;
+  align-items:
+    center;
+  justify-content:
+    center;
+  gap:
+    8px;
+  font-size:
+    14px;
+  font-weight:
+    600;
+  cursor:
+    pointer;
+  transition:
+    .2s ease;
+}
+
+.smartoffice-management-print-button:hover{
+  background:
+    #115e59;
+  transform:
+    translateY(-2px);
+  box-shadow:
+    0 10px 24px
+    rgba(15,118,110,.25);
+}
+
+/* ======================================================
+   PRINT BUTTON LOADING
+====================================================== */
+.smartoffice-management-print-button:disabled{
+  opacity:
+    .75;
+  cursor:
+    not-allowed;
+}
+
+/* ======================================================
+   SPINNER BUTTON
+====================================================== */
+.smartoffice-spinner-print{
+  display:inline-block;
+  width:16px;
+  height:16px;
+  border:2px solid rgba(255,255,255,.4);
+  border-top:2px solid #ffffff;
+  border-radius:50%;
+  animation:smartofficeSpin .8s linear infinite;
+  vertical-align:middle;
+  margin-right:8px;
+}
+
+@keyframes smartofficeSpin{
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+.smartofficeManagementRiwayatList,
+#smartofficeManagementRiwayatList{
+    margin-top:24px;
+}
+
+/* ======================================================
+   MANAGEMENT RIWAYAT INFO
+====================================================== */
+.smartoffice-management-riwayat-info{
+  margin-top:10px;
+}
+
+.smartoffice-management-riwayat-info
+.smartoffice-management-status-badge{
+  margin-bottom:10px;
+}
+
+.smartoffice-management-riwayat-info p{
+  margin:4px 0;
+}
+
+/* ======================================================
+   RIWAYAT SUMMARY
+====================================================== */
+.smartoffice-management-riwayat-summary{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-top:14px;
+}
+
+.smartoffice-management-riwayat-summary-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    min-width:180px;
+}
+
+.smartoffice-management-riwayat-summary-item svg{
+    width:18px;
+    height:18px;
+    stroke:#2563eb;
+    fill:none;
+    stroke-width:2;
+    flex-shrink:0;
+}
+
+.smartoffice-management-riwayat-summary-item span{
+    display:block;
+    font-size:11px;
+    color:#64748b;
+    line-height:1.2;
+    margin:0;
+}
+
+.smartoffice-management-riwayat-summary-item strong{
+    display:block;
+    font-size:14px;
+    font-weight:700;
+    color:#0f172a;
+    line-height:1.3;
+    margin-top:2px;
+}
+
+.smartoffice-management-riwayat-status-kepegawaian{
+    display:block;
+    margin-top:2px;
+    margin-bottom:0;
+    padding:0;
+    background:none !important;
+    border:none !important;
+    border-radius:0;
+    color:#64748b !important;
+    font-size:12px;
+    font-weight:400;
+    white-space:normal;
+}
+
+
+/* ======================================================
+   MOBILE MANAGEMENT CUTI
+====================================================== */
+@media (max-width:768px){
+
+  /* =========================
+     SEARCH CARD
+  ========================= */
+  .smartoffice-management-search-card{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:12px;
+    margin-bottom:14px;
+    border-radius:18px;
+  }
+
+  .smartoffice-management-search-card input,
+  .smartoffice-management-search-card select{
+    height:34px;
+    padding:0 14px;
+    margin:0;
+    font-size:11px;
+  }
+
+  /* =========================
+    CARD PEGAWAI
+  ========================= */
+  .smartoffice-management-card{
+    display:grid;
+    grid-template-columns:
+        36px
+        1fr;
+    grid-template-areas:
+        "avatar content"
+        "avatar content"
+        ". badge";
+    column-gap:12px;
+    padding:14px;
+  }
+
+  .smartoffice-management-avatar{
+    grid-area:avatar;
+    width:36px;
+    height:36px;
+    min-width:36px;
+    font-size:16px;
+    border-radius:12px;
+  }
+
+  .smartoffice-management-card-content{
+    grid-area:content;
+    min-width:0;
+  }
+
+  .smartoffice-management-card-content h3{
+    font-size:13px;
+    line-height:1.3;
+    margin-bottom:2px;
+  }
+
+  .smartoffice-management-card-content small{
+    display:block;
+    font-size:11px;
+    margin-bottom:4px;
+  }
+
+  .smartoffice-management-card-content p{
+    font-size:12px;
+  }
+
+  .smartoffice-management-jabatan{
+    font-size:11px;
+    margin-bottom:8px !important;
+  }
+
+  /* =========================
+    STATUS PEGAWAI
+  ========================= */
+  .smartoffice-management-status-badge{
+    grid-area:badge;
+    justify-self:end;
+    margin-top:-4px;
+    padding:4px 8px;
+    font-size:10px;
+    width:fit-content;
+    white-space:nowrap;
+  }
+
+  /* =========================
+    SUMMARY REKAP PEGAWAI
+  ========================= */
+  .smartoffice-management-summary{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:10px;
+    align-items:stretch;
+  }
+
+  .smartoffice-management-summary-item{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    padding:8px 6px;
+    gap:2px;
+    min-width:0;
+    width:100%;
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+
+  .smartoffice-management-summary-item svg{
+    width:14px;
+    height:14px;
+    margin-bottom:4px;
+  }
+
+  .smartoffice-management-summary-item strong{
+    font-size:14px;
+    line-height:1;
+    margin:0;
+  }
+
+  .smartoffice-management-summary-item span{
+    font-size:10px;
+    margin-top:4px;
+    margin-left:0;
+    white-space:normal;
+    line-height:1.2;
+    text-align:center;
+  }
+
+  /* =========================
+     INFO RIWAYAT
+  ========================= */
+  .smartoffice-management-riwayat-info{
+    margin-top:8px;
+  }
+
+  /* ==================================================
+      FILTER RIWAYAT MOBILE
+  ================================================== */
+  .smartoffice-management-filter-card{
+    display:grid;
+    grid-template-columns:
+      repeat(3, 1fr);
+    gap:8px;
+    row-gap:12px;
+    margin-bottom:14px;
+  }
+
+  /* =========================
+      PEGAWAI FULL WIDTH
+  ========================= */
+  .smartoffice-management-riwayat-filter-group:first-child{
+    grid-column:1 / -1;
+  }
+
+  /* =========================
+     FILTER GROUP
+  ========================= */
+  .smartoffice-management-riwayat-filter-group{
+    width:100%;
+    min-width:0;
+    gap:4px;
+    margin:0;
+  }
+
+  .smartoffice-management-riwayat-filter-group label{
+    font-size:10px;
+    line-height:1.2;
+  }
+
+  .smartoffice-management-riwayat-filter-group select{
+    width:100%;
+    height:36px;
+    padding:0 9px;
+    border-radius:11px;
+    font-size:10px;
+  }
+
+  /* =========================
+       BUTTON
+  ========================= */
+  .smartoffice-management-filter-button,
+  .smartoffice-management-reset-button,
+  .smartoffice-management-print-button{
+    width:100%;
+    height:38px;
+    margin:0;
+    border-radius:11px;
+    font-size:11px;
+  }
+
+  /* =========================
+    CARD MANAGEMENT RIWAYAT
+  ========================= */
+  .smartoffice-management-riwayat-card{
+    display:flex;
+    align-items:flex-start;
+    gap:8px;
+    padding:12px;
+    margin-bottom:10px;
+  }
+
+  .smartoffice-riwayat-date{
+    width:36px;
+    min-width:36px;
+    height:36px;
+    border-radius:12px;
+  }
+
+  .smartoffice-riwayat-date small{
+    font-size:8px;
+  }
+
+  .smartoffice-riwayat-date strong{
+    font-size:14px;
+  }
+
+  .smartoffice-management-riwayat-content{
+    flex:1;
+    min-width:0;
+  }
+
+  .smartoffice-management-riwayat-content h3{
+    font-size:12px;
+    line-height:1.3;
+    margin-bottom:2px;
+  }
+
+  .smartoffice-management-riwayat-content p{
+    font-size:11px;
+    margin:2px 0;
+  }
+
+  .smartoffice-management-riwayat-content small{
+    display:block;
+    font-size:10px;
+    line-height:1.3;
+    margin-bottom:2px;
+  }
+
+  .smartoffice-management-riwayat-status-kepegawaian{
+    display:block;
+    width:100%;
+    text-align:left;
+    margin-top:2px;
+    margin-bottom:6px;
+    font-size:11px;
+    font-weight:500;
+    color:#64748b;
+    background:none;
+    border:none;
+    padding:0;
+  }
+
+  .smartoffice-management-divider{
+      margin:8px 0;
+  }
+
+  .smartofficeManagementRiwayatList,
+  #smartofficeManagementRiwayatList{
+    margin-top:18px;
+  }
+
+  /* =========================
+   SUMMARY RIWAYAT
+  ========================= */
+  .smartoffice-management-riwayat-summary{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-top:8px;
+  }
+
+  .smartoffice-management-riwayat-summary-item{
+    width:100%;
+    display:flex;
+    align-items:flex-start;
+    gap:6px;
+    padding:8px 6px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    box-sizing:border-box;
+  }
+
+  .smartoffice-management-riwayat-summary-item svg{
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+     margin-top:2px;
+  }
+
+  .smartoffice-management-riwayat-summary-item > div{
+    flex:1;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .smartoffice-management-riwayat-summary-item span{
+    display:block;
+    font-size:10px;
+    color:#64748b;
+    line-height:1.2;
+  }
+
+  .smartoffice-management-riwayat-summary-item strong{
+    margin-top:3px;
+    font-size:11px;
+    font-weight:700;
+    line-height:1.3;
+    white-space:normal;
+    word-break:normal;
+    overflow-wrap:anywhere;
+    text-align:left;
+  }
+
+  /* =========================
+    STATUS + ARROW
+  ========================= */
+  .smartoffice-riwayat-cuti-right{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    justify-content:flex-start;
+    gap:6px;
+    margin-left:6px;
+    flex-shrink:0;
+  }
+
+  /* ======================================================
+    MANAGEMENT CUTI - MODAL PROFILE MOBILE
+  ====================================================== */
+  .smartoffice-management-cuti-modal-profile{
+    margin-bottom:14px;
+  }
+
+  .smartoffice-management-cuti-modal-profile-info{
+    gap:0;
+  }
+
+  .smartoffice-management-cuti-modal-profile-info h4{
+    font-size:13px;
+    line-height:1.25;
+  }
+
+  .smartoffice-management-cuti-modal-profile-info small{
+    font-size:10px;
+    line-height:1.3;
+    margin-top:2px;
+  }
+
+  .smartoffice-management-cuti-modal-status{
+    padding:5px 9px;
+    margin-top:7px;
+    font-size:10px;
+  }
+}
+

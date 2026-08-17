@@ -1,0 +1,121 @@
+/* ======================================================
+   SMART OFFICE MOBILE NAVBAR
+====================================================== */
+.smartoffice-mobile-navbar{
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:8px;
+
+    height:66px;
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
+    background:#FFFFFF;
+    border:none;
+    border-radius:28px;
+    box-shadow:
+        0 -8px 28px rgba(0,0,0,.08);
+    backdrop-filter:blur(20px);
+    padding-bottom:env(safe-area-inset-bottom);
+    z-index:1000;
+    animation:
+        smartofficeNavbarAppear
+        .35s ease;
+}
+
+
+/* ======================================================
+   NAVBAR ITEM
+====================================================== */
+.smartoffice-mobile-navbar-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    color:#8A94A6;
+    font-size:10px;
+    font-weight:600;
+    cursor:pointer;
+    transition:.25s ease;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+}
+
+
+/* ======================================================
+   ICON
+====================================================== */
+.smartoffice-mobile-navbar-item svg{
+    width:20px;
+    height:20px;
+    stroke-width:2.2;
+}
+
+
+/* ======================================================
+   TEXT
+====================================================== */
+.smartoffice-mobile-navbar-item small{
+    font-size:9px;
+    font-weight:600;
+    line-height:1;
+}
+
+
+/* ======================================================
+   ACTIVE
+====================================================== */
+.smartoffice-mobile-navbar-item.active{
+    color:#2563EB;
+}
+
+.smartoffice-mobile-navbar-item.active span{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    border-radius:14px;
+    background:rgba(37,99,235,.12);
+    transition:.25s ease;
+}
+
+.smartoffice-mobile-navbar-item.active svg{
+    stroke:#2563EB;
+}
+
+.smartoffice-mobile-navbar-item.active small{
+    color:#2563EB;
+    font-weight:700;
+}
+
+
+/* ======================================================
+   PRESS EFFECT
+====================================================== */
+.smartoffice-mobile-navbar-item:active{
+    transform:scale(.92);
+}
+
+
+/* ======================================================
+   MOBILE ONLY
+====================================================== */
+@media(max-width:768px){
+    .smartoffice-mobile-navbar{
+        display:flex;
+    }
+}
+
+
+/* ======================================================
+   TABLET & DESKTOP
+====================================================== */
+@media(min-width:769px){
+    .smartoffice-mobile-navbar{
+        display:none;
+    }
+}

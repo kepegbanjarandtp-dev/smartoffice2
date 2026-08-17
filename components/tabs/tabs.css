@@ -1,0 +1,99 @@
+/* ======================================================
+   TAB
+====================================================== */
+.smartoffice-tab-wrapper{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.smartoffice-tab-button{
+  flex:1;
+  border:none;
+  border-radius:16px;
+  padding:14px 18px;
+  background:#ffffff;
+  color:#64748b;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+.smartoffice-tab-button svg{
+  width:18px;
+  height:18px;
+  stroke:currentColor;
+  stroke-width:2.2;
+  fill:none;
+}
+
+.smartoffice-tab-button.active{
+  background:#2563eb;
+  color:#ffffff;
+  box-shadow:
+    0 10px 24px
+    rgba(37,99,235,0.22);
+}
+
+.smartoffice-tab-button:hover{
+  transform:translateY(-1px);
+}
+
+/* ======================================================
+   TAB BADGE
+====================================================== */
+.smartoffice-tab-badge{
+    display:none;
+    align-items:center;
+    justify-content:center;
+    width:20px;
+    min-width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#EF4444;
+    color:#FFFFFF;
+    font-size:11px;
+    font-weight:700;
+    flex-shrink:0;
+}
+
+.smartoffice-tab-badge.show{
+    display:flex;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media(max-width:768px){
+
+  .smartoffice-tab-wrapper{
+    gap:10px;
+    margin-bottom:18px;
+  }
+
+  .smartoffice-tab-button{
+    padding:12px;
+    border-radius:14px;
+    font-size:11px;
+    gap:8px;
+  }
+
+  .smartoffice-tab-button svg{
+    width:15px;
+    height:15px;
+  }
+
+  .smartoffice-tab-badge{    
+    width:18px;
+    min-width:18px;
+    height:18px; 
+    font-size:9px; 
+  }
+}
+

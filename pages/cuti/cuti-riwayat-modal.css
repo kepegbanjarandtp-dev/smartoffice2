@@ -1,0 +1,574 @@
+/* ======================================================
+   CUTI RIWAYAT DETAIL MODAL
+====================================================== */
+
+/* OVERLAY */
+.smartoffice-cuti-riwayat-modal{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    rgba(15,23,42,.45);
+  backdrop-filter:
+    blur(2px);
+  z-index:9999;
+  opacity:0;
+  visibility:hidden;
+  transition:
+    opacity .25s ease,
+    visibility .25s ease;
+}
+
+/* SHOW */
+.smartoffice-cuti-riwayat-modal.show{
+  opacity:1;
+  visibility:visible;
+}
+
+
+/* ======================================================
+   RIWAYAT DETAIL MODAL
+====================================================== */
+.smartoffice-cuti-riwayat-modal-content{
+  width:100%;
+  max-width:880px;
+  display:flex;
+  flex-direction:column;
+  max-height:90vh;
+  background:#fff;
+  border:
+    1px solid rgba(226,232,240,.8);
+  border-radius:28px;
+  box-shadow:
+    0 24px 70px rgba(15,23,42,.14),
+    0 8px 24px rgba(15,23,42,.08);
+  opacity:0;
+  transform:
+    translateY(20px)
+    scale(.97);
+  transition:
+    opacity .28s ease,
+    transform .28s cubic-bezier(.22,.61,.36,1);
+}
+
+.smartoffice-cuti-riwayat-modal.show
+.smartoffice-cuti-riwayat-modal-content{
+  opacity:1;
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+.smartoffice-cuti-riwayat-modal-body{
+  overflow-y:auto;
+  padding:
+    16px
+    24px
+    32px;
+}
+
+.smartoffice-cuti-riwayat-modal-header-info
+.smartoffice-cuti-riwayat-modal-status{
+  display:inline-flex;
+  margin-top:8px;
+}
+
+
+/* ======================================================
+   MODAL HEADER
+====================================================== */
+
+/* HEADER WRAPPER */
+.smartoffice-cuti-riwayat-modal-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 18px;
+  border-bottom:
+    1px solid #f1f5f9;
+}
+
+/* TITLE */
+.smartoffice-cuti-riwayat-modal-header h3{
+  margin:0;
+  font-size:20px;
+  font-weight:700;
+  color:#0f172a;
+}
+
+.smartoffice-cuti-riwayat-modal-header-info h4{
+  margin:0 0 10px;
+  font-size:32px;
+  font-weight:700;
+}
+
+.smartoffice-cuti-riwayat-modal-title{
+  margin:0;
+  font-size:20px;
+  font-weight:700;
+  color:#0f172a;
+}
+
+
+/* ======================================================
+   PROFILE HEADER
+====================================================== */
+.smartoffice-cuti-riwayat-modal-profile{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:6px;
+  margin-bottom:20px;
+}
+
+
+/* ======================================================
+   PROFILE INFO
+====================================================== */
+.smartoffice-cuti-riwayat-modal-profile-info h4{
+  margin:0;
+  font-size:20px;
+  font-weight:700;
+  color:#0f172a;
+}
+
+.smartoffice-cuti-riwayat-modal-profile-info small{
+    display:block;
+    margin:6px 0 0;
+    font-size:14px;
+    font-weight:500;
+    line-height:1.4;
+    color:#64748b;
+}
+
+.smartoffice-cuti-riwayat-modal-profile-info p{
+  margin:
+    6px 0 0;
+  font-size:14px;
+  color:#64748b;
+}
+
+
+/* =========================
+   STATUS
+========================= */
+.smartoffice-cuti-riwayat-modal-status{
+  display:inline-flex;
+  align-items:center;
+  padding:8px 14px;
+  border-radius:999px;
+  margin-top:8px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.smartoffice-cuti-riwayat-modal-status.waiting{
+  background:
+    rgba(249,115,22,0.12);
+  color:#f97316;
+}
+
+.smartoffice-cuti-riwayat-modal-status.approved{
+  background:
+    rgba(34,197,94,0.12);
+  color:#16a34a;
+}
+
+.smartoffice-cuti-riwayat-modal-status.rejected{
+  background:
+    rgba(239,68,68,0.12);
+  color:#dc2626;
+}
+
+
+/* ======================================================
+   DETAIL GRID
+====================================================== */
+
+/* GRID LAYOUT */
+.smartoffice-cuti-riwayat-modal-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(2,1fr);
+  gap:12px;
+  margin-bottom:12px;
+}
+
+
+/* ======================================================
+   DETAIL ITEM
+====================================================== */
+
+/* CARD ITEM */
+.smartoffice-cuti-riwayat-modal-item{
+  padding:16px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:
+    1px solid #e2e8f0;
+  box-shadow:
+    0 1px 2px rgba(15,23,42,.04);
+  margin-bottom:6px;
+}
+
+/* LABEL */
+.smartoffice-cuti-riwayat-modal-item label{
+  display:block;
+  margin-bottom:8px;
+  font-size:12px;
+  font-weight:500;
+  color:#64748b;
+}
+
+/* VALUE */
+.smartoffice-cuti-riwayat-modal-item > span{
+  display:block;
+  font-size:15px;
+  font-weight:600;
+  color:#0f172a;
+  line-height:1.5;
+}
+
+/* FULL WIDTH */
+.smartoffice-cuti-riwayat-modal-item.full-width{
+  margin-top:10px;
+  margin-bottom:18px;
+}
+
+
+/* ======================================================
+   LAMPIRAN
+====================================================== */
+.smartoffice-cuti-riwayat-modal-lampiran{
+  margin-top:24px;
+  margin-bottom:18px;
+}
+
+/* TITLE */
+.smartoffice-cuti-riwayat-modal-lampiran-title{
+  font-size:15px;
+  font-weight:700;
+  color:#0f172a;
+  margin-bottom:12px;
+}
+
+
+/* FILE CARD */
+.smartoffice-cuti-riwayat-modal-file-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px;
+  border-radius:18px;
+  background:#f8fafc;
+  border:
+    1px solid #e2e8f0;
+}
+
+/* ICON */
+.smartoffice-cuti-riwayat-modal-file-icon{
+  width:48px;
+  height:48px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#dbeafe;
+  font-size:22px;
+}
+
+/* INFO */
+.smartoffice-cuti-riwayat-modal-file-info{
+  flex:1;
+  min-width:0;
+}
+
+/* FILE NAME */
+.smartoffice-cuti-riwayat-modal-file-name{
+  font-size:14px;
+  font-weight:600;
+  color:#0f172a;
+  line-height:1.5;
+}
+
+.smartoffice-cuti-riwayat-modal-dokumen-link{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:12px;
+  background:#eff6ff;
+  color:#2563eb;
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  cursor:pointer;
+  border:none !important;
+}
+
+.smartoffice-cuti-riwayat-modal-dokumen-link:hover{
+  background:#dbeafe;
+}
+
+/* ======================================================
+   RIWAYAT APPROVAL BOX
+====================================================== */
+.smartoffice-cuti-riwayat-modal-approval-box{
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.smartoffice-cuti-riwayat-modal-approval-box small{
+  display:block;
+  margin-bottom:4px;
+  font-size:12px;
+  color:#64748b;
+}
+
+.smartoffice-cuti-riwayat-modal-approval-box strong{
+  font-size:14px;
+  color:#0f172a;
+  line-height:1.5;
+}
+
+.smartoffice-cuti-riwayat-modal-approval-box
+.smartoffice-cuti-riwayat-modal-status{
+  width:fit-content !important;
+}
+
+
+/* ======================================================
+   FOOTER
+====================================================== */
+.smartoffice-cuti-riwayat-modal-footer{
+  display:flex;
+  justify-content:flex-end;
+  margin-top:24px;
+  padding-top:18px;
+  border-top:
+    1px solid #f1f5f9;
+}
+
+
+/* ======================================================
+   CANCEL BUTTON
+====================================================== */
+.smartoffice-cuti-riwayat-modal-close{
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:none;
+  border-radius:12px;
+  background:#f8fafc;
+  color:#64748b;
+  cursor:pointer;
+  transition:.25s ease;
+}
+
+.smartoffice-cuti-riwayat-modal-close:hover{
+  background:#eef2f7;
+  color:#0f172a;
+  transform:rotate(90deg);
+}
+
+.smartoffice-cuti-riwayat-modal-close svg{
+  width:18px;
+  height:18px;
+  flex-shrink:0;
+}
+
+.smartoffice-cuti-riwayat-modal-close-button{
+  border:none;
+  border-radius:14px;
+  padding:
+    12px
+    18px;
+  background:#e2e8f0;
+  color:#334155;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:
+    .2s ease;
+}
+
+.smartoffice-cuti-riwayat-modal-close-button:hover{
+  transform:
+    translateY(-1px);
+  opacity:
+    .92;
+}
+
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media (max-width:768px){
+
+  /* =========================
+      OVERLAY
+  ========================= */
+  .smartoffice-cuti-riwayat-modal{
+    position:fixed;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+    box-sizing:border-box;
+  }
+
+  /* =========================
+      MODAL
+  ========================= */
+  .smartoffice-cuti-riwayat-modal-content{
+    width:100%;
+    max-width:100%;
+    max-height:
+        calc(100vh - 24px);
+    display:flex;
+    flex-direction:column;
+    border-radius:22px;
+    overflow:hidden;
+  }
+
+  /* HEADER */
+  .smartoffice-cuti-riwayat-modal-header{
+    padding:6px 16px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-header h3{
+    font-size:14px;
+  }
+
+  /* CLOSE */
+  .smartoffice-cuti-riwayat-modal-close{
+    width:36px;
+    height:36px;
+    border-radius:10px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-close svg{
+    width:16px;
+    height:16px;
+  }
+
+  /* BODY */
+  .smartoffice-cuti-riwayat-modal-body{
+    padding:
+      14px
+      16px
+      24px;
+  }
+
+  /* PROFILE */
+  .smartoffice-cuti-riwayat-modal-profile{
+    gap:4px;
+    margin-bottom:16px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-profile-info h4{
+    font-size:14px;
+  }
+
+  /* STATUS */
+  .smartoffice-cuti-riwayat-modal-status{
+    padding:6px 12px;
+    font-size:10px;
+  }
+
+  /* GRID */
+  .smartoffice-cuti-riwayat-modal-grid{
+    grid-template-columns:1fr;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  /* CARD */
+  .smartoffice-cuti-riwayat-modal-item{
+    padding:14px;
+    border-radius:16px;
+    margin-bottom:4px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-item label{
+    font-size:10px;
+    margin-bottom:6px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-item > span{
+    font-size:12px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-item.full-width{
+    margin-top:8px;
+    margin-bottom:14px;
+  }
+
+  /* LAMPIRAN */
+  .smartoffice-cuti-riwayat-modal-lampiran{
+    margin-top:18px;
+    margin-bottom:14px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-lampiran-title{
+    font-size:12px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-file-card{
+    padding:14px;
+    gap:12px;
+    border-radius:16px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-file-icon{
+    width:42px;
+    height:42px;
+    font-size:16px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-file-name{
+    font-size:12px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-dokumen-link{
+    font-size:12px;
+    padding:8px 12px;
+  }
+
+  /* APPROVAL */
+  .smartoffice-cuti-riwayat-modal-approval-box{
+    gap:12px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-approval-box small{
+    font-size:11px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-approval-box strong{
+    font-size:12px;
+  }
+
+  /* FOOTER */
+  .smartoffice-cuti-riwayat-modal-footer{
+    margin-top:18px;
+    padding-top:14px;
+  }
+
+  .smartoffice-cuti-riwayat-modal-close-button{
+    width:30%;
+    justify-content:center;
+    padding:12px;
+    font-size:12px;
+  }
+}
+
+
