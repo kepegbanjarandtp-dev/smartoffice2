@@ -36,7 +36,7 @@ export default defineConfig({
                         type:
                             "image/png",
                         purpose:
-                            "any"
+                            "maskable"
                     },
 
                     {
@@ -47,7 +47,7 @@ export default defineConfig({
                         type:
                             "image/png",
                         purpose:
-                            "any"
+                            "maskable"
                     }
                 ]
             },
