@@ -574,6 +574,20 @@ smartofficeDashboardHeaderFade{
     color:#F59E0B;
 }
 
+/* JEJARING PUSKESMAS */
+#smartofficeJejaringPuskesmasMenuCard
+.smartoffice-dashboard-menu-icon{
+    background:#EAF3FF;
+    color:#2563EB;
+}
+
+/* IMUNISASI JEJARING */
+#smartofficeImunisasiJejaringMenuCard
+.smartoffice-dashboard-menu-icon{
+    background:#FFECEF;
+    color:#F43F5E;
+}
+
 .smartoffice-dashboard-menu-icon svg{
     width:44px;
     height:44px;

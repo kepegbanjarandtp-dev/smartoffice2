@@ -19,6 +19,10 @@ import {
     smartofficeRenderMobileNavbar
 } from "../../components/navbar/navbar.js";
 
+import {
+    smartofficeShowToast
+} from "../../components/toast/toast.js";
+
 /* ======================================================
    SERVICE
 ====================================================== */
@@ -750,6 +754,112 @@ function smartofficeInitDashboardMenu(){
         ] =
             handler;
     }
+
+    /* ======================================================
+       MENU DALAM PENGEMBANGAN
+    ====================================================== */
+
+    const menuPengembangan = [
+
+        {
+            id:
+                "smartofficeJejaringPuskesmasMenuCard",
+
+            message:
+                "Fitur Jejaring Puskesmas sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeImunisasiJejaringMenuCard",
+
+            message:
+                "Fitur Imunisasi Jejaring sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeDokumenPuskesmasMenuCard",
+
+            message:
+                "Fitur Dokumen Puskesmas sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeAgendaMenuCard",
+
+            message:
+                "Fitur Agenda & Kegiatan sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeESuratMenuCard",
+
+            message:
+                "Fitur E-Surat sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeLaporanMenuCard",
+
+            message:
+                "Fitur Laporan & Rekap sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeMasterDataMenuCard",
+
+            message:
+                "Fitur Master Data sedang dalam pengembangan."
+        }
+
+    ];
+
+
+    menuPengembangan.forEach(
+        function(item){
+
+            const menu =
+                document.getElementById(
+                    item.id
+                );
+
+            if(!menu){
+                return;
+            }
+
+            const handler =
+                function(){
+
+                    if(
+                        smartofficeDashboardDestroyed
+                    ){
+                        return;
+                    }
+
+                    smartofficeShowToast(
+                        item.message,
+                        "info"
+                    );
+
+                };
+
+            menu.addEventListener(
+                "click",
+                handler
+            );
+
+            smartofficeDashboardMenuHandlers[
+                item.id
+            ] =
+                handler;
+
+        }
+    );
 }
 
 
