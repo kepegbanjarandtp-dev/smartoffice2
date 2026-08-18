@@ -1237,7 +1237,7 @@ smartofficeDashboardHeaderFade{
   .smartoffice-dashboard-tips-label{
     gap:6px;
     margin-bottom:7px;
-    font-size:10px;
+    font-size:11px;
   }
 
   .smartoffice-dashboard-tips-label-icon{
@@ -1258,14 +1258,14 @@ smartofficeDashboardHeaderFade{
 
   .smartoffice-dashboard-tips-content p{
     margin-top:5px;
-    font-size:8px;
+    font-size:9px;
     line-height:1.45;
     max-width:260px;
   }
 
   .smartoffice-dashboard-tips-footer{
     margin-top:8px;
-    font-size:8px;
+    font-size:9px;
   }
 
   .smartoffice-dashboard-tips-visual{
