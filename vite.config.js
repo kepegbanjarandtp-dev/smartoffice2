@@ -8,6 +8,8 @@ export default defineConfig({
             registerType: "autoUpdate",
             injectRegister: "auto",
             includeAssets: [
+                "smartoffice-icon-192-maskable.png",
+                "smartoffice-icon-512-maskable.png",
                 "smartoffice-icon-192-white.png",
                 "smartoffice-icon-512-white.png"
             ],
@@ -30,7 +32,7 @@ export default defineConfig({
                 icons: [
                     {
                         src:
-                            "/smartoffice-icon-192-white.png",
+                            "/smartoffice-icon-192-maskable.png",
                         sizes:
                             "192x192",
                         type:
@@ -41,7 +43,7 @@ export default defineConfig({
 
                     {
                         src:
-                            "/smartoffice-icon-512-white.png",
+                            "/smartoffice-icon-512-maskable.png",
                         sizes:
                             "512x512",
                         type:
