@@ -4,10 +4,50 @@
 <head>
   <meta charset="UTF-8" />
 
+  <!-- ======================================================
+       FAVICON
+  ======================================================= -->
   <link
     rel="icon"
-    type="image/svg+xml"
-    href="/favicon.svg"
+    type="image/png"
+    sizes="192x192"
+    href="/smartoffice-icon-192-white.png"
+  />
+
+  <!-- ======================================================
+       PWA MANIFEST
+  ======================================================= -->
+  <link
+    rel="manifest"
+    href="/manifest.webmanifest"
+  />
+
+  <!-- ======================================================
+       MOBILE / PWA
+  ======================================================= -->
+  <meta
+    name="theme-color"
+    content="#ffffff"
+  />
+
+  <meta
+    name="mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-capable"
+    content="yes"
+  />
+
+  <meta
+    name="apple-mobile-web-app-status-bar-style"
+    content="default"
+  />
+
+  <meta
+    name="apple-mobile-web-app-title"
+    content="SmartOffice V2"
   />
 
   <meta
@@ -16,17 +56,20 @@
   />
 
   <!-- GOOGLE FONT -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
   <link
-      rel="preconnect"
-      href="https://fonts.gstatic.com"
-      crossorigin
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
   >
 
   <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
   >
 
   <title>SmartOffice V2</title>
@@ -39,7 +82,6 @@
   ======================================================= -->
   <div id="app"></div>
 
-
   <!-- ======================================================
        GLOBAL PREVIEW
   ======================================================= -->
@@ -48,15 +90,12 @@
     class="smartoffice-preview-overlay"
     style="display:none;"
   >
-
     <div
       class="smartoffice-preview-card"
     >
-
       <div
         class="smartoffice-preview-header"
       >
-
         <h3>
           📄 Preview Dokumen
         </h3>
@@ -64,7 +103,6 @@
         <div
           class="smartoffice-preview-actions"
         >
-
           <a
             id="smartofficePreviewDownloadBtn"
             class="smartoffice-preview-download-btn"
@@ -79,30 +117,25 @@
           >
             ✕
           </button>
-
         </div>
 
       </div>
-
 
       <div
         id="smartofficePreviewFileName"
         class="smartoffice-preview-file-name"
       ></div>
 
-
       <div
         id="smartofficePreviewContent"
         class="smartoffice-preview-content"
       ></div>
-
 
       <div
         id="smartofficePreviewToolbar"
         class="smartoffice-preview-toolbar"
         style="display:none;"
       >
-
         <button
           onclick="smartofficeZoomOut()"
         >
@@ -120,13 +153,9 @@
         >
           ➕
         </button>
-
       </div>
-
     </div>
-
   </div>
-
 
   <!-- ======================================================
        MAIN JS
