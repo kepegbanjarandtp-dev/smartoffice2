@@ -57,19 +57,16 @@ const SMARTOFFICE_WEBSITE =
 function smartofficeFormatTanggalSuratFrontend(
     value
 ){
-
     if(
         !value
     ){
         return "-";
     }
 
-
     const date =
         new Date(
             value
         );
-
 
     if(
         isNaN(date)
@@ -77,9 +74,7 @@ function smartofficeFormatTanggalSuratFrontend(
         return "-";
     }
 
-
     const bulanIndonesia = [
-
         "Januari",
         "Februari",
         "Maret",
@@ -92,23 +87,18 @@ function smartofficeFormatTanggalSuratFrontend(
         "Oktober",
         "November",
         "Desember"
-
     ];
-
 
     const tanggal =
         date.getDate();
-
 
     const bulan =
         bulanIndonesia[
             date.getMonth()
         ];
 
-
     const tahun =
         date.getFullYear();
-
 
     return `
         Arjasari,
@@ -162,7 +152,6 @@ export async function smartofficeExportRiwayatCutiPdf(){
         '<span class="smartoffice-spinner-print"></span>Cetak';
 
     try{
-
         /*
          * ==================================================
          * GET DATA KAPUS
@@ -254,19 +243,16 @@ export function smartofficeGenerateLaporanRiwayatCuti(
 ){
 
     const bodyHtml = `
-
         <div
             class="
                 smartoffice-report-container
             "
         >
-
             <table
                 class="
                     smartoffice-report-table
                 "
             >
-
                 <thead>
                     <tr>
                         <th>No</th>
@@ -833,17 +819,13 @@ export function smartofficeGenerateTemplateLaporan(
         <!-- =====================================
             KOP SURAT
         ===================================== -->
-
         <div class="smartoffice-report-container">
-
             <div class="smartoffice-report-kop">
-
                 <div class="smartoffice-report-kop-logo">
                     <img src="${SMARTOFFICE_LOGO_KABUPATEN}">
                 </div>
 
                 <div class="smartoffice-report-kop-content">
-
                     <div class="smartoffice-report-kop-title-1">
                         ${SMARTOFFICE_NAMA_PEMERINTAH}
                     </div>
@@ -865,36 +847,27 @@ export function smartofficeGenerateTemplateLaporan(
                         &nbsp;&nbsp;
                         Website : ${SMARTOFFICE_WEBSITE}
                     </div>
-
                 </div>
-
             </div>
-
             <div class="smartoffice-report-line-1"></div>
             <div class="smartoffice-report-line-2"></div>
-
         </div>
 
         <!-- =====================================
             JUDUL
         ===================================== -->
         <div class="smartoffice-report-container">
-
             <div class="smartoffice-report-title">
                 ${judul}
             </div>
-
         </div>
 
         <!-- =====================================
             INFORMASI LAPORAN
         ===================================== -->
         <div class="smartoffice-report-container">
-
             <div class="smartoffice-report-info">
-
                 <table class="smartoffice-report-info-table">
-
                     <tr>
                         <td>Periode</td>
                         <td>:</td>
@@ -912,11 +885,8 @@ export function smartofficeGenerateTemplateLaporan(
                         <td>:</td>
                         <td>${totalData}</td>
                     </tr>
-
                 </table>
-
             </div>
-
         </div>
 
         <!-- =====================================
@@ -928,9 +898,7 @@ export function smartofficeGenerateTemplateLaporan(
             FOOTER
         ===================================== -->
         <div class="smartoffice-report-container">
-
             <div class="smartoffice-report-footer">
-
                 <!--
                 ======================================================
                 QR CODE
@@ -971,12 +939,10 @@ export function smartofficeGenerateTemplateLaporan(
                 ========================== -->
                 <div class="smartoffice-report-footer-center"></div>
 
-
                 <!-- =========================
                     TANDA TANGAN
                 ========================== -->
                 <div class="smartoffice-report-footer-right">
-
                     <div>
                         ${smartofficeFormatTanggalSuratFrontend(new Date())}
                     </div>
@@ -996,11 +962,8 @@ export function smartofficeGenerateTemplateLaporan(
                     <div>
                         NIP. ${kapus.nip || ''}
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
         <!-- =====================================
@@ -1046,32 +1009,24 @@ export function smartofficeGenerateTemplateLaporan(
    OUTPUT:
    3 Agustus 2026 13:22
 ====================================================== */
-
 function smartofficeFormatTanggalJamBukuTamu(
     value
 ){
-
     if(!value){
-
         return "-";
-
     }
-
 
     const part =
         value.split(" ");
 
-
     const tanggal =
         part[0].split("/");
-
 
     const waktu =
         (
             part[1] ||
             "00:00:00"
         ).split(":");
-
 
     const date =
         new Date(
@@ -1083,20 +1038,15 @@ function smartofficeFormatTanggalJamBukuTamu(
             Number(waktu[2])
         );
 
-
     if(
         isNaN(
             date.getTime()
         )
     ){
-
         return "-";
-
     }
 
-
     const bulan = [
-
         "Januari",
         "Februari",
         "Maret",
@@ -1109,12 +1059,9 @@ function smartofficeFormatTanggalJamBukuTamu(
         "Oktober",
         "November",
         "Desember"
-
     ];
 
-
     return (
-
         date.getDate() +
         " " +
         bulan[
@@ -1130,9 +1077,7 @@ function smartofficeFormatTanggalJamBukuTamu(
         String(
             date.getMinutes()
         ).padStart(2,"0")
-
     );
-
 }
 
 
@@ -1146,7 +1091,6 @@ export function smartofficeGenerateLaporanBukuTamu(
 ){
 
     const bodyHtml = `
-
         <div class="smartoffice-report-container">
             <table class="smartoffice-bukutamu-report-table">
                 <thead>

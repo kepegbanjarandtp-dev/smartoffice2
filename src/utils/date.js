@@ -39,7 +39,6 @@ export function formatTanggalIndonesia(tanggal){
             year: "numeric"
         }
     );
-
 }
 
 
@@ -49,7 +48,6 @@ export function formatTanggalIndonesia(tanggal){
 export function smartofficeFormatTanggalIndoJamFrontend(
     date
 ){
-
     const bulan = [
         "Januari",
         "Februari",
@@ -112,5 +110,4 @@ export function smartofficeFormatTanggalIndoJamFrontend(
         " "
     )
     .trim();
-
 }
