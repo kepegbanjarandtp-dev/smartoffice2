@@ -1222,7 +1222,7 @@ function smartofficeInitUploadDokumen(){
 
                 const fileName =
                     document.getElementById(
-                        "smartofficeDokumenFileName"
+                        "smartofficeDokumenSayaFileName"
                     );
                 if(
                     fileName
@@ -1239,7 +1239,7 @@ function smartofficeInitUploadDokumen(){
             ========================= */
             const fileName =
                 document.getElementById(
-                    "smartofficeDokumenFileName"
+                    "smartofficeDokumenSayaFileName"
                 );
             if(
                 fileName
