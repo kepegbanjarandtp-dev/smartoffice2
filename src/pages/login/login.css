@@ -564,20 +564,8 @@
         display:none;
     }
 
-    .smartoffice-login-page{
-
-        height:100dvh;
-        min-height:100dvh;
-
-        display:flex;
-        align-items:center;
-        justify-content:center;
-
-        overflow:hidden;
-    }
-
     .smartoffice-login-wrapper{
-        height:100dvh;
+        min-height:100dvh;
         box-sizing:border-box;
     }
 
@@ -637,7 +625,6 @@
         right:16px;
     }
 
-
     /* ======================================================
        OPTION
     ====================================================== */
@@ -654,7 +641,6 @@
         font-size:10px;
     }
 
-
     /* ======================================================
        BUTTON
     ====================================================== */
@@ -666,7 +652,6 @@
         border-radius:16px;
         font-size:13px;
     }
-
 
     /* ======================================================
        FOOTER
