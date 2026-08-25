@@ -237,20 +237,20 @@
 
   /* OVERLAY */
   .smartoffice-preview-overlay{
-      padding:
-          8px
-          8px
-          calc(88px + env(safe-area-inset-bottom))
-          8px;
-      align-items:center;
-      justify-content:center;
+        position:fixed;
+        inset:0;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        padding:12px;
+        box-sizing:border-box;
   }
 
   /* MODAL */
   .smartoffice-preview-card{
       width:100%;
       height:100%;
-      border-radius:22px;
+      border-radius:10px;
   }
 
   /* HEADER */

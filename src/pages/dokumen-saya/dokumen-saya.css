@@ -267,6 +267,112 @@
 }
 
 
+/* ======================================================
+   MOBILE
+====================================================== */
+@media screen and (max-width:768px){
+
+    /* ================================================
+       FORM CARD
+    ================================================ */
+    .smartoffice-dokumen-saya-form-card{
+        padding:18px;
+        border-radius:22px;
+    }
+
+    .smartoffice-dokumen-saya-subtitle{      
+        font-size:12px;
+        margin-top:20px;
+        margin-bottom:10px;
+      }
+
+    /* ================================================
+       FORM GRID
+       2 KOLOM → 1 KOLOM
+    ================================================ */
+    .smartoffice-dokumen-saya-form-grid{
+        grid-template-columns:
+            1fr;
+        gap:0;
+    }
+
+    /* ================================================
+       FORM GRID 3
+       4 KOLOM → 1 KOLOM
+    ================================================ */
+    .smartoffice-dokumen-saya-form-grid-3{
+        grid-template-columns:
+            1fr;
+        gap:0;
+        margin-top:8px;
+        margin-bottom:0;
+    }
+
+    /* ================================================
+       FORM GROUP
+    ================================================ */
+    .smartoffice-dokumen-saya-form-group{
+        gap:7px;
+        margin-bottom:14px;
+    }
+
+    .smartoffice-dokumen-saya-form-group label{
+        font-size:12px;
+    }
+
+    /* ================================================
+       INPUT
+    ================================================ */
+    .smartoffice-dokumen-saya-form-group input,
+    .smartoffice-dokumen-saya-form-group select,
+    .smartoffice-dokumen-saya-form-group textarea{
+        padding:13px 14px;
+        border-radius:14px;
+        font-size:12px;
+    }
+
+    /* ================================================
+       FULL WIDTH
+    ================================================ */
+    .smartoffice-dokumen-saya-form-group.full-width{
+        margin-top:20px;
+    }
+
+    /* ================================================
+       UPLOAD BOX
+    ================================================ */
+    .smartoffice-dokumen-saya-upload-box{
+        padding:16px;
+        margin-top:4px;
+        gap:12px;
+        border-radius:16px;
+    }
+
+    .smartoffice-dokumen-saya-upload-box strong{
+        display:block;
+        font-size:12px;
+    }
+
+    .smartoffice-dokumen-saya-upload-box p{
+        font-size:11px;    
+        margin-top:4px;
+    }
+
+    #smartofficeDokumenSayaFileName{
+        font-size:11px;
+    }
+
+    /* ================================================
+       SUBMIT BUTTON
+    ================================================ */
+    .smartoffice-dokumen-saya-submit-button{
+        width:100%;
+        margin-top:24px;
+        padding:15px;
+        border-radius:16px;
+    }
+}
+
 
 /* =======================================================================
    TAB RIWAYAT DOKUMEN

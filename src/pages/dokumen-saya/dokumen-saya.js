@@ -28,6 +28,13 @@ import {
 } from "../../components/toast/toast.js";
 
 import {
+    smartofficeOpenPreviewDokumen,
+    smartofficeClosePreviewDokumen,
+    smartofficeZoomIn,
+    smartofficeZoomOut
+} from "../../components/preview/preview.js";
+
+import {
     smartofficeRenderMobileNavbar
 } from "../../components/navbar/navbar.js";
 
@@ -63,6 +70,12 @@ let smartofficeDokumenSayaData =
    EDIT DOKUMEN
 ====================================================== */
 let smartofficeEditDokumenId =
+    null;
+
+/* ======================================================
+   FILE CHANGE HANDLER
+====================================================== */
+let smartofficeDokumenFileChangeHandler =
     null;
 
 
@@ -162,7 +175,26 @@ export async function smartofficeLoadPage(){
 export async function smartofficeDestroyPage(){
 
     /* =========================
-       RESET STATE
+       REMOVE FILE LISTENER
+    ========================= */
+    const fileInput =
+        document.getElementById(
+            "smartofficeDokumenFile"
+        );
+    if(
+        fileInput &&
+        smartofficeDokumenFileChangeHandler
+    ){
+        fileInput.removeEventListener(
+            "change",
+            smartofficeDokumenFileChangeHandler
+        );
+        smartofficeDokumenFileChangeHandler =
+            null;
+    }
+
+    /* =========================
+       RESET PAGE STATE
     ========================= */
     smartofficeDokumenLoaded =
         false;
@@ -172,6 +204,41 @@ export async function smartofficeDestroyPage(){
 
     smartofficeEditDokumenId =
         null;
+
+    /* =========================
+       RESET UPLOAD FILE
+    ========================= */
+    if(
+        fileInput
+    ){
+        fileInput.value =
+            "";
+    }
+
+    const fileName =
+        document.getElementById(
+            "smartofficeDokumenSayaFileName"
+        );
+    if(
+        fileName
+    ){
+        fileName.innerText =
+            "Belum ada file dipilih";
+    }
+
+    /* =========================
+       CLOSE EDIT MODAL
+    ========================= */
+    const editModal =
+        document.getElementById(
+            "smartofficeEditDokumenModal"
+        );
+    if(
+        editModal
+    ){
+        editModal.style.display =
+            "none";
+    }
 }
 
 
@@ -1181,7 +1248,6 @@ function smartofficeSwitchDokumenTab(
    INIT UPLOAD DOKUMEN
 ====================================================== */
 function smartofficeInitUploadDokumen(){
-
     const fileInput =
         document.getElementById(
             "smartofficeDokumenFile"
@@ -1192,8 +1258,22 @@ function smartofficeInitUploadDokumen(){
         return;
     }
 
-    fileInput.addEventListener(
-        "change",
+    /* =========================
+       PREVENT DUPLICATE LISTENER
+    ========================= */
+    if(
+        smartofficeDokumenFileChangeHandler
+    ){
+        fileInput.removeEventListener(
+            "change",
+            smartofficeDokumenFileChangeHandler
+        );
+    }
+
+    /* =========================
+       CREATE HANDLER
+    ========================= */
+    smartofficeDokumenFileChangeHandler =
         function(e){
             const file =
                 e.target.files[0];
@@ -1208,7 +1288,6 @@ function smartofficeInitUploadDokumen(){
             ========================= */
             const maxSize =
                 5 * 1024 * 1024;
-
             if(
                 file.size > maxSize
             ){
@@ -1247,7 +1326,14 @@ function smartofficeInitUploadDokumen(){
                 fileName.innerText =
                     file.name;
             }
-        }
+        };
+
+    /* =========================
+       ADD LISTENER
+    ========================= */
+    fileInput.addEventListener(
+        "change",
+        smartofficeDokumenFileChangeHandler
     );
 }
 
@@ -2192,3 +2278,6 @@ window.smartofficeSubmitEditDokumen =
 
 window.smartofficePreviewEditFile =
     smartofficePreviewEditFile;
+
+window.smartofficeRefreshDokumen =
+    smartofficeRefreshDokumen;

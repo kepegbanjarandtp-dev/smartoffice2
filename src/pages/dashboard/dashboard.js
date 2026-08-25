@@ -758,13 +758,11 @@ function smartofficeInitDashboardMenu(){
     /* ======================================================
        MENU DALAM PENGEMBANGAN
     ====================================================== */
-
     const menuPengembangan = [
 
         {
             id:
                 "smartofficeJejaringPuskesmasMenuCard",
-
             message:
                 "Fitur Jejaring Puskesmas sedang dalam pengembangan."
         },
@@ -772,7 +770,6 @@ function smartofficeInitDashboardMenu(){
         {
             id:
                 "smartofficeImunisasiJejaringMenuCard",
-
             message:
                 "Fitur Imunisasi Jejaring sedang dalam pengembangan."
         },
@@ -780,15 +777,13 @@ function smartofficeInitDashboardMenu(){
         {
             id:
                 "smartofficeDokumenPuskesmasMenuCard",
-
             message:
-                "Fitur Dokumen Puskesmas sedang dalam pengembangan."
+                "Fitur Pusat Dokumen sedang dalam pengembangan."
         },
 
         {
             id:
                 "smartofficeAgendaMenuCard",
-
             message:
                 "Fitur Agenda & Kegiatan sedang dalam pengembangan."
         },
@@ -796,15 +791,13 @@ function smartofficeInitDashboardMenu(){
         {
             id:
                 "smartofficeESuratMenuCard",
-
             message:
-                "Fitur E-Surat sedang dalam pengembangan."
+                "Fitur Buku Surat sedang dalam pengembangan."
         },
 
         {
             id:
                 "smartofficeLaporanMenuCard",
-
             message:
                 "Fitur Laporan & Rekap sedang dalam pengembangan."
         },
@@ -812,29 +805,24 @@ function smartofficeInitDashboardMenu(){
         {
             id:
                 "smartofficeMasterDataMenuCard",
-
             message:
                 "Fitur Master Data sedang dalam pengembangan."
         }
 
     ];
 
-
     menuPengembangan.forEach(
         function(item){
-
             const menu =
                 document.getElementById(
                     item.id
                 );
-
             if(!menu){
                 return;
             }
 
             const handler =
                 function(){
-
                     if(
                         smartofficeDashboardDestroyed
                     ){
@@ -845,7 +833,6 @@ function smartofficeInitDashboardMenu(){
                         item.message,
                         "info"
                     );
-
                 };
 
             menu.addEventListener(
@@ -857,7 +844,6 @@ function smartofficeInitDashboardMenu(){
                 item.id
             ] =
                 handler;
-
         }
     );
 }

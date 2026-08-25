@@ -208,7 +208,7 @@
     min-width:0;
     display:flex;
     flex-direction:column;
-    gap:4px;
+    gap:2px;
 }
 
 /* NAME */
@@ -430,7 +430,7 @@
     .smartoffice-arsippegawai-progress-toolbar{
         gap:10px;
         margin-bottom:12px;
-        padding-bottom:12px;
+        padding-bottom:10px;
     }
 
     .smartoffice-arsippegawai-progress-toolbar-left{
@@ -438,18 +438,18 @@
     }
 
     .smartoffice-arsippegawai-progress-toolbar-icon{
-        width:34px;
-        height:34px;
+        width:30px;
+        height:30px;
         border-radius:9px;
     }
 
     .smartoffice-arsippegawai-progress-toolbar-icon svg{
-        width:17px;
-        height:17px;
+        width:16px;
+        height:16px;
     }
 
     .smartoffice-arsippegawai-progress-toolbar-title h3{
-        font-size:14px;
+        font-size:12px;
         line-height:1.2;
     }
 
@@ -460,14 +460,14 @@
     }
 
     .smartoffice-arsippegawai-progress-refresh-btn{
-        width:34px;
-        height:34px;
+        width:30px;
+        height:30px;
         border-radius:9px;
     }
 
     .smartoffice-arsippegawai-progress-refresh-btn svg{
-        width:15px;
-        height:15px;
+        width:14px;
+        height:14px;
     }
 
     /* ==============================================
@@ -506,15 +506,15 @@
         grid-row:1;
         display:flex;
         align-items:center;
-        gap:10px;
+        gap:8px;
         min-width:0;
     }
 
     .smartoffice-arsippegawai-progress-avatar{
-        width:30px;
-        height:30px;
+        width:26px;
+        height:26px;
         flex-shrink:0;
-        font-size:10px;
+        font-size:9px;
     }
 
     .smartoffice-arsippegawai-progress-employee-info{
@@ -527,7 +527,7 @@
         white-space:normal;
         overflow:visible;
         text-overflow:clip;
-        font-size:12px;
+        font-size:11px;
         line-height:1.3;
     }
 
@@ -599,7 +599,7 @@
         width:38px;
         height:38px;
         flex-shrink:0;
-        font-size:9px;
+        font-size:8px;
     }
 
     .smartoffice-arsippegawai-progress-percent::before{
@@ -615,9 +615,14 @@
         justify-self:start;
         align-self:center;
         padding:6px 9px;
-        font-size:9px;
+        font-size:8px;
         margin:0;
         margin-top:16px;
+    }
+
+    .smartoffice-arsippegawai-progress-status-dot{
+        width:6px;
+        height:6px;
     }
 
     .smartoffice-arsippegawai-progress-detail-btn{
@@ -625,16 +630,16 @@
         grid-row:3;
         justify-self:end;
         align-self:center;
-        width:28px;
-        height:28px;
+        width:24px;
+        height:24px;
         border-radius:10px;
         margin:0;
         margin-top:16px;
     }
 
     .smartoffice-arsippegawai-progress-detail-btn svg{
-        width:12px;
-        height:12px;
+        width:11px;
+        height:11px;
     }
 
     /* ==============================================
@@ -1714,158 +1719,132 @@
     /* =========================
        FILTER
     ========================= */
-
     .smartoffice-arsippegawai-filter-card{
-
         padding:14px;
-
         margin-top:14px;
         margin-bottom:12px;
-
         border-radius:16px;
     }
 
-
     .smartoffice-arsippegawai-filter-header{
-
-        margin-bottom:13px;
+        margin-bottom:12px;
     }
-
 
     .smartoffice-arsippegawai-filter-title{
-
-        gap:9px;
+        gap:8px;
     }
 
-
     .smartoffice-arsippegawai-filter-title-icon{
-
         width:32px;
         height:32px;
-
         border-radius:9px;
     }
 
-
     .smartoffice-arsippegawai-filter-title-icon svg{
-
         width:16px;
         height:16px;
     }
 
-
     .smartoffice-arsippegawai-filter-title h3{
-
-        font-size:13px;
+        font-size:12px;
     }
 
-
     .smartoffice-arsippegawai-filter-title p{
-
         font-size:9px;
     }
 
-
     .smartoffice-arsippegawai-filter-body{
-
         grid-template-columns:1fr;
-
-        gap:10px;
+        gap:8px;
     }
-
 
     .smartoffice-arsippegawai-filter-group{
-
-        gap:5px;
+        gap:4px;
     }
-
 
     .smartoffice-arsippegawai-filter-group label{
-
         font-size:10px;
+        margin-bottom:4px;
     }
-
 
     .smartoffice-arsippegawai-filter-group
     .smartoffice-input{
-
-        height:40px;
-
+        height:36px;
         font-size:11px;
-
         border-radius:10px;
     }
 
-
     .smartoffice-arsippegawai-filter-action{
-
         width:100%;
-
         display:grid;
-
         grid-template-columns:1fr 1fr;
-
         gap:8px;
-
         margin-top:2px;
     }
 
-
     .smartoffice-arsippegawai-search-button,
     .smartoffice-arsippegawai-reset-button{
-
         width:100%;
-
-        height:40px;
-
+        height:36px;
         font-size:11px;
-
         border-radius:10px;
     }
-
-
- 
 }
 
 
 /* ======================================================
    MOBILE CARD ARSIP
 ====================================================== */
-
-@media(
-    max-width:640px
-){
+@media(max-width:768px){
 
     .smartoffice-arsippegawai-document-list{
-
         grid-template-columns:
             minmax(0,1fr);
-
-        gap:10px;
-
+        gap:8px;
         padding:10px;
+    }
+
+    .smartoffice-arsippegawai-document-title{       
+        gap:8px;
+        font-size:11px;
+    }
+
+    .smartoffice-arsippegawai-document-title-icon{
+        width:28px;
+        height:28px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-radius:9px;
+        background:#eff6ff;
+        color:#2563eb;
+    }
+
+    .smartoffice-arsippegawai-document-title-icon svg{
+        width:12px;
+        height:26px;
+    }
+
+    .smartoffice-arsippegawai-document-legend{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        flex-wrap:wrap;
     }
 
 
     .smartoffice-arsippegawai-document-item{
-
         grid-template-columns:
             38px
             minmax(0,1fr);
-
         grid-template-areas:
-
             "icon document"
             "icon status"
             "icon information"
             "icon actions";
-
         column-gap:10px;
-
-        row-gap:10px;
-
-        padding:13px;
-
+        row-gap:8px;
+        padding:10px;
         border-radius:13px;
     }
 
@@ -1879,12 +1858,12 @@
 
     .smartoffice-arsippegawai-document-name strong{
 
-        font-size:11px;
+        font-size:10px;
     }
 
 
     .smartoffice-arsippegawai-document-name span{
-
+        margin-top:2px;
         font-size:8px;
     }
 
