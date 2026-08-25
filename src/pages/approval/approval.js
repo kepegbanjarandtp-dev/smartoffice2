@@ -1493,33 +1493,31 @@ async function smartofficeSubmitApprovalAction(){
       "smartofficeApprovalSubmitButton"
     );
 
-  /* LOCK */
+  /* =========================
+     LOCK
+  ========================= */
   smartofficeSubmittingApproval =
     true;
 
-  /* DISABLE */
-  submitButton.disabled =
-    true;
+  /* =========================
+     DISABLE BUTTON
+  ========================= */
+  if(
+    submitButton
+  ){
+    submitButton.disabled =
+      true;
+  }
 
-  /* BUTTON TEXT */
-  submitButton.innerHTML = `
-    <div class="
-      smartoffice-cuti-form-button-loading
-    ">
-      <div class="
-        smartoffice-cuti-form-button-spinner
-      "></div>
-
-      <span>
-        ${
-          action === "REJECT"
-            ? "Menolak..."
-            : "Menyetujui..."
-        }
-      </span>
-    </div>
-  `;
-
+  /* =========================
+     GLOBAL LOADING
+  ========================= */
+  smartofficeShowGlobalLoading(
+    action === "REJECT"
+      ? "Memproses penolakan..."
+      : "Memproses persetujuan..."
+  );
+  
   try{
 
     /* =========================
@@ -1562,19 +1560,25 @@ async function smartofficeSubmitApprovalAction(){
   }finally{
 
     /* =========================
-       RESET BUTTON
+       HIDE GLOBAL LOADING
+    ========================= */
+    smartofficeHideGlobalLoading();
+
+    /* =========================
+       RESET STATE
     ========================= */
     smartofficeSubmittingApproval =
       false;
-
+    
+    /* =========================
+       ENABLE BUTTON
+    ========================= */
     if(
       submitButton
     ){
       submitButton.disabled =
         false;
 
-      submitButton.innerHTML =
-        "Submit";
     }
   }
 }

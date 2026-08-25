@@ -36,7 +36,9 @@ import {
 } from "../../components/preview/preview.js";
 
 import {
-    smartofficeShowLoading
+    smartofficeShowLoading,
+    smartofficeShowGlobalLoading,
+    smartofficeHideGlobalLoading
 } from "../../components/loading/loading.js";
 
 /* ======================================================
@@ -2439,82 +2441,57 @@ export async function smartofficeSubmitCutiForm(){
   smartofficeSubmitting =
     true;
 
-  /* BUTTON LOADING */
+  /* DISABLE BUTTON */
   submitButton.disabled =
-    true;
+      true;
 
-  submitButton.innerHTML = `
-    <div class="
-      smartoffice-cuti-form-button-loading
-    ">
-      <div class="
-        smartoffice-cuti-form-button-spinner
-      "></div>
-
-      <span>
-        Mengajukan...
-      </span>
-    </div>
-  `;
+  /* =========================
+    SHOW GLOBAL LOADING
+  ========================= */
+  smartofficeShowGlobalLoading(
+      "Sedang mengajukan cuti..."
+  );
 
   /* KIRIM KE SHEET */
   try{
 
-      /* KIRIM KE SHEET */
       const response =
           await smartofficeSubmitCuti(
               formData
           );
 
-
-      /* RESET LOCK */
-      smartofficeSubmitting =
-          false;
-
-      /* RESET BUTTON */
-      submitButton.disabled =
-          false;
-
-      submitButton.innerHTML =
-          "Ajukan Cuti";
-
-
       /* =========================
         SUCCESS
       ========================= */
-
       if(
           response.success
       ){
 
-          /* =========================
-            RESET FORM
-          ========================= */
+          /* RESET FORM */
           smartofficeResetCutiForm();
 
-          /* =========================
-            TOAST SEGERA
-          ========================= */
+          /* TOAST */
           smartofficeShowToast(
               "Pengajuan berhasil: " +
               (response.data.idCuti || ""),
               "success"
           );
 
-          /* =========================
-            PINDAH TAB
-          ========================= */
-          setTimeout(function(){
-              smartofficeSwitchCutiTab(
-                  "riwayat"
-              );
-          },700);
+          /* PINDAH TAB */
+          setTimeout(
+              function(){
+                  smartofficeSwitchCutiTab(
+                      "riwayat"
+                  );
+              },
+              700
+          );
 
-          /* =========================
-            RELOAD DATA
+          /* RELOAD DATA
             BERJALAN DI BELAKANG
-          ========================= */
+          */
           Promise.allSettled([
+
               smartofficeLoadRiwayatCuti(
                   formData.nip
               ),
@@ -2522,11 +2499,9 @@ export async function smartofficeSubmitCutiForm(){
               smartofficeLoadPegawai(
                   formData.nip
               )
+
           ]).then(function(){
 
-              /* =========================
-                FILTER SETELAH DATA SELESAI
-              ========================= */
               smartofficeFilterRiwayatCuti(
                   "SEMUA"
               );
@@ -2537,37 +2512,51 @@ export async function smartofficeSubmitCutiForm(){
                   "Gagal refresh data setelah submit:",
                   error
               );
-          });
-      }
 
-      /* =========================
-        FAILED
-      ========================= */
+          });
+
+      }
       else{
+
           smartofficeShowToast(
               response.message,
               "error"
           );
+
       }
+
   }
   catch(error){
 
-      /* RESET LOCK */
+      smartofficeShowToast(
+          error.message ||
+          "Terjadi kesalahan saat mengajukan cuti.",
+          "error"
+      );
+
+  }
+  finally{
+
+      /* =========================
+        HIDE GLOBAL LOADING
+      ========================= */
+      smartofficeHideGlobalLoading();
+
+      /* =========================
+        RESET LOCK
+      ========================= */
       smartofficeSubmitting =
           false;
 
-      /* RESET BUTTON */
-      submitButton.disabled =
-          false;
-
-      submitButton.innerHTML =
-          "Ajukan Cuti";
-
-      /* TOAST */
-      smartofficeShowToast(
-          error.message,
-          "error"
-      );
+      /* =========================
+        ENABLE BUTTON
+      ========================= */
+      if(
+          submitButton
+      ){
+          submitButton.disabled =
+              false;
+      }
 
   }
 }
