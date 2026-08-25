@@ -557,31 +557,18 @@
 ====================================================== */
 @media (max-width:768px){
 
-    html:has(
-        body.smartoffice-login-active
-    ),
-    body.smartoffice-login-active{
-
-        height:100%;
-        overflow:hidden;
-        overscroll-behavior:none;
-
-    }
-
-    body.smartoffice-login-active
-    .smartoffice-login-page{
-
-        height:100dvh;
-        min-height:100dvh;
-        overflow:hidden;
-
-    }
-    
     /* ======================================================
        BACKGROUND
     ====================================================== */
     .smartoffice-login-background{
         display:none;
+    }
+
+    .smartoffice-login-page{
+        height:100dvh;
+        min-height:100dvh;
+        overflow:hidden;
+        overscroll-behavior:none;
     }
 
     .smartoffice-login-wrapper{

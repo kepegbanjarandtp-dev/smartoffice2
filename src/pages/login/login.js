@@ -64,10 +64,6 @@ const smartofficeLoginElement = {
 ========================================================== */
 export async function smartofficeLoadPage(){
 
-    document.body.classList.add(
-        "smartoffice-login-active"
-    );
-
     /* =========================
        HIDE MOBILE NAVBAR
     ========================= */
@@ -632,10 +628,6 @@ function smartofficeSaveRememberMe(
    DESTROY LOGIN PAGE
 ========================================================== */
 export async function smartofficeDestroyPage(){
-
-    document.body.classList.add(
-        "smartoffice-login-active"
-    );
     
     smartofficeLoginElement
         .form
