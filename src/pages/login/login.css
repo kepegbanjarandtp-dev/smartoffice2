@@ -577,13 +577,13 @@
     }
 
     .smartoffice-login-wrapper{
-        min-height:100dvh;
+        height:100dvh;
         box-sizing:border-box;
     }
 
     .smartoffice-login-form-side{
         box-sizing:border-box;
-        padding:16px
+
     }
 
     .smartoffice-login-card{
