@@ -119,30 +119,56 @@
 /* =========================
    CONTENT
 ========================= */
+
 .smartoffice-preview-content{
+
   flex:1;
+
+  min-height:0;
+
   display:flex;
+
   align-items:center;
+
   justify-content:center;
+
   overflow:auto;
+
   padding:20px;
+
+  box-sizing:border-box;
+
   background:#f8fafc;
+
 }
 
 
 /* =========================
    IMAGE
 ========================= */
+
 .smartoffice-preview-image{
-  width:100%;
+
+  display:block;
+
+  width:auto;
+
   height:auto;
-  max-width:none;
+
+  max-width:100%;
+
+  max-height:100%;
+
+  object-fit:contain;
+
+  margin:auto;
+
   border-radius:12px;
+
   box-shadow:
     0 4px 20px
     rgba(0,0,0,.08);
-  transition:
-    width .2s ease;
+
 }
 
 
@@ -288,7 +314,19 @@
 
   /* IMAGE */
   .smartoffice-preview-image{
+
+    max-width:100%;
+
+    max-height:100%;
+
+    width:auto;
+
+    height:auto;
+
+    margin:auto;
+
     border-radius:14px;
+
   }
 
   /* DOWNLOAD */
