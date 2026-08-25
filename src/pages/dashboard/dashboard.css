@@ -593,6 +593,20 @@ smartofficeDashboardHeaderFade{
     height:44px;
 }
 
+/* JURNAL APEL */
+#smartofficeJurnalApelMenuCard
+.smartoffice-dashboard-menu-icon{
+    background:#FFF4E5;
+    color:#F97316;
+}
+
+/* DATA PAJAK */
+#smartofficeDataPajakMenuCard
+.smartoffice-dashboard-menu-icon{
+    background:#EAFBF1;
+    color:#16A34A;
+}
+
 
 /* ======================================================
    DASHBOARD MENU TEXT

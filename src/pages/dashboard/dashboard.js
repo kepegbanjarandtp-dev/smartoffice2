@@ -807,6 +807,20 @@ function smartofficeInitDashboardMenu(){
                 "smartofficeMasterDataMenuCard",
             message:
                 "Fitur Master Data sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeJurnalApelMenuCard",
+            message:
+                "Fitur Jurnal Apel sedang dalam pengembangan."
+        },
+
+        {
+            id:
+                "smartofficeDataPajakMenuCard",
+            message:
+                "Fitur Data Pajak sedang dalam pengembangan."
         }
 
     ];
