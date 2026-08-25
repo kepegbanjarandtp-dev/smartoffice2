@@ -565,10 +565,15 @@
     }
 
     .smartoffice-login-page{
+
         height:100dvh;
         min-height:100dvh;
+
+        display:flex;
+        align-items:center;
+        justify-content:center;
+
         overflow:hidden;
-        overscroll-behavior:none;
     }
 
     .smartoffice-login-wrapper{
