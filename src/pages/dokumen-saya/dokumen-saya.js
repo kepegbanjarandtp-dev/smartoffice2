@@ -181,6 +181,11 @@ export async function smartofficeLoadPage(){
 export async function smartofficeDestroyPage(){
 
     /* =========================
+       FORCE HIDE GLOBAL LOADING
+    ========================= */
+    smartofficeForceHideGlobalLoading();
+    
+    /* =========================
        REMOVE FILE LISTENER
     ========================= */
     const fileInput =

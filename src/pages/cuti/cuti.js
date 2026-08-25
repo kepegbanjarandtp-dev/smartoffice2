@@ -163,14 +163,15 @@ export async function smartofficeLoadPage(){
 ====================================================== */
 export async function smartofficeDestroyPage(){
 
+    /* GLOBAL LOADING */
+    smartofficeForceHideGlobalLoading();
+    
     /* =========================
        REMOVE AUTO HITUNG LISTENER
     ========================= */
-
     if(
         smartofficeCutiAutoHitungHandler
     ){
-
         document.removeEventListener(
             "change",
             smartofficeCutiAutoHitungHandler
@@ -178,9 +179,8 @@ export async function smartofficeDestroyPage(){
 
         smartofficeCutiAutoHitungHandler =
             null;
-
     }
-    
+        
     /* RESET CACHE */
     smartofficePegawaiCache = [];
     smartofficeRiwayatCutiCache = null;
