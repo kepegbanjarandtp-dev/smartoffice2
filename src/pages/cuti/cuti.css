@@ -298,7 +298,7 @@
 
 /* ======================================================
    SMART OFFICE CUTI FORM BUTTON LOADING
-====================================================== */
+====================================================== 
 .smartoffice-cuti-form-button-loading{
   display:inline-flex;
   align-items:center;
@@ -322,7 +322,7 @@
   to{
     transform:rotate(360deg);
   }
-}
+}*/
 
 /* =========================
    SUBTITLE

@@ -547,7 +547,6 @@
     box-sizing:border-box;
   }
 
-
   /* =========================
     MODAL
   ========================= */
@@ -656,6 +655,10 @@
   .smartoffice-approval-file-icon{
     width:34px;
     height:34px;
+  }
+
+  .smartoffice-approval-file-name{
+    font-size:12px;
   }
  
   .smartoffice-approval-dokumen-link{

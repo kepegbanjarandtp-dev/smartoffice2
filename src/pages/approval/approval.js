@@ -1978,8 +1978,8 @@ export function smartofficeRenderApprovalDokumen(
         !data.length
     ){
         container.innerHTML = `
-            <div class="smartoffice-arsip-empty">
-                <div class="smartoffice-arsip-empty-icon">
+            <div class="smartoffice-empty-state">
+                <div class="smartoffice-empty-icon">
                     📄
                 </div>
 

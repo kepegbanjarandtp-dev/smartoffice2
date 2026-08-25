@@ -38,6 +38,12 @@ import {
     smartofficeRenderMobileNavbar
 } from "../../components/navbar/navbar.js";
 
+import {
+    smartofficeShowLoading,
+    smartofficeShowGlobalLoading,
+    smartofficeHideGlobalLoading
+} from "../../components/loading/loading.js";
+
 
 /* ======================================================
    IMPORT — SERVICE
@@ -1426,22 +1432,6 @@ async function smartofficeSubmitDokumen(){
     }
 
     /* =========================
-       SPINNER
-    ========================= */
-    submitBtn.disabled =
-        true;
-
-    submitBtn.querySelector(
-        ".smartoffice-btn-text"
-    ).textContent =
-        "Menyimpan...";
-
-    submitBtn.querySelector(
-        ".smartoffice-btn-spinner"
-    ).style.display =
-        "inline-block";
-
-    /* =========================
        SESSION
     ========================= */
     const sessionData =
@@ -1454,19 +1444,6 @@ async function smartofficeSubmitDokumen(){
         !sessionData ||
         !sessionData.nip
     ){
-        submitBtn.disabled =
-            false;
-
-        submitBtn.querySelector(
-            ".smartoffice-btn-text"
-        ).textContent =
-            "Simpan Dokumen";
-
-        submitBtn.querySelector(
-            ".smartoffice-btn-spinner"
-        ).style.display =
-            "none";
-
         smartofficeShowToast(
             "Session tidak ditemukan. Silakan login kembali.",
             "error"
@@ -1474,6 +1451,23 @@ async function smartofficeSubmitDokumen(){
 
         return;
     }
+
+    /* =========================
+       LOCK BUTTON
+    ========================= */
+    if(
+        submitBtn
+    ){
+        submitBtn.disabled =
+            true;
+    }
+
+    /* =========================
+       GLOBAL LOADING
+    ========================= */
+    smartofficeShowGlobalLoading(
+        "Mengupload dokumen..."
+    );
 
     /* =========================
        FILE READER
@@ -1485,9 +1479,9 @@ async function smartofficeSubmitDokumen(){
         async function(e){
 
             try{
+
                 /* =========================
                    UPLOAD DOKUMEN
-                   V2 → SERVICE
                 ========================= */
                 await smartofficeUploadDokumen({
 
@@ -1520,22 +1514,6 @@ async function smartofficeSubmitDokumen(){
                     false;
 
                 /* =========================
-                   RESET BUTTON
-                ========================= */
-                submitBtn.disabled =
-                    false;
-
-                submitBtn.querySelector(
-                    ".smartoffice-btn-text"
-                ).textContent =
-                    "Simpan Dokumen";
-
-                submitBtn.querySelector(
-                    ".smartoffice-btn-spinner"
-                ).style.display =
-                    "none";
-
-                /* =========================
                    SUCCESS
                 ========================= */
                 smartofficeShowToast(
@@ -1552,23 +1530,9 @@ async function smartofficeSubmitDokumen(){
                    LOAD ULANG DOKUMEN
                 ========================= */
                 await smartofficeLoadDokumenSaya();
+
             }
             catch(error){
-                /* =========================
-                   RESET BUTTON
-                ========================= */
-                submitBtn.disabled =
-                    false;
-
-                submitBtn.querySelector(
-                    ".smartoffice-btn-text"
-                ).textContent =
-                    "Simpan Dokumen";
-
-                submitBtn.querySelector(
-                    ".smartoffice-btn-spinner"
-                ).style.display =
-                    "none";
 
                 /* =========================
                    ERROR
@@ -1583,6 +1547,44 @@ async function smartofficeSubmitDokumen(){
                     error
                 );
             }
+            finally{
+
+                /* =========================
+                   HIDE GLOBAL LOADING
+                ========================= */
+                smartofficeHideGlobalLoading();
+
+                /* =========================
+                   ENABLE BUTTON
+                ========================= */
+                if(
+                    submitBtn
+                ){
+                    submitBtn.disabled =
+                        false;
+                }
+            }
+        };
+
+    /* =========================
+       ERROR FILE READER
+    ========================= */
+    reader.onerror =
+        function(){
+
+            smartofficeHideGlobalLoading();
+
+            if(
+                submitBtn
+            ){
+                submitBtn.disabled =
+                    false;
+            }
+
+            smartofficeShowToast(
+                "Gagal membaca file",
+                "error"
+            );
         };
 
     /* =========================
@@ -1615,10 +1617,17 @@ function smartofficeResetDokumenForm(){
         "smartofficeDokumenFile"
     ).value = "";
 
-    document.getElementById(
-        "smartofficeDokumenFileName"
-    ).innerText =
-        "Belum ada file dipilih";
+    const fileName =
+        document.getElementById(
+            "smartofficeDokumenSayaFileName"
+        );
+
+    if(
+        fileName
+    ){
+        fileName.innerText =
+            "Belum ada file dipilih";
+    }
 }
 
 
