@@ -1,24 +1,36 @@
 /* =========================
    PREVIEW OVERLAY
 ========================= */
-.smartoffice-preview-overlay{
-  position:fixed;
-  inset:0;
-  z-index:99999;
-  background:
-    rgba(15,23,42,.55);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  opacity:0;
-  visibility:hidden;
-  transition:
-    opacity .28s ease,
-    visibility .28s ease;
-} 
 
-/* OPEN */
+.smartoffice-preview-overlay{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+
+    background:
+        rgba(15,23,42,.58);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:12px;
+
+    box-sizing:border-box;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:
+        opacity .28s ease,
+        visibility .28s ease;
+}
+
+
+/* =========================
+   OPEN
+========================= */
+
 .smartoffice-preview-overlay.show{
     opacity:1;
     visibility:visible;
@@ -27,6 +39,7 @@
 .smartoffice-preview-overlay.show
 .smartoffice-preview-card{
     opacity:1;
+
     transform:
         translateY(0)
         scale(1);
@@ -36,83 +49,130 @@
 /* =========================
    PREVIEW MODAL
 ========================= */
+
 .smartoffice-preview-card{
-  width:min(
-    95vw,
-    1100px
-  );
-  height:min(
-    92vh,
-    900px
-  );
-  background:#fff;
-  border-radius:20px;
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  box-shadow:
-    0 20px 50px
-    rgba(0,0,0,.18);
-  opacity:0;
-  transform:
-    translateY(24px)
-    scale(.96);
-  transition:
-    transform .30s cubic-bezier(.22,.61,.36,1),
-    opacity .30s ease  
+    width:min(
+        96vw,
+        1100px
+    );
+
+    height:min(
+        94vh,
+        900px
+    );
+
+    background:#ffffff;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    display:flex;
+    flex-direction:column;
+
+    box-shadow:
+        0 24px 70px
+        rgba(0,0,0,.28);
+
+    opacity:0;
+
+    transform:
+        translateY(24px)
+        scale(.97);
+
+    transition:
+        transform .30s cubic-bezier(.22,.61,.36,1),
+        opacity .30s ease;
 }
 
 
 /* =========================
    HEADER
 ========================= */
+
 .smartoffice-preview-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:16px 20px;
-  border-bottom:
-    1px solid #e2e8f0;
-  background:#f8fafc;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:16px 20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color:#ffffff;
 }
 
 .smartoffice-preview-header h3{
-  margin:0;
-  font-size:18px;
-  font-weight:700;
-  color:#1e293b;
-}
+    margin:0;
 
-.smartoffice-preview-header button{
-  width:36px;
-  height:36px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:#f1f5f9;
-  font-size:18px;
-}
+    font-size:16px;
+    font-weight:700;
 
-.smartoffice-preview-header button:hover{
-  background:#e2e8f0;
+    color:#ffffff;
 }
 
 
 /* =========================
-   FILE NAME
+   CLOSE BUTTON
 ========================= */
+
+.smartoffice-preview-header button{
+    width:38px;
+    height:38px;
+
+    border:none;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    background:
+        rgba(255,255,255,.16);
+
+    color:#ffffff;
+
+    font-size:20px;
+
+    transition:
+        .2s ease;
+}
+
+.smartoffice-preview-header button:hover{
+    background:
+        rgba(255,255,255,.26);
+}
+
+
+/* =========================
+   FILE NAME BAR
+========================= */
+
 .smartoffice-preview-file-name{
-  padding:
-    12px
-    20px;
-  border-bottom:
-    1px solid #e2e8f0;
-  background:#fff;
-  font-size:13px;
-  color:#64748b;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+    padding:
+        12px
+        20px;
+
+    background:#f8fafc;
+
+    border-bottom:
+        1px solid #e2e8f0;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    color:#64748b;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 }
 
 
@@ -121,230 +181,176 @@
 ========================= */
 
 .smartoffice-preview-content{
+    flex:1;
+    min-height:0;
 
-  flex:1;
+    display:flex;
 
-  min-height:0;
+    align-items:center;
+    justify-content:center;
 
-  display:flex;
+    overflow:hidden;
 
-  align-items:center;
+    padding:8px;
 
-  justify-content:center;
-
-  overflow:auto;
-
-  padding:20px;
-
-  box-sizing:border-box;
-
-  background:#f8fafc;
-
-}
-
-
-/* =========================
-   IMAGE
-========================= */
-
-.smartoffice-preview-image{
-
-  display:block;
-
-  width:auto;
-
-  height:auto;
-
-  max-width:100%;
-
-  max-height:100%;
-
-  object-fit:contain;
-
-  margin:auto;
-
-  border-radius:12px;
-
-  box-shadow:
-    0 4px 20px
-    rgba(0,0,0,.08);
-
+    background:#1e293b;
 }
 
 
 /* =========================
    PDF
 ========================= */
+
 .smartoffice-preview-pdf{
-  width:100%;
-  height:100%;
-  border:none;
-  border-radius:12px;
+    width:100%;
+    height:100%;
+
+    display:block;
+
+    border:none;
+
+    border-radius:10px;
+
+    background:#ffffff;
 }
 
 
 /* =========================
-   DOWNLOAD
+   PREVIEW ACTIONS
 ========================= */
+
 .smartoffice-preview-actions{
-  display:flex;
-  align-items:center;
-  gap:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
+
+/* =========================
+   DOWNLOAD BUTTON
+========================= */
+
 .smartoffice-preview-download-btn{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  padding:
-    8px
-    12px;
-  border-radius:10px;
-  background:#2563eb;
-  color:#fff;
-  font-size:12px;
-  font-weight:600;
-  text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+
+    padding:8px 12px;
+
+    border-radius:10px;
+
+    background:#ffffff;
+    color:#2563eb;
+
+    font-size:12px;
+    font-weight:700;
+
+    text-decoration:none;
+
+    transition:.2s ease;
 }
 
 .smartoffice-preview-download-btn:hover{
-  opacity:.9;
+    background:#eff6ff;
 }
 
 
 /* =========================
-   ZOOM
-========================= */
-.smartoffice-preview-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:12px;
-  padding:
-    10px
-    0;
-}
-
-.smartoffice-preview-toolbar button{
-  width:36px;
-  height:36px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:#eff6ff;
-  color:#2563eb;
-  font-size:16px;
-  font-weight:700;
-}
-
-.smartoffice-preview-toolbar span{
-  min-width:60px;
-  text-align:center;
-  font-size:13px;
-  font-weight:600;
-}
-
-
-/* =========================
-   PREVIEW MANAGEMENT CUTI
-========================= */
-.smartoffice-approval-file-link{
-  border:none;
-  outline:none;
-  background:none;
-  cursor:pointer;
-}
-
-
-/* ======================================================
    MOBILE
-====================================================== */
+========================= */
+
 @media (max-width:768px){
 
-  /* OVERLAY */
-  .smartoffice-preview-overlay{
-        position:fixed;
-        inset:0;
+    .smartoffice-preview-overlay{
+        padding:8px;
+    }
+
+    .smartoffice-preview-card{
+        width:100%;
+        height:100%;
+
+        border-radius:22px;
+    }
+
+    .smartoffice-preview-header{
+        padding:10px 12px;
+
+        gap:8px;
+    }
+
+    .smartoffice-preview-header h3{
+        font-size:12px;
+
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+
+        min-width:0;
+    }
+
+    .smartoffice-preview-file-name{
+        padding:
+            12px
+            16px;
+
+        font-size:10px;
+    }
+
+    .smartoffice-preview-content{
+        padding:8px;
+    }
+
+    /* =========================
+      ACTIONS MOBILE
+    ========================= */
+
+    .smartoffice-preview-actions{
+        display:flex;
+        align-items:center;
+        gap:6px;
+
+        flex-shrink:0;
+    }
+
+
+    /* =========================
+      DOWNLOAD MOBILE
+    ========================= */
+
+    .smartoffice-preview-download-btn{
         display:flex;
         align-items:center;
         justify-content:center;
-        padding:12px;
-        box-sizing:border-box;
-  }
+        gap:5px;
 
-  /* MODAL */
-  .smartoffice-preview-card{
-      width:100%;
-      height:100%;
-      border-radius:10px;
-  }
+        padding:7px 10px;
 
-  /* HEADER */
-  .smartoffice-preview-header{
-    padding:12px 16px;
-  }
+        border-radius:10px;
 
-  .smartoffice-preview-header h3{
-    font-size:12px;
-    font-weight:700;
-  }
+        font-size:10px;
+        font-weight:700;
 
-  .smartoffice-preview-header button{
-    width:24px;
-    height:24px;
-    border-radius:14px;
-    font-size:14px;
-  }
+        white-space:nowrap;
 
-  /* FILE NAME */
-  .smartoffice-preview-file-name{
-    padding:10px 16px;
-    font-size:10px;
-  }
+        min-height:25px;
+    }
 
-  /* CONTENT */
-  .smartoffice-preview-content{
-    padding:12px;
-  }
 
-  /* PDF */
-  .smartoffice-preview-pdf{
-    border-radius:1px;
-  }
+    /* =========================
+      CLOSE BUTTON MOBILE
+    ========================= */
 
-  /* IMAGE */
-  .smartoffice-preview-image{
+    .smartoffice-preview-header button{
+        width:25px;
+        height:25px;
 
-    max-width:100%;
+        min-width:25px;
 
-    max-height:100%;
+        border-radius:10px;
 
-    width:auto;
+        font-size:13px;
 
-    height:auto;
+        flex-shrink:0;
+    }
 
-    margin:auto;
-
-    border-radius:14px;
-
-  }
-
-  /* DOWNLOAD */
-  .smartoffice-preview-download-btn{
-    padding:6px 10px;
-    border-radius:12px;
-    font-size:10px;
-  }
-
-  /* TOOLBAR */
-  .smartoffice-preview-toolbar{
-    padding:12px 0;
-    gap:10px;
-  }
-
-  .smartoffice-preview-toolbar button{
-    width:34px;
-    height:34px;
-    border-radius:12px;
-  }
 }
