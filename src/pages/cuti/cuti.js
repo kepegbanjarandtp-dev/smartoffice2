@@ -1883,7 +1883,6 @@ export async function smartofficeSwitchCutiTab(
 
     /* RIWAYAT */
     else{
-
         riwayatContent.style.display =
             "block";
 
@@ -1898,27 +1897,20 @@ export async function smartofficeSwitchCutiTab(
         if(
             smartofficeRiwayatCutiCache === null
         ){
-
             const session =
                 smartofficeGetSession();
 
             if(session){
-
                 await smartofficeLoadRiwayatCuti(
                     session.nip
                 );
-
             }
-
         }
 
         /* SUDAH ADA CACHE */
         else{
-
             smartofficeRenderRiwayatCuti();
-
         }
-
     }
 }
 
@@ -2006,9 +1998,7 @@ export function smartofficeInitSubmitButton(){
     /* CLICK EVENT */
     submitButton.onclick =
         function(){
-
             smartofficeSubmitCutiForm();
-
         };
 }
 
@@ -2449,12 +2439,11 @@ export async function smartofficeSubmitCutiForm(){
     SHOW GLOBAL LOADING
   ========================= */
   smartofficeShowGlobalLoading(
-      "Sedang mengajukan cuti..."
+      "Proses Pengajuan cuti..."
   );
 
   /* KIRIM KE SHEET */
   try{
-
       const response =
           await smartofficeSubmitCuti(
               formData
@@ -2466,7 +2455,6 @@ export async function smartofficeSubmitCutiForm(){
       if(
           response.success
       ){
-
           /* RESET FORM */
           smartofficeResetCutiForm();
 
@@ -2487,11 +2475,8 @@ export async function smartofficeSubmitCutiForm(){
               700
           );
 
-          /* RELOAD DATA
-            BERJALAN DI BELAKANG
-          */
+          /* RELOAD DATA BERJALAN DI BELAKANG */
           Promise.allSettled([
-
               smartofficeLoadRiwayatCuti(
                   formData.nip
               ),
@@ -2501,39 +2486,30 @@ export async function smartofficeSubmitCutiForm(){
               )
 
           ]).then(function(){
-
               smartofficeFilterRiwayatCuti(
                   "SEMUA"
               );
 
           }).catch(function(error){
-
               console.error(
                   "Gagal refresh data setelah submit:",
                   error
               );
-
           });
-
       }
       else{
-
           smartofficeShowToast(
               response.message,
               "error"
           );
-
       }
-
   }
   catch(error){
-
       smartofficeShowToast(
           error.message ||
           "Terjadi kesalahan saat mengajukan cuti.",
           "error"
       );
-
   }
   finally{
 
@@ -2557,7 +2533,6 @@ export async function smartofficeSubmitCutiForm(){
           submitButton.disabled =
               false;
       }
-
   }
 }
 
