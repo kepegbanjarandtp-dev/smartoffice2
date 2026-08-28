@@ -162,9 +162,6 @@ export async function smartofficeLoadPage(){
    DESTROY PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
-
-    /* GLOBAL LOADING */
-    smartofficeForceHideGlobalLoading();
     
     /* =========================
        REMOVE AUTO HITUNG LISTENER

@@ -1315,11 +1315,6 @@ export function smartofficeCloseApprovalDetail(){
 export async function smartofficeDestroyPage(){
 
     /* =========================
-       FORCE HIDE GLOBAL LOADING
-    ========================= */
-    smartofficeForceHideGlobalLoading();
-    
-    /* =========================
        MARK DESTROYED
     ========================= */
     smartofficeApprovalDestroyed =
