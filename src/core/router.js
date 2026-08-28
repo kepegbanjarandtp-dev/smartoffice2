@@ -49,10 +49,8 @@ const smartofficeModules = {
     "management-cuti": () =>
         import("../pages/management-cuti/management-cuti.js"),
 
-    /*
     "verify-cuti": () =>
         import("../pages/verify-cuti/verify-cuti.js"),
-    */
 
     "buku-tamu": () =>
         import("../pages/buku-tamu/buku-tamu.js"),
@@ -77,11 +75,7 @@ export async function smartofficeInitializeRouter(){
 
     /* ==================================================
        VERIFY CUTI
-       SEMENTARA DINONAKTIFKAN
-       TETAP DISIMPAN
     ================================================== */
-
-    /*
     const hash =
         window.location.hash;
 
@@ -118,10 +112,7 @@ export async function smartofficeInitializeRouter(){
         );
 
         return;
-
     }
-    */
-
 
     /* ==================================================
        RESET SESSION SETIAP REFRESH
