@@ -50,6 +50,9 @@ let suratMasukAllData = [];
 let suratMasukViewData = [];
 let suratMasukLoaded = false;
 
+let smartofficeBukuSuratTabMasukHandler = null;
+let smartofficeBukuSuratTabKeluarHandler = null;
+
 
 /* ======================================================
    LIFECYCLE
@@ -85,7 +88,7 @@ export async function smartofficeLoadPage(){
         "buku-surat"
     );
 
-    /* LOAD DATA SURAT MASUK */
+    /* LOAD DATA */
     await smartofficeLoadDataSuratMasuk();
 
     /* INIT TAB */
@@ -94,8 +97,9 @@ export async function smartofficeLoadPage(){
     /* INIT REFRESH */
     smartofficeInitBukuSuratRefreshButton();
 
-    /* INIT AKSES TOMBOL TAMBAH SURAT */
+    /* INIT AKSES */
     smartofficeInitAksesSuratMasuk();
+
 }
 
 
@@ -103,9 +107,60 @@ export async function smartofficeLoadPage(){
    DESTROY PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
+
+    const tabSuratMasuk =
+        document.getElementById(
+            "smartofficeTabSuratMasuk"
+        );
+
+    const tabSuratKeluar =
+        document.getElementById(
+            "smartofficeTabSuratKeluar"
+        );
+
+
+    /* REMOVE TAB SURAT MASUK */
+
+    if(
+        tabSuratMasuk &&
+        smartofficeBukuSuratTabMasukHandler
+    ){
+
+        tabSuratMasuk.removeEventListener(
+            "click",
+            smartofficeBukuSuratTabMasukHandler
+        );
+
+        smartofficeBukuSuratTabMasukHandler =
+            null;
+    }
+
+
+    /* REMOVE TAB SURAT KELUAR */
+
+    if(
+        tabSuratKeluar &&
+        smartofficeBukuSuratTabKeluarHandler
+    ){
+
+        tabSuratKeluar.removeEventListener(
+            "click",
+            smartofficeBukuSuratTabKeluarHandler
+        );
+
+        smartofficeBukuSuratTabKeluarHandler =
+            null;
+    }
+
+
+    /* RESET DATA */
+
     suratMasukAllData = [];
+
     suratMasukViewData = [];
+
     suratMasukLoaded = false;
+
 }
 
 
@@ -172,7 +227,6 @@ async function smartofficeLoadDataSuratMasuk(){
 /* ======================================================
    INIT TAB BUKU SURAT
 ====================================================== */
-
 function smartofficeInitBukuSuratTab(){
 
     const tabSuratMasuk =
@@ -200,43 +254,43 @@ function smartofficeInitBukuSuratTab(){
        SURAT MASUK
     ================================================== */
 
-    if(
-        tabSuratMasuk
-    ){
+    if(tabSuratMasuk){
 
-        tabSuratMasuk.addEventListener(
-            "click",
+        smartofficeBukuSuratTabMasukHandler =
             function(){
 
                 tabSuratMasuk.classList.add(
                     "active"
                 );
 
-                if(
-                    tabSuratKeluar
-                ){
+                if(tabSuratKeluar){
+
                     tabSuratKeluar.classList.remove(
                         "active"
                     );
+
                 }
 
+                if(suratMasukContent){
 
-                if(
-                    suratMasukContent
-                ){
                     suratMasukContent.style.display =
                         "";
+
                 }
 
+                if(suratKeluarContent){
 
-                if(
-                    suratKeluarContent
-                ){
                     suratKeluarContent.style.display =
                         "none";
+
                 }
 
-            }
+            };
+
+
+        tabSuratMasuk.addEventListener(
+            "click",
+            smartofficeBukuSuratTabMasukHandler
         );
 
     }
@@ -246,43 +300,43 @@ function smartofficeInitBukuSuratTab(){
        SURAT KELUAR
     ================================================== */
 
-    if(
-        tabSuratKeluar
-    ){
+    if(tabSuratKeluar){
 
-        tabSuratKeluar.addEventListener(
-            "click",
+        smartofficeBukuSuratTabKeluarHandler =
             function(){
 
                 tabSuratKeluar.classList.add(
                     "active"
                 );
 
-                if(
-                    tabSuratMasuk
-                ){
+                if(tabSuratMasuk){
+
                     tabSuratMasuk.classList.remove(
                         "active"
                     );
+
                 }
 
+                if(suratKeluarContent){
 
-                if(
-                    suratKeluarContent
-                ){
                     suratKeluarContent.style.display =
                         "";
+
                 }
 
+                if(suratMasukContent){
 
-                if(
-                    suratMasukContent
-                ){
                     suratMasukContent.style.display =
                         "none";
+
                 }
 
-            }
+            };
+
+
+        tabSuratKeluar.addEventListener(
+            "click",
+            smartofficeBukuSuratTabKeluarHandler
         );
 
     }
@@ -1673,9 +1727,31 @@ async function smartofficeBukaLockSuratMasukUI(
         return;
     }
 
+
+    /* ==================================================
+       SIMPAN FILTER AKTIF
+    ================================================== */
+
+    const filterTanggal =
+        document.getElementById(
+            "filterTanggalMasuk"
+        )?.value || "";
+
+    const filterSearch =
+        document.getElementById(
+            "filterSearchMasuk"
+        )?.value || "";
+
+    const filterBulan =
+        document.getElementById(
+            "filterBulanAgendaMasuk"
+        )?.value || "";
+
+
     smartofficeShowGlobalLoading(
         "Membuka lock Surat Masuk..."
     );
+
 
     try{
 
@@ -1685,12 +1761,69 @@ async function smartofficeBukaLockSuratMasukUI(
             sessionData.role
         );
 
+
         smartofficeShowToast(
             "Surat Masuk berhasil dibuka menjadi DRAFT.",
             "success"
         );
 
+
+        /* ==================================================
+           RELOAD DATA
+        ================================================== */
+
         await smartofficeLoadDataSuratMasuk();
+
+
+        /* ==================================================
+           KEMBALIKAN FILTER AKTIF
+        ================================================== */
+
+        const tanggal =
+            document.getElementById(
+                "filterTanggalMasuk"
+            );
+
+        const search =
+            document.getElementById(
+                "filterSearchMasuk"
+            );
+
+        const bulan =
+            document.getElementById(
+                "filterBulanAgendaMasuk"
+            );
+
+
+        if(tanggal){
+
+            tanggal.value =
+                filterTanggal;
+
+        }
+
+
+        if(search){
+
+            search.value =
+                filterSearch;
+
+        }
+
+
+        if(bulan){
+
+            bulan.value =
+                filterBulan;
+
+        }
+
+
+        /* ==================================================
+           TERAPKAN FILTER KEMBALI
+        ================================================== */
+
+        applyFilterMasuk();
 
     }
     catch(error){
