@@ -52,6 +52,11 @@ let suratMasukLoaded = false;
 
 let smartofficeBukuSuratTabMasukHandler = null;
 let smartofficeBukuSuratTabKeluarHandler = null;
+let smartofficeBukuSuratRefreshHandler = null;
+
+let smartofficeBukuSuratTanggalHandler = null;
+let smartofficeBukuSuratBulanHandler = null;
+let smartofficeBukuSuratSearchHandler = null;
 
 
 /* ======================================================
@@ -106,6 +111,7 @@ export async function smartofficeLoadPage(){
 /* ======================================================
    DESTROY PAGE
 ====================================================== */
+
 export async function smartofficeDestroyPage(){
 
     const tabSuratMasuk =
@@ -118,8 +124,30 @@ export async function smartofficeDestroyPage(){
             "smartofficeTabSuratKeluar"
         );
 
+    const refreshButton =
+        document.getElementById(
+            "smartofficeBukuSuratRefreshButton"
+        );
 
-    /* REMOVE TAB SURAT MASUK */
+    const tanggal =
+        document.getElementById(
+            "smartofficeSuratMasukFilterTanggal"
+        );
+
+    const bulan =
+        document.getElementById(
+            "smartofficeSuratMasukFilterBulan"
+        );
+
+    const search =
+        document.getElementById(
+            "smartofficeSuratMasukFilterSearch"
+        );
+
+
+    /* ==================================================
+       REMOVE TAB
+    ================================================== */
 
     if(
         tabSuratMasuk &&
@@ -131,12 +159,8 @@ export async function smartofficeDestroyPage(){
             smartofficeBukuSuratTabMasukHandler
         );
 
-        smartofficeBukuSuratTabMasukHandler =
-            null;
     }
 
-
-    /* REMOVE TAB SURAT KELUAR */
 
     if(
         tabSuratKeluar &&
@@ -148,12 +172,84 @@ export async function smartofficeDestroyPage(){
             smartofficeBukuSuratTabKeluarHandler
         );
 
-        smartofficeBukuSuratTabKeluarHandler =
-            null;
     }
 
 
-    /* RESET DATA */
+    /* ==================================================
+       REMOVE REFRESH
+    ================================================== */
+
+    if(
+        refreshButton &&
+        smartofficeBukuSuratRefreshHandler
+    ){
+
+        refreshButton.removeEventListener(
+            "click",
+            smartofficeBukuSuratRefreshHandler
+        );
+
+    }
+
+
+    /* ==================================================
+       REMOVE FILTER
+    ================================================== */
+
+    if(
+        tanggal &&
+        smartofficeBukuSuratTanggalHandler
+    ){
+
+        tanggal.removeEventListener(
+            "change",
+            smartofficeBukuSuratTanggalHandler
+        );
+
+    }
+
+
+    if(
+        bulan &&
+        smartofficeBukuSuratBulanHandler
+    ){
+
+        bulan.removeEventListener(
+            "change",
+            smartofficeBukuSuratBulanHandler
+        );
+
+    }
+
+
+    if(
+        search &&
+        smartofficeBukuSuratSearchHandler
+    ){
+
+        search.removeEventListener(
+            "input",
+            smartofficeBukuSuratSearchHandler
+        );
+
+    }
+
+
+    /* ==================================================
+       RESET HANDLER
+    ================================================== */
+
+    smartofficeBukuSuratTabMasukHandler = null;
+    smartofficeBukuSuratTabKeluarHandler = null;
+    smartofficeBukuSuratRefreshHandler = null;
+    smartofficeBukuSuratTanggalHandler = null;
+    smartofficeBukuSuratBulanHandler = null;
+    smartofficeBukuSuratSearchHandler = null;
+
+
+    /* ==================================================
+       RESET DATA
+    ================================================== */
 
     suratMasukAllData = [];
 
@@ -447,14 +543,13 @@ function smartofficeInitBukuSuratRefreshButton(){
 
     if(
         !button ||
-        button.dataset.ready
+        smartofficeBukuSuratRefreshHandler
     ){
         return;
     }
 
 
-    button.addEventListener(
-        "click",
+    smartofficeBukuSuratRefreshHandler =
         async function(){
 
             if(
@@ -486,12 +581,13 @@ function smartofficeInitBukuSuratRefreshButton(){
             button.disabled =
                 false;
 
-        }
+        };
+
+
+    button.addEventListener(
+        "click",
+        smartofficeBukuSuratRefreshHandler
     );
-
-
-    button.dataset.ready =
-        "1";
 
 }
 
@@ -677,63 +773,61 @@ function initFilterSuratMasuk(){
 
     /* ==================================================
        EVENT TANGGAL
-       PILIH TANGGAL → BULAN DIKOSONGKAN
     ================================================== */
 
-    if(
-        tanggal &&
-        !tanggal.dataset.ready
-    ){
+    if(tanggal){
 
-        tanggal.addEventListener(
-            "change",
+        smartofficeBukuSuratTanggalHandler =
             function(){
 
-                if(
-                    bulan
-                ){
-                    bulan.value = "";
+                if(bulan){
+
+                    bulan.value =
+                        "";
+
                 }
 
                 applyFilterMasuk();
 
-            }
-        );
+            };
 
-        tanggal.dataset.ready =
-            "1";
+
+        tanggal.addEventListener(
+            "change",
+            smartofficeBukuSuratTanggalHandler
+        );
 
     }
 
 
     /* ==================================================
        EVENT BULAN
-       PILIH BULAN → TANGGAL DIKOSONGKAN
     ================================================== */
 
-    if(
-        bulan &&
-        !bulan.dataset.ready
-    ){
+    if(bulan){
 
-        bulan.addEventListener(
-            "change",
+        smartofficeBukuSuratBulanHandler =
             function(){
 
                 if(
                     bulan.value &&
                     tanggal
                 ){
-                    tanggal.value = "";
+
+                    tanggal.value =
+                        "";
+
                 }
 
                 applyFilterMasuk();
 
-            }
-        );
+            };
 
-        bulan.dataset.ready =
-            "1";
+
+        bulan.addEventListener(
+            "change",
+            smartofficeBukuSuratBulanHandler
+        );
 
     }
 
@@ -742,18 +836,20 @@ function initFilterSuratMasuk(){
        EVENT SEARCH
     ================================================== */
 
-    if(
-        search &&
-        !search.dataset.ready
-    ){
+    if(search){
+
+        smartofficeBukuSuratSearchHandler =
+            function(){
+
+                applyFilterMasuk();
+
+            };
+
 
         search.addEventListener(
             "input",
-            applyFilterMasuk
+            smartofficeBukuSuratSearchHandler
         );
-
-        search.dataset.ready =
-            "1";
 
     }
 
@@ -1734,17 +1830,17 @@ async function smartofficeBukaLockSuratMasukUI(
 
     const filterTanggal =
         document.getElementById(
-            "filterTanggalMasuk"
+            "smartofficeSuratMasukFilterTanggal"
         )?.value || "";
 
     const filterSearch =
         document.getElementById(
-            "filterSearchMasuk"
+            "smartofficeSuratMasukFilterSearch"
         )?.value || "";
 
     const filterBulan =
         document.getElementById(
-            "filterBulanAgendaMasuk"
+            "smartofficeSuratMasukFilterBulan"
         )?.value || "";
 
 
@@ -1781,41 +1877,29 @@ async function smartofficeBukaLockSuratMasukUI(
 
         const tanggal =
             document.getElementById(
-                "filterTanggalMasuk"
+                "smartofficeSuratMasukFilterTanggal"
             );
 
         const search =
             document.getElementById(
-                "filterSearchMasuk"
+                "smartofficeSuratMasukFilterSearch"
             );
 
         const bulan =
             document.getElementById(
-                "filterBulanAgendaMasuk"
+                "smartofficeSuratMasukFilterBulan"
             );
 
-
         if(tanggal){
-
-            tanggal.value =
-                filterTanggal;
-
+            tanggal.value = filterTanggal;
         }
-
 
         if(search){
-
-            search.value =
-                filterSearch;
-
+            search.value = filterSearch;
         }
 
-
         if(bulan){
-
-            bulan.value =
-                filterBulan;
-
+            bulan.value = filterBulan;
         }
 
 
