@@ -755,6 +755,42 @@ function smartofficeInitDashboardMenu(){
             handler;
     }
 
+    /* =========================
+       BUKU SURAT
+    ========================= */
+    const bukuSuratMenu =
+        document.getElementById(
+            "smartofficeESuratMenuCard"
+        );
+
+    if(
+        bukuSuratMenu
+    ){
+        const handler =
+            async function(){
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
+
+                await smartofficeNavigate(
+                    "buku-surat"
+                );
+            };
+
+        bukuSuratMenu.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeESuratMenuCard"
+        ] =
+            handler;
+    }
+
     /* ======================================================
        MENU DALAM PENGEMBANGAN
     ====================================================== */
@@ -786,13 +822,6 @@ function smartofficeInitDashboardMenu(){
                 "smartofficeAgendaMenuCard",
             message:
                 "Fitur Agenda & Kegiatan sedang dalam pengembangan."
-        },
-
-        {
-            id:
-                "smartofficeESuratMenuCard",
-            message:
-                "Fitur Buku Surat sedang dalam pengembangan."
         },
 
         {

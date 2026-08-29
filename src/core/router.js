@@ -60,6 +60,9 @@ const smartofficeModules = {
 
     "arsip-pegawai": () =>
         import("../pages/arsip-pegawai/arsip-pegawai.js"),
+    
+    "buku-surat": () => 
+        import("../pages/buku-surat/buku-surat.js"), 
 
 };
 
