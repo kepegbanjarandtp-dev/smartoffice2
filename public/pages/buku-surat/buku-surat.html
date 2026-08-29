@@ -1,0 +1,770 @@
+<div class="smartoffice-wrapper">
+
+  <!-- =========================
+      HEADER
+  ========================== -->
+  <div class="smartoffice-header">
+
+    <!-- LEFT -->
+    <div class="smartoffice-header-info">
+
+      <!-- BACK -->
+      <button
+        class="smartoffice-back-button"
+        onclick="smartofficeLoadPage('dashboard')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+
+      <!-- ICON -->
+      <div
+        class="
+          smartoffice-header-icon
+          smartoffice-bukusurat-header-icon
+        "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <rect
+            x="3"
+            y="5"
+            width="18"
+            height="14"
+            rx="2"
+          />
+
+          <polyline
+            points="3 7 12 13 21 7"
+          />
+        </svg>
+      </div>
+
+      <!-- TITLE -->
+      <div class="smartoffice-header-title">
+
+        <h2>
+          Buku Surat
+        </h2>
+
+        <p>
+          Pengelolaan surat masuk dan surat keluar
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- REFRESH -->
+    <button
+      id="smartofficeBukuSuratRefreshButton"
+      class="smartoffice-refresh-button"
+      title="Refresh Data"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.75"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M21 12a9 9 0 1 1-3-6.7"
+        />
+
+        <polyline
+          points="21 3 21 9 15 9"
+        />
+      </svg>
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+      TAB NAVIGATION
+  ========================== -->
+  <div class="smartoffice-tab-wrapper">
+
+    <!-- SURAT MASUK -->
+    <button
+      id="smartofficeTabSuratMasuk"
+      class="
+        smartoffice-tab-button
+        active
+      "
+    >
+      <svg viewBox="0 0 24 24">
+        <path
+          d="
+            M3 5
+            a2 2 0 0 1 2-2
+            h14
+            a2 2 0 0 1 2 2
+            v14
+            a2 2 0 0 1-2 2
+            H5
+            a2 2 0 0 1-2-2
+            z
+          "
+        />
+
+        <polyline
+          points="3 7 12 13 21 7"
+        />
+      </svg>
+
+      <span>
+        Surat Masuk
+      </span>
+    </button>
+
+
+    <!-- SURAT KELUAR -->
+    <button
+      id="smartofficeTabSuratKeluar"
+      class="
+        smartoffice-tab-button
+      "
+    >
+      <svg viewBox="0 0 24 24">
+
+        <path
+          d="
+            M14 2
+            H6
+            a2 2 0 0 0-2 2
+            v16
+            a2 2 0 0 0 2 2
+            h12
+            a2 2 0 0 0 2-2
+            V8
+            z
+          "
+        />
+
+        <polyline
+          points="14 2 14 8 20 8"
+        />
+
+        <line
+          x1="8"
+          y1="13"
+          x2="16"
+          y2="13"
+        />
+
+        <line
+          x1="8"
+          y1="17"
+          x2="13"
+          y2="17"
+        />
+
+      </svg>
+
+      <span>
+        Surat Keluar
+      </span>
+    </button>
+
+  </div>
+
+
+  <!-- =====================================================
+      CONTENT SURAT MASUK
+  ====================================================== -->
+  <div
+    id="smartofficeSuratMasukContent"
+    class="smartoffice-suratmasuk-content"
+  >
+
+    <!-- ======================================================
+        FILTER SURAT MASUK
+    ====================================================== -->
+    <div class="smartoffice-suratmasuk-filter-panel">
+
+
+      <!-- ======================================================
+          ROW 1
+          SEARCH
+      ====================================================== -->
+      <div
+        class="smartoffice-suratmasuk-search-group"
+      >
+
+        <label
+          class="smartoffice-suratmasuk-filter-label"
+        >
+          Cari Surat
+        </label>
+
+        <div
+          class="smartoffice-suratmasuk-search-control"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+          >
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+            />
+
+            <path
+              d="m20 20-4-4"
+            />
+          </svg>
+
+          <input
+            type="text"
+            id="smartofficeSuratMasukFilterSearch"
+            placeholder="Nomor surat, pengirim atau perihal"
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- ======================================================
+          ROW 2
+          BULAN + TANGGAL + ACTION
+      ====================================================== -->
+      <div
+        class="smartoffice-suratmasuk-filter-fields"
+      >
+
+        <!-- BULAN -->
+        <div class="smartoffice-suratmasuk-filter-group">
+
+          <label
+            class="smartoffice-suratmasuk-filter-label"
+          >
+            Bulan
+          </label>
+
+          <div
+            class="smartoffice-suratmasuk-filter-control"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+            >
+              <rect
+                x="3"
+                y="4"
+                width="18"
+                height="17"
+                rx="2"
+              />
+
+              <line
+                x1="8"
+                y1="2"
+                x2="8"
+                y2="6"
+              />
+
+              <line
+                x1="16"
+                y1="2"
+                x2="16"
+                y2="6"
+              />
+
+              <line
+                x1="3"
+                y1="10"
+                x2="21"
+                y2="10"
+              />
+            </svg>
+
+            <select
+              id="smartofficeSuratMasukFilterBulan"
+            >
+              <option value="">
+                Pilih Bulan
+              </option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- TANGGAL -->
+        <div class="smartoffice-suratmasuk-filter-group">
+
+          <label
+            class="smartoffice-suratmasuk-filter-label"
+          >
+            Tanggal
+          </label>
+
+          <div
+            class="smartoffice-suratmasuk-filter-control"
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+            >
+              <rect
+                x="3"
+                y="4"
+                width="18"
+                height="17"
+                rx="2"
+              />
+
+              <line
+                x1="8"
+                y1="2"
+                x2="8"
+                y2="6"
+              />
+
+              <line
+                x1="16"
+                y1="2"
+                x2="16"
+                y2="6"
+              />
+
+              <line
+                x1="3"
+                y1="10"
+                x2="21"
+                y2="10"
+              />
+            </svg>
+
+            <input
+              type="date"
+              id="smartofficeSuratMasukFilterTanggal"
+            >
+
+          </div>
+
+        </div>
+
+
+        <!-- ACTION -->
+        <div
+          class="smartoffice-suratmasuk-filter-actions"
+        >
+
+          <!-- RESET -->
+          <button
+            id="smartofficeSuratMasukResetButton"
+            class="
+              smartoffice-suratmasuk-filter-button
+              smartoffice-suratmasuk-filter-reset
+            "
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="
+                  M3 12
+                  a9 9 0 1 0 3-6.7
+                "
+              />
+
+              <polyline
+                points="
+                  3 4
+                  3 10
+                  9 10
+                "
+              />
+            </svg>
+
+            <span>
+              Reset
+            </span>
+
+          </button>
+
+
+          <!-- EXPORT -->
+          <button
+            id="smartofficeSuratMasukExportButton"
+            class="
+              smartoffice-suratmasuk-filter-button
+              smartoffice-suratmasuk-filter-export
+            "
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 3v12"
+              />
+
+              <path
+                d="m7 10 5 5 5-5"
+              />
+
+              <path
+                d="
+                  M5 21
+                  h14
+                  a2 2 0 0 0 2-2
+                  v-3
+                "
+              />
+
+              <path
+                d="
+                  M3 16
+                  v3
+                  a2 2 0 0 0 2 2
+                "
+              />
+            </svg>
+
+            <span>
+              Export
+            </span>
+
+          </button>
+
+
+          <!-- TAMBAH -->
+          <button
+            id="smartofficeSuratMasukTambahButton"
+            class="
+              smartoffice-suratmasuk-filter-button
+              smartoffice-suratmasuk-filter-add
+            "
+          >
+
+            <svg
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 5v14"
+              />
+
+              <path
+                d="M5 12h14"
+              />
+            </svg>
+
+            <span>
+              Tambah Surat
+            </span>
+
+          </button>
+
+        </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ======================================================
+      LIST
+  ====================================================== -->
+  <div
+    id="smartofficeSuratMasukList"
+    class="smartoffice-suratmasuk-list"
+  ></div>
+
+</div>
+
+
+  <!-- =====================================================
+      CONTENT SURAT KELUAR
+  ====================================================== -->
+  <div
+    id="smartofficeSuratKeluarContent"
+    class="smartoffice-suratkeluar-content"
+    style="display:none;"
+  >
+
+    <!-- =========================
+        FILTER SURAT KELUAR
+    ========================== -->
+    <div
+      class="smartoffice-suratkeluar-filter"
+    >
+
+      <!-- SEMUA -->
+      <button
+        class="
+          smartoffice-suratkeluar-filter-item
+          active
+        "
+        data-filter="SEMUA"
+      >
+        <svg viewBox="0 0 24 24">
+          <path
+            d="
+              M4 4h6v6H4z
+              M14 4h6v6h-6z
+              M4 14h6v6H4z
+              M14 14h6v6h-6z
+            "
+          />
+        </svg>
+
+        <span>
+          Semua
+        </span>
+      </button>
+
+
+      <!-- DRAFT -->
+      <button
+        class="
+          smartoffice-suratkeluar-filter-item
+        "
+        data-filter="DRAFT"
+      >
+        <svg viewBox="0 0 24 24">
+
+          <path
+            d="
+              M14 2H6
+              a2 2 0 0 0-2 2
+              v16
+              a2 2 0 0 0 2 2
+              h12
+              a2 2 0 0 0 2-2
+              V8z
+            "
+          />
+
+          <polyline
+            points="14 2 14 8 20 8"
+          />
+
+          <line
+            x1="8"
+            y1="13"
+            x2="16"
+            y2="13"
+          />
+
+        </svg>
+
+        <span>
+          Draft
+        </span>
+      </button>
+
+
+      <!-- TERKUNCI -->
+      <button
+        class="
+          smartoffice-suratkeluar-filter-item
+        "
+        data-filter="LOCK"
+      >
+        <svg viewBox="0 0 24 24">
+
+          <rect
+            x="3"
+            y="11"
+            width="18"
+            height="10"
+            rx="2"
+          />
+
+          <path
+            d="
+              M7 11V7
+              a5 5 0 0 1 10 0
+              v4
+            "
+          />
+
+        </svg>
+
+        <span>
+          Terkunci
+        </span>
+      </button>
+
+    </div>
+
+
+    <!-- =========================
+        LIST SURAT KELUAR
+
+        Seluruh card/list
+        dirender oleh buku-surat.js
+    ========================== -->
+    <div
+      id="smartofficeSuratKeluarList"
+      class="smartoffice-suratkeluar-list"
+    ></div>
+
+  </div>
+
+
+</div>
+
+
+<!-- =====================================================
+    MODAL DETAIL SURAT MASUK
+====================================================== -->
+<div
+  id="smartofficeSuratMasukDetailModal"
+  class="smartoffice-suratmasuk-detail-modal"
+>
+
+  <div
+    class="
+      smartoffice-suratmasuk-detail-content
+    "
+  >
+
+    <!-- HEADER -->
+    <div
+      class="
+        smartoffice-suratmasuk-detail-header
+      "
+    >
+
+      <h3
+        class="
+          smartoffice-suratmasuk-detail-title
+        "
+      >
+        Detail Surat Masuk
+      </h3>
+
+      <button
+        class="
+          smartoffice-suratmasuk-detail-close
+        "
+        id="smartofficeSuratMasukDetailClose"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6L6 18"/>
+          <path d="M6 6l12 12"/>
+        </svg>
+      </button>
+
+    </div>
+
+
+    <!-- BODY -->
+    <div
+      id="smartofficeSuratMasukDetailBody"
+      class="
+        smartoffice-suratmasuk-detail-body
+      "
+    ></div>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+    MODAL DETAIL SURAT KELUAR
+====================================================== -->
+<div
+  id="smartofficeSuratKeluarDetailModal"
+  class="smartoffice-suratkeluar-detail-modal"
+>
+
+  <div
+    class="
+      smartoffice-suratkeluar-detail-content
+    "
+  >
+
+    <!-- HEADER -->
+    <div
+      class="
+        smartoffice-suratkeluar-detail-header
+      "
+    >
+
+      <h3
+        class="
+          smartoffice-suratkeluar-detail-title
+        "
+      >
+        Detail Surat Keluar
+      </h3>
+
+      <button
+        class="
+          smartoffice-suratkeluar-detail-close
+        "
+        id="smartofficeSuratKeluarDetailClose"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 6L6 18"/>
+          <path d="M6 6l12 12"/>
+        </svg>
+      </button>
+
+    </div>
+
+
+    <!-- BODY -->
+    <div
+      id="smartofficeSuratKeluarDetailBody"
+      class="
+        smartoffice-suratkeluar-detail-body
+      "
+    ></div>
+
+  </div>
+
+</div>
