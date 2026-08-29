@@ -33,31 +33,27 @@ export async function smartofficeGetAllSuratMasuk(){
    BUKA LOCK SURAT MASUK
 ====================================================== */
 export async function smartofficeBukaLockSuratMasuk(
-    rowIndex
+    rowIndex,
+    nip,
+    role
 ){
 
-    const sessionData =
-        smartofficeGetSession();
-
-    const response =
+    const result =
         await smartofficeApi(
-            "bukaLockSuratMasuk",
+            "smartofficeBukaLockSuratMasuk",
             {
                 rowIndex,
-                nip:
-                    sessionData?.nip || "",
-                role:
-                    sessionData?.role || ""
+                nip,
+                role
             }
         );
 
-    if(
-        !response.success
-    ){
+    if(!result.success){
         throw new Error(
-            response.message
+            result.message ||
+            "Gagal membuka lock Surat Masuk."
         );
     }
 
-    return response;
+    return result;
 }

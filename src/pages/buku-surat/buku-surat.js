@@ -1644,7 +1644,6 @@ function smartofficeRenderSuratMasuk(
 /* ======================================================
    BUKA LOCK SURAT MASUK
 ====================================================== */
-
 async function smartofficeBukaLockSuratMasukUI(
     rowIndex
 ){
@@ -1655,31 +1654,41 @@ async function smartofficeBukaLockSuratMasukUI(
             "Status surat akan dikembalikan menjadi DRAFT."
         );
 
-
     if(
         !yakin
     ){
         return;
     }
 
+    const sessionData =
+        smartofficeGetSession();
+
+    if(
+        !sessionData
+    ){
+        smartofficeShowToast(
+            "Session pengguna tidak ditemukan.",
+            "error"
+        );
+        return;
+    }
 
     smartofficeShowGlobalLoading(
         "Membuka lock Surat Masuk..."
     );
 
-
     try{
 
         await smartofficeBukaLockSuratMasuk(
-            rowIndex
+            rowIndex,
+            sessionData.nip,
+            sessionData.role
         );
-
 
         smartofficeShowToast(
             "Surat Masuk berhasil dibuka menjadi DRAFT.",
             "success"
         );
-
 
         await smartofficeLoadDataSuratMasuk();
 
@@ -1690,7 +1699,6 @@ async function smartofficeBukaLockSuratMasukUI(
             "Buka Lock Surat Masuk Error:",
             error
         );
-
 
         smartofficeShowToast(
             error.message ||
@@ -1706,3 +1714,10 @@ async function smartofficeBukaLockSuratMasukUI(
     }
 
 }
+
+/* ======================================================
+   EXPOSE ACTION KE WINDOW
+====================================================== */
+
+window.smartofficeBukaLockSuratMasukUI =
+    smartofficeBukaLockSuratMasukUI;
