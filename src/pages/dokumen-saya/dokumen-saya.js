@@ -55,6 +55,13 @@ import {
     smartofficeUploadDokumen
 } from "../../services/dokumen-saya.service.js";
 
+/* ======================================================
+   UTILS
+====================================================== */
+import {
+    smartofficeConvertFileToBase64
+} from "../../utils/file.js";
+
 
 /* ================================================================================
    GLOBAL STATE
