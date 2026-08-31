@@ -1252,7 +1252,7 @@
 .smartoffice-arsippegawai-document-action{
     flex:1;
     min-width:0;
-    height:40px;
+    height:38px;
     display:inline-flex;
     align-items:center;
     justify-content:center;
@@ -1292,7 +1292,7 @@
 .smartoffice-arsippegawai-lock-button{
     flex:1;
     min-width:0;
-    height:34px;
+    height:38px;
     display:inline-flex;
     align-items:center;
     justify-content:center;

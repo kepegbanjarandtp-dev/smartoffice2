@@ -1400,13 +1400,10 @@ async function smartofficeSubmitDokumen(){
     const file =
         fileInput.files[0];
 
-
     /* =========================
        VALIDASI
     ========================= */
-
     if(!jenisDokumen){
-
         smartofficeShowToast(
             "Pilih jenis dokumen",
             "error"
@@ -1416,7 +1413,6 @@ async function smartofficeSubmitDokumen(){
     }
 
     if(!nomorDokumen){
-
         smartofficeShowToast(
             "Nomor dokumen wajib diisi. Jika tidak memiliki nomor, isi dengan tanda (-)",
             "error"
@@ -1426,7 +1422,6 @@ async function smartofficeSubmitDokumen(){
     }
 
     if(!file){
-
         smartofficeShowToast(
             "Pilih berkas terlebih dahulu",
             "error"
@@ -1435,19 +1430,15 @@ async function smartofficeSubmitDokumen(){
         return;
     }
 
-
     /* =========================
        SESSION
     ========================= */
-
     const sessionData =
         smartofficeGetSession();
-
     if(
         !sessionData ||
         !sessionData.nip
     ){
-
         smartofficeShowToast(
             "Session tidak ditemukan. Silakan login kembali.",
             "error"
@@ -1456,50 +1447,37 @@ async function smartofficeSubmitDokumen(){
         return;
     }
 
-
     /* =========================
        LOCK BUTTON
     ========================= */
-
     if(submitBtn){
-
         submitBtn.disabled =
             true;
-
     }
-
 
     /* =========================
        GLOBAL LOADING
     ========================= */
-
     smartofficeShowGlobalLoading(
         "Mengupload dokumen..."
     );
 
-
     /* =========================
        FILE READER
     ========================= */
-
     const reader =
         new FileReader();
 
-
     reader.onload =
         async function(e){
-
             let success =
                 false;
 
             try{
-
                 /* =========================
                    UPLOAD DOKUMEN
                 ========================= */
-
                 await smartofficeUploadDokumen({
-
                     nip:
                         sessionData.nip,
 
@@ -1521,38 +1499,28 @@ async function smartofficeSubmitDokumen(){
                     /* TETAP ASLI */
                     base64:
                         e.target.result
-
                 });
-
 
                 /* =========================
                    RESET MEMORY
                 ========================= */
-
                 smartofficeDokumenLoaded =
                     false;
-
 
                 /* =========================
                    RESET FORM
                 ========================= */
-
                 smartofficeResetDokumenForm();
-
 
                 /* =========================
                    LOAD ULANG
                 ========================= */
-
                 await smartofficeLoadDokumenSaya();
-
 
                 success =
                     true;
-
             }
             catch(error){
-
                 smartofficeShowToast(
                     error.message ||
                     "Gagal upload dokumen",
@@ -1562,87 +1530,63 @@ async function smartofficeSubmitDokumen(){
                 console.error(
                     error
                 );
-
             }
             finally{
 
                 /* =========================
                    HIDE LOADING DULU
                 ========================= */
-
                 smartofficeHideGlobalLoading();
-
 
                 /* =========================
                    ENABLE BUTTON
                 ========================= */
-
                 if(submitBtn){
-
                     submitBtn.disabled =
                         false;
-
                 }
-
 
                 /* =========================
                    TOAST SUCCESS
                    PALING TERAKHIR
                 ========================= */
-
                 if(success){
-
                     setTimeout(
                         function(){
-
                             smartofficeShowToast(
                                 "Dokumen berhasil diupload",
                                 "success"
                             );
-
                         },
                         100
                     );
-
                 }
-
             }
-
         };
-
 
     /* =========================
        ERROR FILE READER
     ========================= */
-
     reader.onerror =
         function(){
-
             smartofficeHideGlobalLoading();
-
             if(submitBtn){
-
                 submitBtn.disabled =
                     false;
-
             }
 
             smartofficeShowToast(
                 "Gagal membaca file",
                 "error"
             );
-
         };
-
 
     /* =========================
        START READER
     ========================= */
-
     reader.readAsDataURL(
         file
     );
-
 }
 
 

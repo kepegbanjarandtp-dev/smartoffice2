@@ -23,17 +23,9 @@
 }
 
 
-/* ======================================================
-   CONTENT
-====================================================== */
-
-.smartoffice-suratmasuk-content,
-.smartoffice-suratkeluar-content {
-
-  width: 100%;
-
-}
-
+/* ==============================================================================
+   FILTER SURAT MASUK
+============================================================================== */
 
 /* ======================================================
    FILTER SURAT MASUK
@@ -564,6 +556,169 @@
     rgba(47, 111, 211, 0.32);
 
 }
+
+
+/* ======================================================
+   MOBILE SURAT MASUK
+   MAX-WIDTH 768px
+====================================================== */
+@media (max-width: 768px){
+
+    /* ==================================================
+       FILTER PANEL
+    ================================================== */
+    .smartoffice-suratmasuk-filter-panel{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 12px;
+    }
+
+    /* ==================================================
+       SEARCH
+    ================================================== */
+    .smartoffice-suratmasuk-search-group{
+        width: 100%;
+        flex: none;
+    }
+
+    .smartoffice-suratmasuk-search-control{
+        height: 40px;
+    }
+
+    /* ==================================================
+       FILTER FIELDS
+    ================================================== */
+    .smartoffice-suratmasuk-filter-fields{
+        width: 100%;
+        flex: none;
+        display: grid;
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0, 1fr)
+            );
+        gap: 8px;
+    }
+
+    /* ==================================================
+       FILTER GROUP
+    ================================================== */
+    .smartoffice-suratmasuk-filter-group{
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* ==================================================
+      ACTION FILTER MOBILE
+      1 BARIS PENUH
+      MENGISI 2 KOLOM
+    ================================================== */
+    .smartoffice-suratmasuk-filter-actions{
+        width: 100%;
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;
+        gap: 8px;
+        margin-top:6px;
+    }
+
+    /* ==================================================
+      SEMUA BUTTON
+      FLEXIBLE
+    ================================================== */
+    .smartoffice-suratmasuk-filter-actions
+    .smartoffice-suratmasuk-filter-button{
+        flex: 1 1 0;
+        width: auto;
+        min-width: 0;
+        max-width: none;
+        box-sizing: border-box;
+    }
+
+    /* ==================================================
+      BUTTON YANG DIHIDE
+      JANGAN IKUT MENGAMBIL RUANG
+    ================================================== */
+    .smartoffice-suratmasuk-filter-actions
+    .smartoffice-suratmasuk-filter-button[style*="display: none"]{
+        display: none !important;
+    }
+
+    /* ==================================================
+       UKURAN CONTROL
+       TETAP UKURAN MOBILE SEKARANG
+    ================================================== */
+    .smartoffice-suratmasuk-filter-control{
+        height: 40px;
+    }
+
+    /* ==================================================
+       LABEL
+    ================================================== */
+    .smartoffice-suratmasuk-filter-label{
+        font-size: 10px;
+    }
+
+    /* ==================================================
+       INPUT / SELECT
+    ================================================== */
+    .smartoffice-suratmasuk-filter-control select,
+    .smartoffice-suratmasuk-filter-control input{
+        font-size: 11px;
+    }
+
+    /* ==================================================
+       SEARCH INPUT
+    ================================================== */
+    .smartoffice-suratmasuk-search-control input{
+        font-size: 11px;
+    }
+
+    /* ==================================================
+       BUTTON
+    ================================================== */
+    .smartoffice-suratmasuk-filter-button{
+        height: 40px;
+        font-size: 10px;
+        padding:
+            0 7px;
+    }
+
+    /* ==================================================
+       BUTTON ICON
+    ================================================== */
+    .smartoffice-suratmasuk-filter-button svg{
+        width: 15px;
+        height: 15px;
+    }
+
+    /* ==================================================
+      TAMBAH SURAT
+      ICON + TEXT RAPAT
+    ================================================== */
+    .smartoffice-suratmasuk-filter-add{
+        justify-content: center;
+        gap: 2px;
+    }
+
+    /* ICON TAMBAH */
+    .smartoffice-suratmasuk-filter-add svg{
+        flex: 0 0 auto;
+        width: 15px;
+        height: 15px;
+    }
+
+    /* TEXT TAMBAH */
+    .smartoffice-suratmasuk-filter-add span{
+        display: inline-block;
+        white-space: nowrap;
+        line-height: 1.1;
+    }
+}
+
 
 
 /* ======================================================
@@ -1580,7 +1735,223 @@
 }
 
 
+/* ======================================================
+   MOBILE SURAT MASUK
+   MAX-WIDTH 768px
+====================================================== */
+@media (max-width: 768px){
 
+    /* ==================================================
+       CARD
+    ================================================== */
+    .smartoffice-suratmasuk-card{
+        width: 100%;
+        border-radius: 18px;
+    }
+
+    /* ==================================================
+       BAGIAN ATAS CARD
+    ================================================== */
+    .smartoffice-suratmasuk-top{
+        gap: 8px;
+        padding: 12px;
+    }
+
+    /* ==================================================
+       ICON SURAT
+    ================================================== */
+    .smartoffice-suratmasuk-icon{
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+    }
+
+    .smartoffice-suratmasuk-icon svg{
+        width: 20px;
+        height: 20px;
+    }
+
+    /* ==================================================
+       INFORMASI UTAMA
+       FONT TETAP SEPERTI DESKTOP SAAT INI
+    ================================================== */
+    .smartoffice-suratmasuk-document {
+      gap: 2px;
+    }
+    
+    .smartoffice-suratmasuk-name{
+        font-size: 12px;
+    }
+
+    .smartoffice-suratmasuk-file{
+        font-size: 11px;
+    }
+
+    .smartoffice-suratmasuk-file svg{
+        width: 11px;
+        height: 11px;
+    }
+
+    /* ==================================================
+       STATUS
+    ================================================== */
+    .smartoffice-suratmasuk-status{
+        min-width: 68px;
+        padding: 6px 8px;
+        border-radius: 10px;
+    }
+
+    .smartoffice-suratmasuk-status-title strong{
+        font-size: 10px;
+    }
+
+    .smartoffice-suratmasuk-status-dot{
+        width: 6px;
+        height: 6px;
+    }
+
+    /* ==================================================
+      INFORMATION CARD MOBILE
+      SETIAP BARIS TINGGINYA SAMA
+    ================================================== */
+    .smartoffice-suratmasuk-information{
+        width: 100%;
+        display: grid;
+        grid-template-columns:
+          minmax(0, 1.25fr)
+          minmax(0, 0.75fr);    
+        align-items: stretch;
+        gap: 1px;
+        background: #edf2f7;
+        border-bottom:
+            1px solid
+            #edf2f7;
+    }
+
+    /* ==================================================
+      META ITEM
+      TINGGI MENGIKUTI BARIS GRID
+    ================================================== */
+    .smartoffice-suratmasuk-meta{
+        min-width: 0;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        padding:
+            10px
+            11px;
+        background: #ffffff;
+        box-sizing: border-box;
+    }
+
+    /* ==================================================
+       LABEL META
+       TETAP 9px
+    ================================================== */
+    .smartoffice-suratmasuk-meta-label{
+        font-size: 9px;
+    }
+
+    /* ==================================================
+       VALUE META
+       TETAP 12px
+    ================================================== */
+    .smartoffice-suratmasuk-meta-value{
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* ==================================================
+       PERIHAL & DISPOSISI
+       TETAP 12px
+    ================================================== */
+    .smartoffice-suratmasuk-meta-value.note{
+        font-size: 12px;
+    }
+
+    /* ==================================================
+       DISPOSISI
+    ================================================== */
+    .smartoffice-suratmasuk-disposisi
+    .smartoffice-suratmasuk-meta-value{
+        font-size: 11px;
+        padding:
+            6px
+            9px;
+        line-height: 1.4;
+    }
+
+    /* ==================================================
+       ACTION AREA
+    ================================================== */
+    .smartoffice-suratmasuk-actions{
+        gap: 7px;
+        padding:
+            10px
+            11px;
+    }
+
+    /* ==================================================
+       ACTION BUTTON
+       FONT TETAP 11px
+    ================================================== */
+    .smartoffice-suratmasuk-action{
+        min-height: 36px;
+        gap: 6px;
+        padding:
+            0
+            9px;
+        border-radius: 10px;
+        font-size: 11px;
+    }
+
+    /* ==================================================
+       ACTION ICON
+       TETAP 17px
+    ================================================== */
+    .smartoffice-suratmasuk-action svg{
+        width: 17px;
+        height: 17px;
+    }
+
+    /* ==================================================
+       EMPTY STATE
+    ================================================== */
+    .smartoffice-suratmasuk-empty{
+        min-height: 190px;
+        padding: 25px 20px;
+        border-radius: 18px;
+    }
+
+    .smartoffice-suratmasuk-empty-icon{
+        width: 48px;
+        height: 48px;
+        border-radius: 15px;
+    }
+
+    .smartoffice-suratmasuk-empty-icon svg{
+        width: 23px;
+        height: 23px;
+    }
+
+    /* ==================================================
+       EMPTY TITLE
+       TETAP 13px
+    ================================================== */
+    .smartoffice-suratmasuk-empty strong{
+        font-size: 13px;
+    }
+
+    /* ==================================================
+       EMPTY DESCRIPTION
+       TETAP 11px
+    ================================================== */
+    .smartoffice-suratmasuk-empty span{
+        font-size: 11px;
+    }
+}
 
 
 
