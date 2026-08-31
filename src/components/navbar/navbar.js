@@ -331,6 +331,7 @@ export function smartofficeRenderMobileNavbar(
        APPROVAL MENU
     ====================================================== */
     if(
+        role === "SUPERADMIN" ||
         role === "PJ" ||
         role === "KAPUS" ||
         role === "ADMIN"

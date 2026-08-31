@@ -801,80 +801,105 @@ export function smartofficeRenderArsipPegawai(
             ){
                 informationHtml +=
                 `
-                <div
-                    class="
-                        smartoffice-arsippegawai-status-extra
-                        lock-info
-                    "
+                <div 
+                    class=" 
+                        smartoffice-arsippegawai-status-extra 
+                        lock-info 
+                    " 
                 >
-                    <span
-                        class="
-                            smartoffice-arsippegawai-detail-label
-                        "
+                    <span 
+                        class=" 
+                            smartoffice-arsippegawai-detail-label 
+                        " 
                     >
-                        Status Lock
-                    </span>
-
-                    <strong
-                        class="
-                            smartoffice-arsippegawai-detail-value
-                        "
+                        Status Lock 
+                    </span> 
+            
+                    <strong 
+                        class=" 
+                            smartoffice-arsippegawai-detail-value 
+                        " 
                     >
-                        🔓 Lock dibuka
+                        🔓 Lock dibuka 
                     </strong>
                 </div>
                 `;
 
                 informationHtml +=
                 `
-                <div
-                    class="
-                        smartoffice-arsippegawai-status-extra
-                        lock-info
-                    "
+                <div 
+                    class=" 
+                        smartoffice-arsippegawai-status-extra 
+                        lock-info 
+                    " 
                 >
-                    <span
-                        class="
-                            smartoffice-arsippegawai-detail-label
-                        "
+                    <span 
+                        class=" 
+                            smartoffice-arsippegawai-detail-label 
+                        " 
                     >
-                        Dibuka Oleh
+                        Alasan Buka Lock
                     </span>
 
-                    <strong
-                        class="
-                            smartoffice-arsippegawai-detail-value
-                        "
+                    <strong 
+                        class=" 
+                            smartoffice-arsippegawai-detail-value 
+                        " 
                     >
-                        ${item.openLockBy || "-"}
+                        ${item.alasanBukaLock || "-"}
                     </strong>
-
                 </div>
                 `;
 
                 informationHtml +=
                 `
-                <div
-                    class="
-                        smartoffice-arsippegawai-status-extra
-                        lock-info
-                    "
+                <div 
+                    class=" 
+                        smartoffice-arsippegawai-status-extra 
+                        lock-info 
+                    " 
                 >
-                    <span
-                        class="
-                            smartoffice-arsippegawai-detail-label
-                        "
+                    <span 
+                        class=" 
+                            smartoffice-arsippegawai-detail-label 
+                        " 
                     >
-                        Tanggal Buka Lock
-                    </span>
+                        Dibuka Oleh 
+                    </span> 
+            
+                    <strong 
+                        class=" 
+                            smartoffice-arsippegawai-detail-value 
+                        " 
+                    >
+                        ${item.openLockBy || "-"} 
+                    </strong> 
+                </div>
+                `;
 
-                    <strong
-                        class="
-                            smartoffice-arsippegawai-detail-value
-                        "
+                informationHtml +=
+                `
+                <div 
+                    class=" 
+                        smartoffice-arsippegawai-status-extra 
+                        lock-info 
+                    " 
+                >
+                    <span 
+                        class=" 
+                            smartoffice-arsippegawai-detail-label 
+                        " 
                     >
-                        ${item.openLockAt || "-"}
-                    </strong>
+                        Tanggal Buka Lock 
+                    </span> 
+            
+                    <strong 
+                        class=" 
+                            smartoffice-arsippegawai-detail-value 
+                        " 
+                    >
+                        ${item.openLockAt || "-"} 
+                    </strong> 
                 </div>
                 `;
             }
@@ -994,13 +1019,8 @@ export function smartofficeRenderArsipPegawai(
                 &&
                 sessionData
                 &&
-                [
-                    "ADMIN",
-                    "KAPUS",
-                    "PJ"
-                ].includes(
-                    sessionData.role
-                )
+                sessionData.role ===
+                "SUPERADMIN"
             ){
                 actionHtml +=
                 `

@@ -377,6 +377,17 @@ function smartofficeFilterMenuByRole(
     }
 
     /* =========================
+       SUPERADMIN
+       Master Data TETAP TAMPIL
+    ========================= */
+    else if(
+        role === "SUPERADMIN"
+    ){
+        masterDataMenu &&
+            (masterDataMenu.style.display = "");
+    }
+
+    /* =========================
        PJ
        Master Data TETAP TAMPIL
     ========================= */
@@ -452,8 +463,9 @@ async function smartofficeLoadApprovalBadge(
            ADMIN
            DOKUMEN SAJA
         ========================= */
-        else if(
-            sessionData.role === "ADMIN"
+        if(
+            sessionData.role === "ADMIN" ||
+            sessionData.role === "SUPERADMIN"
         ){
             const dokumen =
                 await smartofficeGetDokumenVerifikasi();
