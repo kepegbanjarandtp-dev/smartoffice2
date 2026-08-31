@@ -55,13 +55,6 @@ import {
     smartofficeUploadDokumen
 } from "../../services/dokumen-saya.service.js";
 
-/* ======================================================
-   UTILS
-====================================================== */
-import {
-    smartofficeConvertFileToBase64
-} from "../../utils/file.js";
-
 
 /* ================================================================================
    GLOBAL STATE
@@ -1384,40 +1377,20 @@ async function smartofficeSubmitDokumen(){
             "smartofficeDokumenSubmitButton"
         );
 
-
-    /* =========================
-       JENIS DOKUMEN
-    ========================= */
-
     const jenisDokumen =
         document.getElementById(
             "smartofficeDokumenJenisDokumen"
         ).value;
-
-
-    /* =========================
-       NOMOR DOKUMEN
-    ========================= */
 
     const nomorDokumen =
         document.getElementById(
             "smartofficeDokumenNomor"
         ).value.trim();
 
-
-    /* =========================
-       KETERANGAN
-    ========================= */
-
     const keterangan =
         document.getElementById(
             "smartofficeDokumenKeterangan"
         ).value.trim();
-
-
-    /* =========================
-       FILE
-    ========================= */
 
     const fileInput =
         document.getElementById(
@@ -1425,16 +1398,14 @@ async function smartofficeSubmitDokumen(){
         );
 
     const file =
-        fileInput?.files?.[0];
+        fileInput.files[0];
 
 
     /* =========================
-       VALIDASI JENIS DOKUMEN
+       VALIDASI
     ========================= */
 
-    if(
-        !jenisDokumen
-    ){
+    if(!jenisDokumen){
 
         smartofficeShowToast(
             "Pilih jenis dokumen",
@@ -1442,17 +1413,9 @@ async function smartofficeSubmitDokumen(){
         );
 
         return;
-
     }
 
-
-    /* =========================
-       VALIDASI NOMOR DOKUMEN
-    ========================= */
-
-    if(
-        !nomorDokumen
-    ){
+    if(!nomorDokumen){
 
         smartofficeShowToast(
             "Nomor dokumen wajib diisi. Jika tidak memiliki nomor, isi dengan tanda (-)",
@@ -1460,17 +1423,9 @@ async function smartofficeSubmitDokumen(){
         );
 
         return;
-
     }
 
-
-    /* =========================
-       VALIDASI FILE
-    ========================= */
-
-    if(
-        !file
-    ){
+    if(!file){
 
         smartofficeShowToast(
             "Pilih berkas terlebih dahulu",
@@ -1478,27 +1433,6 @@ async function smartofficeSubmitDokumen(){
         );
 
         return;
-
-    }
-
-
-    /* =========================
-       VALIDASI UKURAN FILE
-       MAKSIMAL 5 MB
-    ========================= */
-
-    if(
-        file.size >
-        5 * 1024 * 1024
-    ){
-
-        smartofficeShowToast(
-            "Ukuran file maksimal 5 MB",
-            "error"
-        );
-
-        return;
-
     }
 
 
@@ -1508,11 +1442,6 @@ async function smartofficeSubmitDokumen(){
 
     const sessionData =
         smartofficeGetSession();
-
-
-    /* =========================
-       VALIDASI SESSION
-    ========================= */
 
     if(
         !sessionData ||
@@ -1525,7 +1454,6 @@ async function smartofficeSubmitDokumen(){
         );
 
         return;
-
     }
 
 
@@ -1533,9 +1461,7 @@ async function smartofficeSubmitDokumen(){
        LOCK BUTTON
     ========================= */
 
-    if(
-        submitBtn
-    ){
+    if(submitBtn){
 
         submitBtn.disabled =
             true;
@@ -1552,148 +1478,170 @@ async function smartofficeSubmitDokumen(){
     );
 
 
-    /*
-       FLAG UNTUK MENENTUKAN
-       APAKAH UPLOAD BERHASIL
-    */
+    /* =========================
+       FILE READER
+    ========================= */
 
-    let uploadSuccess =
-        false;
-
-
-    try{
-
-        /* =========================
-           CONVERT FILE
-           PAKAI UTILS/File.js
-        ========================= */
-
-        const base64 =
-            await smartofficeConvertFileToBase64(
-                file
-            );
+    const reader =
+        new FileReader();
 
 
-        /* =========================
-           UPLOAD DOKUMEN
-        ========================= */
+    reader.onload =
+        async function(e){
 
-        await smartofficeUploadDokumen({
-
-            nip:
-                sessionData.nip,
-
-            jenisDokumen:
-                jenisDokumen,
-
-            nomorDokumen:
-                nomorDokumen,
-
-            keterangan:
-                keterangan,
-
-            namaFile:
-                file.name,
-
-            mimeType:
-                file.type,
-
-            base64:
-                base64
-
-        });
-
-
-        /* =========================
-           RESET MEMORY
-        ========================= */
-
-        smartofficeDokumenLoaded =
-            false;
-
-
-        /* =========================
-           RESET FORM
-        ========================= */
-
-        smartofficeResetDokumenForm();
-
-
-        /* =========================
-           LOAD ULANG DOKUMEN
-        ========================= */
-
-        await smartofficeLoadDokumenSaya();
-
-
-        /* =========================
-           UPLOAD BERHASIL
-        ========================= */
-
-        uploadSuccess =
-            true;
-
-    }
-    catch(error){
-
-        /* =========================
-           ERROR
-        ========================= */
-
-        console.error(
-            "Upload dokumen error:",
-            error
-        );
-
-
-        smartofficeShowToast(
-            error.message ||
-            "Gagal upload dokumen",
-            "error"
-        );
-
-    }
-    finally{
-
-        /* =========================
-           HIDE GLOBAL LOADING
-        ========================= */
-
-        smartofficeHideGlobalLoading();
-
-
-        /* =========================
-           ENABLE BUTTON
-        ========================= */
-
-        if(
-            submitBtn
-        ){
-
-            submitBtn.disabled =
+            let success =
                 false;
 
-        }
+            try{
+
+                /* =========================
+                   UPLOAD DOKUMEN
+                ========================= */
+
+                await smartofficeUploadDokumen({
+
+                    nip:
+                        sessionData.nip,
+
+                    jenisDokumen:
+                        jenisDokumen,
+
+                    nomorDokumen:
+                        nomorDokumen,
+
+                    keterangan:
+                        keterangan,
+
+                    namaFile:
+                        file.name,
+
+                    mimeType:
+                        file.type,
+
+                    /* TETAP ASLI */
+                    base64:
+                        e.target.result
+
+                });
 
 
-        /* =========================
-           SUCCESS TOAST
-           MUNCUL SETELAH LOADING
-           SUDAH DIHILANGKAN
-        ========================= */
+                /* =========================
+                   RESET MEMORY
+                ========================= */
 
-        if(
-            uploadSuccess
-        ){
+                smartofficeDokumenLoaded =
+                    false;
+
+
+                /* =========================
+                   RESET FORM
+                ========================= */
+
+                smartofficeResetDokumenForm();
+
+
+                /* =========================
+                   LOAD ULANG
+                ========================= */
+
+                await smartofficeLoadDokumenSaya();
+
+
+                success =
+                    true;
+
+            }
+            catch(error){
+
+                smartofficeShowToast(
+                    error.message ||
+                    "Gagal upload dokumen",
+                    "error"
+                );
+
+                console.error(
+                    error
+                );
+
+            }
+            finally{
+
+                /* =========================
+                   HIDE LOADING DULU
+                ========================= */
+
+                smartofficeHideGlobalLoading();
+
+
+                /* =========================
+                   ENABLE BUTTON
+                ========================= */
+
+                if(submitBtn){
+
+                    submitBtn.disabled =
+                        false;
+
+                }
+
+
+                /* =========================
+                   TOAST SUCCESS
+                   PALING TERAKHIR
+                ========================= */
+
+                if(success){
+
+                    setTimeout(
+                        function(){
+
+                            smartofficeShowToast(
+                                "Dokumen berhasil diupload",
+                                "success"
+                            );
+
+                        },
+                        100
+                    );
+
+                }
+
+            }
+
+        };
+
+
+    /* =========================
+       ERROR FILE READER
+    ========================= */
+
+    reader.onerror =
+        function(){
+
+            smartofficeHideGlobalLoading();
+
+            if(submitBtn){
+
+                submitBtn.disabled =
+                    false;
+
+            }
 
             smartofficeShowToast(
-                "Dokumen berhasil diupload",
-                "success"
+                "Gagal membaca file",
+                "error"
             );
 
-        }
+        };
 
-    }
+
+    /* =========================
+       START READER
+    ========================= */
+
+    reader.readAsDataURL(
+        file
+    );
 
 }
 
