@@ -27,7 +27,7 @@ const SMARTOFFICE_API_TIMEOUT_MS =
    Apps Script kadang balikin 404 sesaat karena race
    condition di redirect script.googleusercontent.com
 ====================================================== */
-const SMARTOFFICE_MAX_RETRIES = 1;
+const SMARTOFFICE_MAX_RETRIES = 2;
 const SMARTOFFICE_RETRY_BASE_DELAY_MS = 400;
 
 function smartofficeDelay(ms){
