@@ -298,7 +298,10 @@ export async function smartofficeNavigate(
         }
 
         const module =
-            await loader();
+            await smartofficeLoadModule(
+                loader,
+                pageName
+            );
 
         /* ==================================================
            INIT PAGE
@@ -501,6 +504,207 @@ async function smartofficeGetPageHtml(
     );
 }
 
+
+/* ======================================================
+   RECOVERY VITE CHUNK ERROR
+====================================================== */
+
+function smartofficeIsChunkLoadError(
+    error
+){
+
+    const message =
+        String(
+            error?.message ||
+            error ||
+            ""
+        ).toLowerCase();
+
+
+    return (
+
+        message.includes(
+            "failed to fetch dynamically imported module"
+        ) ||
+
+        message.includes(
+            "importing a module script failed"
+        ) ||
+
+        message.includes(
+            "dynamically imported module"
+        ) ||
+
+        message.includes(
+            "chunkloaderror"
+        )
+
+    );
+
+}
+
+
+/* ======================================================
+   RETRY LOAD MODULE
+====================================================== */
+
+async function smartofficeLoadModule(
+    loader,
+    pageName
+){
+
+    try{
+
+        return await loader();
+
+    }
+    catch(error){
+
+        console.warn(
+            "SMARTOFFICE MODULE LOAD FAILED:",
+            pageName,
+            error
+        );
+
+
+        /* ==============================================
+           BUKAN ERROR CHUNK
+        ============================================== */
+
+        if(
+            !smartofficeIsChunkLoadError(
+                error
+            )
+        ){
+
+            throw error;
+
+        }
+
+
+        /* ==============================================
+           CEK APAKAH SUDAH PERNAH RECOVERY
+        ============================================== */
+
+        const recoveryKey =
+            "smartoffice_chunk_recovery";
+
+
+        const alreadyRecovered =
+            sessionStorage.getItem(
+                recoveryKey
+            );
+
+
+        if(alreadyRecovered){
+
+            console.error(
+                "SMARTOFFICE CHUNK RECOVERY SUDAH PERNAH DILAKUKAN."
+            );
+
+            throw error;
+
+        }
+
+
+        /* ==============================================
+           TANDAI RECOVERY
+        ============================================== */
+
+        sessionStorage.setItem(
+            recoveryKey,
+            "1"
+        );
+
+
+        /* ==============================================
+           BERSIHKAN CACHE PWA
+        ============================================== */
+
+        if(
+            "caches" in window
+        ){
+
+            try{
+
+                const cacheNames =
+                    await caches.keys();
+
+                await Promise.all(
+                    cacheNames.map(
+                        cacheName =>
+                            caches.delete(
+                                cacheName
+                            )
+                    )
+                );
+
+            }
+            catch(cacheError){
+
+                console.warn(
+                    "SMARTOFFICE CACHE CLEAR FAILED:",
+                    cacheError
+                );
+
+            }
+
+        }
+
+
+        /* ==============================================
+           UPDATE SERVICE WORKER
+        ============================================== */
+
+        if(
+            "serviceWorker" in navigator
+        ){
+
+            try{
+
+                const registrations =
+                    await navigator
+                        .serviceWorker
+                        .getRegistrations();
+
+                await Promise.all(
+                    registrations.map(
+                        registration =>
+                            registration.update()
+                    )
+                );
+
+            }
+            catch(swError){
+
+                console.warn(
+                    "SMARTOFFICE SERVICE WORKER UPDATE FAILED:",
+                    swError
+                );
+
+            }
+
+        }
+
+
+        /* ==============================================
+           RELOAD SATU KALI
+        ============================================== */
+
+        console.warn(
+            `SMARTOFFICE CHUNK ERROR: ${pageName}. Reload aplikasi untuk mengambil asset terbaru.`
+        );
+
+
+        window.location.reload();
+
+        return new Promise(
+            () => {}
+        );
+
+    }
+
+}
 
 /* ======================================================
    GLOBAL ROUTER
