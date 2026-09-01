@@ -416,6 +416,7 @@ export async function smartofficeDestroyCurrentPage(){
 async function smartofficeGetPageHtml(
     pageName
 ){
+
     if(
         smartofficePageCache.has(
             pageName
@@ -426,55 +427,78 @@ async function smartofficeGetPageHtml(
         );
     }
 
-    const response =
-        await fetch(
-            `/pages/${pageName}/${pageName}.html`
-        );
+    const maxAttempts = 2;
 
-    /* =========================
-       JANGAN CACHE KALAU GAGAL
-       (404, 500, DLL)
-    ========================= */
-    if(!response.ok){
-        throw new Error(
-            `Gagal memuat halaman "${pageName}" (status ${response.status})`
-        );
+    let lastError = null;
+
+    for(
+        let attempt = 1;
+        attempt <= maxAttempts;
+        attempt++
+    ){
+
+        try{
+
+            const response =
+                await fetch(
+                    `/pages/${pageName}/${pageName}.html`,
+                    {
+                        cache: "no-store"
+                    }
+                );
+
+            if(!response.ok){
+
+                throw new Error(
+                    `Gagal memuat halaman "${pageName}" (status ${response.status})`
+                );
+
+            }
+
+            const html =
+                await response.text();
+
+            smartofficePageCache.set(
+                pageName,
+                html
+            );
+
+            return html;
+
+        }
+        catch(error){
+
+            lastError = error;
+
+            console.warn(
+                `SMARTOFFICE LOAD PAGE FAILED: ${pageName} - attempt ${attempt}`,
+                error
+            );
+
+            if(
+                attempt < maxAttempts
+            ){
+
+                await new Promise(
+                    resolve =>
+                        setTimeout(
+                            resolve,
+                            500
+                        )
+                );
+
+            }
+
+        }
+
     }
 
-    const html =
-        await response.text();
-
-    smartofficePageCache.set(
-        pageName,
-        html
+    throw (
+        lastError ||
+        new Error(
+            `Gagal memuat halaman "${pageName}".`
+        )
     );
-
-    return html;
-}
-
-
-/* ======================================================
-   ERROR HTML (FALLBACK UI)
-====================================================== */
-function smartofficeGetErrorHtml(
-    pageName
-){
-    return `
-        <div style="padding: 40px; text-align: center;">
-            <p style="font-weight: bold; margin-bottom: 8px;">
-                Gagal memuat halaman "${pageName}"
-            </p>
-            <p style="margin-bottom: 16px; color: #666;">
-                Periksa koneksi internet kamu, lalu coba lagi.
-            </p>
-            <button
-                onclick="window.smartofficeLoadPage('${pageName}')"
-                style="padding: 8px 16px; cursor: pointer;"
-            >
-                Coba Lagi
-            </button>
-        </div>
-    `;
 }
 
 
