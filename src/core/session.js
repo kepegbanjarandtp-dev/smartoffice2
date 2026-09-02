@@ -1,5 +1,6 @@
 import {
-    smartofficeNavigate
+    smartofficeNavigate,
+    smartofficeResetNavigationState
 } from "./router.js";
 
 import {
@@ -86,6 +87,7 @@ export async function smartofficeLogout(){
        RESET GLOBAL LOADING
     ========================= */
     smartofficeForceHideGlobalLoading();
+    smartofficeResetNavigationState();
 
     /* =========================
        CLEAR SESSION

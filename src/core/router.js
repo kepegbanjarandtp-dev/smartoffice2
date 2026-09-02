@@ -215,6 +215,24 @@ export async function smartofficeNavigate(
         pushState = true
     } = options;
 
+    let globalLoadingHandled = false;
+
+    /* ==================================================
+       CEGAH NAVIGASI BERTUMPUK
+       Navigasi baru tidak dijalankan jika router
+       masih memproses navigasi sebelumnya.
+    ================================================== */
+    if(smartofficeIsNavigating){
+        console.warn(
+            "SMARTOFFICE NAVIGATE DIABAIKAN:",
+            pageName
+        );
+
+        return;
+    }
+
+    smartofficeIsNavigating = true;
+
     /* ==================================================
        GLOBAL PAGE LOADING
        Login tidak memakai global loading saat
@@ -243,7 +261,7 @@ export async function smartofficeNavigate(
         await smartofficeDestroyCurrentPage();
 
         /* ==================================================
-           LOAD HTML
+           AMBIL CONTAINER APP
         ================================================== */
         const app =
             document.getElementById(
@@ -251,9 +269,15 @@ export async function smartofficeNavigate(
             );
 
         if(!app){
-            return;
+
+            throw new Error(
+                "Container #app tidak ditemukan."
+            );
         }
 
+        /* ==================================================
+           LOAD HTML
+        ================================================== */
         let html;
 
         try{
@@ -315,9 +339,38 @@ export async function smartofficeNavigate(
             typeof loadFunction ===
             "function"
         ){
-            await loadFunction(
-                params
-            );
+            /*
+            * Halaman sudah berhasil dimuat.
+            * Global loading tidak menunggu proses
+            * pengambilan data internal halaman.
+            *
+            * Spinner mini stat / card akan menangani
+            * loading data masing-masing.
+            */
+            smartofficeHideGlobalLoading();
+
+            /*
+            * Lepaskan tanggung jawab global loading
+            * dari finally.
+            */
+            globalLoadingHandled = true;
+
+            /*
+            * Jalankan lifecycle halaman.
+            *
+            * Tidak di-await oleh router karena halaman
+            * sudah memiliki sistem loading internal.
+            */
+            Promise.resolve(
+                loadFunction(params)
+            ).catch(function(error){
+
+                console.error(
+                    "SMARTOFFICE PAGE LOAD ERROR:",
+                    pageName,
+                    error
+                );
+            });
         }
 
         /* ==================================================
@@ -390,10 +443,31 @@ export async function smartofficeNavigate(
            GLOBAL PAGE LOADING OFF
            Login tidak memiliki global loading router.
         ================================================== */
-        if(useGlobalLoading){
+        if(
+            useGlobalLoading &&
+            !globalLoadingHandled
+        ){
+
             smartofficeHideGlobalLoading();
         }
+
+        /* ==================================================
+           ROUTER SIAP UNTUK NAVIGASI BERIKUTNYA
+        ================================================== */
+        smartofficeIsNavigating =
+            false;
     }
+}
+
+
+/* ======================================================
+   RESET NAVIGATION STATE
+   Digunakan saat logout / reset aplikasi
+====================================================== */
+export function smartofficeResetNavigationState(){
+
+    smartofficeIsNavigating =
+        false;
 }
 
 
@@ -419,7 +493,6 @@ export async function smartofficeDestroyCurrentPage(){
 async function smartofficeGetPageHtml(
     pageName
 ){
-
     if(
         smartofficePageCache.has(
             pageName
@@ -431,7 +504,6 @@ async function smartofficeGetPageHtml(
     }
 
     const maxAttempts = 2;
-
     let lastError = null;
 
     for(
@@ -439,9 +511,7 @@ async function smartofficeGetPageHtml(
         attempt <= maxAttempts;
         attempt++
     ){
-
         try{
-
             const response =
                 await fetch(
                     `/pages/${pageName}/${pageName}.html`,
@@ -451,13 +521,10 @@ async function smartofficeGetPageHtml(
                 );
 
             if(!response.ok){
-
                 throw new Error(
                     `Gagal memuat halaman "${pageName}" (status ${response.status})`
                 );
-
             }
-
             const html =
                 await response.text();
 
@@ -465,14 +532,10 @@ async function smartofficeGetPageHtml(
                 pageName,
                 html
             );
-
             return html;
-
         }
         catch(error){
-
             lastError = error;
-
             console.warn(
                 `SMARTOFFICE LOAD PAGE FAILED: ${pageName} - attempt ${attempt}`,
                 error
@@ -481,7 +544,6 @@ async function smartofficeGetPageHtml(
             if(
                 attempt < maxAttempts
             ){
-
                 await new Promise(
                     resolve =>
                         setTimeout(
@@ -489,11 +551,8 @@ async function smartofficeGetPageHtml(
                             500
                         )
                 );
-
             }
-
         }
-
     }
 
     throw (
@@ -506,13 +565,36 @@ async function smartofficeGetPageHtml(
 
 
 /* ======================================================
+   ERROR HTML (FALLBACK UI)
+====================================================== */
+function smartofficeGetErrorHtml(
+    pageName
+){
+    return `
+        <div style="padding: 40px; text-align: center;">
+            <p style="font-weight: bold; margin-bottom: 8px;">
+                Gagal memuat halaman "${pageName}"
+            </p>
+            <p style="margin-bottom: 16px; color: #666;">
+                Periksa koneksi internet kamu, lalu coba lagi.
+            </p>
+            <button
+                onclick="window.smartofficeLoadPage('${pageName}')"
+                style="padding: 8px 16px; cursor: pointer;"
+            >
+                Coba Lagi
+            </button>
+        </div>
+    `;
+}
+
+
+/* ======================================================
    RECOVERY VITE CHUNK ERROR
 ====================================================== */
-
 function smartofficeIsChunkLoadError(
     error
 ){
-
     const message =
         String(
             error?.message ||
@@ -520,9 +602,7 @@ function smartofficeIsChunkLoadError(
             ""
         ).toLowerCase();
 
-
     return (
-
         message.includes(
             "failed to fetch dynamically imported module"
         ) ||
@@ -538,95 +618,72 @@ function smartofficeIsChunkLoadError(
         message.includes(
             "chunkloaderror"
         )
-
     );
-
 }
 
 
 /* ======================================================
    RETRY LOAD MODULE
 ====================================================== */
-
 async function smartofficeLoadModule(
     loader,
     pageName
 ){
-
     try{
-
         return await loader();
-
     }
     catch(error){
-
         console.warn(
             "SMARTOFFICE MODULE LOAD FAILED:",
             pageName,
             error
         );
 
-
         /* ==============================================
            BUKAN ERROR CHUNK
         ============================================== */
-
         if(
             !smartofficeIsChunkLoadError(
                 error
             )
         ){
-
             throw error;
-
         }
-
 
         /* ==============================================
            CEK APAKAH SUDAH PERNAH RECOVERY
         ============================================== */
-
         const recoveryKey =
             "smartoffice_chunk_recovery";
-
 
         const alreadyRecovered =
             sessionStorage.getItem(
                 recoveryKey
             );
 
-
         if(alreadyRecovered){
-
             console.error(
                 "SMARTOFFICE CHUNK RECOVERY SUDAH PERNAH DILAKUKAN."
             );
 
             throw error;
-
         }
-
 
         /* ==============================================
            TANDAI RECOVERY
         ============================================== */
-
         sessionStorage.setItem(
             recoveryKey,
             "1"
         );
 
-
         /* ==============================================
            BERSIHKAN CACHE PWA
         ============================================== */
-
         if(
             "caches" in window
         ){
-
             try{
-
                 const cacheNames =
                     await caches.keys();
 
@@ -638,30 +695,22 @@ async function smartofficeLoadModule(
                             )
                     )
                 );
-
             }
             catch(cacheError){
-
                 console.warn(
                     "SMARTOFFICE CACHE CLEAR FAILED:",
                     cacheError
                 );
-
             }
-
         }
-
 
         /* ==============================================
            UPDATE SERVICE WORKER
         ============================================== */
-
         if(
             "serviceWorker" in navigator
         ){
-
             try{
-
                 const registrations =
                     await navigator
                         .serviceWorker
@@ -673,38 +722,30 @@ async function smartofficeLoadModule(
                             registration.update()
                     )
                 );
-
             }
             catch(swError){
-
                 console.warn(
                     "SMARTOFFICE SERVICE WORKER UPDATE FAILED:",
                     swError
                 );
-
             }
-
-        }
-
+       }
 
         /* ==============================================
            RELOAD SATU KALI
         ============================================== */
-
         console.warn(
             `SMARTOFFICE CHUNK ERROR: ${pageName}. Reload aplikasi untuk mengambil asset terbaru.`
         );
-
 
         window.location.reload();
 
         return new Promise(
             () => {}
         );
-
     }
-
 }
+
 
 /* ======================================================
    GLOBAL ROUTER

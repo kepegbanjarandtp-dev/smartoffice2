@@ -31,7 +31,8 @@ import {
 ====================================================== */
 import {
     smartofficeShowGlobalLoading,
-    smartofficeHideGlobalLoading
+    smartofficeHideGlobalLoading,
+    smartofficeShowLoading
 } from "../../components/loading/loading.js";
 
 /* ======================================================
@@ -364,6 +365,35 @@ function smartofficeInitBukuSuratTab(){
 ====================================================== */
 async function smartofficeLoadDataSuratMasuk(){
     try{
+        /* =========================
+           LOADING CARD CONTENT
+        ========================= */
+        const container =
+            document.getElementById(
+                "smartofficeSuratMasukList"
+            );
+
+        if(container){
+            container.innerHTML = `
+                <div class="
+                    smartoffice-loading
+                ">
+                    <div class="
+                        smartoffice-loading-spinner
+                    "></div>
+
+                    <div class="
+                        smartoffice-loading-text
+                    ">
+                        Memuat data Surat Masuk...
+                    </div>
+                </div>
+            `;
+        }
+
+        /* =========================
+           SELESAI LOADING CARD CONTENT
+        ========================= */
         const res =
             await smartofficeGetAllSuratMasuk();
 
@@ -1851,11 +1881,57 @@ async function smartofficeRenderFormSuratMasuk(
     const isEdit =
         !!data;
 
+    /* ===============================
+       FORMAT TANGGAL INPUT DATE
+    =============================== */
+
+    const tanggalTerima =
+        parseTanggalMasuk(
+            data?.tglTerima
+        );
+
+    const tanggalSurat =
+        parseTanggalMasuk(
+            data?.tglSurat
+        );
+
+    const tglTerimaInput =
+        tanggalTerima
+            ? [
+                tanggalTerima.getFullYear(),
+                String(
+                    tanggalTerima.getMonth() + 1
+                ).padStart(2, "0"),
+                String(
+                    tanggalTerima.getDate()
+                ).padStart(2, "0")
+            ].join("-")
+            : "";
+
+    const tglSuratInput =
+        tanggalSurat
+            ? [
+                tanggalSurat.getFullYear(),
+                String(
+                    tanggalSurat.getMonth() + 1
+                ).padStart(2, "0"),
+                String(
+                    tanggalSurat.getDate()
+                ).padStart(2, "0")
+            ].join("-")
+            : "";
+
     body.innerHTML = `
         <form
             id="smartofficeSuratMasukForm"
             class="smartoffice-suratmasuk-form"
         >
+            <input
+                type="hidden"
+                id="rowIndexMasuk"
+                value=""
+            >
+
             <!-- ROW 1 -->
             <div
                 class="smartoffice-suratmasuk-form-group"
@@ -1883,7 +1959,7 @@ async function smartofficeRenderFormSuratMasuk(
                 <input
                     type="date"
                     id="smartofficeSuratMasukTglTerima"
-                    value="${data?.tglTerima || ""}"
+                    value="${tglTerimaInput || ""}"
                     required
                 >
             </div>
@@ -1914,7 +1990,7 @@ async function smartofficeRenderFormSuratMasuk(
                 <input
                     type="date"
                     id="smartofficeSuratMasukTglSurat"
-                    value="${data?.tglSurat || ""}"
+                    value="${tglSuratInput || ""}"
                     required
                 >
             </div>
@@ -2505,7 +2581,7 @@ async function renderDisposisiDropdown(
     smartofficeSuratMasukDisposisiSelected =
         data?.disposisi
             ? String(data.disposisi)
-                .split(",")
+                .split(";")
                 .map(
                     item =>
                         item.trim()
@@ -3251,11 +3327,13 @@ export async function smartofficeSubmitSuratMasuk(){
            DATA FORM
         ================================================== */
         const payload = {
+
             /* TAMBAH = null
-               EDIT = data.rowIndex */
-            /*rowIndex:
+            EDIT = data.rowIndex */
+
+            rowIndex:
                 smartofficeSuratMasukEditRowIndex ||
-                null,*/
+                null,
 
             tglTerima:
                 document.getElementById(
@@ -3286,7 +3364,7 @@ export async function smartofficeSubmitSuratMasuk(){
                DISIMPAN DALAM SATU KOLOM */
             disposisi:
                 smartofficeSuratMasukDisposisiSelected
-                    .join(", ")
+                    .join(";")
         };
 
         /* ==================================================
@@ -3301,13 +3379,13 @@ export async function smartofficeSubmitSuratMasuk(){
             fileInput?.files?.[0];
 
         if(file){
-            /* MAX 5 MB */
+            /* MAX 2 MB */
             if(
                 file.size >
-                5 * 1024 * 1024
+                2 * 1024 * 1024
             ){
                 throw new Error(
-                    "Ukuran dokumen maksimal 5 MB."
+                    "Ukuran dokumen maksimal 2 MB."
                 );
             }
 
@@ -3318,14 +3396,14 @@ export async function smartofficeSubmitSuratMasuk(){
                     file
                 );
 
-            payload.file = {
-                name:
-                    file.name,
-                type:
-                    file.type,
-                data:
-                    base64
-            };
+            payload.base64 =
+                base64;
+
+            payload.fileName =
+                file.name;
+
+            payload.fileType =
+                file.type;
         }
 
         /* ==================================================
@@ -3412,6 +3490,134 @@ export async function smartofficeSubmitSuratMasuk(){
     }
 }
 
+/* =====================================================
+   HELPER RESET UI SUBMIT SURAT MASUK
+===================================================== */
+function resetSubmitMasukUI() {
+
+    isSubmittingMasuk = false;
+
+    document
+        .getElementById("btnLoadingMasuk")
+        ?.classList.add("hidden");
+
+    document
+        .getElementById("btnSimpanMasuk")
+        ?.classList.remove("hidden");
+
+}
+
+/* =====================================================
+   HELPER NOTIF SURAT MASUK
+===================================================== */
+
+function showInlineSuratMasuk() {
+
+  const el = document.getElementById("inlineSuratMasuk");
+
+  if (!el) return;
+
+  el.classList.remove("hidden");
+
+  setTimeout(() => {
+
+    el.classList.add("hidden");
+
+  }, 1500);
+
+}
+
+function hideInlineSuratMasuk() {
+
+  document.getElementById("inlineSuratMasuk")
+    ?.classList.add("hidden");
+
+}
+
+/* =====================================================
+   OPEN EDIT MODAL SURAT MASUK
+===================================================== */
+export async function openEditModalMasuk(rowIndex) {
+
+    /* ===============================
+       RESET UI
+    =============================== */
+
+    hideInlineSuratMasuk();
+
+    resetSubmitMasukUI();
+
+
+    /* ===============================
+       CARI DATA
+    =============================== */
+
+    const item =
+        suratMasukAllData.find(
+            d =>
+                String(d.rowIndex) ===
+                String(rowIndex)
+        );
+
+    if(!item){
+
+        console.error(
+            "Data Surat Masuk tidak ditemukan:",
+            rowIndex
+        );
+
+        smartofficeShowToast(
+            "Data Surat Masuk tidak ditemukan",
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* ===============================
+       RENDER FORM MODE EDIT
+    =============================== */
+
+    await smartofficeRenderFormSuratMasuk(
+        item
+    );
+
+
+    /* ===============================
+       BUKA MODAL
+    =============================== */
+
+    const modal =
+        document.getElementById(
+            "smartofficeSuratMasukFormModal"
+        );
+
+    if(modal){
+
+        modal.style.display =
+            "flex";
+
+    }
+
+
+    /* ===============================
+       RESET FILE INPUT
+    =============================== */
+
+    const fileInput =
+        document.getElementById(
+            "smartofficeSuratMasukFile"
+        );
+
+    if(fileInput){
+
+        fileInput.value = "";
+
+    }
+
+}
+
 /* ======================================================
    EXPOSE ACTION KE WINDOW
 ====================================================== */
@@ -3426,3 +3632,6 @@ window.smartofficeConfirmBukaLockSuratMasuk =
 
 window.smartofficeCloseFormSuratMasuk =
     smartofficeCloseFormSuratMasuk;
+
+window.openEditModalMasuk =
+    openEditModalMasuk;
