@@ -6,6 +6,9 @@ import {
 } from "../core/api.js";
 
 
+/* =================================================================================
+   SURAT MASUK
+================================================================================= */
 /* ======================================================
    GET SEMUA DATA SURAT MASUK
    UNTUK FILTER & CLIENT-SIDE VIEW
@@ -121,3 +124,80 @@ export async function smartofficeSaveSuratMasuk(
     return response;
 }
 
+
+/* =================================================================================
+   SURAT KELUAR
+================================================================================= */
+/* ======================================================
+   AMBIL SEMUA DATA SURAT KELUAR
+====================================================== */
+export async function smartofficeGetAllSuratKeluar(){
+
+    const response =
+        await smartofficeApi(
+            "getAllSuratKeluar"
+        );
+    if(
+        !response.success
+    ){
+        throw new Error(
+            response.message ||
+            "Gagal memuat data Surat Keluar."
+        );
+    }
+
+    return response.data || [];
+}
+
+
+/* ======================================================
+   SIMPAN SURAT KELUAR
+====================================================== */
+export async function smartofficeSaveSuratKeluar(
+    payload
+){
+    const response =
+        await smartofficeApi(
+            "saveAndLockSuratKeluar",
+            payload
+        );
+
+    if(!response.success){
+        throw new Error(
+            response.message ||
+            "Gagal menyimpan Surat Keluar."
+        );
+    }
+
+    return response.data;
+}
+
+
+/* ======================================================
+   BUKA LOCK SURAT KELUAR
+====================================================== */
+export async function smartofficeBukaLockSuratKeluar(
+    rowIndex,
+    nip,
+    role
+){
+    const response =
+        await smartofficeApi(
+            "bukaLockSuratKeluar",
+            {
+                rowIndex,
+                nip,
+                role
+            }
+        );
+
+    if(!response.success){
+
+        throw new Error(
+            response.message ||
+            "Gagal membuka lock Surat Keluar."
+        );
+    }
+
+    return response.data;
+}
