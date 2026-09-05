@@ -1,0 +1,1358 @@
+<div class="smartoffice-wrapper">
+
+  <!-- ======================================================
+      DASHBOARD HEADER
+  ====================================================== -->
+  <div class="smartoffice-dashboard-header">
+
+    <!-- BRAND -->
+    <div class="smartoffice-dashboard-brand">
+
+      <!-- LOGO -->
+      <div class="smartoffice-dashboard-logo">
+        <img
+          src="https://i.ibb.co.com/JRXzrV2m/smartoffice-logo-optimized.webp"
+          alt="SmartOffice"
+        >
+      </div>
+
+      <!-- TITLE -->
+      <div class="smartoffice-dashboard-brand-info">
+        <h2>
+          Smart Office
+        </h2>
+
+        <p>
+          Versi 2.0 Developed by Raz Media
+        </p>
+      </div>
+    </div>
+
+    <!-- LOGOUT -->
+    <button
+      id="smartofficeLogoutButton"
+      class="smartoffice-dashboard-logout-button"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2.2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="m9 21 6-9-6-9"/>
+      </svg>
+
+      <span>
+        Logout
+      </span>
+
+    </button>
+  </div>  
+
+  <!-- =========================
+      WELCOME CARD
+  ========================== -->
+  <div class="smartoffice-dashboard-welcome">
+      <div
+          class="smartoffice-dashboard-welcome-avatar"
+          id="smartofficeDashboardAvatar"
+      >
+          T
+      </div>
+
+      <div class="smartoffice-dashboard-welcome-content">
+          <h3 id="smartofficeDashboardUserName">
+              Memuat...
+          </h3>
+
+          <p id="smartofficeDashboardJabatan">
+              Memuat...
+          </p>
+
+          <div class="smartoffice-dashboard-welcome-date">
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <rect
+                      x="3"
+                      y="4"
+                      width="18"
+                      height="18"
+                      rx="2"
+                  />
+                  <line
+                      x1="8"
+                      y1="2"
+                      x2="8"
+                      y2="6"
+                  />
+                  <line
+                      x1="16"
+                      y1="2"
+                      x2="16"
+                      y2="6"
+                  />
+                  <line
+                      x1="3"
+                      y1="10"
+                      x2="21"
+                      y2="10"
+                  />
+              </svg>
+              <span id="smartofficeDashboardToday">
+                  Senin, 22 Juli 2026
+              </span>
+          </div>
+      </div>
+  </div>
+
+  <!-- ======================================================
+      KATEGORI — KHUSUS ROLE
+  ====================================================== -->
+  <div
+      id="smartofficeDashboardRoleCategory"
+      class="
+          smartoffice-dashboard-category
+          smartoffice-dashboard-role-category
+      "
+  >
+
+      <div class="smartoffice-dashboard-category-header">
+          <div class="smartoffice-dashboard-category-title-wrap">
+              <div class="smartoffice-dashboard-category-lock">
+                  <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                  >
+                      <rect
+                          x="3"
+                          y="11"
+                          width="18"
+                          height="10"
+                          rx="2"
+                      />
+                      <path
+                          d="M7 11V7a5 5 0 0 1 10 0v4"
+                      />
+                  </svg>
+              </div>
+
+              <div>
+                  <h2>Manajemen &amp; Administrasi</h2>
+
+                  <span class="smartoffice-dashboard-role-badge">
+                      Khusus Role
+                  </span>
+              </div>
+          </div>
+
+          <button
+              type="button"
+              class="smartoffice-dashboard-category-more"
+          >
+              Lihat Semua
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path d="m9 18 6-6-6-6"/>
+              </svg>
+          </button>
+      </div>
+
+      <div class="smartoffice-dashboard-menu-grid">
+          <!-- =========================
+              APPROVAL
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeApprovalMenuCard"
+          >
+            <!-- BADGE -->
+            <div
+              class="smartoffice-dashboard-menu-badge"
+              id="smartofficeApprovalBadge"
+            >
+              0
+            </div>
+
+            <div
+              class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="38"
+                height="38"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path
+                  d="M9 11l3 3L22 4"
+                />
+                <path
+                  d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"
+                />
+              </svg>
+            </div>
+
+            <h3>Approval</h3>
+            <p>Approval pengajuan pegawai</p>
+          </div>
+
+          <!-- =========================
+              MANAGEMENT CUTI
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeManagementCutiMenuCard"
+          >
+            <div
+              class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="38"
+                height="38"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="
+                  M16 21v-2
+                  a4 4 0 0 0-4-4H5
+                  a4 4 0 0 0-4 4v2
+                "/>
+
+                <circle
+                  cx="8.5"
+                  cy="7"
+                  r="4"
+                />
+
+                <path d="
+                  M20 8v6
+                "/>
+
+                <path d="
+                  M23 11h-6
+                "/>
+              </svg>
+            </div>
+
+            <h3>Management Cuti</h3>
+            <p>Monitoring dan riwayat cuti pegawai</p>
+          </div>  
+
+          <!-- =========================
+              ARSIP KEPEGAWAIAN
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeArsipPegawaiMenuCard"
+          >
+            <div
+              class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="38"
+                height="38"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="
+                  M21 8
+                  v11
+                  a2 2 0 0 1-2 2H5
+                  a2 2 0 0 1-2-2V5
+                  a2 2 0 0 1 2-2h8
+                "/>
+
+                <path d="
+                  M21 8h-8
+                  V0
+                "/>
+
+                <path d="
+                  M9 13h6
+                "/>
+
+                <path d="
+                  M9 17h6
+                "/>
+              </svg>
+            </div>
+
+            <h3>Arsip Kepegawaian</h3>
+            <p>Verifikasi dan monitoring arsip pegawai</p>
+          </div>  
+          
+          <!-- =========================
+              MASTER DATA 
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeMasterDataMenuCard"
+          >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                <circle
+                    cx="12"
+                    cy="8"
+                    r="3"
+                />
+
+                <path
+                    d="
+                      M5 20
+                      a7 7 0 0 1 14 0
+                    "
+                />
+
+                <path
+                    d="
+                      M19 8
+                      a3 3 0 0 1 0 6
+                    "
+                />
+
+                <path
+                    d="
+                      M21 20
+                      a5 5 0 0 0-3-4.58
+                    "
+                />
+              </svg>
+            </div>
+            <h3>
+              Master Data
+            </h3>
+            <p>
+              Pengelolaan data utama puskesmas
+            </p>
+          </div>
+      </div>
+  </div>
+
+  <!-- ======================================================
+      KATEGORI — LAYANAN SAYA
+  ====================================================== -->
+  <div class="smartoffice-dashboard-category">
+
+      <div class="smartoffice-dashboard-category-header">
+          <h2>Layanan Saya</h2>
+
+          <button
+              type="button"
+              class="smartoffice-dashboard-category-more"
+          >
+              Lihat Semua
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path d="m9 18 6-6-6-6"/>
+              </svg>
+          </button>
+      </div>
+  
+      <!-- =========================
+          MENU GRID
+      ========================== -->
+      <div class="smartoffice-dashboard-menu-grid">
+
+        <!-- =========================
+            e-CUTI
+        ========================== -->
+        <div
+            id="smartofficeCutiMenuCard"
+            class="smartoffice-dashboard-menu-card"
+        >
+          <div
+            class="smartoffice-dashboard-menu-icon"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="38"
+              height="38"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect
+                x="3"
+                y="4"
+                width="18"
+                height="18"
+                rx="2"
+              />
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+
+          <h3>e-Cuti</h3>
+          <p>Pengajuan dan riwayat cuti pegawai</p>
+        </div>
+
+        <!-- =========================
+            SMARTSPD BLUD
+        ========================== -->
+        <div
+            class="smartoffice-dashboard-menu-card"
+            id="smartofficeSPDBLUDMenuCard"
+        >
+          <div
+            class="smartoffice-dashboard-menu-icon"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="38"
+              height="38"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M3 7h18"
+              />
+              <path
+                d="M6 3h12l3 4v13a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7l3-4Z"
+              />
+              <path
+                d="M8 11h8"
+              />
+              <path
+                d="M8 15h5"
+              />
+            </svg>
+          </div>
+
+          <h3>SmartSPD BLUD</h3>
+          <p>Pengajuan perjalanan dinas pegawai</p>
+        </div>
+
+        <!-- =========================
+            DOKUMEN SAYA
+        ========================== -->
+        <div
+            class="smartoffice-dashboard-menu-card"
+            id="smartofficeDokumenSayaMenuCard"
+        >
+          <div
+            class="smartoffice-dashboard-menu-icon"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="38"
+              height="38"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="
+                M14 2H6
+                a2 2 0 0 0-2 2v16
+                a2 2 0 0 0 2 2h12
+                a2 2 0 0 0 2-2V8z
+              "/>
+
+              <polyline points="
+                14 2
+                14 8
+                20 8
+              "/>
+
+              <line
+                x1="8"
+                y1="13"
+                x2="16"
+                y2="13"
+              />
+
+              <line
+                x1="8"
+                y1="17"
+                x2="16"
+                y2="17"
+              />
+            </svg>
+          </div>
+
+          <h3>Dokumen Saya</h3>
+          <p>Upload dan kelola dokumen kepegawaian</p>
+        </div>
+        
+        <!-- SLOT 4 KOSONG -->
+      </div>
+  </div>
+
+  <!-- ======================================================
+      KATEGORI — OPERASIONAL PUSKESMAS
+  ====================================================== -->
+  <div class="smartoffice-dashboard-category">
+
+      <div class="smartoffice-dashboard-category-header">
+          <h2>Operasional Puskesmas</h2>
+
+          <button
+              type="button"
+              class="smartoffice-dashboard-category-more"
+          >
+              Lihat Semua
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path d="m9 18 6-6-6-6"/>
+              </svg>
+          </button>
+      </div>
+
+      <div class="smartoffice-dashboard-menu-grid">
+
+          <!-- =========================
+              AGENDA DAN KEGIATAN
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeAgendaMenuCard"
+          >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="17"
+                    rx="2"
+                />
+
+                <line
+                    x1="16"
+                    y1="2"
+                    x2="16"
+                    y2="6"
+                />
+
+                <line
+                    x1="8"
+                    y1="2"
+                    x2="8"
+                    y2="6"
+                />
+
+                <line
+                    x1="3"
+                    y1="10"
+                    x2="21"
+                    y2="10"
+                />
+
+                <path
+                    d="M8 14h3"
+                />
+
+                <path
+                    d="M8 17h5"
+                />
+              </svg>
+            </div>
+            <h3>
+              Agenda &amp; Kegiatan
+            </h3>
+            <p>
+              Agenda dan jadwal kegiatan puskesmas
+            </p>
+          </div>
+
+          <!-- =========================
+              SLOT 3
+          ========================== -->
+       
+
+          <!-- =========================
+              JEJARING PUSKESMAS
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeJejaringPuskesmasMenuCard"
+          >
+              <div
+                  class="smartoffice-dashboard-menu-icon"
+              >
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="38"
+                      height="38"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                  >
+                      <circle
+                          cx="12"
+                          cy="5"
+                          r="2"
+                      />
+
+                      <circle
+                          cx="5"
+                          cy="17"
+                          r="2"
+                      />
+
+                      <circle
+                          cx="19"
+                          cy="17"
+                          r="2"
+                      />
+
+                      <path
+                          d="M12 7v4"
+                      />
+
+                      <path
+                          d="M12 11 5 15"
+                      />
+
+                      <path
+                          d="M12 11 19 15"
+                      />
+                  </svg>
+              </div>
+              <h3>
+                  Jejaring Puskesmas
+              </h3>
+              <p>
+                  Data jejaring puskesmas di wilayah kerja
+              </p>
+          </div>
+
+          <!-- =========================
+              IMUNISASI JEJARING
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeImunisasiJejaringMenuCard"
+          >
+              <div
+                  class="smartoffice-dashboard-menu-icon"
+              >
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="38"
+                      height="38"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                  >
+                      <path
+                          d="m18 2 4 4"
+                      />
+
+                      <path
+                          d="m17 7 3-3"
+                      />
+
+                      <path
+                          d="m19 5-8.5 8.5"
+                      />
+
+                      <path
+                          d="M9.5 13.5 4 19"
+                      />
+
+                      <path
+                          d="m3 21 3-3"
+                      />
+
+                      <path
+                          d="M7 17 4 14"
+                      />
+
+                      <path
+                          d="m11 9 4 4"
+                      />
+                  </svg>
+              </div>
+              <h3>
+                  Imunisasi Jejaring
+              </h3>
+              <p>
+                  Pengajuan imunisasi dari bidan praktik dan klinik
+              </p>
+          </div>
+          <!-- SLOT 3 KOSONG -->
+          <!-- SLOT 4 KOSONG -->
+      </div>
+
+  </div>
+
+  <!-- ======================================================
+      KATEGORI — ADMINISTRASI
+  ====================================================== -->
+  <div class="smartoffice-dashboard-category">
+
+      <div class="smartoffice-dashboard-category-header">
+          <h2>Administrasi</h2>
+
+          <button
+              type="button"
+              class="smartoffice-dashboard-category-more"
+          >
+              Lihat Semua
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path d="m9 18 6-6-6-6"/>
+              </svg>
+          </button>
+      </div>
+
+      <div class="smartoffice-dashboard-menu-grid">
+          <!-- =========================
+              BUKU TAMU
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeBukuTamuMenuCard"
+          >
+            <div
+              class="
+                smartoffice-dashboard-menu-icon
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="38"
+                height="38"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="
+                  M4 19.5
+                  A2.5 2.5 0 0 1
+                  6.5 17H20
+                "/>
+
+                <path d="
+                  M6.5 2H20
+                  v20H6.5
+                  A2.5 2.5 0 0 1
+                  4 19.5V4.5
+                  A2.5 2.5 0 0 1
+                  6.5 2Z
+                "/>
+
+                <line
+                  x1="8"
+                  y1="7"
+                  x2="16"
+                  y2="7"
+                />
+
+                <line
+                  x1="8"
+                  y1="11"
+                  x2="16"
+                  y2="11"
+                />
+
+                <line
+                  x1="8"
+                  y1="15"
+                  x2="13"
+                  y2="15"
+                />
+              </svg>
+            </div>
+
+            <h3>Buku Tamu</h3>
+            <p>Monitoring data kunjungan tamu</p>
+          </div>
+
+          <!-- =========================
+              MONITORING
+              (Coming Soon)
+          ========================== -->
+          <!--
+          <div
+              id="smartofficeMonitoringMenuCard"
+              class="smartoffice-dashboard-menu-card"
+          >
+              ...
+          </div>
+          -->
+
+          <!-- =========================
+              BUKU SURAT 
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeESuratMenuCard"
+          >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                <rect
+                    x="3"
+                    y="5"
+                    width="18"
+                    height="14"
+                    rx="2"
+                />
+
+                <polyline
+                    points="3 7 12 13 21 7"
+                />
+              </svg>
+            </div>
+            <h3>
+              Buku Surat
+            </h3>
+            <p>
+              Register dan penomoran surat
+            </p>
+          </div>
+
+          <!-- =========================
+             JURNAL APEL
+          ========================== -->
+          <div
+            class="smartoffice-dashboard-menu-card"
+            id="smartofficeJurnalApelMenuCard"
+          >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M8 2v4" />
+
+                    <path d="M16 2v4" />
+
+                    <rect
+                        x="3"
+                        y="4"
+                        width="18"
+                        height="18"
+                        rx="2"
+                    />
+
+                    <path d="M3 10h18" />
+                    <path d="M8 14h.01" />
+                    <path d="M12 14h.01" />
+                    <path d="M16 14h.01" />
+                    <path d="M8 18h.01" />
+                    <path d="M12 18h.01" />
+                </svg>
+            </div>
+
+            <h3>
+                Jurnal Apel
+            </h3>
+
+            <p>
+                Pencatatan dan monitoring kegiatan apel
+            </p>
+          </div>
+
+          <!-- =========================
+              DOKUMEN PUSKESMAS
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeDokumenPuskesmasMenuCard"
+          >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                <path
+                    d="
+                      M14 2H6
+                      a2 2 0 0 0-2 2v16
+                      a2 2 0 0 0 2 2h12
+                      a2 2 0 0 0 2-2V8z
+                    "
+                />
+
+                <polyline
+                    points="14 2 14 8 20 8"
+                />
+
+                <line
+                    x1="8"
+                    y1="12"
+                    x2="16"
+                    y2="12"
+                />
+
+                <line
+                    x1="8"
+                    y1="16"
+                    x2="16"
+                    y2="16"
+                />
+              </svg>
+            </div>
+            <h3>
+              Pusat Dokumen
+            </h3>
+            <p>
+              Dokumen dan arsip administrasi puskesmas
+            </p>
+          </div>
+      </div>
+  </div>
+
+  <!-- ======================================================
+    KATEGORI — KEUANGAN
+  ====================================================== -->
+  <div
+    class="smartoffice-dashboard-category"
+  >
+    <div
+        class="smartoffice-dashboard-category-header"
+    >
+        <h2>
+            Keuangan
+        </h2>
+
+        <button
+            type="button"
+            class="smartoffice-dashboard-category-more"
+        >
+            Lihat Semua
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path
+                    d="m9 18 6-6-6-6"
+                />
+            </svg>
+        </button>
+    </div>
+
+    <div
+        class="smartoffice-dashboard-menu-grid"
+    >
+        <!-- =========================
+            DATA PAJAK
+        ========================== -->
+        <div
+            class="smartoffice-dashboard-menu-card"
+            id="smartofficeDataPajakMenuCard"
+        >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <!-- DOKUMEN -->
+                    <path
+                        d="
+                            M14 2H6
+                            a2 2 0 0 0-2 2v16
+                            a2 2 0 0 0 2 2h12
+                            a2 2 0 0 0 2-2V8z
+                        "
+                    />
+
+                    <polyline
+                        points="
+                            14 2
+                            14 8
+                            20 8
+                        "
+                    />
+
+                    <!-- RUPIAH -->
+                    <path
+                        d="
+                            M8 12h4
+                            a2 2 0 0 1 0 4H8
+                        "
+                    />
+
+                    <path
+                        d="M8 12v7"
+                    />
+
+                    <path
+                        d="M8 15h4"
+                    />
+
+                    <path
+                        d="M14 16v3"
+                    />
+                </svg>
+            </div>
+
+            <h3>
+                Data Pajak
+            </h3>
+
+            <p>
+                Pengelolaan dan monitoring data pajak
+            </p>
+        </div>
+    </div>
+  </div>
+
+  <!-- ======================================================
+      KATEGORI — INFORMASI & LAPORAN
+  ====================================================== -->
+  <div class="smartoffice-dashboard-category">
+
+      <div class="smartoffice-dashboard-category-header">
+          <h2>Informasi &amp; Laporan</h2>
+
+          <button
+              type="button"
+              class="smartoffice-dashboard-category-more"
+          >
+              Lihat Semua
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path d="m9 18 6-6-6-6"/>
+              </svg>
+          </button>
+      </div>
+
+      <div class="smartoffice-dashboard-menu-grid">
+
+          <!-- =========================
+              LAPORAN & REKAP 
+          ========================== -->
+          <div
+              class="smartoffice-dashboard-menu-card"
+              id="smartofficeLaporanMenuCard"
+          >
+            <div
+                class="smartoffice-dashboard-menu-icon"
+            >
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="38"
+                  height="38"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                <path
+                    d="M4 19V5"
+                />
+
+                <path
+                    d="M4 19h16"
+                />
+
+                <rect
+                    x="7"
+                    y="12"
+                    width="2.5"
+                    height="5"
+                    rx="1"
+                />
+
+                <rect
+                    x="11"
+                    y="9"
+                    width="2.5"
+                    height="8"
+                    rx="1"
+                />
+
+                <rect
+                    x="15"
+                    y="6"
+                    width="2.5"
+                    height="11"
+                    rx="1"
+                />
+              </svg>
+            </div>
+            <h3>
+              Laporan &amp; Rekap
+            </h3>
+            <p>
+              Laporan dan rekapitulasi data puskesmas
+            </p>
+          </div>
+
+          <!-- SLOT 2 KOSONG -->
+          <!-- SLOT 3 KOSONG -->
+          <!-- SLOT 4 KOSONG -->
+      </div>
+  </div>
+ 
+
+   <!-- ======================================================
+      TIPS SMART OFFICE
+  ====================================================== -->
+  <div class="smartoffice-dashboard-tips-card">
+
+    <!-- LEFT -->
+      <div class="smartoffice-dashboard-tips-content">
+          <div class="smartoffice-dashboard-tips-label">
+              <div class="smartoffice-dashboard-tips-label-icon">
+                  <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                  >
+                      <path
+                          d="M9 18h6"
+                      />
+
+                      <path
+                          d="M10 22h4"
+                      />
+
+                      <path
+                          d="M8.5 14.5
+                            C7.55 13.7
+                            7 12.5
+                            7 11
+                            a5 5 0 0 1 10 0
+                            c0 1.5-.55 2.7-1.5 3.5
+                            -.75.65-1.5 1.35-1.5 2.5
+                            h-4
+                            c0-1.15-.75-1.85-1.5-2.5Z"
+                      />
+                  </svg>
+              </div>
+
+              <span>
+                  Tips Smart Office
+              </span>
+          </div>
+
+          <h3>
+              Pastikan data selalu
+              <span>
+                  diperbarui
+              </span>
+          </h3>
+
+          <p>
+              Periksa data kegiatan dan dokumen secara berkala
+              agar informasi Smart Office tetap lengkap dan akurat.
+          </p>
+
+          <div class="smartoffice-dashboard-tips-footer">
+              <span>
+                  Tips untuk hari ini
+              </span>
+
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path d="M5 12h14"/>
+                  <path d="m13 6 6 6-6 6"/>
+              </svg>
+          </div>
+      </div>
+
+      <!-- RIGHT ILLUSTRATION -->
+      <div class="smartoffice-dashboard-tips-visual">
+          <div class="smartoffice-dashboard-tips-glow"></div>
+          <div class="smartoffice-dashboard-tips-bulb">
+              <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+              >
+                  <path
+                      d="M9 18h6"
+                  />
+
+                  <path
+                      d="M10 22h4"
+                  />
+
+                  <path
+                      d="M8.5 14.5
+                        C7.55 13.7
+                        7 12.5
+                        7 11
+                        a5 5 0 0 1 10 0
+                        c0 1.5-.55 2.7-1.5 3.5
+                        -.75.65-1.5 1.35-1.5 2.5
+                        h-4
+                        c0-1.15-.75-1.85-1.5-2.5Z"
+                  />
+
+                  <path d="M12 2v2"/>
+                  <path d="m4.93 4.93 1.41 1.41"/>
+                  <path d="M2 12h2"/>
+                  <path d="m19.07 4.93-1.41 1.41"/>
+                  <path d="M22 12h-2"/>
+              </svg>
+          </div>
+          <div class="smartoffice-dashboard-tips-spark spark-1"></div>
+          <div class="smartoffice-dashboard-tips-spark spark-2"></div>
+          <div class="smartoffice-dashboard-tips-spark spark-3"></div>
+      </div>
+  </div>
+
+</div>   
+
+  <!-- =========================
+       MOBILE NAVBAR
+  ========================== -->
+  <div
+    id="smartofficeMobileNavbar"
+    class="smartoffice-mobile-navbar"
+  ></div>
+
