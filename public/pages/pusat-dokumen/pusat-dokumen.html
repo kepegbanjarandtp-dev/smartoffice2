@@ -1,0 +1,559 @@
+<div class="smartoffice-wrapper">
+
+  <!-- =========================
+      HEADER
+  ========================== -->
+  <div class="smartoffice-header">
+
+    <!-- LEFT -->
+    <div class="smartoffice-header-info">
+
+      <!-- BACK -->
+      <button
+        class="smartoffice-back-button"
+        onclick="smartofficeLoadPage('dashboard')"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+
+      <!-- ICON -->
+      <div
+        class="
+          smartoffice-header-icon
+          smartoffice-pusatdokumen-header-icon
+        "
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="8" y1="13" x2="16" y2="13"/>
+          <line x1="8" y1="17" x2="16" y2="17"/>
+          <line x1="8" y1="9" x2="10" y2="9"/>
+        </svg>
+      </div>
+
+      <!-- TITLE -->
+      <div class="smartoffice-header-title">
+        <h2>
+          Pusat Dokumen
+        </h2>
+        <p>
+          Pusat pengelolaan dokumen Puskesmas
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================
+      TAB
+  ========================== -->
+  <div class="smartoffice-tab-wrapper">
+
+    <!-- PENOMORAN SK -->
+    <button
+      type="button"
+      class="smartoffice-tab-button active"
+      data-tab="penomoran-sk"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="8" y1="13" x2="16" y2="13"/>
+        <line x1="8" y1="17" x2="14" y2="17"/>
+      </svg>
+      <span>
+        Penomoran SK
+      </span>
+    </button>
+
+    <!-- PENOMORAN SOP -->
+    <button
+      type="button"
+      class="smartoffice-tab-button"
+      data-tab="penomoran-sop"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 4h16v16H4z"/>
+        <path d="M8 8h8"/>
+        <path d="M8 12h8"/>
+        <path d="M8 16h5"/>
+      </svg>
+      <span>
+        Penomoran SOP
+      </span>
+    </button>
+
+    <!-- TEMPLATE DOKUMEN -->
+    <button
+      type="button"
+      class="smartoffice-tab-button"
+      data-tab="template-dokumen"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M4 4h16v16H4z"/>
+        <path d="M8 8h8"/>
+        <path d="M8 12h5"/>
+        <path d="M8 16h8"/>
+      </svg>
+      <span>
+        Template Dokumen
+      </span>
+    </button>
+
+    <!-- ARSIP PUSKESMAS -->
+    <button
+      type="button"
+      class="smartoffice-tab-button"
+      data-tab="arsip-puskesmas"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M3 7h18"/>
+        <path d="M5 7v12h14V7"/>
+        <path d="M4 4h16l1 3H3z"/>
+        <path d="M9 11h6"/>
+      </svg>
+      <span>
+        Arsip Puskesmas
+      </span>
+    </button>
+  </div>
+
+  <!-- ======================================================
+     INFO CARD PENOMORAN SK
+  ====================================================== -->
+  <div
+    id="smartofficePenomoranSKInfo"
+    class="smartoffice-penomoransk-info"
+  >
+
+    <!-- ==================================================
+         ICON UTAMA
+    ================================================== -->
+    <div class="smartoffice-penomoransk-info-icon">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path
+          d="M6.5 3.5h7L18.5 8v12.5H6.5a2 2 0 0 1-2-2V5.5a2 2 0 0 1 2-2Z"
+        />
+        <path
+          d="M13.5 3.5V8h5"
+        />
+        <path
+          d="M8 12h7"
+        />
+        <path
+          d="M8 15.5h5"
+        />
+      </svg>
+    </div>
+
+    <!-- ==================================================
+         INFORMASI
+    ================================================== -->
+    <div class="smartoffice-penomoransk-info-content">
+      <h2>
+        Penomoran SK
+      </h2>
+
+      <p>
+        Buat dan kelola nomor Surat Keputusan (SK) secara otomatis
+        dengan format sesuai ketentuan penomoran Puskesmas.
+      </p>
+
+      <!-- ==================================================
+           FEATURE BADGES
+      ================================================== -->
+      <div class="smartoffice-penomoransk-info-features">
+
+        <!-- OTOMATIS -->
+        <div class="smartoffice-penomoransk-feature">
+          <span class="smartoffice-penomoransk-feature-icon green">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="5 12 10 17 19 7"/>
+            </svg>
+          </span>
+          <span>
+            Otomatis
+          </span>
+        </div>
+
+        <!-- SESUAI FORMAT -->
+        <div class="smartoffice-penomoransk-feature">
+          <span class="smartoffice-penomoransk-feature-icon purple">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="3"
+              />
+              <path
+                d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-2.5V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H6v-2.5h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.5v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v2.5h-.2a1.7 1.7 0 0 0-1.6 1Z"
+              />
+            </svg>
+          </span>
+          <span>
+            Sesuai Format
+          </span>
+        </div>
+
+        <!-- TERSTRUKTUR -->
+        <div class="smartoffice-penomoransk-feature">
+          <span class="smartoffice-penomoransk-feature-icon orange">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path
+                d="M12 3 20 6v5c0 5-3.4 8.4-8 10-4.6-1.6-8-5-8-10V6l8-3Z"
+              />
+              <polyline points="8.5 12 11 14.5 15.5 10"/>
+            </svg>
+          </span>
+          <span>
+            Terstruktur
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================================================
+         ILUSTRASI DOKUMEN + PENA
+    ================================================== -->
+    <div
+      class="smartoffice-penomoransk-info-art"
+      aria-hidden="true"
+    >
+      <!-- DECORATIVE CIRCLE -->
+      <div
+        class="smartoffice-penomoransk-art-circle"
+      ></div>
+
+      <!-- BADGE SK -->
+      <div
+        class="smartoffice-penomoransk-art-badge"
+      >
+        SK
+      </div>
+
+      <!-- PAPER -->
+      <div
+        class="smartoffice-penomoransk-art-paper"
+      >
+        <div
+          class="smartoffice-penomoransk-paper-line line-1"
+        ></div>
+        <div
+          class="smartoffice-penomoransk-paper-line line-2"
+        ></div>
+        <div
+          class="smartoffice-penomoransk-paper-line line-3"
+        ></div>
+        <div
+          class="smartoffice-penomoransk-paper-line line-4"
+        ></div>
+      </div>
+
+      <!-- PEN -->
+      <div
+        class="smartoffice-penomoransk-art-pen"
+      >
+        <div
+          class="smartoffice-penomoransk-pen-body"
+        ></div>
+        <div
+          class="smartoffice-penomoransk-pen-grip"
+        ></div>
+        <div
+          class="smartoffice-penomoransk-pen-tip"
+        ></div>
+      </div>
+
+      <!-- DECORATIVE LEAF -->
+      <div
+        class="smartoffice-penomoransk-art-shape shape-one"
+      ></div>
+      <div
+        class="smartoffice-penomoransk-art-shape shape-two"
+      ></div>
+
+      <!-- SLOGAN -->
+      <div
+        class="smartoffice-penomoransk-art-slogan"
+      >
+        <span>Dokumen Tertata,</span>
+        <strong>Pelayanan Lebih Baik</strong>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ======================================================
+       PENOMORAN SK
+  ====================================================== -->
+  <div
+    id="smartofficePenomoranSKContent"
+    class="smartoffice-penomoransk-content"
+  >
+
+    <!-- ==================================================
+        FILTER BAR PENOMORAN SK
+    ================================================== -->
+    <div class="smartoffice-penomoransk-filter">
+
+        <!-- SEARCH NOMOR / TENTANG -->
+        <div class="smartoffice-penomoransk-filter-field smartoffice-penomoransk-filter-search">
+            <label>
+                Cari Nomor SK / Tentang
+            </label>
+
+            <input
+                type="text"
+                id="smartofficePenomoranSKFilterSearch"
+                placeholder="Cari nomor SK atau isi tentang"
+            >
+        </div>
+
+        <!-- TAHUN -->
+        <div class="smartoffice-penomoransk-filter-field">
+            <label>
+                Tahun
+            </label>
+
+            <select
+                id="smartofficePenomoranSKFilterTahun"
+            >
+                <option value="">
+                    Semua
+                </option>
+            </select>
+        </div>
+
+        <!-- KLASTER -->
+        <div class="smartoffice-penomoransk-filter-field">
+            <label>
+                Klaster
+            </label>
+
+            <select
+                id="smartofficePenomoranSKFilterKlaster"
+            >
+                <option value="">
+                    Semua
+                </option>
+            </select>
+        </div>
+
+        <!-- STATUS SK -->
+        <div class="smartoffice-penomoransk-filter-field">
+            <label>
+                Status SK
+            </label>
+
+            <select
+                id="smartofficePenomoranSKFilterStatus"
+            >
+                <option value="">
+                    Semua
+                </option>
+
+                <option value="BERLAKU">
+                    Berlaku
+                </option>
+
+                <option value="DICABUT">
+                    Dicabut
+                </option>
+            </select>
+        </div>
+
+        <!-- RESET FILTER -->
+        <button
+            type="button"
+            id="smartofficePenomoranSKResetButton"
+            class="smartoffice-penomoransk-filter-button"
+            title="Reset Filter"
+            aria-label="Reset Filter"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M3 12a9 9 0 1 0 3-6.7"/>
+                <polyline points="3 4 3 10 9 10"/>
+            </svg>
+
+            <span>
+                Reset
+            </span>
+        </button>
+
+        <!-- TAMBAH SK -->
+        <button
+            type="button"
+            id="smartofficePenomoranSKTambahButton"
+            class="smartoffice-penomoransk-tambah-button"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M12 5v14"/>
+                <path d="M5 12h14"/>
+            </svg>
+
+            <span>
+                Tambah SK
+            </span>
+        </button>
+    </div>
+
+    <!-- ==================================================
+         LIST SK
+    ================================================== -->
+    <div
+        id="smartofficePenomoranSKList"
+        class="smartoffice-penomoransk-list"
+    >
+        <div class="smartoffice-loading">
+            <div class="smartoffice-loading-spinner"></div>
+            <div class="smartoffice-loading-text">
+                Memuat data Surat Keputusan...
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================
+         MODAL FORM SK
+    ================================================== -->
+    <div
+        id="smartofficePenomoranSKFormModal"
+        class="smartoffice-penomoransk-form-modal"
+    >
+        <div
+            class="smartoffice-penomoransk-form-overlay"
+            id="smartofficePenomoranSKFormOverlay"
+        ></div>
+
+        <div
+            class="smartoffice-penomoransk-form-content"
+        >
+            <!-- HEADER -->
+            <div
+                class="smartoffice-penomoransk-form-header"
+            >
+                <div>
+                    <h3
+                        class="smartoffice-penomoransk-form-title"
+                    >
+                        Tambah Surat Keputusan
+                    </h3>
+
+                    <p>
+                        Lengkapi data Surat Keputusan
+                    </p>
+                </div>
+
+                <!-- CLOSE -->
+                <button
+                    type="button"
+                    id="smartofficePenomoranSKFormClose"
+                    class="smartoffice-penomoransk-form-close"
+                    aria-label="Tutup"
+                >
+                    ×
+                </button>
+            </div>
+
+            <!-- BODY DINAMIS -->
+            <div
+                id="smartofficePenomoranSKFormBody"
+                class="smartoffice-penomoransk-form-body"
+            ></div>
+        </div>
+    </div>
+  </div>
+</div>
