@@ -64,6 +64,9 @@ const smartofficeModules = {
     "buku-surat": () => 
         import("../pages/buku-surat/buku-surat.js"), 
 
+    "pusat-dokumen": () =>
+        import("../pages/pusat-dokumen/penomoran-sk.js"),
+
 };
 
 

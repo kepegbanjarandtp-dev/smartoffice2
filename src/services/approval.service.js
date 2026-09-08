@@ -37,20 +37,33 @@ export async function smartofficeProcessApprovalCuti(
     nip,
     catatan
 ){
+    const approvalAction =
+        String(action || "")
+            .trim()
+            .toUpperCase();
+    if(
+        approvalAction !== "APPROVE" &&
+        approvalAction !== "REJECT"
+    ){
+        throw new Error(
+            "Action approval tidak valid."
+        );
+    }
+
     const result =
         await smartofficeApi(
             "smartofficeProcessApprovalCuti",
             {
                 idCuti,
-                action,
+                approvalAction,
                 nip,
                 catatan
             }
         );
-
     if(!result.success){
         throw new Error(
-            result.message
+            result.message ||
+            "Gagal memproses approval."
         );
     }
 

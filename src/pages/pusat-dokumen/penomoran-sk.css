@@ -1,0 +1,2613 @@
+/* ======================================================
+   PUSAT DOKUMEN
+   KERANGKA HALAMAN + TAB
+====================================================== */
+
+/* ======================================================
+   HEADER ICON
+====================================================== */
+
+.smartoffice-pusatdokumen-header-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+
+/* ======================================================
+   TAB WRAPPER
+====================================================== */
+
+.smartoffice-tab-wrapper{
+    display:flex;
+    align-items:stretch;
+    width:100%;
+    margin-top:18px;
+    border-bottom:1px solid #e2e8f0;
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+
+.smartoffice-tab-wrapper::-webkit-scrollbar{
+    display:none;
+}
+
+
+/* ======================================================
+   TAB BUTTON
+====================================================== */
+
+.smartoffice-tab-button{
+    position:relative;
+    flex:0 0 auto;
+    min-height:44px;
+    padding:0 15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:7px;
+
+    background:transparent;
+    border:0;
+    border-bottom:2px solid transparent;
+
+    color:#64748b;
+
+    font-family:inherit;
+    font-size:11px;
+    font-weight:600;
+
+    white-space:nowrap;
+    cursor:pointer;
+
+    transition:
+        color .2s ease,
+        border-color .2s ease,
+        background .2s ease;
+}
+
+.smartoffice-tab-button svg{
+    width:16px;
+    height:16px;
+    flex:0 0 16px;
+
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+.smartoffice-tab-button:hover{
+    color:#2563eb;
+    background:#f8fafc;
+}
+
+.smartoffice-tab-button.active{
+    color:#2563eb;
+    border-bottom-color:#2563eb;
+}
+
+/* ======================================================
+   CONTENT AREA
+====================================================== */
+
+.smartoffice-pusatdokumen-content{
+    width:100%;
+    min-height:120px;
+    box-sizing:border-box;
+}
+
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width:600px){
+
+    .smartoffice-tab-wrapper{
+        margin-top:15px;
+    }
+
+    .smartoffice-tab-button{
+        min-height:42px;
+        padding:0 12px;
+        gap:6px;
+        font-size:10px;
+    }
+
+    .smartoffice-tab-button svg{
+        width:15px;
+        height:15px;
+        flex-basis:15px;
+    }
+
+    .smartoffice-pusatdokumen-tab-info{
+        padding:13px 1px 12px;
+    }
+
+    .smartoffice-pusatdokumen-tab-info-title{
+        font-size:12px;
+    }
+
+    .smartoffice-pusatdokumen-tab-info-description{
+        font-size:9px;
+    }
+
+}
+
+/* ============================================================================
+   INFO CARD 
+  ============================================================================ */
+/* ======================================================
+   INFO CARD PENOMORAN SK
+  ====================================================== */
+
+.smartoffice-penomoransk-info{
+    position:relative;
+
+    width:100%;
+    min-height:145px;
+
+    display:flex;
+    align-items:center;
+
+    padding:22px 30px;
+    margin-bottom:14px;
+
+    box-sizing:border-box;
+
+    background:
+        radial-gradient(
+            circle at 82% 50%,
+            rgba(219,234,254,.75) 0,
+            rgba(239,246,255,.45) 30%,
+            transparent 58%
+        ),
+        linear-gradient(
+            110deg,
+            #ffffff 0%,
+            #ffffff 58%,
+            #f3f8ff 100%
+        );
+
+    border:1px solid #cfe0f8;
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 6px 20px rgba(30,64,175,.07);
+}
+
+
+/* ======================================================
+   ICON UTAMA
+  ====================================================== */
+
+.smartoffice-penomoransk-info-icon{
+    position:relative;
+    z-index:5;
+
+    width:58px;
+    height:58px;
+    min-width:58px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    margin-right:22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #e8f1ff,
+            #dceaff
+        );
+
+    border:1px solid #c8dcfa;
+    border-radius:20px;
+
+    color:#2563eb;
+
+    box-shadow:
+        0 5px 14px rgba(37,99,235,.08);
+}
+
+.smartoffice-penomoransk-info-icon svg{
+    width:32px;
+    height:32px;
+    display:block;
+}
+
+
+/* ======================================================
+   CONTENT
+  ====================================================== */
+
+.smartoffice-penomoransk-info-content{
+    position:relative;
+    z-index:5;
+
+    max-width:650px;
+    min-width:0;
+}
+
+.smartoffice-penomoransk-info-content h2{
+    margin:0;
+
+    color:#102a56;
+
+    font-size:21px;
+    line-height:1.25;
+    font-weight:750;
+    letter-spacing:-.35px;
+}
+
+.smartoffice-penomoransk-info-content p{
+    margin:7px 0 0;
+
+    max-width:620px;
+
+    color:#647a9b;
+
+    font-size:11px;
+    line-height:1.6;
+}
+
+
+/* ======================================================
+   FEATURE BADGES
+  ====================================================== */
+
+.smartoffice-penomoransk-info-features{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:9px;
+
+    margin-top:15px;
+}
+
+.smartoffice-penomoransk-feature{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    height:31px;
+
+    padding:0 12px 0 6px;
+
+    background:rgba(255,255,255,.88);
+
+    border:1px solid rgba(221,230,243,.95);
+    border-radius:999px;
+
+    box-shadow:
+        0 2px 7px rgba(15,23,42,.035);
+
+    color:#20385f;
+
+    font-size:10px;
+    font-weight:650;
+
+    white-space:nowrap;
+}
+
+.smartoffice-penomoransk-feature-icon{
+    width:22px;
+    height:22px;
+    min-width:22px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:50%;
+}
+
+.smartoffice-penomoransk-feature-icon svg{
+    width:13px;
+    height:13px;
+}
+
+.smartoffice-penomoransk-feature-icon.green{
+    color:#ffffff;
+    background:#22c59b;
+}
+
+.smartoffice-penomoransk-feature-icon.purple{
+    color:#ffffff;
+    background:#8b5cf6;
+}
+
+.smartoffice-penomoransk-feature-icon.orange{
+    color:#ffffff;
+    background:#f59e0b;
+}
+
+
+/* ======================================================
+   AREA ILUSTRASI
+  ====================================================== */
+
+.smartoffice-penomoransk-info-art{
+    position:absolute;
+
+    right:0;
+    top:0;
+
+    width:330px;
+    height:100%;
+
+    pointer-events:none;
+}
+
+
+/* ======================================================
+   BACKGROUND ART
+  ====================================================== */
+
+.smartoffice-penomoransk-art-circle{
+    position:absolute;
+
+    width:280px;
+    height:280px;
+
+    right:-45px;
+    top:-52px;
+
+    border-radius:50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(219,234,254,.9) 0%,
+            rgba(239,246,255,.45) 55%,
+            transparent 72%
+        );
+}
+
+
+/* ======================================================
+   BADGE SK
+  ====================================================== */
+
+.smartoffice-penomoransk-art-badge{
+    position:absolute;
+
+    right:155px;
+    top:22px;
+
+    width:46px;
+    height:34px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            145deg,
+            #60a5fa,
+            #2563eb
+        );
+
+    border-radius:11px;
+
+    color:#ffffff;
+
+    font-size:16px;
+    font-weight:800;
+
+    box-shadow:
+        0 8px 18px rgba(37,99,235,.20);
+
+    transform:rotate(-2deg);
+}
+
+
+/* ======================================================
+   PAPER
+  ====================================================== */
+
+.smartoffice-penomoransk-art-paper{
+    position:absolute;
+
+    right:50px;
+    top:20px;
+
+    width:92px;
+    height:112px;
+
+    padding:28px 17px;
+
+    box-sizing:border-box;
+
+    background:#ffffff;
+
+    border:1px solid #d5e4fb;
+
+    border-radius:9px;
+
+    box-shadow:
+        0 12px 24px rgba(37,99,235,.12);
+
+    transform:rotate(6deg);
+
+    z-index:3;
+}
+
+
+/* PAPER CORNER */
+
+.smartoffice-penomoransk-art-paper::before{
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    right:0;
+
+    width:27px;
+    height:27px;
+
+    background:
+        linear-gradient(
+            225deg,
+            #e7f0ff 0%,
+            #e7f0ff 49%,
+            #ffffff 50%
+        );
+
+    border-left:1px solid #d5e4fb;
+    border-bottom:1px solid #d5e4fb;
+
+    border-radius:0 8px 0 8px;
+}
+
+
+/* PAPER LINES */
+
+.smartoffice-penomoransk-paper-line{
+    height:7px;
+
+    margin-bottom:12px;
+
+    border-radius:5px;
+
+    background:#c8dcfb;
+}
+
+.smartoffice-penomoransk-paper-line.line-1{
+    width:70%;
+}
+
+.smartoffice-penomoransk-paper-line.line-2{
+    width:86%;
+}
+
+.smartoffice-penomoransk-paper-line.line-3{
+    width:78%;
+}
+
+.smartoffice-penomoransk-paper-line.line-4{
+    width:55%;
+}
+
+
+/* ======================================================
+   PEN
+  ====================================================== */
+
+.smartoffice-penomoransk-art-pen{
+    position:absolute;
+
+    right:34px;
+    bottom:10px;
+
+    width:40px;
+    height:110px;
+
+    transform:rotate(24deg);
+
+    z-index:5;
+}
+
+
+/* PEN BODY */
+
+.smartoffice-penomoransk-pen-body{
+    position:absolute;
+
+    left:9px;
+    top:7px;
+
+    width:19px;
+    height:84px;
+
+    border-radius:8px 8px 5px 5px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #1d4ed8 0%,
+            #3b82f6 46%,
+            #60a5fa 100%
+        );
+
+    box-shadow:
+        2px 4px 8px rgba(30,64,175,.18);
+}
+
+
+/* PEN GRIP */
+
+.smartoffice-penomoransk-pen-grip{
+    position:absolute;
+
+    left:9px;
+    top:70px;
+
+    width:19px;
+    height:22px;
+
+    background:#1d4ed8;
+
+    border-radius:3px 3px 6px 6px;
+}
+
+
+/* PEN TIP */
+
+.smartoffice-penomoransk-pen-tip{
+    position:absolute;
+
+    left:10px;
+    bottom:0;
+
+    width:17px;
+    height:22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e3a8a,
+            #2563eb
+        );
+
+    clip-path:polygon(
+        0 0,
+        100% 0,
+        50% 100%
+    );
+}
+
+
+/* ======================================================
+   DECORATIVE SHAPES
+  ====================================================== */
+
+.smartoffice-penomoransk-art-shape{
+    position:absolute;
+
+    border-radius:50% 50% 45% 55%;
+
+    background:#dbeafe;
+
+    opacity:.75;
+
+    z-index:1;
+}
+
+.smartoffice-penomoransk-art-shape.shape-one{
+    width:52px;
+    height:22px;
+
+    right:13px;
+    bottom:27px;
+
+    transform:rotate(35deg);
+}
+
+.smartoffice-penomoransk-art-shape.shape-two{
+    width:68px;
+    height:27px;
+
+    right:2px;
+    bottom:53px;
+
+    transform:rotate(-25deg);
+
+    opacity:.5;
+}
+
+
+/* ======================================================
+   SLOGAN
+  ====================================================== */
+
+.smartoffice-penomoransk-art-slogan{
+    position:absolute;
+
+    right:160px;
+    bottom:30px;
+
+    width:140px;
+
+    color:#6090dc;
+
+    font-size:13px;
+    line-height:1.35;
+
+    font-style:italic;
+
+    transform:rotate(-5deg);
+
+    z-index:6;
+}
+
+.smartoffice-penomoransk-art-slogan span,
+.smartoffice-penomoransk-art-slogan strong{
+    display:block;
+}
+
+.smartoffice-penomoransk-art-slogan strong{
+    color:#4d83d9;
+    font-weight:700;
+}
+
+
+/* ======================================================
+   RESPONSIVE
+  ====================================================== */
+
+@media (max-width:900px){
+
+    .smartoffice-penomoransk-info-art{
+        width:340px;
+    }
+
+    .smartoffice-penomoransk-info-content{
+        max-width:540px;
+    }
+
+    .smartoffice-penomoransk-art-slogan{
+        display:none;
+    }
+
+    .smartoffice-penomoransk-art-badge{
+        right:195px;
+    }
+}
+
+
+@media (max-width:700px){
+
+    .smartoffice-penomoransk-info{
+        min-height:142px;
+
+        padding:18px;
+
+        border-radius:15px;
+    }
+
+    .smartoffice-penomoransk-info-icon{
+        width:50px;
+        height:50px;
+        min-width:50px;
+
+        margin-right:12px;
+
+        border-radius:14px;
+    }
+
+    .smartoffice-penomoransk-info-icon svg{
+        width:27px;
+        height:27px;
+    }
+
+    .smartoffice-penomoransk-info-content{
+        padding-right:85px;
+    }
+
+    .smartoffice-penomoransk-info-content h2{
+        font-size:15px;
+    }
+
+    .smartoffice-penomoransk-info-content p{
+        margin-top:5px;
+
+        font-size:9px;
+        line-height:1.45;
+    }
+
+    .smartoffice-penomoransk-info-features{
+        gap:5px;
+        margin-top:9px;
+    }
+
+    .smartoffice-penomoransk-feature{
+        height:25px;
+        padding:0 8px 0 4px;
+
+        font-size:8px;
+    }
+
+    .smartoffice-penomoransk-feature-icon{
+        width:18px;
+        height:18px;
+        min-width:18px;
+    }
+
+    .smartoffice-penomoransk-feature-icon svg{
+        width:10px;
+        height:10px;
+    }
+
+    .smartoffice-penomoransk-info-art{
+        width:145px;
+    }
+
+    .smartoffice-penomoransk-art-circle{
+        width:150px;
+        height:150px;
+
+        right:-40px;
+        top:-10px;
+    }
+
+    .smartoffice-penomoransk-art-badge{
+        right:88px;
+        top:17px;
+
+        width:34px;
+        height:26px;
+
+        font-size:11px;
+        border-radius:7px;
+    }
+
+    .smartoffice-penomoransk-art-paper{
+        right:28px;
+        top:20px;
+
+        width:62px;
+        height:82px;
+
+        padding:18px 9px;
+
+        border-radius:6px;
+    }
+
+    .smartoffice-penomoransk-art-paper::before{
+        width:15px;
+        height:15px;
+    }
+
+    .smartoffice-penomoransk-paper-line{
+        height:4px;
+        margin-bottom:7px;
+    }
+
+    .smartoffice-penomoransk-art-pen{
+        right:2px;
+        bottom:2px;
+
+        width:32px;
+        height:83px;
+    }
+
+    .smartoffice-penomoransk-pen-body{
+        left:7px;
+        top:5px;
+
+        width:14px;
+        height:63px;
+    }
+
+    .smartoffice-penomoransk-pen-grip{
+        left:7px;
+        top:51px;
+
+        width:14px;
+        height:17px;
+    }
+
+    .smartoffice-penomoransk-pen-tip{
+        left:8px;
+
+        width:12px;
+        height:16px;
+    }
+
+    .smartoffice-penomoransk-art-shape.shape-one{
+        width:30px;
+        height:13px;
+
+        right:-2px;
+        bottom:18px;
+    }
+
+    .smartoffice-penomoransk-art-shape.shape-two{
+        width:38px;
+        height:15px;
+
+        right:-6px;
+        bottom:35px;
+    }
+}
+
+
+
+
+
+/* ======================================================
+   PUSAT DOKUMEN
+   PENOMORAN SK
+====================================================== */
+
+
+/* ======================================================
+   CONTENT PENOMORAN SK
+====================================================== */
+
+.smartoffice-penomoransk-content{
+    width:100%;
+    box-sizing:border-box;
+}
+
+
+/* ======================================================
+   FILTER BAR PENOMORAN SK
+====================================================== */
+
+.smartoffice-penomoransk-filter{
+    width:100%;
+
+    display:grid;
+
+    grid-template-columns:
+        minmax(300px, 1fr)
+        105px
+        120px
+        120px
+        82px
+        82px;
+
+    gap:8px;
+
+    align-items:end;
+
+    padding:11px;
+
+    margin-bottom:12px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+
+    box-sizing:border-box;
+}
+
+
+/* ======================================================
+   FILTER FIELD
+====================================================== */
+
+.smartoffice-penomoransk-filter-field{
+    min-width:0;
+}
+
+.smartoffice-penomoransk-filter-field label{
+    display:block;
+
+    margin-bottom:5px;
+
+    font-size:9px;
+    line-height:1.2;
+    font-weight:600;
+
+    color:#475569;
+}
+
+
+/* ======================================================
+   INPUT & SELECT
+====================================================== */
+
+.smartoffice-penomoransk-filter-field input,
+.smartoffice-penomoransk-filter-field select{
+    width:100%;
+    height:33px;
+
+    padding:0 9px;
+
+    box-sizing:border-box;
+
+    border:1px solid #d8e1ec;
+    border-radius:8px;
+
+    background:#fff;
+
+    color:#172033;
+
+    font-family:inherit;
+    font-size:9px;
+    font-weight:400;
+
+    outline:none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-penomoransk-filter-field input::placeholder{
+    color:#94a3b8;
+}
+
+.smartoffice-penomoransk-filter-field input:focus,
+.smartoffice-penomoransk-filter-field select:focus{
+    border-color:#93c5fd;
+
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.08);
+}
+
+
+/* ======================================================
+   SEARCH
+====================================================== */
+
+.smartoffice-penomoransk-filter-search{
+    min-width:0;
+}
+
+
+/* ======================================================
+   RESET FILTER
+====================================================== */
+
+.smartoffice-penomoransk-filter-button{
+    height:33px;
+    min-width:82px;
+
+    padding:0 10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+
+    background:#f1f5f9;
+    color:#475569;
+
+    font-family:inherit;
+    font-size:9px;
+    font-weight:600;
+
+    white-space:nowrap;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
+}
+
+.smartoffice-penomoransk-filter-button:hover{
+    background:#e2e8f0;
+    border-color:#cbd5e1;
+    color:#334155;
+}
+
+.smartoffice-penomoransk-filter-button svg{
+    width:13px;
+    height:13px;
+
+    display:block;
+    flex-shrink:0;
+}
+
+/* ======================================================
+   TAMBAH SK
+====================================================== */
+
+.smartoffice-penomoransk-tambah-button{
+    height:33px;
+
+    padding:0 10px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+
+    border:1px solid #2563eb;
+    border-radius:8px;
+
+    background:#2563eb;
+    color:#fff;
+
+    font-family:inherit;
+    font-size:9px;
+    font-weight:600;
+
+    white-space:nowrap;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        transform .15s ease;
+}
+
+.smartoffice-penomoransk-tambah-button:hover{
+    background:#1d4ed8;
+    border-color:#1d4ed8;
+}
+
+.smartoffice-penomoransk-tambah-button:active{
+    transform:translateY(1px);
+}
+
+.smartoffice-penomoransk-tambah-button svg{
+    width:13px;
+    height:13px;
+
+    display:block;
+}
+
+
+/* ==============================================================================
+   CONTENT CARD SK
+============================================================================== */
+/* ======================================================
+   LIST PENOMORAN SK
+====================================================== */
+
+.smartoffice-penomoransk-list{
+    width:100%;
+    box-sizing:border-box;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:10px;
+}
+
+
+/* ======================================================
+   CARD
+====================================================== */
+
+.smartoffice-penomoransk-item{
+    position:relative;
+
+    width:100%;
+    box-sizing:border-box;
+
+    padding:13px 14px 12px;
+
+    background:#FFFFFF;
+
+    border:1px solid #e2e8f0;
+    border-radius:17px;
+
+    box-shadow:
+        0 2px 5px rgba(15,23,42,.025),
+        0 6px 18px rgba(15,23,42,.035);
+
+    overflow:hidden;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease;
+}
+
+
+/* ======================================================
+   ACCENT KLASTER
+====================================================== */
+
+.smartoffice-penomoransk-item::before{
+    content:"";
+
+    position:absolute;
+    top:0;
+    bottom:0;
+    left:0;
+
+    width:3px;
+}
+
+
+/* KL-1 */
+.smartoffice-penomoransk-kl1::before{
+    background:#2563eb;
+}
+
+/* KL-2 */
+.smartoffice-penomoransk-kl2::before{
+    background:#7c3aed;
+}
+
+/* KL-3 */
+.smartoffice-penomoransk-kl3::before{
+    background:#10b981;
+}
+
+/* KL-4 */
+.smartoffice-penomoransk-kl4::before{
+    background:#f59e0b;
+}
+
+/* KL-5 */
+.smartoffice-penomoransk-kl5::before{
+    background:#ef4444;
+}
+
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.smartoffice-penomoransk-item-header{
+    width:100%;
+
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+
+    gap:10px;
+}
+
+
+/* ======================================================
+   TITLE WRAP
+====================================================== */
+
+.smartoffice-penomoransk-item-title-wrap{
+    min-width:0;
+    flex:1;
+
+    display:flex;
+    align-items:center;
+
+    gap:10px;
+}
+
+
+/* ======================================================
+   ICON
+====================================================== */
+
+.smartoffice-penomoransk-item-icon{
+    width:46px;
+    min-width:46px;
+    height:46px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+
+/* WARNA ICON KLASTER */
+
+.smartoffice-penomoransk-kl2
+.smartoffice-penomoransk-item-icon{
+    background:#f5f3ff;
+    color:#7c3aed;
+}
+
+.smartoffice-penomoransk-kl3
+.smartoffice-penomoransk-item-icon{
+    background:#ecfdf5;
+    color:#059669;
+}
+
+.smartoffice-penomoransk-kl4
+.smartoffice-penomoransk-item-icon{
+    background:#fffbeb;
+    color:#d97706;
+}
+
+.smartoffice-penomoransk-kl5
+.smartoffice-penomoransk-item-icon{
+    background:#fff1f2;
+    color:#e11d48;
+}
+
+
+.smartoffice-penomoransk-item-icon svg{
+    width:23px;
+    height:23px;
+
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+
+/* ======================================================
+   NOMOR + TANGGAL
+====================================================== */
+
+.smartoffice-penomoransk-item-title-content{
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+}
+
+
+.smartoffice-penomoransk-item-nomor{
+    margin-bottom:3px;
+
+    font-size:14px;
+    line-height:1.35;
+
+    font-weight:750;
+
+    color:#172554;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+.smartoffice-penomoransk-item-tanggal{
+    display:flex;
+    align-items:center;
+
+    gap:5px;
+
+    font-size:10px;
+    line-height:1.3;
+
+    color:#94a3b8;
+}
+
+
+.smartoffice-penomoransk-item-tanggal svg{
+    width:12px;
+    height:12px;
+
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+
+    flex-shrink:0;
+}
+
+
+/* ======================================================
+   STATUS
+====================================================== */
+
+.smartoffice-penomoransk-item-status{
+    flex-shrink:0;
+
+    display:inline-flex;
+    align-items:center;
+
+    gap:5px;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    background:#ecfdf5;
+    border:1px solid #bbf7d0;
+
+    color:#15803d;
+
+    font-size:9px;
+    font-weight:800;
+
+    line-height:1;
+}
+
+
+/* ======================================================
+   STATUS DOT
+====================================================== */
+
+.smartoffice-penomoransk-status-dot{
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+
+    background:#22c55e;
+}
+
+
+/* ======================================================
+   TENTANG
+====================================================== */
+
+.smartoffice-penomoransk-item-tentang{
+    margin-top:11px;
+    padding-top:10px;
+
+    border-top:1px solid #f1f5f9;
+}
+
+
+.smartoffice-penomoransk-item-label{
+    display:flex;
+    align-items:center;
+
+    gap:5px;
+
+    margin-bottom:4px;
+
+    font-size:8px;
+    line-height:1.3;
+
+    font-weight:700;
+
+    letter-spacing:.35px;
+
+    color:#94a3b8;
+}
+
+
+.smartoffice-penomoransk-item-label svg{
+    width:12px;
+    height:12px;
+
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+
+    flex-shrink:0;
+}
+
+
+/* ======================================================
+   ISI TENTANG
+====================================================== */
+
+.smartoffice-penomoransk-item-value{
+    font-size:12px;
+    line-height:1.4;
+
+    font-weight:700;
+
+    color:#1e293b;
+}
+
+
+/* ======================================================
+   INFORMASI BAWAH
+====================================================== */
+
+.smartoffice-penomoransk-item-info{
+    display:grid;
+
+    grid-template-columns:
+        minmax(0,1fr)
+        minmax(0,1.35fr)
+        auto;
+
+    align-items:center;
+
+    gap:0;
+
+    margin-top:10px;
+    padding-top:9px;
+
+    border-top:1px solid #f1f5f9;
+}
+
+
+.smartoffice-penomoransk-item-info-box{
+    min-width:0;
+}
+
+
+/* PEMISAH */
+
+.smartoffice-penomoransk-item-info-box + 
+.smartoffice-penomoransk-item-info-box{
+    padding-left:12px;
+    margin-left:12px;
+
+    border-left:1px solid #eef2f7;
+}
+
+
+/* ======================================================
+   KLASTER VALUE
+====================================================== */
+
+.smartoffice-penomoransk-item-klaster-value{
+    display:inline-block;
+
+    max-width:100%;
+
+    padding:4px 8px;
+
+    border-radius:7px;
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    font-size:10px;
+    line-height:1.3;
+
+    font-weight:700;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* WARNA KLASTER */
+
+.smartoffice-penomoransk-kl2
+.smartoffice-penomoransk-item-klaster-value{
+    background:#f5f3ff;
+    color:#7c3aed;
+}
+
+.smartoffice-penomoransk-kl3
+.smartoffice-penomoransk-item-klaster-value{
+    background:#ecfdf5;
+    color:#059669;
+}
+
+.smartoffice-penomoransk-kl4
+.smartoffice-penomoransk-item-klaster-value{
+    background:#fffbeb;
+    color:#d97706;
+}
+
+.smartoffice-penomoransk-kl5
+.smartoffice-penomoransk-item-klaster-value{
+    background:#fff1f2;
+    color:#e11d48;
+}
+
+
+/* ======================================================
+   KLASIFIKASI
+====================================================== */
+
+.smartoffice-penomoransk-item-klasifikasi-value{
+    display:inline-block;
+
+    max-width:100%;
+
+    padding:4px 8px;
+
+    border-radius:7px;
+
+    background:#eff6ff;
+
+    color:#334155;
+
+    font-size:10px;
+    line-height:1.35;
+
+    font-weight:600;
+
+    word-break:break-word;
+}
+
+
+
+/* ======================================================
+   EMPTY
+====================================================== */
+
+.smartoffice-empty{
+    width:100%;
+    box-sizing:border-box;
+
+    padding:35px 20px;
+
+    text-align:center;
+
+    background:#fff;
+
+    border:1px dashed #cbd5e1;
+
+    border-radius:17px;
+}
+
+
+.smartoffice-empty-title{
+    margin-bottom:5px;
+
+    font-size:13px;
+    font-weight:700;
+
+    color:#334155;
+}
+
+
+.smartoffice-empty-text{
+    font-size:11px;
+    line-height:1.5;
+
+    color:#94a3b8;
+}
+
+
+/* ======================================================
+   ACTION WRAP
+====================================================== */
+
+.smartoffice-penomoransk-item-action-wrap{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+
+    gap:6px;
+
+    padding-left:10px;
+    transform:translateY(5px);
+}
+
+
+/* ======================================================
+   BUTTON LIHAT SK
+====================================================== */
+
+.smartoffice-penomoransk-item-action{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:5px;
+
+    min-width:82px;
+
+    padding:7px 10px;
+
+    border:1px solid #dbeafe;
+    border-radius:10px;
+
+    background:#f8fbff;
+    color:#2563eb;
+
+    font-family:inherit;
+    font-size:10px;
+    font-weight:750;
+
+    cursor:pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+
+.smartoffice-penomoransk-item-action:hover{
+    background:#eff6ff;
+    border-color:#bfdbfe;
+}
+
+
+.smartoffice-penomoransk-item-action:active{
+    transform:scale(.96);
+}
+
+
+.smartoffice-penomoransk-item-action svg{
+    width:13px;
+    height:13px;
+
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+
+    stroke-linecap:round;
+    stroke-linejoin:round;
+}
+
+
+.smartoffice-penomoransk-action-arrow{
+    font-size:14px;
+    line-height:10px;
+    font-weight:500;
+}
+
+
+/* ======================================================
+   BUTTON MORE
+====================================================== */
+
+.smartoffice-penomoransk-item-more{
+    width:32px;
+    height:32px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:0;
+
+    border:1px solid #e2e8f0;
+    border-radius:10px;
+
+    background:#ffffff;
+    color:#64748b;
+
+    font-family:Arial,sans-serif;
+    font-size:18px;
+    line-height:1;
+
+    cursor:pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        color .18s ease,
+        transform .18s ease;
+}
+
+
+.smartoffice-penomoransk-item-more:hover{
+    background:#f8fafc;
+    border-color:#cbd5e1;
+    color:#334155;
+}
+
+
+.smartoffice-penomoransk-item-more:active{
+    transform:scale(.94);
+}
+
+
+/* ======================================================
+   ACTION MODAL
+====================================================== */
+
+.smartoffice-penomoransk-action-sheet{
+    position:fixed;
+    inset:0;
+
+    z-index:9999;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-sizing:border-box;
+
+    padding:20px;
+
+    visibility:hidden;
+    pointer-events:none;
+}
+
+
+.smartoffice-penomoransk-action-sheet.active{
+    visibility:visible;
+    pointer-events:auto;
+}
+
+
+/* ======================================================
+   OVERLAY
+====================================================== */
+
+.smartoffice-penomoransk-action-overlay{
+    position:absolute;
+    inset:0;
+
+    background:rgba(15,23,42,.38);
+
+    opacity:0;
+
+    backdrop-filter:blur(3px);
+
+    transition:
+        opacity .22s ease;
+}
+
+
+.smartoffice-penomoransk-action-sheet.active
+.smartoffice-penomoransk-action-overlay{
+    opacity:1;
+}
+
+
+/* ======================================================
+   ACTION PANEL
+====================================================== */
+
+.smartoffice-penomoransk-action-panel{
+    position:relative;
+
+    width:100%;
+    max-width:360px;
+
+    box-sizing:border-box;
+
+    padding:12px;
+
+    background:#ffffff;
+
+    border:1px solid rgba(226,232,240,.9);
+
+    border-radius:20px;
+
+    box-shadow:
+        0 20px 50px
+        rgba(15,23,42,.18);
+
+    opacity:0;
+
+    transform:scale(.94);
+
+    transition:
+        opacity .22s ease,
+        transform .22s ease;
+
+    z-index:1;
+}
+
+
+.smartoffice-penomoransk-action-sheet.active
+.smartoffice-penomoransk-action-panel{
+    opacity:1;
+
+    transform:scale(1);
+}
+
+
+/* ======================================================
+   HANDLE
+====================================================== */
+
+.smartoffice-penomoransk-action-handle{
+    display:none;
+}
+
+
+/* ======================================================
+   TITLE
+====================================================== */
+
+.smartoffice-penomoransk-action-title{
+    padding-top:4px;
+
+    font-size:15px;
+    line-height:1.3;
+
+    font-weight:750;
+
+    color:#1e293b;
+
+    text-align:center;
+}
+
+
+.smartoffice-penomoransk-action-number{
+    margin-top:4px;
+    margin-bottom:13px;
+
+    font-size:9px;
+    line-height:1.4;
+
+    color:#94a3b8;
+
+    text-align:center;
+
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+
+/* ======================================================
+   ACTION OPTION
+====================================================== */
+
+.smartoffice-penomoransk-action-option{
+    width:100%;
+
+    display:flex;
+    align-items:center;
+
+    gap:11px;
+
+    box-sizing:border-box;
+
+    padding:11px 10px;
+
+    margin:0;
+
+    border:1px solid #eef2f7;
+    border-radius:13px;
+
+    background:#ffffff;
+
+    font-family:inherit;
+
+    text-align:left;
+
+    cursor:pointer;
+
+    transition:
+        background .18s ease,
+        border-color .18s ease,
+        transform .18s ease;
+}
+
+
+.smartoffice-penomoransk-action-option
++ .smartoffice-penomoransk-action-option{
+    margin-top:7px;
+}
+
+
+.smartoffice-penomoransk-action-option:hover{
+    background:#f8fafc;
+    border-color:#e2e8f0;
+}
+
+
+.smartoffice-penomoransk-action-option:active{
+    transform:scale(.985);
+}
+
+
+/* ======================================================
+   OPTION ICON
+====================================================== */
+
+.smartoffice-penomoransk-action-option-icon{
+    width:38px;
+    min-width:38px;
+    height:38px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:#eff6ff;
+
+    font-size:17px;
+}
+
+
+/* ======================================================
+   OPTION CONTENT
+====================================================== */
+
+.smartoffice-penomoransk-action-option-content{
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+
+    gap:2px;
+}
+
+
+.smartoffice-penomoransk-action-option-content strong{
+    font-size:12px;
+    line-height:1.3;
+
+    font-weight:750;
+
+    color:#1e293b;
+}
+
+
+.smartoffice-penomoransk-action-option-content small{
+    font-size:10px;
+    line-height:1.3;
+
+    color:#94a3b8;
+}
+
+
+/* ======================================================
+   CANCEL
+====================================================== */
+
+.smartoffice-penomoransk-action-cancel{
+    width:100%;
+
+    box-sizing:border-box;
+
+    margin-top:9px;
+
+    padding:10px;
+
+    border:none;
+    border-radius:11px;
+
+    background:#f8fafc;
+    color:#64748b;
+
+    font-family:inherit;
+
+    font-size:11px;
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:
+        background .18s ease,
+        transform .18s ease;
+}
+
+
+.smartoffice-penomoransk-action-cancel:hover{
+    background:#f1f5f9;
+}
+
+
+.smartoffice-penomoransk-action-cancel:active{
+    transform:scale(.98);
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width:767px){
+
+    .smartoffice-penomoransk-item-action-wrap{
+        padding-left:8px;
+    }
+
+    .smartoffice-penomoransk-item-more{
+        width:30px;
+        height:30px;
+
+        border-radius:9px;
+
+        font-size:17px;
+    }
+
+    .smartoffice-penomoransk-action-sheet{
+        padding:16px;
+    }
+
+    .smartoffice-penomoransk-action-panel{
+        max-width:350px;
+
+        border-radius:19px;
+
+        padding:11px;
+    }
+
+}
+
+
+/* ======================================================
+   DESKTOP
+====================================================== */
+
+@media (min-width:768px){
+
+    .smartoffice-penomoransk-action-panel{
+        max-width:390px;
+    }
+
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width:767px){
+
+    .smartoffice-penomoransk-item{
+        padding:12px 12px 11px;
+    }
+
+    .smartoffice-penomoransk-item-info{
+        grid-template-columns:
+            minmax(0,1fr)
+            minmax(0,1fr);
+        gap:9px;
+    }
+
+    .smartoffice-penomoransk-item-action-wrap{
+        grid-column:1 / -1;
+
+        display:flex;
+        justify-content:flex-end;
+
+        padding-left:0;
+        padding-top:8px;
+    }
+
+    .smartoffice-penomoransk-item-info-box + 
+    .smartoffice-penomoransk-item-info-box{
+        padding-left:9px;
+        margin-left:9px;
+    }
+
+}
+
+
+/* ======================================================
+   DESKTOP
+====================================================== */
+
+@media (min-width:768px){
+
+    .smartoffice-penomoransk-list{
+        gap:11px;
+    }
+
+    .smartoffice-penomoransk-item{
+        padding:14px 15px 12px;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ======================================================
+   FORM MODAL
+====================================================== */
+
+.smartoffice-penomoransk-form-modal{
+    position:fixed;
+    inset:0;
+
+    z-index:1100;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:16px;
+
+    box-sizing:border-box;
+}
+
+.smartoffice-penomoransk-form-modal.show{
+    display:flex;
+}
+
+
+/* ======================================================
+   MODAL OVERLAY
+====================================================== */
+
+.smartoffice-penomoransk-form-overlay{
+    position:absolute;
+    inset:0;
+
+    background:rgba(15,23,42,.42);
+}
+
+
+/* ======================================================
+   MODAL CONTENT
+====================================================== */
+
+.smartoffice-penomoransk-form-content{
+    position:relative;
+    z-index:1;
+
+    width:100%;
+    max-width:620px;
+
+    max-height:90vh;
+
+    display:flex;
+    flex-direction:column;
+
+    background:#fff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 20px 60px rgba(15,23,42,.20);
+}
+
+
+/* ======================================================
+   MODAL HEADER
+====================================================== */
+
+.smartoffice-penomoransk-form-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:16px 18px;
+
+    border-bottom:1px solid #edf1f5;
+}
+
+.smartoffice-penomoransk-form-header h3,
+.smartoffice-penomoransk-form-title{
+    margin:0;
+
+    font-size:14px;
+    line-height:1.4;
+    font-weight:700;
+
+    color:#172033;
+}
+
+.smartoffice-penomoransk-form-header p{
+    margin:3px 0 0;
+
+    font-size:9px;
+    line-height:1.5;
+
+    color:#64748b;
+}
+
+
+/* ======================================================
+   MODAL CLOSE
+====================================================== */
+
+.smartoffice-penomoransk-form-close{
+    width:30px;
+    height:30px;
+
+    padding:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:0;
+    border-radius:8px;
+
+    background:transparent;
+    color:#64748b;
+
+    font-family:inherit;
+    font-size:22px;
+    font-weight:400;
+
+    line-height:1;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+.smartoffice-penomoransk-form-close:hover{
+    background:#f1f5f9;
+    color:#172033;
+}
+
+
+/* ======================================================
+   MODAL BODY
+====================================================== */
+
+.smartoffice-penomoransk-form-body{
+    padding:18px;
+
+    overflow-y:auto;
+
+    box-sizing:border-box;
+}
+
+
+/* ======================================================
+   RESPONSIVE
+====================================================== */
+
+@media (max-width:900px){
+
+    .smartoffice-penomoransk-filter{
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .smartoffice-penomoransk-filter-search{
+        grid-column:span 3;
+    }
+
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width:600px){
+
+    .smartoffice-penomoransk-filter{
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap:8px;
+
+        padding:10px;
+
+        border-radius:12px;
+    }
+
+    .smartoffice-penomoransk-filter-search{
+        grid-column:span 2;
+    }
+
+    .smartoffice-penomoransk-filter-field label{
+        font-size:8px;
+    }
+
+    .smartoffice-penomoransk-filter-field input,
+    .smartoffice-penomoransk-filter-field select{
+        height:33px;
+
+        font-size:9px;
+    }
+
+    .smartoffice-penomoransk-filter-button{
+        width:100%;
+        height:33px;
+    }
+
+    .smartoffice-penomoransk-tambah-button{
+        width:100%;
+        height:33px;
+    }
+
+    .smartoffice-penomoransk-form-modal{
+        padding:12px;
+    }
+
+    .smartoffice-penomoransk-form-content{
+        max-height:92vh;
+        border-radius:16px;
+    }
+
+    .smartoffice-penomoransk-form-header{
+        padding:14px;
+    }
+
+    .smartoffice-penomoransk-form-body{
+        padding:14px;
+    }
+
+}
+
+
+/* ======================================================
+   FORM PENOMORAN SK
+   DESKTOP
+====================================================== */
+
+.smartoffice-penomoransk-form{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap:16px;
+
+}
+
+
+/* ======================================================
+   BARIS 1
+   PREVIEW NOMOR + KODE
+====================================================== */
+
+.smartoffice-penomoransk-field-preview{
+
+    grid-column:
+        1 / 3;
+
+}
+
+.smartoffice-penomoransk-preview-value{
+
+    min-height:42px;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:0 12px;
+
+    border:1px solid #d7e0ef;
+
+    border-radius:10px;
+
+    background:#f7f9fc;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:#1f3f75;
+
+}
+
+.smartoffice-penomoransk-field-kode{
+
+    grid-column:
+        3;
+
+}
+
+
+/* ======================================================
+   BARIS 2
+   KLASIFIKASI FULL WIDTH
+====================================================== */
+
+.smartoffice-penomoransk-field-klasifikasi{
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+/* ======================================================
+   BARIS 3
+   TANGGAL + KLASTER + STATUS
+====================================================== */
+
+.smartoffice-penomoransk-field-tanggal{
+
+    grid-column:
+        1;
+
+}
+
+.smartoffice-penomoransk-field-klaster{
+
+    grid-column:
+        2;
+
+}
+
+.smartoffice-penomoransk-field-status{
+
+    grid-column:
+        3;
+
+}
+
+
+/* ======================================================
+   BARIS 4
+   TENTANG FULL WIDTH
+====================================================== */
+
+.smartoffice-penomoransk-field-tentang{
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+/* ======================================================
+   BARIS 5
+   UPLOAD FULL WIDTH
+====================================================== */
+
+.smartoffice-penomoransk-field-file{
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+/* ======================================================
+   SIMPAN
+====================================================== */
+
+.smartoffice-penomoransk-form-submit{
+
+    grid-column:
+        1 / -1;
+
+}
+
+
+/* ======================================================
+   FORM FIELD
+====================================================== */
+
+.smartoffice-penomoransk-form-field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+}
+
+.smartoffice-penomoransk-form-field label{
+    font-size:13px;
+    font-weight:700;
+    color:#344054;
+}
+
+.smartoffice-penomoransk-form-field input,
+.smartoffice-penomoransk-form-field select,
+.smartoffice-penomoransk-form-field textarea{
+    width:100%;
+    box-sizing:border-box;
+    border:1px solid #D9E0EA;
+    border-radius:12px;
+    background:#FFFFFF;
+    color:#1D2939;
+    font-family:inherit;
+    font-size:14px;
+    outline:none;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+/* ======================================================
+   INPUT / SELECT
+====================================================== */
+
+.smartoffice-penomoransk-form-field input,
+.smartoffice-penomoransk-form-field select{
+    height:46px;
+    padding:0 13px;
+}
+
+
+/* ======================================================
+   TEXTAREA
+====================================================== */
+
+.smartoffice-penomoransk-form-field textarea{
+    min-height:105px;
+    padding:12px 13px;
+    resize:vertical;
+    line-height:1.5;
+}
+
+
+/* ======================================================
+   FOCUS
+====================================================== */
+
+.smartoffice-penomoransk-form-field input:focus,
+.smartoffice-penomoransk-form-field select:focus,
+.smartoffice-penomoransk-form-field textarea:focus{
+    border-color:#2563EB;
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.08);
+}
+
+
+/* ======================================================
+   KODE OTOMATIS
+====================================================== */
+
+#smartofficeSKKode{
+    background:#F4F6F9;
+    color:#667085;
+    cursor:not-allowed;
+}
+
+
+/* ======================================================
+   FILE PDF
+====================================================== */
+
+#smartofficePenomoranSKFile{
+    height:auto;
+    min-height:46px;
+    padding:10px 12px;
+    cursor:pointer;
+}
+
+.smartoffice-penomoransk-form-field small{
+    font-size:11px;
+    color:#98A2B3;
+}
+
+
+/* ======================================================
+   PREVIEW NOMOR SK
+====================================================== */
+
+.smartoffice-penomoransk-form-preview{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    padding:14px 15px;
+    border-radius:14px;
+    background:#F5F8FF;
+    border:1px solid #E1E9FF;
+}
+
+.smartoffice-penomoransk-form-preview span{
+    font-size:11px;
+    font-weight:600;
+    color:#667085;
+}
+
+.smartoffice-penomoransk-form-preview strong{
+    font-size:15px;
+    font-weight:800;
+    color:#1D4ED8;
+    line-height:1.4;
+    word-break:break-word;
+}
+
+
+/* ======================================================
+   BUTTON SIMPAN
+====================================================== */
+
+.smartoffice-penomoransk-form-submit{
+    width:100%;
+    min-height:46px;
+    border:none;
+    border-radius:13px;
+    background:#2563EB;
+    color:#FFFFFF;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:700;
+    cursor:pointer;
+    transition:
+        transform .15s ease,
+        opacity .2s ease;
+}
+
+.smartoffice-penomoransk-form-submit:active{
+    transform:scale(.98);
+}
+
+.smartoffice-penomoransk-form-submit:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+}

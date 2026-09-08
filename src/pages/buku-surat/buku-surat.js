@@ -4392,44 +4392,97 @@ function renderSuratKeluar(){
         return;
     }
 
-    if(!suratKeluarViewData.length){
+    /* ==================================================
+       ROLE LOGIN
+    ================================================== */
+    const sessionData =
+        smartofficeGetSession();
 
-        list.innerHTML = `
-            <div class="smartoffice-suratkeluar-empty">
-                <div class="smartoffice-suratkeluar-empty-icon">
-                    <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.8"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="M6 2h9l3 3v17H6z"/>
-                        <path d="M14 2v4h4"/>
-                        <path d="M9 11h6"/>
-                        <path d="M9 15h4"/>
-                    </svg>
-                </div>
+    const currentRole =
+        String(
+            sessionData?.role || ""
+        )
+        .trim()
+        .toUpperCase();
 
-                <div class="smartoffice-suratkeluar-empty-title">
-                    Tidak Ada Surat Keluar
-                </div>
+    const canEdit =
+        [
+            "ADMIN",
+            "PJ",
+            "KAPUS",
+            "SUPERADMIN"
+        ].includes(currentRole);
 
-                <div class="smartoffice-suratkeluar-empty-text">
-                    Data surat keluar tidak ditemukan.
-                </div>
+    const canUnlock =
+        currentRole === "SUPERADMIN";
+
+    /* ==================================================
+       EMPTY STATE
+    ================================================== */
+    if(
+        !Array.isArray(suratKeluarViewData) ||
+        suratKeluarViewData.length === 0
+    ){
+        list.innerHTML =
+        `
+        <div
+            class="
+                smartoffice-suratmasuk-empty
+            "
+        >
+            <div
+                class="
+                    smartoffice-suratmasuk-empty-icon
+                "
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <rect
+                        x="3"
+                        y="5"
+                        width="18"
+                        height="14"
+                        rx="2"
+                    />
+                    <polyline
+                        points="
+                            3 7
+                            12 13
+                            21 7
+                        "
+                    />
+                </svg>
             </div>
+
+            <strong>
+                Tidak ada surat keluar
+            </strong>
+
+            <span>
+                Belum terdapat surat keluar
+                yang sesuai dengan filter.
+            </span>
+        </div>
         `;
 
         return;
     }
 
+    /* ==================================================
+       RENDER CARD
+    ================================================== */
     list.innerHTML =
         suratKeluarViewData.map(item => {
 
             const status =
-                (item.status || "DRAFT").toUpperCase();
+                (item.status || "DRAFT")
+                    .toUpperCase();
 
             const isLock =
                 status === "LOCK";
@@ -4443,6 +4496,103 @@ function renderSuratKeluar(){
                 isLock
                     ? "Terkunci"
                     : "Draft";
+
+            /* ==========================================
+               ACTION
+            ========================================== */
+            let actionButton = "";
+
+            /*
+             * DRAFT
+             * ------------------------------------------
+             * ADMIN
+             * PJ
+             * KAPUS
+             * SUPERADMIN
+             * = Ubah Surat
+             */
+            if(!isLock && canEdit){
+                actionButton = `
+                    <button
+                        type="button"
+                        class="
+                            smartoffice-suratkeluar-card-action
+                            smartoffice-suratkeluar-action-edit
+                        "
+                        onclick="
+                            openEditModalByRowIndex(
+                                ${item.rowIndex}
+                            )
+                        "
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>
+                        </svg>
+                        <span>Ubah Surat</span>
+                    </button>
+                `;
+            }
+
+            /*
+             * LOCK
+             * ------------------------------------------
+             * HANYA SUPERADMIN
+             * = Buka Lock
+             */
+            if(isLock && canUnlock){
+                actionButton = `
+                    <button
+                        type="button"
+                        class="
+                            smartoffice-suratkeluar-card-action
+                            smartoffice-suratkeluar-action-lock
+                        "
+                        onclick="
+                            smartofficeBukaLockSuratKeluarUI(
+                                ${item.rowIndex}
+                            )
+                        "
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect
+                                x="5"
+                                y="10"
+                                width="14"
+                                height="10"
+                                rx="2"
+                            />
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                        </svg>
+                        <span>Buka Lock</span>
+                    </button>
+                `;
+            }
+
+            /*
+             * FOOTER
+             * ------------------------------------------
+             * USER / role lain pada LOCK:
+             * hanya Lihat Surat
+             */
+            const footerClass =
+                actionButton
+                    ? "smartoffice-suratkeluar-card-footer"
+                    : "smartoffice-suratkeluar-card-footer smartoffice-suratkeluar-card-footer-single";
 
             return `
 
@@ -4542,7 +4692,6 @@ function renderSuratKeluar(){
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                                         <circle cx="12" cy="7" r="4"/>
                                     </svg>
-
                                     TUJUAN
                                 </div>
 
@@ -4641,7 +4790,10 @@ function renderSuratKeluar(){
                     <!-- ==================================
                          ACTION
                     ================================== -->
-                    <div class="smartoffice-suratkeluar-card-footer">
+                    <div class="${footerClass}">
+                        <!-- LIHAT SURAT
+                             SEMUA ROLE -->
+
                         <button
                             type="button"
                             class="
@@ -4670,71 +4822,7 @@ function renderSuratKeluar(){
                             <span>Lihat Surat</span>
                         </button>
 
-                        ${
-                            !isLock
-                            ?
-                            `
-                            <button
-                                type="button"
-                                class="
-                                    smartoffice-suratkeluar-card-action
-                                    smartoffice-suratkeluar-action-edit
-                                "
-                                onclick="
-                                    openEditModalByRowIndex(
-                                        ${item.rowIndex}
-                                    )
-                                "
-                            >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <path d="M12 20h9"/>
-                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4z"/>
-                                </svg>
-                                <span>Ubah Surat</span>
-                            </button>
-                            `
-                            :
-                            `
-                            <button
-                                type="button"
-                                class="
-                                    smartoffice-suratkeluar-card-action
-                                    smartoffice-suratkeluar-action-lock
-                                "
-                                onclick="
-                                    smartofficeBukaLockSuratKeluar(
-                                        ${item.rowIndex}
-                                    )
-                                "
-                            >
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.8"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                >
-                                    <rect
-                                        x="5"
-                                        y="10"
-                                        width="14"
-                                        height="10"
-                                        rx="2"
-                                    />
-                                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
-                                </svg>
-                                <span>Buka Lock</span>
-                            </button>
-                            `
-                        }
+                        ${actionButton}
                     </div>
                 </div>
             `;
@@ -5572,7 +5660,6 @@ function smartofficeRenderMasterSuratKeluar(){
    SET SELECT VALUE
 ====================================================== */
 function smartofficeSetSelectValue(id, value){
-
     const select =
         document.getElementById(id);
 
@@ -5607,7 +5694,6 @@ async function openEditModalByRowIndex(rowIndex){
         );
 
     if(!item){
-
         smartofficeShowToast(
             "Data Surat Keluar tidak ditemukan",
             "error"
@@ -5616,11 +5702,9 @@ async function openEditModalByRowIndex(rowIndex){
         return;
     }
 
-
     /* ==================================================
        BUKA MODAL TERLEBIH DAHULU
     ================================================== */
-
     smartofficeRenderFormSuratKeluar(item);
 
     const modal =
@@ -5632,23 +5716,18 @@ async function openEditModalByRowIndex(rowIndex){
         modal.classList.add("show");
     }
 
-
     /* ==================================================
        LOAD MASTER JIKA BELUM ADA
     ================================================== */
-
     if(
         !masterSurat ||
         !Array.isArray(masterSurat.klasifikasi)
     ){
-
         try{
-
             masterSurat =
                 await smartofficeGetMasterSurat();
 
         }catch(error){
-
             console.error(
                 "Gagal memuat master Surat Keluar:",
                 error
@@ -5663,18 +5742,14 @@ async function openEditModalByRowIndex(rowIndex){
         }
     }
 
-
     /* ==================================================
        RENDER MASTER
     ================================================== */
-
     smartofficeRenderMasterSuratKeluar();
-
 
     /* ==================================================
        ISI NILAI KLASIFIKASI
     ================================================== */
-
     const klasifikasiHidden =
         document.getElementById(
             "smartofficeSuratKeluarKlasifikasi"
@@ -5690,7 +5765,6 @@ async function openEditModalByRowIndex(rowIndex){
             "smartofficeSuratKeluarKodeSurat"
         );
 
-
     const klasifikasiMaster =
         masterSurat?.klasifikasi?.find(
             option =>
@@ -5702,38 +5776,27 @@ async function openEditModalByRowIndex(rowIndex){
                 ).trim()
         );
 
-
     if(klasifikasiHidden){
-
         klasifikasiHidden.value =
             item.klasifikasi || "";
-
     }
 
-
     if(klasifikasiText){
-
         klasifikasiText.textContent =
             item.klasifikasi ||
             "-- Pilih Klasifikasi --";
-
     }
 
-
     if(kodeField){
-
         kodeField.value =
             item.kode ||
             klasifikasiMaster?.kode ||
             "";
-
     }
-
 
     /* ==================================================
        ISI SELECT BIASA
     ================================================== */
-
     smartofficeSetSelectValue(
         "smartofficeSuratKeluarSifat",
         item.sifat
@@ -5857,7 +5920,6 @@ function smartofficeOpenBukaLockSuratKeluarModal(
    TUTUP MODAL
 ====================================================== */
 function smartofficeCloseBukaLockSuratKeluarModal(){
-
     const modal =
         document.getElementById(
             "smartofficeSuratKeluarLockModal"
@@ -6015,14 +6077,11 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
 async function smartofficeSubmitSuratKeluar(
     event
 ){
-
     event.preventDefault();
-
 
     /* ==================================================
        AMBIL ELEMENT
     ================================================== */
-
     const rowIndex =
         document.getElementById(
             "smartofficeSuratKeluarRowIndex"
@@ -6068,11 +6127,9 @@ async function smartofficeSubmitSuratKeluar(
             "smartofficeSuratKeluarFile"
         );
 
-
     /* ==================================================
        VALIDASI
     ================================================== */
-
     const requiredFields = [
         {
             value:kode,
@@ -6100,15 +6157,12 @@ async function smartofficeSubmitSuratKeluar(
         }
     ];
 
-
     const emptyFields =
         requiredFields.filter(
             field => !field.value
         );
 
-
     if(emptyFields.length){
-
         smartofficeShowToast(
             "Data wajib diisi: " +
             emptyFields
@@ -6120,23 +6174,18 @@ async function smartofficeSubmitSuratKeluar(
         return;
     }
 
-
     /* ==================================================
        CEK FILE
     ================================================== */
-
     const file =
         fileInput?.files?.[0] || null;
 
-
     if(file){
-
         /* MAKSIMAL 2 MB */
         if(
             file.size >
             2 * 1024 * 1024
         ){
-
             smartofficeShowToast(
                 "Ukuran file maksimal 2 MB.",
                 "error"
@@ -6144,14 +6193,11 @@ async function smartofficeSubmitSuratKeluar(
 
             return;
         }
-
     }
-
 
     /* ==================================================
        TOMBOL SIMPAN
     ================================================== */
-
     const submitButton =
         document.getElementById(
             "smartofficeSuratKeluarFormSubmit"
@@ -6162,69 +6208,45 @@ async function smartofficeSubmitSuratKeluar(
             "smartofficeSuratKeluarFormCancel"
         );
 
-
     if(submitButton){
-
         submitButton.disabled = true;
-
         submitButton.innerHTML = `
             <span class="smartoffice-btn-spinner"></span>
             <span>Menyimpan...</span>
         `;
-
     }
-
 
     if(cancelButton){
-
         cancelButton.disabled = true;
-
     }
-
 
     /* ==================================================
        PAYLOAD
     ================================================== */
-
     const payload = {
-
         rowIndex:rowIndex,
-
         kode:kode,
-
         klasifikasi:klasifikasi,
-
         sifat:sifat,
-
         tujuan:tujuan,
-
         perihal:perihal,
-
         penandatangan:penandatangan,
-
         keterangan:keterangan
-
     };
 
-
     try{
-
         /* ==================================================
            FILE
         ================================================== */
-
         if(file){
-
             const base64 =
                 await new Promise(
                     (resolve,reject) => {
-
                         const reader =
                             new FileReader();
 
                         reader.onload =
                             function(){
-
                                 const result =
                                     reader.result;
 
@@ -6232,7 +6254,6 @@ async function smartofficeSubmitSuratKeluar(
                                     String(result)
                                         .split(",")[1]
                                 );
-
                             };
 
                         reader.onerror =
@@ -6241,10 +6262,8 @@ async function smartofficeSubmitSuratKeluar(
                         reader.readAsDataURL(
                             file
                         );
-
                     }
                 );
-
 
             payload.base64 =
                 base64;
@@ -6254,50 +6273,38 @@ async function smartofficeSubmitSuratKeluar(
 
             payload.fileType =
                 file.type;
-
         }
-
 
         /* ==================================================
            SIMPAN KE SERVER
         ================================================== */
-
         await smartofficeSaveSuratKeluar(
             payload
         );
 
-
         /* ==================================================
            TUTUP MODAL
         ================================================== */
-
         smartofficeCloseFormSuratKeluar();
-
 
         /* ==================================================
            RELOAD DATA
         ================================================== */
-
         await loadDataSuratKeluar();
-
 
         /* ==================================================
            TOAST
         ================================================== */
-
         smartofficeShowToast(
             "Surat Keluar berhasil disimpan.",
             "success"
         );
-
     }
     catch(error){
-
         console.error(
             "Submit Surat Keluar Error:",
             error
         );
-
 
         smartofficeShowToast(
             error.message ||
@@ -6305,27 +6312,17 @@ async function smartofficeSubmitSuratKeluar(
             "error"
         );
 
-
         /* KEMBALIKAN TOMBOL */
-
         if(submitButton){
-
             submitButton.disabled = false;
-
             submitButton.innerHTML =
                 "Simpan";
-
         }
-
 
         if(cancelButton){
-
             cancelButton.disabled = false;
-
         }
-
     }
-
 }
 
 

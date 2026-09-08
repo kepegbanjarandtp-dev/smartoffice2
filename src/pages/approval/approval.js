@@ -75,8 +75,7 @@ const smartofficeApprovalState = {
   idCuti : ''
 };
 
-let smartofficeApprovalAction =
-  'APPROVE';
+let smartofficeApprovalAction = "";
 
 let smartofficeSubmittingApproval =
   false;
@@ -783,8 +782,7 @@ function smartofficeOpenApprovalDetail(
   /* =========================
     RESET ACTION
   ========================= */
-  smartofficeApprovalAction =
-    'APPROVE';
+  smartofficeApprovalAction = "";
 
   /* =========================
     HELPER
@@ -1249,7 +1247,7 @@ export function smartofficeCloseApprovalDetail(){
 
   /* RESET STATE */
   smartofficeApprovalAction =
-    "APPROVE";
+    "";
 
   smartofficeApprovalState.idCuti =
     "";
@@ -1410,7 +1408,7 @@ export async function smartofficeDestroyPage(){
         "";
 
     smartofficeApprovalAction =
-        "APPROVE";
+        "";
 
     smartofficeSubmittingApproval =
         false;
@@ -1454,6 +1452,22 @@ async function smartofficeSubmitApprovalAction(){
   ========================= */
   const action =
     smartofficeApprovalAction;
+
+  if(
+      action !== "APPROVE" &&
+      action !== "REJECT"
+  ){
+      smartofficeShowToast(
+          "Silakan pilih Approve atau Reject terlebih dahulu.",
+          "error"
+      );
+      return;
+  }
+
+  console.log(
+      "SMARTOFFICE APPROVAL ACTION SEBELUM SUBMIT:",
+      action
+  );
 
   /* =========================
      CATATAN
@@ -1510,6 +1524,18 @@ async function smartofficeSubmitApprovalAction(){
   }
 
   /* =========================
+     BUTTON TEXT
+  ========================= */
+  if(
+    submitButton
+  ){
+    submitButton.innerHTML =
+      action === "REJECT"
+        ? "Menolak..."
+        : "Menyetujui...";
+  }
+
+  /* =========================
      GLOBAL LOADING
   ========================= */
   smartofficeShowGlobalLoading(
@@ -1517,7 +1543,7 @@ async function smartofficeSubmitApprovalAction(){
       ? "Memproses penolakan..."
       : "Memproses persetujuan..."
   );
-  
+
   try{
 
     /* =========================
@@ -1545,12 +1571,12 @@ async function smartofficeSubmitApprovalAction(){
     smartofficeCloseApprovalDetail();
 
     /* =========================
-      REFRESH SEMUA DATA APPROVAL
-      CUTI + DOKUMEN
+       REFRESH DATA
     ========================= */
     await smartofficeRefreshAllApprovalData();
 
   }catch(error){
+
     smartofficeShowToast(
       error.message ||
       "Terjadi kesalahan.",
@@ -1569,7 +1595,7 @@ async function smartofficeSubmitApprovalAction(){
     ========================= */
     smartofficeSubmittingApproval =
       false;
-    
+
     /* =========================
        ENABLE BUTTON
     ========================= */
@@ -1579,6 +1605,10 @@ async function smartofficeSubmitApprovalAction(){
       submitButton.disabled =
         false;
 
+      submitButton.innerHTML =
+        action === "REJECT"
+          ? "Tolak"
+          : "Setujui";
     }
   }
 }

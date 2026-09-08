@@ -803,6 +803,41 @@ function smartofficeInitDashboardMenu(){
             handler;
     }
 
+    /* =========================
+       PUSAT DOKUMEN
+    ========================= */
+    const pusatDokumenMenu =
+        document.getElementById(
+            "smartofficeDokumenPuskesmasMenuCard"
+        );
+
+    if(
+        pusatDokumenMenu
+    ){
+        const handler =
+            async function(){
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
+
+                await smartofficeNavigate(
+                    "pusat-dokumen"
+                );
+            };
+
+        pusatDokumenMenu.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDokumenPuskesmasMenuCard"
+        ] =
+            handler;
+    }
+
     /* ======================================================
        MENU DALAM PENGEMBANGAN
     ====================================================== */
@@ -820,13 +855,6 @@ function smartofficeInitDashboardMenu(){
                 "smartofficeImunisasiJejaringMenuCard",
             message:
                 "Fitur Imunisasi Jejaring sedang dalam pengembangan."
-        },
-
-        {
-            id:
-                "smartofficeDokumenPuskesmasMenuCard",
-            message:
-                "Fitur Pusat Dokumen sedang dalam pengembangan."
         },
 
         {
