@@ -8,20 +8,42 @@
     bottom:8px;
 
     height:66px;
+
     display:flex;
     align-items:center;
     justify-content:space-around;
+
     background:#FFFFFF;
     border:none;
     border-radius:28px;
+
     box-shadow:
         0 -8px 28px rgba(0,0,0,.08);
+
     backdrop-filter:blur(20px);
+
     padding-bottom:env(safe-area-inset-bottom);
+
     z-index:1000;
+
     animation:
         smartofficeNavbarAppear
         .35s ease;
+}
+
+
+/* ======================================================
+   NAVBAR CONTAINER
+====================================================== */
+.smartoffice-navbar-container{
+    width:100%;
+    height:100%;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-around;
+
+    padding:0 6px;
 }
 
 
@@ -30,18 +52,50 @@
 ====================================================== */
 .smartoffice-mobile-navbar-item{
     flex:1;
+
+    min-width:0;
+    height:100%;
+
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
+
     gap:4px;
+
+    padding:0;
+    margin:0;
+
+    border:none;
+    outline:none;
+    background:transparent;
+
     color:#8A94A6;
+
     font-size:10px;
     font-weight:600;
+
     cursor:pointer;
+
     transition:.25s ease;
+
     user-select:none;
     -webkit-tap-highlight-color:transparent;
+}
+
+
+/* ======================================================
+   ICON WRAPPER
+====================================================== */
+.smartoffice-mobile-navbar-item > span{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    width:38px;
+    height:38px;
+
+    border-radius:14px;
 }
 
 
@@ -51,6 +105,7 @@
 .smartoffice-mobile-navbar-item svg{
     width:20px;
     height:20px;
+
     stroke-width:2.2;
 }
 
@@ -59,9 +114,13 @@
    TEXT
 ====================================================== */
 .smartoffice-mobile-navbar-item small{
+    display:block;
+
     font-size:9px;
     font-weight:600;
     line-height:1;
+
+    white-space:nowrap;
 }
 
 
@@ -72,20 +131,27 @@
     color:#2563EB;
 }
 
+
 .smartoffice-mobile-navbar-item.active span{
     display:flex;
     align-items:center;
     justify-content:center;
+
     width:38px;
     height:38px;
+
     border-radius:14px;
+
     background:rgba(37,99,235,.12);
+
     transition:.25s ease;
 }
+
 
 .smartoffice-mobile-navbar-item.active svg{
     stroke:#2563EB;
 }
+
 
 .smartoffice-mobile-navbar-item.active small{
     color:#2563EB;
@@ -105,9 +171,11 @@
    MOBILE ONLY
 ====================================================== */
 @media(max-width:768px){
+
     .smartoffice-mobile-navbar{
         display:flex;
     }
+
 }
 
 
@@ -115,7 +183,29 @@
    TABLET & DESKTOP
 ====================================================== */
 @media(min-width:769px){
+
     .smartoffice-mobile-navbar{
         display:none;
     }
+
+}
+
+
+/* ======================================================
+   NAVBAR APPEAR ANIMATION
+====================================================== */
+@keyframes smartofficeNavbarAppear{
+
+    from{
+        opacity:0;
+        transform:
+            translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:
+            translateY(0);
+    }
+
 }

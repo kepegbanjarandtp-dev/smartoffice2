@@ -1,687 +1,586 @@
-import "./navbar.css";
+// ============================================================
+// SMART OFFICE V2.1
+// NAVBAR COMPONENT
+// ============================================================
+import './navbar.css';
 
-
-/* ======================================================
-   CORE
-====================================================== */
 import {
     smartofficeCheckSession,
     smartofficeGetSession,
     smartofficeClearSession
-} from "../../core/session.js";
-
+} from '../../core/session.js';
 
 import {
     smartofficeNavigate
-} from "../../core/router.js";
+} from '../../core/router.js';
 
 
-
-/* ======================================================
-   SMARTOFFICE NAVBAR
-====================================================== */
-let smartofficeNavbarElement =
-    null;
+// ============================================================
+// GLOBAL NAVBAR ELEMENT
+// ============================================================
+let smartofficeNavbarElement = null;
 
 
-/* ======================================================
-   INITIALIZE NAVBAR
-====================================================== */
-export function smartofficeInitializeNavbar(){
-    smartofficeNavbarElement =
-        document.getElementById(
-            "smartofficeMobileNavbarFixed"
-        );
-}
-
-
-/* ======================================================
-   SHOW NAVBAR
-====================================================== */
-export function smartofficeShowNavbar(){
-    if(
-        !smartofficeNavbarElement
-    ){
-        smartofficeNavbarElement =
-            document.getElementById(
-                "smartofficeMobileNavbarFixed"
-            );
-    }
-
-    if(
-        !smartofficeNavbarElement
-    ){
-        return;
-    }
-
-    smartofficeNavbarElement
-        .classList.remove(
-            "hidden"
-        );
-}
-
-
-/* ======================================================
-   HIDE NAVBAR
-====================================================== */
-export function smartofficeHideNavbar(){
-    if(
-        !smartofficeNavbarElement
-    ){
-        smartofficeNavbarElement =
-            document.getElementById(
-                "smartofficeMobileNavbarFixed"
-            );
-    }
-
-    if(
-        !smartofficeNavbarElement
-    ){
-        return;
-    }
-
-    smartofficeNavbarElement
-        .classList.add(
-            "hidden"
-        );
-}
-
-
-/* ======================================================
-   TOGGLE NAVBAR
-====================================================== */
-export function smartofficeToggleNavbar(
-    isShow
+// ============================================================
+// INITIALIZE NAVBAR
+// ============================================================
+export function smartofficeInitializeNavbar(
+    role = null,
+    activeMenu = 'home'
 ){
-    if(
-        isShow
-    ){
-        smartofficeShowNavbar();
+    const sessionValid =
+        smartofficeCheckSession();
+
+    if(!sessionValid){
+        smartofficeHideNavbar();
         return;
     }
 
-    smartofficeHideNavbar();
+    smartofficeRenderMobileNavbar(
+        role,
+        activeMenu
+    );
 }
 
 
-/* ======================================================
-   DESTROY NAVBAR
-====================================================== */
-export function smartofficeDestroyNavbar(){
-    smartofficeNavbarElement =
-        null;
+// ============================================================
+// SHOW NAVBAR
+// ============================================================
+export function smartofficeShowNavbar(){
+    if(smartofficeNavbarElement){
+        smartofficeNavbarElement.classList.remove(
+            'smartoffice-navbar-hidden'
+        );
+    }
 }
 
 
-/* ======================================================
-   SET ACTIVE MENU
-====================================================== */
-function smartofficeSetActiveNavbar(
+// ============================================================
+// HIDE NAVBAR
+// ============================================================
+export function smartofficeHideNavbar(){
+    if(smartofficeNavbarElement){
+        smartofficeNavbarElement.classList.add(
+            'smartoffice-navbar-hidden'
+        );
+    }
+}
+
+
+// ============================================================
+// TOGGLE NAVBAR
+// ============================================================
+export function smartofficeToggleNavbar(){
+    if(!smartofficeNavbarElement){
+        return;
+    }
+
+    smartofficeNavbarElement.classList.toggle(
+        'smartoffice-navbar-hidden'
+    );
+}
+
+
+// ============================================================
+// SET ACTIVE MENU
+// ============================================================
+export function smartofficeSetActiveNavbar(
     activeMenu
 ){
-    const navbar =
-        document.getElementById(
-            "smartofficeMobileNavbarFixed"
-        );
-
-    if(
-        !navbar
-    ){
+    if(!smartofficeNavbarElement){
         return;
     }
 
-
-    /* ==================================================
-       RESET SEMUA ACTIVE
-    ================================================== */
-    navbar
-        .querySelectorAll(
-            ".smartoffice-mobile-navbar-item"
-        )
-        .forEach(
-            function(item){
-
-                item.classList.remove(
-                    "active"
-                );
-            }
-        );
-
-
-    /* ==================================================
-       DASHBOARD = HOME
-    ================================================== */
-    if(
-        activeMenu === "dashboard"
-    ){
-        activeMenu =
-            "home";
-    }
-
-
-    /* ==================================================
-       CARI MENU AKTIF
-    ================================================== */
-    const activeMap = {
+    const menuButtons = {
         home:
-            "smartofficeHomeButton",
-
-        approval:
-            "smartofficeApprovalButton",
+            'smartofficeHomeButton',
 
         cuti:
-            "smartofficeCutiButton",
+            'smartofficeCutiButton',
 
-        spd:
-            "smartofficeSpdButton"
+        notifikasi:
+            'smartofficeNotificationButton',
+
+        'dokumen-saya':
+            'smartofficeDokumenSayaButton'
     };
 
-    const buttonId =
-        activeMap[
-            activeMenu
-        ];
+    Object.values(menuButtons).forEach(
+        function(buttonId){
+            const button =
+                document.getElementById(
+                    buttonId
+                );
+            if(button){
+                button.classList.remove(
+                    'active'
+                );
+            }
+        }
+    );
 
-    if(
-        !buttonId
-    ){
-        return;
-    }
+    const activeButtonId =
+        menuButtons[activeMenu];
 
-    const button =
-        document.getElementById(
-            buttonId
-        );
-
-    if(
-        button
-    ){
-        button.classList.add(
-            "active"
-        );
+    if(activeButtonId){
+        const activeButton =
+            document.getElementById(
+                activeButtonId
+            );
+        if(activeButton){
+            activeButton.classList.add(
+                'active'
+            );
+        }
     }
 }
 
 
-/* ======================================================
-   RENDER MOBILE NAVBAR
-
-   PARAM:
-   - role
-   - activeMenu
-
-   CATATAN:
-   Navbar hanya dibuat SATU KALI.
-
-   Jika navbar sudah ada:
-   - tidak dibuat ulang
-   - tidak dihapus
-   - hanya active menu yang diubah
-====================================================== */
+// ============================================================
+// RENDER MOBILE NAVBAR
+// ============================================================
 export function smartofficeRenderMobileNavbar(
-    role,
-    activeMenu
+    role = null,
+    activeMenu = 'home'
 ){
 
-    /* ==================================================
-       VALIDATE SESSION
-    ================================================== */
-    if(
-        !smartofficeCheckSession()
-    ){
+    // --------------------------------------------------------
+    // CHECK SESSION
+    // --------------------------------------------------------
+    const sessionValid =
+        smartofficeCheckSession();
+
+    if(!sessionValid){
+        smartofficeHideNavbar();
         return;
     }
 
-    /* ==================================================
-       GET ROLE DARI SESSION
-       Jika role tidak dikirim
-    ================================================== */
-    if(
-        !role
-    ){
-        const sessionData =
-            smartofficeGetSession();
 
-        role =
-            sessionData?.role || "";
+    // --------------------------------------------------------
+    // GET SESSION
+    // --------------------------------------------------------
+    const session =
+        smartofficeGetSession();
+
+    if(!session){
+        smartofficeHideNavbar();
+        return;
     }
 
-    /* ==================================================
-       NAVBAR SUDAH ADA
-       JANGAN BUAT ULANG
-    ================================================== */
-    const existingNavbar =
-        document.getElementById(
-            "smartofficeMobileNavbarFixed"
-        );
-    if(
-        existingNavbar
-    ){
-        smartofficeNavbarElement =
-            existingNavbar;
+    // --------------------------------------------------------
+    // GET ROLE
+    // --------------------------------------------------------
+    if(!role){
+        role =
+            session.role ||
+            'USER';
+    }
 
+    // --------------------------------------------------------
+    // JIKA NAVBAR SUDAH ADA
+    // --------------------------------------------------------
+    if(smartofficeNavbarElement){
+        smartofficeShowNavbar();
         smartofficeSetActiveNavbar(
             activeMenu
         );
-
         return;
     }
 
-    /* ==================================================
-       CREATE NAVBAR
-       HANYA PERTAMA KALI
-    ================================================== */
+    // ========================================================
+    // CREATE NAVBAR
+    // ========================================================
     const navbar =
         document.createElement(
-            "div"
+            'nav'
         );
 
-    navbar.id =
-        "smartofficeMobileNavbarFixed";
-
     navbar.className =
-        "smartoffice-mobile-navbar";
+        'smartoffice-mobile-navbar';
 
-    /* ==================================================
-       NAVBAR HTML
-    ================================================== */
-    let navbarHtml =
-        "";
+    navbar.id =
+        'smartofficeMobileNavbar';
 
-    /* =====================================================
-       HOME MENU
-    ====================================================== */
-    navbarHtml += `
-        <div
-            id="smartofficeHomeButton"
-            class="
-                smartoffice-mobile-navbar-item
-            "
-        >
-            <span>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="
-                        M3 9.5
-                        12 3
-                        l9 6.5
-                        V20
-                        a1 1 0 0 1-1 1
-                        h-5v-7H9v7H4
-                        a1 1 0 0 1-1-1Z
-                    "/>
-                </svg>
-            </span>
+    // ========================================================
+    // NAVBAR CONTAINER
+    // ========================================================
+    const navbarContainer =
+        document.createElement(
+            'div'
+        );
+    navbarContainer.className =
+        'smartoffice-navbar-container';
 
-            <small>
-                Home
-            </small>
-        </div>
-    `;
+    // ========================================================
+    // HOME
+    // ========================================================
+    const homeButton =
+        document.createElement(
+            'button'
+        );
 
-    /* =====================================================
-       APPROVAL MENU
-    ====================================================== */
-    if(
-        role === "SUPERADMIN" ||
-        role === "PJ" ||
-        role === "KAPUS" ||
-        role === "ADMIN"
-    ){
-        navbarHtml += `
-            <div
-                id="smartofficeApprovalButton"
-                class="
-                    smartoffice-mobile-navbar-item
-                "
+    homeButton.type =
+        'button';
+
+    homeButton.id =
+        'smartofficeHomeButton';
+
+    homeButton.className =
+        'smartoffice-mobile-navbar-item';
+
+    homeButton.innerHTML = `
+        <span>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
             >
-                <span>
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="22"
-                        height="22"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    >
-                        <path d="
-                            M9 11l3 3L22 4
-                        "/>
-
-                        <path d="
-                            M21 12v7
-                            a2 2 0 0 1-2 2H5
-                            a2 2 0 0 1-2-2V5
-                            a2 2 0 0 1 2-2h11
-                        "/>
-                    </svg>
-                </span>
-
-                <small>
-                    Approval
-                </small>
-            </div>
-        `;
-    }
-
-    /* =====================================================
-       CUTI MENU
-    ====================================================== */
-    navbarHtml += `
-        <div
-            id="smartofficeCutiButton"
-            class="
-                smartoffice-mobile-navbar-item
-            "
-        >
-            <span>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <rect
-                        x="3"
-                        y="4"
-                        width="18"
-                        height="18"
-                        rx="2"
-                    />
-
-                    <line
-                        x1="16"
-                        y1="2"
-                        x2="16"
-                        y2="6"
-                    />
-
-                    <line
-                        x1="8"
-                        y1="2"
-                        x2="8"
-                        y2="6"
-                    />
-
-                    <line
-                        x1="3"
-                        y1="10"
-                        x2="21"
-                        y2="10"
-                    />
-                </svg>
-            </span>
-
-            <small>
-                Cuti
-            </small>
-        </div>
+                <path d="M3 10.5L12 3l9 7.5"></path>
+                <path d="M5 9.5V21h14V9.5"></path>
+                <path d="M9 21v-6h6v6"></path>
+            </svg>
+        </span>
+        <small>
+            Home
+        </small>
     `;
 
-    /* =====================================================
-       SPD MENU
-    ====================================================== */
-    navbarHtml += `
-        <div
-            id="smartofficeSpdButton"
-            class="
-                smartoffice-mobile-navbar-item
-            "
-        >
-            <span>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="
-                        M3 7h18
-                    "/>
+    homeButton.addEventListener(
+        'click',
+        function(){
+            smartofficeNavigate(
+                'dashboard'
+            );
+        }
+    );
 
-                    <path d="
-                        M6 3h12l3 4
-                        v13
-                        a1 1 0 0 1-1 1H4
-                        a1 1 0 0 1-1-1V7l3-4Z
-                    "/>
+    // ========================================================
+    // CUTI
+    // ========================================================
+    const cutiButton =
+        document.createElement(
+            'button'
+        );
 
-                    <path d="
-                        M8 11h8
-                    "/>
+    cutiButton.type =
+        'button';
 
-                    <path d="
-                        M8 15h5
-                    "/>
-                </svg>
-            </span>
+    cutiButton.id =
+        'smartofficeCutiButton';
 
-            <small>
-                SPD
-            </small>
-        </div>
+    cutiButton.className =
+        'smartoffice-mobile-navbar-item';
+
+    cutiButton.innerHTML = `
+        <span>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <rect
+                    x="3"
+                    y="4"
+                    width="18"
+                    height="17"
+                    rx="2"
+                ></rect>
+                <line
+                    x1="16"
+                    y1="2"
+                    x2="16"
+                    y2="6"
+                ></line>
+                <line
+                    x1="8"
+                    y1="2"
+                    x2="8"
+                    y2="6"
+                ></line>
+                <line
+                    x1="3"
+                    y1="10"
+                    x2="21"
+                    y2="10"
+                ></line>
+            </svg>
+        </span>
+
+        <small>
+            Cuti
+        </small>
     `;
 
-    /* =====================================================
-       ACCOUNT / LOGOUT
-    ====================================================== */
-    navbarHtml += `
-        <div
-            class="
-                smartoffice-mobile-navbar-item
-            "
-            id="smartofficeNavbarLogoutButton"
-        >
-            <span>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path d="
-                        M20 21
-                        a8 8 0 0 0-16 0
-                    "/>
+    cutiButton.addEventListener(
+        'click',
+        function(){
+            smartofficeNavigate(
+                'cuti'
+            );
+        }
+    );
 
-                    <circle
-                        cx="12"
-                        cy="7"
-                        r="4"
-                    />
-                </svg>
-            </span>
 
-            <small>
-                Logout
-            </small>
-        </div>
+    // ========================================================
+    // NOTIFIKASI
+    // ========================================================
+    const notificationButton =
+        document.createElement(
+            'button'
+        );
+
+    notificationButton.type =
+        'button';
+
+    notificationButton.id =
+        'smartofficeNotificationButton';
+
+    notificationButton.className =
+        'smartoffice-mobile-navbar-item';
+
+    notificationButton.innerHTML = `
+        <span>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path
+                    d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                ></path>
+                <path
+                    d="M13.73 21a2 2 0 0 1-3.46 0"
+                ></path>
+            </svg>
+        </span>
+        <small>
+            Notifikasi
+        </small>
     `;
 
-    /* ==================================================
-       RENDER NAVBAR
-    ================================================== */
-    navbar.innerHTML =
-        navbarHtml;
+    notificationButton.addEventListener(
+        'click',
+        function(){
 
-    /* ==================================================
-       APPEND TO BODY
-    ================================================== */
+            /*
+             * Logic notification panel
+             * akan dipasang pada tahap berikutnya.
+             */
+
+            console.log(
+                'Smart Office: Notification clicked'
+            );
+        }
+    );
+
+    // ========================================================
+    // DOKUMEN SAYA
+    // ========================================================
+    const dokumenSayaButton =
+        document.createElement(
+            'button'
+        );
+
+    dokumenSayaButton.type =
+        'button';
+
+    dokumenSayaButton.id =
+        'smartofficeDokumenSayaButton';
+
+    dokumenSayaButton.className =
+        'smartoffice-mobile-navbar-item';
+
+    dokumenSayaButton.innerHTML = `
+        <span>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path
+                    d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                ></path>
+                <polyline
+                    points="14 2 14 8 20 8"
+                ></polyline>
+                <line
+                    x1="8"
+                    y1="13"
+                    x2="16"
+                    y2="13"
+                ></line>
+                <line
+                    x1="8"
+                    y1="17"
+                    x2="16"
+                    y2="17"
+                ></line>
+            </svg>
+        </span>
+        <small>
+            Dokumen Saya
+        </small>
+    `;
+
+    dokumenSayaButton.addEventListener(
+        'click',
+        function(){
+            smartofficeNavigate(
+                'dokumen-saya'
+            );
+        }
+    );
+
+    // ========================================================
+    // LOGOUT
+    // ========================================================
+    const logoutButton =
+        document.createElement(
+            'button'
+        );
+
+    logoutButton.type =
+        'button';
+
+    logoutButton.id =
+        'smartofficeNavbarLogoutButton';
+
+    logoutButton.className =
+        'smartoffice-mobile-navbar-item';
+
+    logoutButton.innerHTML = `
+        <span>
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path
+                    d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
+                ></path>
+                <polyline
+                    points="16 17 21 12 16 7"
+                ></polyline>
+                <line
+                    x1="21"
+                    y1="12"
+                    x2="9"
+                    y2="12"
+                ></line>
+            </svg>
+        </span>
+        <small>
+            Logout
+        </small>
+    `;
+
+    logoutButton.addEventListener(
+        'click',
+        smartofficeNavbarLogout
+    );
+
+    // ========================================================
+    // APPEND MENU
+    // ========================================================
+    navbarContainer.appendChild(
+        homeButton
+    );
+
+    navbarContainer.appendChild(
+        cutiButton
+    );
+
+    navbarContainer.appendChild(
+        notificationButton
+    );
+
+    navbarContainer.appendChild(
+        dokumenSayaButton
+    );
+
+    navbarContainer.appendChild(
+        logoutButton
+    );
+
+    // ========================================================
+    // APPEND NAVBAR
+    // ========================================================
+    navbar.appendChild(
+        navbarContainer
+    );
+
     document.body.appendChild(
         navbar
     );
 
-    /* ==================================================
-       SAVE REFERENCE
-    ================================================== */
+    // ========================================================
+    // SAVE GLOBAL ELEMENT
+    // ========================================================
     smartofficeNavbarElement =
         navbar;
 
-    /* ==================================================
-       SET ACTIVE AWAL
-    ================================================== */
+    // ========================================================
+    // SET ACTIVE MENU
+    // ========================================================
     smartofficeSetActiveNavbar(
         activeMenu
     );
-
-    /* ==================================================
-       HOME EVENT
-       ACTIVE DIUBAH SEBELUM NAVIGASI
-    ================================================== */
-    document
-        .getElementById(
-            "smartofficeHomeButton"
-        )
-        ?.addEventListener(
-            "click",
-            function(){
-                smartofficeSetActiveNavbar(
-                    "home"
-                );
-
-                smartofficeNavigate(
-                    "dashboard"
-                );
-            }
-        );
-
-    /* ==================================================
-       APPROVAL EVENT
-       ACTIVE DIUBAH SEBELUM NAVIGASI
-    ================================================== */
-    document
-        .getElementById(
-            "smartofficeApprovalButton"
-        )
-        ?.addEventListener(
-            "click",
-            function(){
-                smartofficeSetActiveNavbar(
-                    "approval"
-                );
-
-                smartofficeNavigate(
-                    "approval"
-                );
-            }
-        );
-
-    /* ==================================================
-       CUTI EVENT
-       ACTIVE DIUBAH SEBELUM NAVIGASI
-    ================================================== */
-    document
-        .getElementById(
-            "smartofficeCutiButton"
-        )
-        ?.addEventListener(
-            "click",
-            function(){
-                smartofficeSetActiveNavbar(
-                    "cuti"
-                );
-
-                smartofficeNavigate(
-                    "cuti"
-                );
-            }
-        );
-
-    /* ==================================================
-       SPD EVENT
-       ACTIVE DIUBAH SEBELUM NAVIGASI
-    ================================================== */
-    document
-        .getElementById(
-            "smartofficeSpdButton"
-        )
-        ?.addEventListener(
-            "click",
-            function(){
-                smartofficeSetActiveNavbar(
-                    "spd"
-                );
-
-                smartofficeNavigate(
-                    "spd"
-                );
-            }
-        );
-
-
-    /* ==================================================
-       LOGOUT EVENT
-    ================================================== */
-    document
-        .getElementById(
-            "smartofficeNavbarLogoutButton"
-        )
-        ?.addEventListener(
-            "click",
-            smartofficeNavbarLogout
-        );
 }
 
 
-/* ======================================================
-   NAVBAR LOGOUT
-====================================================== */
-async function smartofficeNavbarLogout(){
-    if(
-        !confirm(
-            "Yakin ingin keluar?"
-        )
-    ){
+// ============================================================
+// LOGOUT
+// ============================================================
+function smartofficeNavbarLogout(){
+    const confirmed =
+        window.confirm(
+            'Apakah Anda yakin ingin keluar dari Smart Office?'
+        );
+    if(!confirmed){
         return;
     }
 
-    /* =========================
-       CLEAR SESSION
-    ========================= */
+    // --------------------------------------------------------
+    // CLEAR SESSION
+    // --------------------------------------------------------
     smartofficeClearSession();
 
-    /* =========================
-       REMOVE NAVBAR
-    ========================= */
-    document
-        .getElementById(
-            "smartofficeMobileNavbarFixed"
-        )
-        ?.remove();
+    // --------------------------------------------------------
+    // REMOVE NAVBAR
+    // --------------------------------------------------------
+    smartofficeDestroyNavbar();
 
-    smartofficeNavbarElement =
-        null;
-
-    /* =========================
-       NAVIGATE LOGIN
-    ========================= */
-    await smartofficeNavigate(
-        "login"
+    // --------------------------------------------------------
+    // NAVIGATE LOGIN
+    // --------------------------------------------------------
+    smartofficeNavigate(
+        'login'
     );
+}
+
+
+// ============================================================
+// DESTROY NAVBAR
+// ============================================================
+export function smartofficeDestroyNavbar(){
+    if(smartofficeNavbarElement){
+        smartofficeNavbarElement.remove();
+        smartofficeNavbarElement =
+            null;
+    }
 }
