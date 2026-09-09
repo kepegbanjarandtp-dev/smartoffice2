@@ -147,7 +147,7 @@ export async function smartofficeLoadPage(){
     ========================= */
     smartofficeRenderMobileNavbar(
         sessionData.role,
-        "dokumen"
+        "dokumen-saya"
     );
 
     /* =========================
