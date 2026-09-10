@@ -567,13 +567,22 @@ async function smartofficeRegisterFCMInternal(){
                         ){
 
                             smartofficeShowFCMStatus(
-                                "✓ FCM BERHASIL\n" +
-                                "FID: " +
-                                installationId +
-                                "\n" +
-                                "FID sudah terdaftar ke akun.",
+                                "✓ Notifikasi berhasil diaktifkan.",
                                 "success"
                             );
+
+                            setTimeout(() => {
+
+                                const element =
+                                    document.getElementById(
+                                        "smartofficeFCMDebugStatus"
+                                    );
+
+                                if(element){
+                                    element.remove();
+                                }
+
+                            }, 3000);
 
                         }
                         else{
@@ -644,12 +653,6 @@ async function smartofficeRegisterFCMInternal(){
         console.log(
             "[Smart Office] FCM register() berhasil."
         );
-
-
-        smartofficeShowFCMStatus(
-            "FCM: registrasi push berhasil dijalankan."
-        );
-
 
         console.log(
             "[Smart Office] Register FCM berhasil dijalankan."
