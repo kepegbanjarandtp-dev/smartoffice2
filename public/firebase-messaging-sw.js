@@ -143,7 +143,7 @@ messaging.onBackgroundMessage(
             );
 
             console.log(
-                "[Smart Office] Android/Desktop notification berhasil dibuat."
+                "[Smart Office] Notification berhasil dibuat."
             );
 
         }
