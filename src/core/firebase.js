@@ -212,11 +212,6 @@ async function smartofficeGetMessagingServiceWorker(){
 
 export async function smartofficeRegisterFCM(){
 
-    /*
-     * Jangan menjalankan proses register
-     * berkali-kali secara bersamaan.
-     */
-
     if(
         smartofficeFCMRegisterPromise
     ){
@@ -225,6 +220,19 @@ export async function smartofficeRegisterFCM(){
             smartofficeFCMRegisterPromise
         );
     }
+
+
+    /*
+     * RESET FCM SEKALI UNTUK PERANGKAT INI.
+     *
+     * Hapus penanda reset lama agar
+     * perangkat yang sudah pernah menjalankan
+     * percobaan sebelumnya tetap dipaksa reset.
+     */
+
+    localStorage.removeItem(
+        SMARTOFFICE_FCM_RESET_KEY
+    );
 
 
     smartofficeFCMRegisterPromise =
@@ -254,7 +262,7 @@ export async function smartofficeResetFCM(){
     try{
 
         smartofficeShowFCMStatus(
-            "FCM: menghapus registrasi FID lama..."
+            "FCM: menghapus registrasi lama..."
         );
 
         const registration =
@@ -267,23 +275,26 @@ export async function smartofficeResetFCM(){
             );
         }
 
-        /* Hapus FID lama dari Firebase */
+
+        /* =========================================
+           UNREGISTER FCM
+        ========================================= */
+
         const removed =
             await unregister(
                 smartofficeMessaging
             );
 
-        console.log(
-            "[Smart Office] FCM unregister:",
-            removed
-        );
-
         smartofficeShowFCMStatus(
-            "FID lama dihapus.\n" +
-            "Membuat FID baru..."
+            "HASIL UNREGISTER:\n" +
+            String(removed)
         );
 
-        /* Register ulang */
+
+        /* =========================================
+           REGISTER FCM KEMBALI
+        ========================================= */
+
         await register(
             smartofficeMessaging,
             {
@@ -295,19 +306,17 @@ export async function smartofficeResetFCM(){
             }
         );
 
-        console.log(
-            "[Smart Office] FCM register ulang berhasil."
+
+        smartofficeShowFCMStatus(
+            "FCM REGISTER ULANG.\n" +
+            "Menunggu FID baru..."
         );
 
-        /*
-         * FID baru akan masuk melalui onRegistered()
-         * yang sudah ada di firebase.js.
-         */
 
         return {
             success: true,
             message:
-                "Reset FCM berhasil."
+                "FCM berhasil diregistrasikan ulang."
         };
 
     }
@@ -319,7 +328,7 @@ export async function smartofficeResetFCM(){
         );
 
         smartofficeShowFCMStatus(
-            "FCM RESET GAGAL\n" +
+            "FCM RESET GAGAL:\n" +
             (
                 error?.message ||
                 "Gagal reset FCM."
