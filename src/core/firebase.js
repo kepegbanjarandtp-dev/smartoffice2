@@ -222,6 +222,26 @@ async function smartofficeGetMessagingServiceWorker(){
 
 export async function smartofficeRegisterFCM(){
 
+    /* =====================================================
+       DEVELOPMENT
+       FCM tidak dijalankan di localhost.
+       ===================================================== */
+
+    if(!import.meta.env.PROD){
+
+        console.log(
+            "[Smart Office] FCM dilewati pada mode development."
+        );
+
+        return {
+            success: true,
+            skipped: true,
+            message:
+                "FCM dilewati pada mode development."
+        };
+    }
+
+
     if(
         smartofficeFCMRegisterPromise
     ){
@@ -231,8 +251,10 @@ export async function smartofficeRegisterFCM(){
         );
     }
 
+
     smartofficeFCMRegisterPromise =
         smartofficeRegisterFCMInternal();
+
 
     try{
 
@@ -579,43 +601,44 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-           HAPUS FIREBASE INSTALLATION LAMA
+          HAPUS FIREBASE INSTALLATION LAMA
+          HANYA SEKALI
         ================================================= */
 
-        smartofficeShowFCMStatus(
-            "FCM: menghapus Firebase Installation lama..."
-        );
+        const alreadyReset =
+            localStorage.getItem(
+                SMARTOFFICE_FCM_RESET_KEY
+            ) === "done";
 
-        const deletedInstallation =
+
+        if(!alreadyReset){
+
+            smartofficeShowFCMStatus(
+                "FCM: menghapus Firebase Installation lama..."
+            );
+
+
             await deleteInstallations(
                 smartofficeInstallations
             );
 
-        console.log(
-            "[Smart Office] Firebase Installation dihapus:",
-            deletedInstallation
-        );
 
-        smartofficeShowFCMStatus(
-            "Firebase Installation lama dihapus.\n" +
-            "Membuat FID baru..."
-        );
+            console.log(
+                "[Smart Office] Firebase Installation lama dihapus."
+            );
 
 
-        /* =================================================
-           REGISTER FCM
-        ================================================= */
+            localStorage.setItem(
+                SMARTOFFICE_FCM_RESET_KEY,
+                "done"
+            );
 
-        await register(
-            smartofficeMessaging,
-            {
-                vapidKey:
-                    SMARTOFFICE_FCM_VAPID_KEY,
 
-                serviceWorkerRegistration:
-                    registration
-            }
-        );
+            smartofficeShowFCMStatus(
+                "Firebase Installation lama dihapus.\n" +
+                "Membuat FID baru..."
+            );
+        }
 
 
         /* =================================================
