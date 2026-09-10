@@ -562,6 +562,14 @@ async function smartofficeRegisterFCMInternal(){
         REGISTER FCM
         ================================================= */
 
+        await unregister(
+            smartofficeMessaging
+        );
+
+        console.log(
+            "[Smart Office] FID lama sudah di-unregister."
+        );
+
         await register(
             smartofficeMessaging,
             {
