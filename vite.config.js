@@ -13,7 +13,8 @@ export default defineConfig({
                 "smartoffice-icon-512-maskable.png",
                 "smartoffice-icon-192-white.png",
                 "smartoffice-icon-512-white.png",
-                "firebase-messaging-sw.js"
+                "firebase-messaging-sw.js",
+                "smartoffice-notification-icon-96.png"
             ],
 
             workbox: {
