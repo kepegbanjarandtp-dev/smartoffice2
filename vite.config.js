@@ -96,9 +96,6 @@ export default defineConfig({
 
             injectManifest: {
 
-                injectionPoint:
-                    undefined,
-
                 rollupFormat:
                     "iife"
 
