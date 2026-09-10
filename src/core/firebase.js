@@ -2,7 +2,6 @@
    SMART OFFICE V2.1
    FIREBASE CONFIGURATION
 ========================================================= */
-
 import { initializeApp } from "firebase/app";
 
 import {
@@ -25,7 +24,6 @@ import { smartofficeApi } from "./api.js";
 /* =========================================================
    FIREBASE CONFIG
 ========================================================= */
-
 const firebaseConfig = {
     apiKey: "AIzaSyBg_ccqzIYFYz9-d6O-nQwZyvCEHkDZsA0",
     authDomain: "smartoffice-v2.firebaseapp.com",
@@ -39,7 +37,6 @@ const firebaseConfig = {
 /* =========================================================
    INITIALIZE FIREBASE
 ========================================================= */
-
 const smartofficeFirebaseApp =
     initializeApp(firebaseConfig);
 
@@ -497,7 +494,7 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-           SERVICE WORKER FCM
+           SERVICE WORKER
         ================================================= */
 
         const registration =
@@ -509,7 +506,7 @@ async function smartofficeRegisterFCMInternal(){
         ){
 
             throw new Error(
-                "Service Worker FCM tidak berhasil didaftarkan."
+                "Service Worker Smart Office tidak berhasil didaftarkan."
             );
 
         }
@@ -624,63 +621,12 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-           HAPUS FIREBASE INSTALLATION LAMA
-           HANYA SEKALI
-        ================================================= */
-
-        const alreadyReset =
-            localStorage.getItem(
-                SMARTOFFICE_FCM_RESET_KEY
-            ) === "done";
-
-
-        if(
-            !alreadyReset
-        ){
-
-            smartofficeShowFCMStatus(
-                "FCM: menghapus Firebase Installation lama..."
-            );
-
-
-            try{
-
-                await deleteInstallations(
-                    smartofficeInstallations
-                );
-
-
-                console.log(
-                    "[Smart Office] Firebase Installation lama dihapus."
-                );
-
-            }
-            catch(error){
-
-                console.warn(
-                    "[Smart Office] Firebase Installation lama tidak dapat dihapus:",
-                    error
-                );
-
-            }
-
-
-            localStorage.setItem(
-                SMARTOFFICE_FCM_RESET_KEY,
-                "done"
-            );
-
-
-            smartofficeShowFCMStatus(
-                "Firebase Installation lama diproses.\n" +
-                "Membuat registrasi FCM baru..."
-            );
-
-        }
-
-
-        /* =================================================
            REGISTER FCM
+           
+           PENTING:
+           TIDAK ADA deleteInstallations()
+           
+           FID TIDAK DI-RESET SAAT LOGIN.
         ================================================= */
 
         await register(
@@ -960,11 +906,8 @@ export function smartofficeListenFCMMessage(callback){
                     {
                         body: body,
 
-                        icon:
-                            "/smartoffice-icon-192-white.png",
-
-                        badge:
-                            "/smartoffice-icon-192-white.png",
+                        icon: "/smartoffice-notification-icon-96.png",
+                        badge: "/smartoffice-notification-icon-96.png",
 
                         tag:
                             notificationId,
