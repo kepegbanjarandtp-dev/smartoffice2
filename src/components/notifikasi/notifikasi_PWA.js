@@ -1117,15 +1117,20 @@ export function smartofficeUpdateNotificationBadge(
 
 
 // ============================================================
-// REFRESH NOTIFICATION BADGE
+// LOAD NOTIFICATION CACHE
+// Dipanggil 1x setelah login.
+// Tidak dipanggil oleh navbar.
 // ============================================================
-export async function smartofficeRefreshNotificationBadge(){
+export async function smartofficeLoadNotificationCache(){
 
     try{
+
         const session =
             smartofficeGetSession();
 
-        if(!session) return;
+        if(!session){
+            return;
+        }
 
         const nip =
             String(session.nip || '').trim();
@@ -1134,6 +1139,28 @@ export async function smartofficeRefreshNotificationBadge(){
             String(session.role || 'USER')
                 .trim()
                 .toUpperCase();
+
+        if(!nip){
+            return;
+        }
+
+        // Jangan request kalau cache akun yang sama masih tersedia
+        if(
+            smartofficeNotificationCache &&
+            smartofficeNotificationCache.nip === nip &&
+            smartofficeNotificationCache.role === role
+        ){
+            smartofficeUpdateNotificationBadge(
+                smartofficeNotificationCache.unreadCount
+            );
+
+            return;
+        }
+
+        console.log(
+            'SMARTOFFICE LOAD NOTIFICATION CACHE:',
+            { nip, role }
+        );
 
         const response =
             await smartofficeApi(
@@ -1152,9 +1179,7 @@ export async function smartofficeRefreshNotificationBadge(){
         }
 
         const notifications =
-            Array.isArray(
-                data?.notifications
-            )
+            Array.isArray(data?.notifications)
                 ? data.notifications
                 : [];
 
@@ -1164,9 +1189,33 @@ export async function smartofficeRefreshNotificationBadge(){
                 notifications.length
             );
 
-        /* =========================
-           SIMPAN CACHE
-        ========================= */
+        /*
+         * PENTING:
+         * Pastikan response masih untuk session yang sama.
+         * Kalau user sudah logout/login akun lain saat request
+         * belum selesai, hasil akun lama jangan dimasukkan cache.
+         */
+        const currentSession =
+            smartofficeGetSession();
+
+        const currentNip =
+            String(currentSession?.nip || '').trim();
+
+        const currentRole =
+            String(currentSession?.role || 'USER')
+                .trim()
+                .toUpperCase();
+
+        if(
+            currentNip !== nip ||
+            currentRole !== role
+        ){
+            return;
+        }
+
+        // ====================================================
+        // SIMPAN CACHE
+        // ====================================================
         smartofficeNotificationCache = {
             nip,
             role,
@@ -1174,19 +1223,60 @@ export async function smartofficeRefreshNotificationBadge(){
             unreadCount
         };
 
-        /* =========================
-           UPDATE BADGE
-        ========================= */
+        // ====================================================
+        // UPDATE BADGE
+        // ====================================================
         smartofficeUpdateNotificationBadge(
             unreadCount
-);
+        );
+
     }
     catch(error){
+
         console.warn(
-            'Notification badge gagal:',
+            'Load notification cache gagal:',
             error
         );
+
     }
+}
+
+
+// ============================================================
+// REFRESH NOTIFICATION BADGE
+// HANYA MEMBACA CACHE
+// TIDAK ADA REQUEST KE GAS
+// ============================================================
+export function smartofficeRefreshNotificationBadge(){
+
+    const session =
+        smartofficeGetSession();
+
+    if(!session){
+        smartofficeUpdateNotificationBadge(0);
+        return;
+    }
+
+    const nip =
+        String(session.nip || '').trim();
+
+    const role =
+        String(session.role || 'USER')
+            .trim()
+            .toUpperCase();
+
+    if(
+        !smartofficeNotificationCache ||
+        smartofficeNotificationCache.nip !== nip ||
+        smartofficeNotificationCache.role !== role
+    ){
+        smartofficeUpdateNotificationBadge(0);
+        return;
+    }
+
+    smartofficeUpdateNotificationBadge(
+        smartofficeNotificationCache.unreadCount
+    );
 }
 
 
