@@ -23,6 +23,10 @@ import {
     smartofficeShowToast
 } from "../../components/toast/toast.js";
 
+import {
+    smartofficeLoadNotificationCache
+} from "../../componentsnotifikasi/notifikasi_PWA.js";
+
 /* ======================================================
    SERVICE
 ====================================================== */
@@ -102,6 +106,18 @@ export async function smartofficeLoadPage(){
         sessionData.role,
         "home"
     );
+
+    /* ==========================================
+       PRELOAD NOTIFICATION
+       Setelah router selesai abort request lama
+    ========================================== */
+    smartofficeLoadNotificationCache()
+    .catch(error => {
+        console.warn(
+            "[Smart Office] Notification preload gagal:",
+            error
+        );
+    });
 
     /* =========================
        LOGOUT BUTTON
