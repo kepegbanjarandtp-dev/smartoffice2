@@ -64,8 +64,21 @@ export function smartofficeShowNavbar(){
 // HIDE NAVBAR
 // ============================================================
 export function smartofficeHideNavbar(){
+
     if(smartofficeNavbarElement){
         smartofficeNavbarElement.classList.add(
+            'smartoffice-navbar-hidden'
+        );
+    }
+
+    // Pastikan navbar yang ada di DOM ikut tersembunyi
+    const navbar =
+        document.getElementById(
+            'smartofficeMobileNavbar'
+        );
+
+    if(navbar){
+        navbar.classList.add(
             'smartoffice-navbar-hidden'
         );
     }
