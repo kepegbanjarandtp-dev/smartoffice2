@@ -103,12 +103,8 @@ messaging.onBackgroundMessage(
                 notificationBody,
 
 
-            icon:
-                "/smartoffice-icon-192-white.png",
-
-
-            badge:
-                "/smartoffice-icon-192-white.png",
+            icon: "/smartoffice-notification-icon-96.png",
+            badge: "/smartoffice-notification-icon-96.png",
 
 
             data:
