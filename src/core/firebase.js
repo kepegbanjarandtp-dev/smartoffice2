@@ -8,6 +8,7 @@ import { initializeApp } from "firebase/app";
 import {
     getMessaging,
     register,
+    unregister,
     onRegistered,
     onUnregistered,
     onMessage
@@ -67,6 +68,8 @@ let smartofficeFCMRegisteredListener = null;
 let smartofficeFCMUnregisteredListener = null;
 
 let smartofficeFCMRegisterPromise = null;
+const SMARTOFFICE_FCM_RESET_KEY =
+    "smartoffice_fcm_reset_v1";
 
 
 /* =========================================================
@@ -238,6 +241,98 @@ export async function smartofficeRegisterFCM(){
 
         smartofficeFCMRegisterPromise =
             null;
+    }
+}
+
+
+/* =========================================================
+   RESET FCM DARI PWA
+   ========================================================= */
+
+export async function smartofficeResetFCM(){
+
+    try{
+
+        smartofficeShowFCMStatus(
+            "FCM: menghapus registrasi FID lama..."
+        );
+
+        const registration =
+            await smartofficeGetMessagingServiceWorker();
+
+        if(!registration){
+
+            throw new Error(
+                "Service Worker Smart Office tidak ditemukan."
+            );
+        }
+
+        /* Hapus FID lama dari Firebase */
+        const removed =
+            await unregister(
+                smartofficeMessaging
+            );
+
+        console.log(
+            "[Smart Office] FCM unregister:",
+            removed
+        );
+
+        smartofficeShowFCMStatus(
+            "FID lama dihapus.\n" +
+            "Membuat FID baru..."
+        );
+
+        /* Register ulang */
+        await register(
+            smartofficeMessaging,
+            {
+                vapidKey:
+                    SMARTOFFICE_FCM_VAPID_KEY,
+
+                serviceWorkerRegistration:
+                    registration
+            }
+        );
+
+        console.log(
+            "[Smart Office] FCM register ulang berhasil."
+        );
+
+        /*
+         * FID baru akan masuk melalui onRegistered()
+         * yang sudah ada di firebase.js.
+         */
+
+        return {
+            success: true,
+            message:
+                "Reset FCM berhasil."
+        };
+
+    }
+    catch(error){
+
+        console.error(
+            "[Smart Office] Reset FCM gagal:",
+            error
+        );
+
+        smartofficeShowFCMStatus(
+            "FCM RESET GAGAL\n" +
+            (
+                error?.message ||
+                "Gagal reset FCM."
+            ),
+            "error"
+        );
+
+        return {
+            success: false,
+            message:
+                error?.message ||
+                "Gagal reset FCM."
+        };
     }
 }
 
@@ -426,7 +521,45 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-           REGISTER KE FCM
+           RESET FID LAMA — SEKALI SAJA
+        ================================================= */
+
+        const alreadyReset =
+            localStorage.getItem(
+                SMARTOFFICE_FCM_RESET_KEY
+            ) === "done";
+
+        if(!alreadyReset){
+
+            smartofficeShowFCMStatus(
+                "FCM: reset registrasi lama..."
+            );
+
+            try{
+
+                const removed =
+                    await unregister(
+                        smartofficeMessaging
+                    );
+
+                console.log(
+                    "[Smart Office] FCM unregister lama:",
+                    removed
+                );
+
+            }
+            catch(error){
+
+                console.warn(
+                    "[Smart Office] Unregister FCM lama:",
+                    error
+                );
+            }
+        }
+
+
+        /* =================================================
+        REGISTER FCM
         ================================================= */
 
         await register(
@@ -439,6 +572,23 @@ async function smartofficeRegisterFCMInternal(){
                     registration
             }
         );
+
+
+        /* =================================================
+        TANDAI RESET SUDAH SELESAI
+        ================================================= */
+
+        if(!alreadyReset){
+
+            localStorage.setItem(
+                SMARTOFFICE_FCM_RESET_KEY,
+                "done"
+            );
+
+            console.log(
+                "[Smart Office] FCM reset pertama selesai."
+            );
+        }
 
 
         console.log(
