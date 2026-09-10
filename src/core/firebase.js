@@ -521,7 +521,8 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-           RESET FID LAMA — SEKALI SAJA
+           RESET FID LAMA
+           HANYA SEKALI
         ================================================= */
 
         const alreadyReset =
@@ -529,10 +530,11 @@ async function smartofficeRegisterFCMInternal(){
                 SMARTOFFICE_FCM_RESET_KEY
             ) === "done";
 
+
         if(!alreadyReset){
 
             smartofficeShowFCMStatus(
-                "FCM: reset registrasi lama..."
+                "FCM: menghapus FID lama..."
             );
 
             try{
@@ -543,32 +545,34 @@ async function smartofficeRegisterFCMInternal(){
                     );
 
                 console.log(
-                    "[Smart Office] FCM unregister lama:",
+                    "[Smart Office] FCM unregister:",
                     removed
+                );
+
+                smartofficeShowFCMStatus(
+                    "FCM: FID lama dihapus.\n" +
+                    "Membuat FID baru..."
                 );
 
             }
             catch(error){
 
                 console.warn(
-                    "[Smart Office] Unregister FCM lama:",
+                    "[Smart Office] Unregister FCM:",
                     error
+                );
+
+                smartofficeShowFCMStatus(
+                    "FCM: unregister lama tidak diperlukan.\n" +
+                    "Membuat registrasi baru..."
                 );
             }
         }
 
 
         /* =================================================
-        REGISTER FCM
+           REGISTER FCM
         ================================================= */
-
-        await unregister(
-            smartofficeMessaging
-        );
-
-        console.log(
-            "[Smart Office] FID lama sudah di-unregister."
-        );
 
         await register(
             smartofficeMessaging,
@@ -583,7 +587,7 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-        TANDAI RESET SUDAH SELESAI
+           RESET SUDAH SELESAI
         ================================================= */
 
         if(!alreadyReset){
@@ -602,17 +606,6 @@ async function smartofficeRegisterFCMInternal(){
         console.log(
             "[Smart Office] Register FCM berhasil dijalankan."
         );
-
-
-        /*
-         * PENTING:
-         *
-         * FID dikirim melalui onRegistered()
-         * secara asynchronous.
-         *
-         * Jadi register() sukses belum tentu
-         * callback FID sudah selesai.
-         */
 
 
         return {
