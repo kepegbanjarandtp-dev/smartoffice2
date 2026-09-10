@@ -173,7 +173,7 @@ function smartofficeShowFCMStatus(
 
 
 /* =========================================================
-   GET SERVICE WORKER
+   GET SERVICE WORKER FCM
 ========================================================= */
 
 async function smartofficeGetMessagingServiceWorker(){
@@ -199,13 +199,28 @@ async function smartofficeGetMessagingServiceWorker(){
 
 
     /* =====================================================
-       GUNAKAN SERVICE WORKER UTAMA SMART OFFICE
+       KHUSUS FIREBASE CLOUD MESSAGING
+
+       FCM menggunakan:
+       /firebase-messaging-sw.js
+
+       BUKAN:
+       /sw.js
     ===================================================== */
 
     smartofficeMessagingRegistration =
         await navigator.serviceWorker.register(
-            "/sw.js"
+            "/firebase-messaging-sw.js",
+            {
+                scope: "/"
+            }
         );
+
+
+    console.log(
+        "[Smart Office] FCM Service Worker berhasil didaftarkan:",
+        smartofficeMessagingRegistration.scope
+    );
 
 
     await navigator.serviceWorker.ready;
@@ -443,6 +458,7 @@ async function smartofficeRegisterFCMInternal(){
                 message:
                     "Browser tidak mendukung Notification."
             };
+
         }
 
 
@@ -460,6 +476,7 @@ async function smartofficeRegisterFCMInternal(){
                 message:
                     "Browser tidak mendukung Service Worker."
             };
+
         }
 
 
@@ -481,6 +498,7 @@ async function smartofficeRegisterFCMInternal(){
 
             permission =
                 await Notification.requestPermission();
+
         }
 
 
@@ -499,15 +517,27 @@ async function smartofficeRegisterFCMInternal(){
                 message:
                     "Izin notifikasi tidak diberikan."
             };
+
         }
 
 
         /* =================================================
-           SERVICE WORKER
+           SERVICE WORKER FCM
         ================================================= */
 
         const registration =
             await smartofficeGetMessagingServiceWorker();
+
+
+        if(
+            !registration
+        ){
+
+            throw new Error(
+                "Service Worker FCM tidak berhasil didaftarkan."
+            );
+
+        }
 
 
         smartofficeShowFCMStatus(
@@ -532,6 +562,19 @@ async function smartofficeRegisterFCMInternal(){
                             "[Smart Office] Firebase Installation ID:",
                             installationId
                         );
+
+
+                        if(
+                            !installationId
+                        ){
+
+                            console.error(
+                                "[Smart Office] FID kosong."
+                            );
+
+                            return;
+
+                        }
 
 
                         smartofficeShowFCMStatus(
@@ -572,9 +615,12 @@ async function smartofficeRegisterFCMInternal(){
                                 ),
                                 "error"
                             );
+
                         }
+
                     }
                 );
+
         }
 
 
@@ -595,14 +641,16 @@ async function smartofficeRegisterFCMInternal(){
                             "[Smart Office] FID tidak lagi terdaftar:",
                             installationId
                         );
+
                     }
                 );
+
         }
 
 
         /* =================================================
-          HAPUS FIREBASE INSTALLATION LAMA
-          HANYA SEKALI
+           HAPUS FIREBASE INSTALLATION LAMA
+           HANYA SEKALI
         ================================================= */
 
         const alreadyReset =
@@ -611,21 +659,35 @@ async function smartofficeRegisterFCMInternal(){
             ) === "done";
 
 
-        if(!alreadyReset){
+        if(
+            !alreadyReset
+        ){
 
             smartofficeShowFCMStatus(
                 "FCM: menghapus Firebase Installation lama..."
             );
 
 
-            await deleteInstallations(
-                smartofficeInstallations
-            );
+            try{
+
+                await deleteInstallations(
+                    smartofficeInstallations
+                );
 
 
-            console.log(
-                "[Smart Office] Firebase Installation lama dihapus."
-            );
+                console.log(
+                    "[Smart Office] Firebase Installation lama dihapus."
+                );
+
+            }
+            catch(error){
+
+                console.warn(
+                    "[Smart Office] Firebase Installation lama tidak dapat dihapus:",
+                    error
+                );
+
+            }
 
 
             localStorage.setItem(
@@ -635,27 +697,37 @@ async function smartofficeRegisterFCMInternal(){
 
 
             smartofficeShowFCMStatus(
-                "Firebase Installation lama dihapus.\n" +
-                "Membuat FID baru..."
+                "Firebase Installation lama diproses.\n" +
+                "Membuat registrasi FCM baru..."
             );
+
         }
 
 
         /* =================================================
-           RESET SUDAH SELESAI
+           REGISTER FCM
         ================================================= */
 
-        if(!alreadyReset){
+        await register(
+            smartofficeMessaging,
+            {
+                vapidKey:
+                    SMARTOFFICE_FCM_VAPID_KEY,
 
-            localStorage.setItem(
-                SMARTOFFICE_FCM_RESET_KEY,
-                "done"
-            );
+                serviceWorkerRegistration:
+                    registration
+            }
+        );
 
-            console.log(
-                "[Smart Office] FCM reset pertama selesai."
-            );
-        }
+
+        console.log(
+            "[Smart Office] FCM register() berhasil."
+        );
+
+
+        smartofficeShowFCMStatus(
+            "FCM: registrasi push berhasil dijalankan."
+        );
 
 
         console.log(
@@ -669,6 +741,7 @@ async function smartofficeRegisterFCMInternal(){
 
             message:
                 "Registrasi push berhasil dijalankan."
+
         };
 
     }
@@ -697,8 +770,11 @@ async function smartofficeRegisterFCMInternal(){
             message:
                 error?.message ||
                 "Gagal register FCM."
+
         };
+
     }
+
 }
 
 
