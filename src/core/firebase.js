@@ -6,6 +6,11 @@
 import { initializeApp } from "firebase/app";
 
 import {
+    getInstallations,
+    deleteInstallations
+} from "firebase/installations"; 
+
+import {
     getMessaging,
     register,
     unregister,
@@ -37,6 +42,11 @@ const firebaseConfig = {
 
 const smartofficeFirebaseApp =
     initializeApp(firebaseConfig);
+
+const smartofficeInstallations =
+    getInstallations(
+        smartofficeFirebaseApp
+    );
 
 
 /* =========================================================
@@ -346,6 +356,60 @@ export async function smartofficeResetFCM(){
 }
 
 
+export async function smartofficeDeleteFirebaseInstallation(){
+
+    try{
+
+        smartofficeShowFCMStatus(
+            "FCM: menghapus Firebase Installation lama..."
+        );
+
+        await deleteInstallations(
+            smartofficeInstallations
+        );
+
+        console.log(
+            "[Smart Office] Firebase Installation lama berhasil dihapus."
+        );
+
+        smartofficeShowFCMStatus(
+            "✓ Firebase Installation lama dihapus.\n" +
+            "Siap membuat FID baru.",
+            "success"
+        );
+
+        return {
+            success: true,
+            message:
+                "Firebase Installation lama berhasil dihapus."
+        };
+
+    }
+    catch(error){
+
+        console.error(
+            "[Smart Office] Gagal menghapus Firebase Installation:",
+            error
+        );
+
+        smartofficeShowFCMStatus(
+            "FCM GAGAL HAPUS INSTALLATION:\n" +
+            (
+                error?.message ||
+                "Gagal menghapus Firebase Installation."
+            ),
+            "error"
+        );
+
+        return {
+            success: false,
+            message:
+                error?.message ||
+                "Gagal menghapus Firebase Installation."
+        };
+    }
+}
+
 /* =========================================================
    INTERNAL REGISTER
 ========================================================= */
@@ -530,53 +594,27 @@ async function smartofficeRegisterFCMInternal(){
 
 
         /* =================================================
-           RESET FID LAMA
-           HANYA SEKALI
+           HAPUS FIREBASE INSTALLATION LAMA
         ================================================= */
 
-        const alreadyReset =
-            localStorage.getItem(
-                SMARTOFFICE_FCM_RESET_KEY
-            ) === "done";
+        smartofficeShowFCMStatus(
+            "FCM: menghapus Firebase Installation lama..."
+        );
 
-
-        if(!alreadyReset){
-
-            smartofficeShowFCMStatus(
-                "FCM: menghapus FID lama..."
+        const deletedInstallation =
+            await deleteInstallations(
+                smartofficeInstallations
             );
 
-            try{
+        console.log(
+            "[Smart Office] Firebase Installation dihapus:",
+            deletedInstallation
+        );
 
-                const removed =
-                    await unregister(
-                        smartofficeMessaging
-                    );
-
-                console.log(
-                    "[Smart Office] FCM unregister:",
-                    removed
-                );
-
-                smartofficeShowFCMStatus(
-                    "FCM: FID lama dihapus.\n" +
-                    "Membuat FID baru..."
-                );
-
-            }
-            catch(error){
-
-                console.warn(
-                    "[Smart Office] Unregister FCM:",
-                    error
-                );
-
-                smartofficeShowFCMStatus(
-                    "FCM: unregister lama tidak diperlukan.\n" +
-                    "Membuat registrasi baru..."
-                );
-            }
-        }
+        smartofficeShowFCMStatus(
+            "Firebase Installation lama dihapus.\n" +
+            "Membuat FID baru..."
+        );
 
 
         /* =================================================
