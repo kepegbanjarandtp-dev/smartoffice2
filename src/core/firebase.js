@@ -175,59 +175,34 @@ function smartofficeShowFCMStatus(
 /* =========================================================
    GET SERVICE WORKER FCM
 ========================================================= */
-
 async function smartofficeGetMessagingServiceWorker(){
 
-    if(
-        !("serviceWorker" in navigator)
-    ){
-
+    if(!("serviceWorker" in navigator)){
         throw new Error(
             "Browser tidak mendukung Service Worker."
         );
-
     }
 
-
-    if(
-        smartofficeMessagingRegistration
-    ){
-
+    if(smartofficeMessagingRegistration){
         return smartofficeMessagingRegistration;
-
     }
-
-
-    /* =====================================================
-       KHUSUS FIREBASE CLOUD MESSAGING
-
-       FCM menggunakan:
-       /firebase-messaging-sw.js
-
-       BUKAN:
-       /sw.js
-    ===================================================== */
 
     smartofficeMessagingRegistration =
         await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js",
+            "/sw.js",
             {
                 scope: "/"
             }
         );
 
+    await navigator.serviceWorker.ready;
 
     console.log(
-        "[Smart Office] FCM Service Worker berhasil didaftarkan:",
+        "[Smart Office] PWA + FCM Service Worker siap:",
         smartofficeMessagingRegistration.scope
     );
 
-
-    await navigator.serviceWorker.ready;
-
-
     return smartofficeMessagingRegistration;
-
 }
 
 
@@ -942,30 +917,89 @@ export async function smartofficeRegisterPushToken(
 
 /* =========================================================
    FOREGROUND MESSAGE
+   TAMPILKAN NOTIFIKASI SAAT APLIKASI SEDANG TERBUKA
 ========================================================= */
 
-export function smartofficeListenFCMMessage(
-    callback
-){
+export function smartofficeListenFCMMessage(callback){
 
     return onMessage(
         smartofficeMessaging,
-        (payload) => {
+
+        async (payload) => {
 
             console.log(
                 "[Smart Office] Foreground push:",
                 payload
             );
 
+            const title =
+                payload?.notification?.title ||
+                payload?.data?.title ||
+                "Smart Office V2.1";
 
-            if(
-                typeof callback === "function"
-            ){
+            const body =
+                payload?.notification?.body ||
+                payload?.data?.body ||
+                "Ada pemberitahuan baru.";
 
-                callback(
-                    payload
+            const notificationId =
+                payload?.data?.notificationId ||
+                "smartoffice-" + Date.now();
+
+            const url =
+                payload?.data?.url ||
+                "/";
+
+            try {
+
+                const registration =
+                    await navigator.serviceWorker.ready;
+
+                await registration.showNotification(
+                    title,
+                    {
+                        body: body,
+
+                        icon:
+                            "/smartoffice-icon-192-white.png",
+
+                        badge:
+                            "/smartoffice-icon-192-white.png",
+
+                        tag:
+                            notificationId,
+
+                        renotify:
+                            true,
+
+                        requireInteraction:
+                            false,
+
+                        data: {
+                            ...(payload?.data || {}),
+                            notificationId,
+                            url
+                        }
+                    }
                 );
+
+                console.log(
+                    "[Smart Office] Foreground notification tampil."
+                );
+
+            } catch(error) {
+
+                console.error(
+                    "[Smart Office] Foreground notification gagal:",
+                    error
+                );
+
             }
+
+            if(typeof callback === "function"){
+                callback(payload);
+            }
+
         }
     );
 }
