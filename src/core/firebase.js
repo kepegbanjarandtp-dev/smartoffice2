@@ -172,71 +172,34 @@ async function smartofficeGetMessagingServiceWorker(){
         throw new Error(
             "Browser tidak mendukung Service Worker."
         );
+
     }
 
-
-    /* =====================================================
-       GUNAKAN REGISTRATION YANG SUDAH ADA
-    ===================================================== */
 
     if(
         smartofficeMessagingRegistration
     ){
 
-        return (
-            smartofficeMessagingRegistration
-        );
+        return smartofficeMessagingRegistration;
+
     }
 
 
     /* =====================================================
-       CEK SERVICE WORKER YANG SUDAH TERDAFTAR
+       GUNAKAN SERVICE WORKER UTAMA SMART OFFICE
     ===================================================== */
-
-    const existingRegistration =
-        await navigator.serviceWorker.getRegistration(
-            "/"
-        );
-
-
-    if(
-        existingRegistration &&
-        existingRegistration.active
-    ){
-
-        smartofficeMessagingRegistration =
-            existingRegistration;
-
-        return (
-            smartofficeMessagingRegistration
-        );
-    }
-
-
-    /* =====================================================
-       REGISTER FIREBASE SERVICE WORKER
-    ===================================================== */
-
-    smartofficeShowFCMStatus(
-        "FCM: mendaftarkan Service Worker..."
-    );
-
 
     smartofficeMessagingRegistration =
         await navigator.serviceWorker.register(
-            "/firebase-messaging-sw.js",
-            {
-                scope: "/"
-            }
+            "/sw.js"
         );
 
 
     await navigator.serviceWorker.ready;
 
 
-    return (
-        smartofficeMessagingRegistration
-    );
+    return smartofficeMessagingRegistration;
+
 }
 
 
