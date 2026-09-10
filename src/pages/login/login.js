@@ -42,6 +42,15 @@ import {
 } from "../../components/loading/loading.js";
 
 
+/* =========================
+   FIREBASE PUSH
+========================= */
+import {
+    smartofficeRegisterFCM
+}
+from "../../core/firebase.js";
+
+
 /* ==========================================================
    LOGIN ELEMENT
 ========================================================== */
@@ -453,16 +462,13 @@ async function smartofficeProcessLogin(
         "Memverifikasi akun..."
     );
 
-
     /* =========================
        LOGIN TIMER START - LOG
     ========================= */
     const t0 =
         performance.now();
 
-
     try{
-
         /* =========================
            LOGIN REQUEST
         ========================= */
@@ -472,13 +478,11 @@ async function smartofficeProcessLogin(
                 password
             );
 
-
         /* =========================
            LOGIN TIMER API - LOG
         ========================= */
         const t1 =
             performance.now();
-
 
         /* =========================
            VALIDASI RESPONSE
@@ -487,7 +491,6 @@ async function smartofficeProcessLogin(
             !response ||
             !response.success
         ){
-
             smartofficeShowToast(
                 response?.message ||
                 "Login gagal.",
@@ -497,7 +500,6 @@ async function smartofficeProcessLogin(
             return;
         }
 
-
         /* =========================
            SAVE SESSION
         ========================= */
@@ -505,6 +507,26 @@ async function smartofficeProcessLogin(
             response.data
         );
 
+        /* =========================
+           REGISTER FIREBASE PUSH
+        ========================= */
+        smartofficeRegisterFCM()
+            .then(
+                result => {
+                    console.log(
+                        "[Smart Office] Auto register FCM:",
+                        result
+                    );
+                }
+            )
+            .catch(
+                error => {
+                    console.warn(
+                        "[Smart Office] Auto register FCM gagal:",
+                        error
+                    );
+                }
+            );
 
         /* =========================
            LOGIN TIMER SESSION - LOG
@@ -512,13 +534,11 @@ async function smartofficeProcessLogin(
         const t2 =
             performance.now();
 
-
         console.log(
             "API      :",
             ((t1 - t0) / 1000).toFixed(2),
             "detik"
         );
-
 
         console.log(
             "Session  :",
@@ -526,19 +546,16 @@ async function smartofficeProcessLogin(
             "detik"
         );
 
-
         console.log(
             "Total    :",
             ((t2 - t0) / 1000).toFixed(2),
             "detik"
         );
 
-
         /* =========================
            START ACTIVITY MONITOR
         ========================= */
         smartofficeStartActivityMonitor();
-
 
         /* =========================
            REMEMBER ME
@@ -549,7 +566,6 @@ async function smartofficeProcessLogin(
             password
         );
 
-
         /* =========================
            LOGIN SUCCESS
         ========================= */
@@ -558,17 +574,14 @@ async function smartofficeProcessLogin(
             "success"
         );
 
-
         /* =========================
            LOAD DASHBOARD
         ========================= */
         await smartofficeNavigate(
             "dashboard"
         );
-
     }
     catch(error){
-
         console.error(
             "SMARTOFFICE LOGIN ERROR:",
             error
@@ -579,7 +592,6 @@ async function smartofficeProcessLogin(
             "Terjadi kesalahan saat login.",
             "error"
         );
-
     }
     finally{
 
@@ -587,9 +599,7 @@ async function smartofficeProcessLogin(
            HIDE GLOBAL LOADING
         ========================= */
         smartofficeHideGlobalLoading();
-
     }
-
 }
 
 
