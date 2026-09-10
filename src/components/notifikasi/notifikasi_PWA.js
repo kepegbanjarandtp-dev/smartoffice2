@@ -1278,3 +1278,88 @@ export async function smartofficeRefreshNotifications(){
         content
     );
 }
+
+
+/* ============================================================
+   DESTROY NOTIFICATION STATE
+============================================================ */
+export function smartofficeDestroyNotification(){
+
+    // --------------------------------------------------------
+    // REMOVE PANEL
+    // --------------------------------------------------------
+    if(
+        smartofficeNotificationPanelElement
+    ){
+
+        smartofficeNotificationPanelElement.remove();
+
+        smartofficeNotificationPanelElement =
+            null;
+    }
+
+
+    // --------------------------------------------------------
+    // REMOVE OUTSIDE CLICK
+    // --------------------------------------------------------
+    if(
+        smartofficeNotificationOutsideClickHandler
+    ){
+
+        document.removeEventListener(
+            'click',
+            smartofficeNotificationOutsideClickHandler
+        );
+
+        smartofficeNotificationOutsideClickHandler =
+            null;
+    }
+
+
+    // --------------------------------------------------------
+    // REMOVE ESCAPE
+    // --------------------------------------------------------
+    if(
+        smartofficeNotificationEscapeHandler
+    ){
+
+        document.removeEventListener(
+            'keydown',
+            smartofficeNotificationEscapeHandler
+        );
+
+        smartofficeNotificationEscapeHandler =
+            null;
+    }
+
+
+    // --------------------------------------------------------
+    // CLEAR CACHE
+    // --------------------------------------------------------
+    smartofficeNotificationCache =
+        null;
+
+
+    // --------------------------------------------------------
+    // RESET ACTIVE BUTTON
+    // --------------------------------------------------------
+    smartofficeNotificationPreviousActiveButton =
+        null;
+
+
+    // --------------------------------------------------------
+    // RESET BADGE
+    // --------------------------------------------------------
+    const badge =
+        document.getElementById(
+            'smartofficeNotificationBadge'
+        );
+
+    if(badge){
+
+        badge.textContent = '0';
+
+        badge.hidden = true;
+    }
+
+}

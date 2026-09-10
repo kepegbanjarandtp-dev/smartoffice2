@@ -16,7 +16,8 @@ import {
 
 import {
     smartofficeToggleNotificationPanel,
-    smartofficeRefreshNotificationBadge
+    smartofficeRefreshNotificationBadge,
+    smartofficeDestroyNotification
 } from '../notifikasi/notifikasi_PWA.js';
 
 
@@ -579,6 +580,11 @@ function smartofficeNavbarLogout(){
     if(!confirmed){
         return;
     }
+
+    // ========================================================
+    // DESTROY NOTIFICATION STATE
+    // ========================================================
+    smartofficeDestroyNotification();
 
     // --------------------------------------------------------
     // CLEAR SESSION
