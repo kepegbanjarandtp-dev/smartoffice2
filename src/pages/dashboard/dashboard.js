@@ -25,7 +25,7 @@ import {
 
 import {
     smartofficeLoadNotificationCache
-} from "../../componentsnotifikasi/notifikasi_PWA.js";
+} from "../../components/notifikasi/notifikasi_PWA.js";
 
 /* ======================================================
    SERVICE
