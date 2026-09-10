@@ -231,23 +231,8 @@ export async function smartofficeRegisterFCM(){
         );
     }
 
-
-    /*
-     * RESET FCM SEKALI UNTUK PERANGKAT INI.
-     *
-     * Hapus penanda reset lama agar
-     * perangkat yang sudah pernah menjalankan
-     * percobaan sebelumnya tetap dipaksa reset.
-     */
-
-    localStorage.removeItem(
-        SMARTOFFICE_FCM_RESET_KEY
-    );
-
-
     smartofficeFCMRegisterPromise =
         smartofficeRegisterFCMInternal();
-
 
     try{
 
