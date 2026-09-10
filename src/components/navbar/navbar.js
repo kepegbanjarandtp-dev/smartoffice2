@@ -14,6 +14,11 @@ import {
     smartofficeNavigate
 } from '../../core/router.js';
 
+import {
+    smartofficeToggleNotificationPanel,
+    smartofficeRefreshNotificationBadge
+} from '../notifikasi/notifikasi_PWA.js';
+
 
 // ============================================================
 // GLOBAL NAVBAR ELEMENT
@@ -345,7 +350,7 @@ export function smartofficeRenderMobileNavbar(
         'smartoffice-mobile-navbar-item';
 
     notificationButton.innerHTML = `
-        <span>
+        <span class="smartoffice-notification-icon">
             <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -361,6 +366,14 @@ export function smartofficeRenderMobileNavbar(
                     d="M13.73 21a2 2 0 0 1-3.46 0"
                 ></path>
             </svg>
+
+            <span
+                id="smartofficeNotificationBadge"
+                class="smartoffice-notification-badge"
+                hidden
+            >
+                0
+            </span>
         </span>
         <small>
             Notifikasi
@@ -371,14 +384,8 @@ export function smartofficeRenderMobileNavbar(
         'click',
         function(){
 
-            /*
-             * Logic notification panel
-             * akan dipasang pada tahap berikutnya.
-             */
+            smartofficeToggleNotificationPanel();
 
-            console.log(
-                'Smart Office: Notification clicked'
-            );
         }
     );
 
@@ -533,6 +540,11 @@ export function smartofficeRenderMobileNavbar(
     // ========================================================
     smartofficeNavbarElement =
         navbar;
+
+    // ========================================================
+    // LOAD NOTIFICATION BADGE
+    // ========================================================
+    smartofficeRefreshNotificationBadge();
 
     // ========================================================
     // SET ACTIVE MENU

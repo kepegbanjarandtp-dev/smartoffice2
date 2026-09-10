@@ -1,0 +1,266 @@
+/* ======================================================
+   NOTIFICATION PANEL
+====================================================== */
+.smartoffice-notification-panel{
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:84px;
+    max-width:430px;
+    margin-left:auto;
+    margin-right:auto;
+    background:#FFFFFF;
+    border:1px solid rgba(15,23,42,.06);
+    border-radius:22px;
+    box-shadow:
+        0 18px 50px rgba(15,23,42,.16);
+    overflow:hidden;
+    z-index:1001;
+    animation:
+        smartofficeNotificationAppear
+        .22s ease;
+}
+
+/* ======================================================
+   NOTIFICATION HEADER
+====================================================== */
+.smartoffice-notification-header{
+    height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 16px;
+    border-bottom:1px solid #F1F3F5;
+}
+
+/* ======================================================
+   NOTIFICATION TITLE
+====================================================== */
+.smartoffice-notification-title{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    color:#172033;
+    font-size:14px;
+    font-weight:700;
+}
+
+.smartoffice-notification-title-icon{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border-radius:11px;
+    background:rgba(37,99,235,.10);
+    color:#2563EB;
+}
+
+.smartoffice-notification-title-icon svg{
+    width:17px;
+    height:17px;
+}
+
+/* ======================================================
+   CLOSE BUTTON
+====================================================== */
+.smartoffice-notification-close{
+    width:32px;
+    height:32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    border:none;
+    outline:none;
+    border-radius:10px;
+    background:transparent;
+    color:#8A94A6;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.smartoffice-notification-close:hover{
+    background:#F4F6F8;
+}
+
+.smartoffice-notification-close:active{
+    transform:scale(.92);
+}
+
+.smartoffice-notification-close svg{
+    width:17px;
+    height:17px;
+}
+
+/* ======================================================
+   CONTENT
+====================================================== */
+.smartoffice-notification-content{
+    max-height:430px;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+}
+
+/* ======================================================
+   EMPTY STATE
+====================================================== */
+.smartoffice-notification-empty{
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:28px 20px;
+    text-align:center;
+}
+
+.smartoffice-notification-empty-icon{
+    width:62px;
+    height:62px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:14px;
+    border-radius:20px;
+    background:#F5F7FA;
+    color:#9AA4B2;
+}
+
+.smartoffice-notification-empty-icon svg{
+    width:28px;
+    height:28px;
+}
+
+.smartoffice-notification-empty-title{
+    margin-bottom:6px;
+    color:#172033;
+    font-size:14px;
+    font-weight:700;
+}
+
+.smartoffice-notification-empty-text{
+    max-width:250px;
+    color:#8A94A6;
+    font-size:11px;
+    line-height:1.5;
+}
+
+/* ======================================================
+   NOTIFIKASI
+====================================================== */
+.smartoffice-notification-item{
+    display:flex;
+    gap:12px;
+    padding:14px 16px;
+    border-bottom:1px solid #F1F3F5;
+    transition:.2s ease;
+}
+
+.smartoffice-notification-item:last-child{
+    border-bottom:none;
+}
+
+.smartoffice-notification-item:hover{
+    background:#FAFBFC;
+}
+
+.smartoffice-notification-item-icon{
+    flex:0 0 38px;
+    width:38px;
+    height:38px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:13px;
+    background:#F3F5F8;
+    color:#8A94A6;
+}
+
+.smartoffice-notification-item-icon svg{
+    width:18px;
+    height:18px;
+}
+
+.smartoffice-notification-item-icon.is-success{
+    background:rgba(22,163,74,.10);
+    color:#16A34A;
+}
+
+.smartoffice-notification-item-icon.is-info,
+.smartoffice-notification-item-icon.is-document{
+    background:rgba(245,158,11,.12);
+    color:#D97706;
+}
+
+.smartoffice-notification-item-icon.is-danger{
+    background:rgba(220,38,38,.10);
+    color:#DC2626;
+}
+
+.smartoffice-notification-item-body{
+    min-width:0;
+    flex:1;
+}
+
+.smartoffice-notification-item-title{
+    color:#172033;
+    font-size:12px;
+    font-weight:700;
+    line-height:1.35;
+    margin-bottom:4px;
+}
+
+.smartoffice-notification-item-message{
+    color:#667085;
+    font-size:11px;
+    line-height:1.45;
+}
+
+.smartoffice-notification-item-time{
+    margin-top:6px;
+    color:#98A2B3;
+    font-size:9px;
+    line-height:1;
+}
+
+/* ======================================================
+   NOTIFICATION APPEAR
+====================================================== */
+@keyframes smartofficeNotificationAppear{
+    from{
+        opacity:0;
+        transform:
+            translateY(12px)
+            scale(.98);
+    }
+    to{
+        opacity:1;
+        transform:
+            translateY(0)
+            scale(1);
+    }
+}
+
+
+/* ======================================================
+   MOBILE ONLY
+====================================================== */
+@media(max-width:768px){
+    .smartoffice-notification-panel{
+        display:block;
+    }
+}
+
+/* ======================================================
+   TABLET & DESKTOP
+====================================================== */
+@media(min-width:769px){
+    .smartoffice-notification-panel{
+        display:none;
+    }
+}
+
+.smartoffice-notification-clickable{
+    cursor:pointer;
+}

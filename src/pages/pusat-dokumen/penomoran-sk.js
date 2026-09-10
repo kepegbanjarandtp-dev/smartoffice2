@@ -61,6 +61,7 @@ let smartofficePenomoranSKNomorHandler = null;
 let smartofficePenomoranSKTahunHandler = null;
 let smartofficePenomoranSKKlasterHandler = null;
 let smartofficePenomoranSKStatusHandler = null;
+let smartofficePenomoranSKKlasifikasiOutsideClickHandler = null;
 
 /* ======================================================
    STATE FORM SK
@@ -986,8 +987,8 @@ function smartofficeInitFilterSK(){
         klasterList,
         "Semua"
     );
-
 }
+
 
 /* =========================
    FILL SELECT SK
@@ -1228,7 +1229,6 @@ function smartofficeInitFilterSKEvent(){
     ================================================== */
     smartofficePenomoranSKSearchHandler =
         smartofficeApplyFilterSK;
-
     if(search){
         search.addEventListener(
             "input",
@@ -1241,7 +1241,6 @@ function smartofficeInitFilterSKEvent(){
     ================================================== */
     smartofficePenomoranSKNomorHandler =
         smartofficeApplyFilterSK;
-
     if(nomor){
         nomor.addEventListener(
             "change",
@@ -1254,7 +1253,6 @@ function smartofficeInitFilterSKEvent(){
     ================================================== */
     smartofficePenomoranSKTahunHandler =
         smartofficeApplyFilterSK;
-
     if(tahun){
         tahun.addEventListener(
             "change",
@@ -1294,12 +1292,10 @@ function smartofficeInitFilterSKEvent(){
    EVENT TAMBAH SK
 ====================================================== */
 function smartofficeInitTambahSKEvent(){
-
     const button =
         document.getElementById(
             "smartofficePenomoranSKTambahButton"
         );
-
     if(!button){
         return;
     }
@@ -1325,11 +1321,9 @@ async function smartofficeOpenTambahSK(){
     smartofficeSKEditNomorUrut =
         null;
 
-
     /* =========================
        RENDER FORM
     ========================= */
-
     const body =
         document.getElementById(
             "smartofficePenomoranSKFormBody"
@@ -1339,18 +1333,15 @@ async function smartofficeOpenTambahSK(){
         return;
     }
 
-
     body.innerHTML = `
         <form
             id="smartofficePenomoranSKForm"
             class="smartoffice-penomoransk-form"
         >
-
             <!-- =========================
                 BARIS 1
                 PREVIEW NOMOR + KODE
             ========================== -->
-
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-preview"
             >
@@ -1365,7 +1356,6 @@ async function smartofficeOpenTambahSK(){
                     —
                 </div>
             </div>
-
 
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-kode"
@@ -1382,35 +1372,57 @@ async function smartofficeOpenTambahSK(){
                 >
             </div>
 
-
-            <!-- =========================
-                BARIS 2
-                KLASIFIKASI FULL WIDTH
-            ========================== -->
-
-            <div
-                class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-klasifikasi"
-            >
-                <label>
-                    Klasifikasi
+            <!-- ========================= 
+                BARIS 2 
+                KLASIFIKASI FULL WIDTH 
+            ========================== --> 
+            <div 
+                class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-klasifikasi" 
+            > 
+                <label> 
+                    Klasifikasi 
                 </label>
 
-                <select
+                <div
+                    id="smartofficeSKKlasifikasiDropdown"
+                    class="smartoffice-penomoransk-custom-select"
+                >
+                    <button
+                        type="button"
+                        id="smartofficeSKKlasifikasiButton"
+                        class="smartoffice-penomoransk-custom-select-button"
+                    >
+                        <span
+                            id="smartofficeSKKlasifikasiText"
+                        >
+                            Pilih klasifikasi
+                        </span>
+
+                        <span
+                            class="smartoffice-penomoransk-custom-select-arrow"
+                        >
+                            ▾
+                        </span>
+                    </button>
+
+                    <div
+                        id="smartofficeSKKlasifikasiOptions"
+                        class="smartoffice-penomoransk-custom-select-options"
+                    ></div>
+                </div>
+
+                <!-- VALUE KLASIFIKASI -->
+                <input
+                    type="hidden"
                     id="smartofficeSKKlasifikasi"
                     required
                 >
-                    <option value="">
-                        Pilih klasifikasi
-                    </option>
-                </select>
             </div>
-
 
             <!-- =========================
                 BARIS 3
                 TANGGAL + KLASTER + STATUS
             ========================== -->
-
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-tanggal"
             >
@@ -1424,7 +1436,6 @@ async function smartofficeOpenTambahSK(){
                     required
                 >
             </div>
-
 
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-klaster"
@@ -1443,7 +1454,6 @@ async function smartofficeOpenTambahSK(){
                 </select>
             </div>
 
-
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-status"
             >
@@ -1461,12 +1471,10 @@ async function smartofficeOpenTambahSK(){
                 </select>
             </div>
 
-
             <!-- =========================
                 BARIS 4
                 TENTANG FULL WIDTH
             ========================== -->
-
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-tentang"
             >
@@ -1482,12 +1490,10 @@ async function smartofficeOpenTambahSK(){
                 ></textarea>
             </div>
 
-
             <!-- =========================
                 BARIS 5
                 UPLOAD FULL WIDTH
             ========================== -->
-
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-file"
             >
@@ -1495,22 +1501,50 @@ async function smartofficeOpenTambahSK(){
                     File SK
                 </label>
 
-                <input
-                    type="file"
-                    id="smartofficePenomoranSKFile"
-                    accept=".pdf,application/pdf"
+                <div
+                    class="smartoffice-penomoransk-upload-box"
+                    id="smartofficePenomoranSKUploadBox"
                 >
+                    <input
+                        type="file"
+                        id="smartofficePenomoranSKFile"
+                        accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        hidden
+                    >
 
-                <small>
-                    Format PDF
-                </small>
+                    <div
+                        class="smartoffice-penomoransk-upload-icon"
+                    >
+                        ↑
+                    </div>
+
+                    <div
+                        class="smartoffice-penomoransk-upload-content"
+                    >
+                        <strong>
+                            Pilih File SK
+                        </strong>
+
+                        <span>
+                            Klik untuk memilih file atau tarik file ke area ini
+                        </span>
+
+                        <small>
+                            PDF • DOC • DOCX • Maksimal 5 Mb
+                        </small>
+                    </div>
+                    <div
+                        class="smartoffice-penomoransk-upload-file"
+                        id="smartofficePenomoranSKUploadFileName"
+                    >
+                        Belum ada file dipilih
+                    </div>
+                </div>
             </div>
-
 
             <!-- =========================
                 SIMPAN
             ========================== -->
-
             <button
                 type="submit"
                 class="smartoffice-penomoransk-form-submit"
@@ -1518,42 +1552,32 @@ async function smartofficeOpenTambahSK(){
             >
                 Simpan SK
             </button>
-
         </form>
     `;
-
 
     /* =========================
        BUKA MODAL DULU
        CONTEK BUKU SURAT
     ========================= */
-
     const modal =
         document.getElementById(
             "smartofficePenomoranSKFormModal"
         );
-
     if(modal){
-
         modal.style.display =
             "flex";
-
     }
-
-
-    /* =========================
-       LOAD MASTER
-    ========================= */
-
-    await smartofficeLoadSKMaster();
-
 
     /* =========================
        INIT FORM EVENT
     ========================= */
-
     smartofficeInitSKFormEvent();
+    smartofficeInitUploadSKEvent();
 
+    /* =========================
+       LOAD MASTER
+    ========================= */
+    await smartofficeLoadSKMaster();  
 }
 
 
@@ -1563,7 +1587,6 @@ async function smartofficeOpenTambahSK(){
 async function smartofficeLoadSKMaster(){
 
     try{
-
         const master =
             await smartofficeGetSKMaster();
 
@@ -1571,10 +1594,8 @@ async function smartofficeLoadSKMaster(){
             master || {};
 
         smartofficeRenderSKMaster();
-
     }
     catch(error){
-
         console.error(
             "Load Master SK Error:",
             error
@@ -1593,6 +1614,26 @@ async function smartofficeLoadSKMaster(){
 ====================================================== */
 function smartofficeRenderSKMaster(){
 
+    const klasifikasiDropdown =
+        document.getElementById(
+            "smartofficeSKKlasifikasiDropdown"
+        );
+
+    const klasifikasiButton =
+        document.getElementById(
+            "smartofficeSKKlasifikasiButton"
+        );
+
+    const klasifikasiText =
+        document.getElementById(
+            "smartofficeSKKlasifikasiText"
+        );
+
+    const klasifikasiOptions =
+        document.getElementById(
+            "smartofficeSKKlasifikasiOptions"
+        );
+
     const klasifikasi =
         document.getElementById(
             "smartofficeSKKlasifikasi"
@@ -1608,60 +1649,142 @@ function smartofficeRenderSKMaster(){
             "smartofficeSKStatusSK"
         );
 
-
     /* =========================
        KLASIFIKASI
     ========================= */
+    if(
+        klasifikasiDropdown &&
+        klasifikasiButton &&
+        klasifikasiText &&
+        klasifikasiOptions &&
+        klasifikasi
+    ){
+        klasifikasiOptions.innerHTML = "";
 
-    if(klasifikasi){
+        klasifikasiText.textContent =
+            "Pilih klasifikasi";
 
-        klasifikasi.innerHTML = `
-            <option value="">
-                Pilih klasifikasi
-            </option>
-        `;
-
+        klasifikasi.value = "";
         (
             smartofficeSKMaster.klasifikasi ||
             []
         ).forEach(function(item){
-
             const option =
                 document.createElement(
-                    "option"
+                    "div"
                 );
 
-            option.value =
-                item;
+            option.className =
+                "smartoffice-penomoransk-custom-select-option";
 
             option.textContent =
                 item;
 
-            klasifikasi.appendChild(
+            option.dataset.value =
+                item;
+
+            option.onclick =
+                function(){
+                    klasifikasi.value =
+                        item;
+
+                    klasifikasiText.textContent =
+                        item;
+
+                    klasifikasiOptions
+                        .classList
+                        .remove("show");
+
+                    klasifikasiOptions
+                        .querySelectorAll(
+                            ".smartoffice-penomoransk-custom-select-option"
+                        )
+                        .forEach(function(itemOption){
+                            itemOption.classList.remove(
+                                "active"
+                            );
+                        });
+
+                    option.classList.add(
+                        "active"
+                    );
+
+                    const kode =
+                        smartofficeSKMaster
+                            .map?.[item] || "";
+
+                    const kodeField =
+                        document.getElementById(
+                            "smartofficeSKKode"
+                        );
+                    if(kodeField){
+                        kodeField.value =
+                            kode;
+                    }
+
+                    if(
+                        typeof smartofficeUpdatePreviewNomorSK ===
+                        "function"
+                    ){
+                        smartofficeUpdatePreviewNomorSK();
+                    }
+                };
+
+            klasifikasiOptions.appendChild(
                 option
             );
-
         });
-    }
 
+        klasifikasiButton.onclick =
+            function(event){
+                event.stopPropagation();
+
+                klasifikasiOptions
+                    .classList
+                    .toggle("show");
+            };
+
+        if(
+            smartofficePenomoranSKKlasifikasiOutsideClickHandler
+        ){
+            document.removeEventListener(
+                "click",
+                smartofficePenomoranSKKlasifikasiOutsideClickHandler
+            );
+        }
+
+        smartofficePenomoranSKKlasifikasiOutsideClickHandler =
+            function(event){
+                if(
+                    !klasifikasiDropdown.contains(
+                        event.target
+                    )
+                ){
+                    klasifikasiOptions
+                        .classList
+                        .remove("show");
+                }
+            };
+
+        document.addEventListener(
+            "click",
+            smartofficePenomoranSKKlasifikasiOutsideClickHandler
+        );
+    }
 
     /* =========================
        KLASTER
     ========================= */
-
     if(klaster){
-
         klaster.innerHTML = `
             <option value="">
                 Pilih klaster
             </option>
         `;
-
         (
             smartofficeSKMaster.klaster ||
             []
         ).forEach(function(item){
-
             const option =
                 document.createElement(
                     "option"
@@ -1676,28 +1799,22 @@ function smartofficeRenderSKMaster(){
             klaster.appendChild(
                 option
             );
-
         });
     }
-
 
     /* =========================
        STATUS SK
     ========================= */
-
     if(status){
-
         status.innerHTML = `
             <option value="">
                 Pilih status
             </option>
         `;
-
         (
             smartofficeSKMaster.statusSK ||
             []
         ).forEach(function(item){
-
             const option =
                 document.createElement(
                     "option"
@@ -1712,10 +1829,8 @@ function smartofficeRenderSKMaster(){
             status.appendChild(
                 option
             );
-
         });
     }
-
 }
 
 
@@ -1723,14 +1838,10 @@ function smartofficeRenderSKMaster(){
    EVENT FORM SK
 ====================================================== */
 function smartofficeInitSKFormEvent(){
+
     const form =
         document.getElementById(
             "smartofficePenomoranSKForm"
-        );
-
-    const klasifikasi =
-        document.getElementById(
-            "smartofficeSKKlasifikasi"
         );
 
     const klaster =
@@ -1753,35 +1864,9 @@ function smartofficeInitSKFormEvent(){
             "smartofficePenomoranSKFormOverlay"
         );
 
-    if(klasifikasi){
-
-        klasifikasi.addEventListener(
-            "change",
-            function(){
-
-                const kode =
-                    smartofficeSKMaster
-                        ?.map
-                        ?.[klasifikasi.value] ||
-                    "";
-
-                const kodeElement =
-                    document.getElementById(
-                        "smartofficeSKKode"
-                    );
-
-                if(kodeElement){
-                    kodeElement.value =
-                        kode;
-                }
-
-                smartofficeUpdatePreviewNomorSK();
-
-            }
-        );
-
-    }
-
+    /* =========================
+       KLASTER
+    ========================= */
     if(klaster){
         klaster.addEventListener(
             "change",
@@ -1789,6 +1874,9 @@ function smartofficeInitSKFormEvent(){
         );
     }
 
+    /* =========================
+       TANGGAL SK
+    ========================= */
     if(tanggal){
         tanggal.addEventListener(
             "change",
@@ -1796,6 +1884,9 @@ function smartofficeInitSKFormEvent(){
         );
     }
 
+    /* =========================
+       SUBMIT
+    ========================= */
     if(form){
         form.addEventListener(
             "submit",
@@ -1803,11 +1894,17 @@ function smartofficeInitSKFormEvent(){
         );
     }
 
+    /* =========================
+       CLOSE
+    ========================= */
     if(close){
         close.onclick =
             smartofficeCloseSKForm;
     }
 
+    /* =========================
+       OVERLAY
+    ========================= */
     if(overlay){
         overlay.onclick =
             smartofficeCloseSKForm;
@@ -2033,7 +2130,6 @@ async function smartofficeSubmitSK(
 
         smartofficeCloseSKForm();
         await smartofficeLoadDataPenomoranSK();
-
     }
     catch(error){
         console.error(
@@ -2046,7 +2142,6 @@ async function smartofficeSubmitSK(
             "Gagal menyimpan Surat Keputusan.",
             "error"
         );
-
     }
     finally{
         smartofficeHideGlobalLoading();
@@ -2075,16 +2170,137 @@ function smartofficeCloseSKForm(){
         return;
     }
 
+    /* =========================
+       TUTUP MODAL
+    ========================= */
     modal.classList.remove(
         "active"
     );
 
+    modal.style.display =
+        "none";
+
+    /* =========================
+       RESET FORM STATE
+    ========================= */
     smartofficeSKFormMode =
         "add";
+
     smartofficeSKEditRowIndex =
         null;
+
     smartofficeSKEditNomorUrut =
         null;
+}
+
+
+/* ======================================================
+   INIT UPLOAD FILE SK
+====================================================== */
+function smartofficeInitUploadSKEvent(){
+
+    const uploadBox =
+        document.getElementById(
+            "smartofficePenomoranSKUploadBox"
+        );
+
+    const fileInput =
+        document.getElementById(
+            "smartofficePenomoranSKFile"
+        );
+
+    const fileName =
+        document.getElementById(
+            "smartofficePenomoranSKUploadFileName"
+        );
+
+    if(
+        !uploadBox ||
+        !fileInput ||
+        !fileName
+    ){
+        return;
+    }
+
+
+    uploadBox.onclick =
+        function(){
+
+            fileInput.click();
+
+        };
+
+
+    fileInput.onchange =
+        function(){
+
+            const file =
+                fileInput.files?.[0];
+
+            if(!file){
+
+                fileName.textContent =
+                    "Belum ada file dipilih";
+
+                fileName.classList.remove(
+                    "show"
+                );
+
+                return;
+            }
+
+            fileName.textContent =
+                file.name;
+
+            fileName.classList.add(
+                "show"
+            );
+        };
+
+
+    uploadBox.ondragover =
+        function(event){
+
+            event.preventDefault();
+
+            uploadBox.classList.add(
+                "dragover"
+            );
+        };
+
+
+    uploadBox.ondragleave =
+        function(){
+
+            uploadBox.classList.remove(
+                "dragover"
+            );
+        };
+
+
+    uploadBox.ondrop =
+        function(event){
+
+            event.preventDefault();
+
+            uploadBox.classList.remove(
+                "dragover"
+            );
+
+            const files =
+                event.dataTransfer.files;
+
+            if(!files.length){
+                return;
+            }
+
+            fileInput.files =
+                files;
+
+            fileInput.dispatchEvent(
+                new Event("change")
+            );
+        };
 }
 
 
