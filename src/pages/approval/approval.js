@@ -497,6 +497,7 @@ export async function smartofficeLoadApprovalCuti(){
           html += `
             <div class="
               smartoffice-approval-card
+              data-id-cuti="${item.idCuti}"
             ">
               <div class="
                 smartoffice-approval-card-header
@@ -730,6 +731,69 @@ export async function smartofficeLoadApprovalCuti(){
    }
 }
 
+
+/* ======================================================
+  UPDATE UI LANGSUNG
+  TANPA GET ULANG
+===================================================== */
+function smartofficeRemoveApprovalCutiFromUI(idCuti){
+
+    const container =
+        document.getElementById(
+            "smartofficeApprovalCutiList"
+        );
+
+    if(!container) return;
+
+    const card =
+        container.querySelector(
+            `.smartoffice-approval-card[data-id-cuti="${idCuti}"]`
+        );
+
+    if(card){
+        card.remove();
+    }
+
+    /* UPDATE BADGE CUTI */
+    const badge =
+        document.getElementById(
+            "smartofficeApprovalCutiBadge"
+        );
+
+    const remaining =
+        container.querySelectorAll(
+            ".smartoffice-approval-card"
+        ).length;
+
+    if(badge){
+        badge.textContent =
+            remaining;
+
+        badge.classList.toggle(
+            "show",
+            remaining > 0
+        );
+    }
+
+    /* EMPTY STATE */
+    if(remaining === 0){
+        container.innerHTML = `
+            <div class="smartoffice-empty-state">
+                <div class="smartoffice-empty-icon">
+                    📭
+                </div>
+
+                <h3>
+                    Tidak ada approval
+                </h3>
+
+                <p>
+                    Belum ada pengajuan yang perlu diproses
+                </p>
+            </div>
+        `;
+    }
+}
 
 
 /* ================================================================================
@@ -1571,9 +1635,12 @@ async function smartofficeSubmitApprovalAction(){
     smartofficeCloseApprovalDetail();
 
     /* =========================
-       REFRESH DATA
+       UPDATE UI LANGSUNG
+       TANPA GET ULANG
     ========================= */
-    await smartofficeRefreshAllApprovalData();
+    smartofficeRemoveApprovalCutiFromUI(
+        smartofficeApprovalState.idCuti
+    );
 
   }catch(error){
 
@@ -2639,6 +2706,108 @@ export function smartofficeOpenTolakDokumenModal(
 
 
 /* ======================================================
+   HAPUS DOKUMEN APPROVAL DARI UI
+   Setelah berhasil diverifikasi / ditolak
+====================================================== */
+function smartofficeRemoveApprovalDokumenFromUI(
+    idDokumen
+){
+
+    const container =
+        document.getElementById(
+            "smartofficeApprovalDokumenList"
+        );
+
+    if(!container){
+        return;
+    }
+
+    const buttons =
+        container.querySelectorAll(
+            "button"
+        );
+
+    let targetCard = null;
+
+    buttons.forEach(
+        function(button){
+
+            const onclick =
+                button.getAttribute(
+                    "onclick"
+                ) || "";
+
+            if(
+                onclick.includes(
+                    String(idDokumen)
+                )
+            ){
+                targetCard =
+                    button.closest(
+                        ".smartoffice-approval-dokumen-card"
+                    );
+            }
+        }
+    );
+
+    if(targetCard){
+        targetCard.remove();
+    }
+
+    /* =========================
+       UPDATE BADGE
+    ========================= */
+    const badge =
+        document.getElementById(
+            "smartofficeApprovalDokumenBadge"
+        );
+
+    if(badge){
+
+        const remaining =
+            container.querySelectorAll(
+                ".smartoffice-approval-dokumen-card"
+            ).length;
+
+        badge.textContent =
+            remaining;
+
+        badge.style.display =
+            remaining > 0
+                ? "inline-flex"
+                : "none";
+    }
+
+    /* =========================
+       EMPTY STATE
+    ========================= */
+    const remainingCards =
+        container.querySelectorAll(
+            ".smartoffice-approval-dokumen-card"
+        ).length;
+
+    if(remainingCards === 0){
+
+        container.innerHTML = `
+            <div class="smartoffice-empty-state">
+                <div class="smartoffice-empty-icon">
+                    📄
+                </div>
+
+                <h3>
+                    Tidak Ada Dokumen
+                </h3>
+
+                <p>
+                    Tidak ada dokumen yang menunggu verifikasi
+                </p>
+            </div>
+        `;
+    }
+}
+
+
+/* ======================================================
    SUBMIT VERIFIKASI DOKUMEN
 ====================================================== */
 export async function smartofficeSubmitVerifikasiDokumen(
@@ -2731,9 +2900,11 @@ export async function smartofficeSubmitVerifikasiDokumen(
         smartofficeCloseApprovalDokumenModal();
 
         /* =========================
-           REFRESH
+          HAPUS DARI UI
         ========================= */
-        await smartofficeRefreshAllApprovalData();
+        smartofficeRemoveApprovalDokumenFromUI(
+            idDokumen
+        );
 
         /* =========================
            SUCCESS TOAST
@@ -2928,9 +3099,11 @@ export async function smartofficeSubmitTolakDokumen(
         smartofficeCloseApprovalDokumenModal();
 
         /* =========================
-           REFRESH
+          HAPUS DARI UI
         ========================= */
-        await smartofficeRefreshAllApprovalData();
+        smartofficeRemoveApprovalDokumenFromUI(
+            idDokumen
+        );
 
         /* =========================
            SUCCESS TOAST
