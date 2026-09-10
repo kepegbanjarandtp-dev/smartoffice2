@@ -2,15 +2,10 @@ import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig({
-
     plugins: [
-
         VitePWA({
-
             strategies: "generateSW",
-
             registerType: "autoUpdate",
-
             injectRegister: "auto",
 
             includeAssets: [
@@ -20,6 +15,12 @@ export default defineConfig({
                 "smartoffice-icon-512-white.png",
                 "firebase-messaging-sw.js"
             ],
+
+            workbox: {
+                importScripts: [
+                    "firebase-messaging-sw.js"
+                ]
+            },
 
             manifest: {
                 name: "SmartOffice V2",
@@ -48,9 +49,6 @@ export default defineConfig({
                     }
                 ]
             }
-
         })
-
     ]
-
 });
