@@ -66,13 +66,33 @@ import {
 let smartofficeManagementRekapData = [];
 let smartofficeManagementRiwayatData = [];
 
+/* ======================================================
+   LIFECYCLE
+====================================================== */
+let smartofficeManagementPageInstance = 0;
+
+let smartofficeManagementScrollTimer = null;
+let smartofficeManagementModalTimer = null;
+
+/* ======================================================
+   EVENT HANDLERS
+====================================================== */
 const smartofficeManagementHandlers =
     new Map();
+
 
 /* ================================================================================
    LOAD PAGE
 ================================================================================ */
 export async function smartofficeLoadPage(){
+
+    /* =========================
+       PAGE INSTANCE
+    ========================= */
+    smartofficeManagementPageInstance++;
+
+    const pageInstance =
+        smartofficeManagementPageInstance;
 
     /* =========================
        CHECK LOGIN SESSION
@@ -88,7 +108,6 @@ export async function smartofficeLoadPage(){
     ========================= */
     const sessionData =
         smartofficeGetSession();
-
     if(
         !sessionData
     ){
@@ -125,10 +144,29 @@ export async function smartofficeLoadPage(){
     ]);
 
     /* =========================
-    LOAD FILTER PEGAWAI
-    SETELAH DATA REKAP SIAP
+       CEK PAGE MASIH AKTIF
+    ========================= */
+    if(
+        pageInstance !==
+        smartofficeManagementPageInstance
+    ){
+        return;
+    }
+
+    /* =========================
+       LOAD FILTER PEGAWAI
     ========================= */
     smartofficeLoadPegawaiFilter();
+
+    /* =========================
+       CEK PAGE MASIH AKTIF
+    ========================= */
+    if(
+        pageInstance !==
+        smartofficeManagementPageInstance
+    ){
+        return;
+    }
 
     /* =========================
        REFRESH
@@ -149,10 +187,14 @@ export async function smartofficeLoadPage(){
 
         smartofficeManagementHandlers.set(
             refreshButton,
-            handler
+            {
+                type: "click",
+                handler: handler
+            }
         );
     }
 }
+
 
 /* ================================================================================
    DESTROY PAGE
@@ -160,15 +202,52 @@ export async function smartofficeLoadPage(){
 export async function smartofficeDestroyPage(){
 
     /* =========================
+       INVALIDATE PAGE
+    ========================= */
+    smartofficeManagementPageInstance++;
+
+    /* =========================
+       CLEAR SCROLL TIMER
+    ========================= */
+    if(
+        smartofficeManagementScrollTimer
+    ){
+        clearTimeout(
+            smartofficeManagementScrollTimer
+        );
+
+        smartofficeManagementScrollTimer =
+            null;
+    }
+
+    /* =========================
+       CLEAR MODAL TIMER
+    ========================= */
+    if(
+        smartofficeManagementModalTimer
+    ){
+        clearTimeout(
+            smartofficeManagementModalTimer
+        );
+
+        smartofficeManagementModalTimer =
+            null;
+    }
+
+    /* =========================
        REMOVE EVENT HANDLERS
     ========================= */
     smartofficeManagementHandlers.forEach(
-        function(handler, element){
-
-            element?.removeEventListener(
-                "click",
-                handler
-            );
+        function(entry, element){
+            if(
+                element &&
+                entry?.handler
+            ){
+                element.removeEventListener(
+                    entry.type,
+                    entry.handler
+                );
+            }
         }
     );
 
@@ -272,6 +351,9 @@ window.smartofficeSwitchManagementCutiTab =
 ================================================================================ */
 export async function smartofficeLoadRekapPegawai(){
 
+    const pageInstance =
+        smartofficeManagementPageInstance;
+
     /* =========================
        LOADING MINI STAT
     ========================= */
@@ -293,13 +375,26 @@ export async function smartofficeLoadRekapPegawai(){
         requestAnimationFrame(resolve)
     );
 
-    try{
+    if(
+        pageInstance !==
+        smartofficeManagementPageInstance
+    ){
+        return;
+    }
 
+    try{
         /* =========================
            LOAD DATA
         ========================= */
         const data =
             await smartofficeGetRekapPegawai();
+
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
 
         /* =========================
            SAVE CACHE
@@ -329,12 +424,19 @@ export async function smartofficeLoadRekapPegawai(){
            KARENA PINDAH HALAMAN
         ========================= */
         if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
+
+        if(
             error?.message ===
             "Request dibatalkan."
         ){
             return;
         }
-        
+
         console.error(error);
 
         smartofficeShowToast(
@@ -516,6 +618,9 @@ function smartofficeRenderRekapPegawai(
 ================================================================================ */
 export async function smartofficeLoadAllRiwayatCuti(){
 
+    const pageInstance =
+        smartofficeManagementPageInstance;
+
     /* =========================
        LOADING MINI STAT
     ========================= */
@@ -542,13 +647,26 @@ export async function smartofficeLoadAllRiwayatCuti(){
         requestAnimationFrame(resolve)
     );
 
-    try{
+    if(
+        pageInstance !==
+        smartofficeManagementPageInstance
+    ){
+        return;
+    }
 
+    try{
         /* =========================
            LOAD DATA
         ========================= */
         const data =
             await smartofficeGetAllRiwayatCuti();
+
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
 
         /* =========================
            SAVE CACHE
@@ -618,17 +736,24 @@ export async function smartofficeLoadAllRiwayatCuti(){
 
     }
     catch(error){
-
         /* =========================
            REQUEST DIBATALKAN
            KARENA PINDAH HALAMAN
         ========================= */
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
+
         if(
             error?.message ===
             "Request dibatalkan."
         ){
             return;
         }
+
         console.error(error);
 
         smartofficeShowToast(
@@ -669,11 +794,9 @@ function smartofficeRenderManagementRiwayat(
                 <div class="smartoffice-empty-icon">
                     📭
                 </div>
-
                 <h3>
                     Data tidak ditemukan
                 </h3>
-
                 <p>
                     Tidak ada riwayat cuti sesuai filter yang dipilih
                 </p>
@@ -794,16 +917,13 @@ function smartofficeRenderManagementRiwayat(
                     <h3>
                         ${item.jenisCuti}
                     </h3>
-
                     <p>
                         ${item.nama}
                     </p>
-
                     <small>
                         ${identitasLabel} :
                         ${item.nip}
                     </small>
-
                     <small
                         class="
                             smartoffice-management-status-badge
@@ -1030,25 +1150,59 @@ function smartofficeSetDefaultManagementBulan(){
 ====================================================== */
 export function smartofficeInitManagementSearch(){
 
-    /* SEARCH */
-    document
-        .getElementById(
+    /* =========================
+       SEARCH PEGAWAI
+    ========================= */
+    const searchInput =
+        document.getElementById(
             "smartofficeManagementSearchPegawai"
-        )
-        ?.addEventListener(
-            "input",
-            smartofficeFilterRekapPegawai
         );
 
-    /* FILTER STATUS */
-    document
-        .getElementById(
-            "smartofficeManagementFilterStatusPegawai"
-        )
-        ?.addEventListener(
-            "change",
-            smartofficeFilterRekapPegawai
+    if(searchInput){
+
+        const handler =
+            smartofficeFilterRekapPegawai;
+
+        searchInput.addEventListener(
+            "input",
+            handler
         );
+
+        smartofficeManagementHandlers.set(
+            searchInput,
+            {
+                type: "input",
+                handler: handler
+            }
+        );
+    }
+
+    /* =========================
+       FILTER STATUS
+    ========================= */
+    const statusFilter =
+        document.getElementById(
+            "smartofficeManagementFilterStatusPegawai"
+        );
+
+    if(statusFilter){
+
+        const handler =
+            smartofficeFilterRekapPegawai;
+
+        statusFilter.addEventListener(
+            "change",
+            handler
+        );
+
+        smartofficeManagementHandlers.set(
+            statusFilter,
+            {
+                type: "change",
+                handler: handler
+            }
+        );
+    }
 }
 
 
@@ -1338,6 +1492,9 @@ window.smartofficeResetManagementRiwayat =
 ====================================================== */
 async function smartofficeRefreshManagementCuti(){
 
+    const pageInstance =
+        smartofficeManagementPageInstance;
+
     /* =========================
        RESET SEARCH REKAP
     ========================= */
@@ -1422,6 +1579,13 @@ async function smartofficeRefreshManagementCuti(){
             smartofficeLoadAllRiwayatCuti()
         ]);
 
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
+
         /* =========================
            LOAD FILTER PEGAWAI
         ========================= */
@@ -1436,11 +1600,17 @@ async function smartofficeRefreshManagementCuti(){
         );
     }
     catch(error){
-
         /* =========================
            REQUEST DIBATALKAN
            KARENA PINDAH HALAMAN
         ========================= */
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
+
         if(
             error?.message ===
             "Request dibatalkan."
@@ -1471,25 +1641,53 @@ async function smartofficeRefreshManagementCuti(){
 export function smartofficeOpenRiwayatPegawai(
     nip
 ){
-
     /* PINDAH TAB */
     smartofficeSwitchManagementCutiTab(
         "riwayat"
     );
 
     /* SCROLL */
-    setTimeout(
-        function(){
-            document
-                .getElementById(
-                    "smartofficeManagementRiwayatContent"
-                )
-                ?.scrollIntoView({
-                    behavior: "smooth"
-                });
-        },
-        200
-    );
+    const pageInstance =
+        smartofficeManagementPageInstance;
+    if(
+        smartofficeManagementScrollTimer
+    ){
+        clearTimeout(
+            smartofficeManagementScrollTimer
+        );
+    }
+
+    smartofficeManagementScrollTimer =
+        setTimeout(
+            function(){
+                if(
+                    pageInstance !==
+                    smartofficeManagementPageInstance
+                ){
+                    smartofficeManagementScrollTimer =
+                        null;
+
+                    return;
+                }
+
+                const content =
+                    document.getElementById(
+                        "smartofficeManagementRiwayatContent"
+                    );
+
+                if(
+                    content?.isConnected
+                ){
+                    content.scrollIntoView({
+                        behavior: "smooth"
+                    });
+                }
+
+                smartofficeManagementScrollTimer =
+                    null;
+            },
+            200
+        );
 
     /* RESET STATUS */
     document
@@ -1553,16 +1751,51 @@ function smartofficeOpenManagementCutiDetail(
     );
 
   /* SHOW MODAL */
+  if(
+    !modal ||
+    !body
+  ){
+    return;
+  }
+
   modal.style.display =
     'flex';
 
-  setTimeout(function(){
+  const pageInstance =
+    smartofficeManagementPageInstance;
 
-    modal.classList.add(
-      'show'
+  if(
+    smartofficeManagementModalTimer
+  ){
+    clearTimeout(
+        smartofficeManagementModalTimer
     );
+  }
 
-  },10);
+  smartofficeManagementModalTimer =
+    setTimeout(
+        function(){
+            if(
+                pageInstance !==
+                smartofficeManagementPageInstance
+                ||
+                !modal.isConnected
+            ){
+                smartofficeManagementModalTimer =
+                    null;
+
+                return;
+            }
+
+            modal.classList.add(
+                'show'
+            );
+
+            smartofficeManagementModalTimer =
+                null;
+        },
+        10
+    );
 
   /* STATUS */
   let statusText =
@@ -1621,7 +1854,6 @@ function smartofficeOpenManagementCutiDetail(
          PROFILE
     ========================= -->
     <div class="smartoffice-management-cuti-modal-profile">
-
         <div class="smartoffice-management-cuti-modal-profile-info">
             <h4>
                 ${item.nama || '-'}
@@ -1645,7 +1877,6 @@ function smartofficeOpenManagementCutiDetail(
          DETAIL GRID
     ========================= -->
     <div class="smartoffice-cuti-riwayat-modal-grid">
-
         <div class="smartoffice-cuti-riwayat-modal-item">
             <label>ID Cuti</label>
             <span>${item.idCuti || '-'}</span>
@@ -1971,7 +2202,6 @@ export function smartofficeCloseManagementCutiDetail(){
         document.getElementById(
             "smartofficeManagementCutiDetailModal"
         );
-
     if(!modal){
         return;
     }
@@ -1981,11 +2211,43 @@ export function smartofficeCloseManagementCutiDetail(){
         "show"
     );
 
-    /* HIDE MODAL */
-    setTimeout(function(){
-        modal.style.display =
-            "none";
-    },200);
+    /* =========================
+    HIDE MODAL
+    ========================= */
+    const pageInstance =
+        smartofficeManagementPageInstance;
+
+    if(
+        smartofficeManagementModalTimer
+    ){
+        clearTimeout(
+            smartofficeManagementModalTimer
+        );
+    }
+
+    smartofficeManagementModalTimer =
+        setTimeout(
+            function(){
+                if(
+                    pageInstance !==
+                    smartofficeManagementPageInstance
+                    ||
+                    !modal.isConnected
+                ){
+                    smartofficeManagementModalTimer =
+                        null;
+
+                    return;
+                }
+
+                modal.style.display =
+                    "none";
+
+                smartofficeManagementModalTimer =
+                    null;
+            },
+            200
+        );
 }
 
 window.smartofficeOpenManagementCutiDetail =

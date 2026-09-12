@@ -46,7 +46,7 @@ import {
 ====================================================== */
 import {
     smartofficeGetPegawaiByNip,
-    smartofficeSearchPegawai,
+    smartofficeSearchPegawaiCuti,
     smartofficeGetJumlahCuti,
     smartofficeGetRiwayatCuti,
     smartofficeSubmitCuti
@@ -390,12 +390,12 @@ export async function smartofficeLoadPegawaiCache(){
     try{
         /* GET DATA PEGAWAI */
         const result =
-            await smartofficeSearchPegawai(
+            await smartofficeSearchPegawaiCuti(
                 ""
             );
 
         console.log(
-            "CACHE PEGAWAI:",
+            "CACHE PEGAWAI CUTI:",
             result
         );
 

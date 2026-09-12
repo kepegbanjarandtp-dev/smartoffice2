@@ -84,6 +84,18 @@ let smartofficeEditDokumenId =
 let smartofficeDokumenFileChangeHandler =
     null;
 
+let smartofficeDokumenPageInstance =
+    0;
+
+let smartofficeDokumenUploadReader =
+    null;
+
+let smartofficeDokumenEditReader =
+    null;
+
+let smartofficeDokumenSuccessToastTimer =
+    null;
+
 
 /* ================================================================================
    LIFECYCLE
@@ -93,6 +105,9 @@ let smartofficeDokumenFileChangeHandler =
    LOAD PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
+
+    const pageInstance =
+        ++smartofficeDokumenPageInstance;
 
     /* =========================
        CHECK LOGIN SESSION
@@ -154,7 +169,6 @@ export async function smartofficeLoadPage(){
        LOAD DATA
        BERJALAN PARALEL
     ========================= */
-
     await Promise.all([
         smartofficeLoadDataPegawaiDokumen(
             sessionData.nip
@@ -166,6 +180,16 @@ export async function smartofficeLoadPage(){
             sessionData.nip
         )
     ]);
+
+    if(
+        pageInstance !==
+        smartofficeDokumenPageInstance
+    ){
+        return;
+    }
+
+    smartofficeDokumenLoaded =
+        true;
 
     /* =========================
        PAGE LOADED
@@ -180,6 +204,55 @@ export async function smartofficeLoadPage(){
 ====================================================== */
 export async function smartofficeDestroyPage(){
    
+    ++smartofficeDokumenPageInstance;
+
+    /* CLEAN TIMER */
+    if(
+        smartofficeDokumenSuccessToastTimer
+    ){
+        clearTimeout(
+            smartofficeDokumenSuccessToastTimer
+        );
+
+        smartofficeDokumenSuccessToastTimer =
+            null;
+    }
+
+    /* CLEAN FILE READER */
+    if(
+        smartofficeDokumenUploadReader
+    ){
+        try{
+            smartofficeDokumenUploadReader.abort();
+        }
+        catch(error){
+            console.warn(
+                "Gagal membatalkan upload FileReader:",
+                error
+            );
+        }
+
+        smartofficeDokumenUploadReader =
+            null;
+    }
+
+    if(
+        smartofficeDokumenEditReader
+    ){
+        try{
+            smartofficeDokumenEditReader.abort();
+        }
+        catch(error){
+            console.warn(
+                "Gagal membatalkan edit FileReader:",
+                error
+            );
+        }
+
+        smartofficeDokumenEditReader =
+            null;
+    }
+
     /* =========================
        REMOVE FILE LISTENER
     ========================= */
@@ -256,6 +329,9 @@ async function smartofficeLoadDataPegawaiDokumen(
 ){
 
     try{
+        const pageInstance =
+            smartofficeDokumenPageInstance;
+            
         /* =========================
            GET DATA PEGAWAI
         ========================= */
@@ -263,6 +339,13 @@ async function smartofficeLoadDataPegawaiDokumen(
             await smartofficeGetPegawaiByNip(
                 nip
             );
+
+        if(
+            pageInstance !==
+            smartofficeDokumenPageInstance
+        ){
+            return;
+        }
 
         /* =========================
            VALIDASI
@@ -355,6 +438,9 @@ async function smartofficeLoadDataPegawaiDokumen(
 async function smartofficeLoadMasterDokumen(){
 
     try{
+        const pageInstance =
+            smartofficeDokumenPageInstance;
+
         /* =========================
            GET SESSION
         ========================= */
@@ -373,6 +459,13 @@ async function smartofficeLoadMasterDokumen(){
             await smartofficeGetMasterDokumen(
                 sessionData.nip
             );
+
+        if(
+            pageInstance !==
+            smartofficeDokumenPageInstance
+        ){
+            return;
+        }
 
         /* =========================
            SELECT
@@ -459,10 +552,20 @@ async function smartofficeLoadDokumenSaya(){
     }
 
     try{
+        const pageInstance =
+            smartofficeDokumenPageInstance;
+
         const data =
             await smartofficeGetDokumenPegawai(
                 sessionData.nip
             );
+
+        if(
+            pageInstance !==
+            smartofficeDokumenPageInstance
+        ){
+            return;
+        }
 
         smartofficeDokumenSayaData =
             data;
@@ -1468,8 +1571,21 @@ async function smartofficeSubmitDokumen(){
     const reader =
         new FileReader();
 
+    smartofficeDokumenUploadReader =
+        reader;
+
+    const pageInstance =
+        smartofficeDokumenPageInstance;
+
     reader.onload =
         async function(e){
+            if(
+                pageInstance !==
+                smartofficeDokumenPageInstance
+            ){
+                return;
+            }
+
             let success =
                 false;
 
@@ -1500,6 +1616,16 @@ async function smartofficeSubmitDokumen(){
                     base64:
                         e.target.result
                 });
+
+                if(
+                    pageInstance !==
+                    smartofficeDokumenPageInstance
+                ){
+                    return;
+                }
+
+                smartofficeDokumenUploadReader =
+                    null;
 
                 /* =========================
                    RESET MEMORY
@@ -1533,6 +1659,9 @@ async function smartofficeSubmitDokumen(){
             }
             finally{
 
+                smartofficeDokumenUploadReader =
+                    null;
+
                 /* =========================
                    HIDE LOADING DULU
                 ========================= */
@@ -1550,16 +1679,32 @@ async function smartofficeSubmitDokumen(){
                    TOAST SUCCESS
                    PALING TERAKHIR
                 ========================= */
-                if(success){
-                    setTimeout(
-                        function(){
-                            smartofficeShowToast(
-                                "Dokumen berhasil diupload",
-                                "success"
-                            );
-                        },
-                        100
-                    );
+                if(
+                    success &&
+                    pageInstance ===
+                    smartofficeDokumenPageInstance
+                ){
+                    smartofficeDokumenSuccessToastTimer =
+                        setTimeout(
+                            function(){
+
+                                if(
+                                    pageInstance !==
+                                    smartofficeDokumenPageInstance
+                                ){
+                                    return;
+                                }
+
+                                smartofficeShowToast(
+                                    "Dokumen berhasil diupload",
+                                    "success"
+                                );
+
+                                smartofficeDokumenSuccessToastTimer =
+                                    null;
+                            },
+                            100
+                        );
                 }
             }
         };
@@ -1569,6 +1714,8 @@ async function smartofficeSubmitDokumen(){
     ========================= */
     reader.onerror =
         function(){
+            smartofficeDokumenUploadReader =
+                null;
             smartofficeHideGlobalLoading();
             if(submitBtn){
                 submitBtn.disabled =
@@ -1631,6 +1778,12 @@ function smartofficeResetDokumenForm(){
 async function smartofficeRefreshDokumen(){
 
     /* =========================
+       PAGE INSTANCE
+    ========================= */
+    const pageInstance =
+        smartofficeDokumenPageInstance;
+
+    /* =========================
        MINI STAT LOADING
     ========================= */
     document.getElementById(
@@ -1672,11 +1825,25 @@ async function smartofficeRefreshDokumen(){
     `;
 
     try{
-
+        /* =========================
+           RESET FORM
+        ========================= */
+        smartofficeResetDokumenForm();
+        
         /* =========================
            RELOAD DATA
         ========================= */
         await smartofficeLoadDokumenSaya();
+
+        /* =========================
+           CEK HALAMAN
+        ========================= */
+        if(
+            pageInstance !==
+            smartofficeDokumenPageInstance
+        ){
+            return;
+        }
 
         /* =========================
            TOAST
@@ -1687,6 +1854,16 @@ async function smartofficeRefreshDokumen(){
         );
     }
     catch(error){
+
+        /* =========================
+           CEK HALAMAN
+        ========================= */
+        if(
+            pageInstance !==
+            smartofficeDokumenPageInstance
+        ){
+            return;
+        }
 
         console.error(
             "Gagal refresh dokumen:",
@@ -1980,119 +2157,132 @@ function smartofficeCloseEditDokumenModal(){
 }
 
 
-/* ====================================================== 
-   SUBMIT EDIT DOKUMEN 
-====================================================== */ 
-async function smartofficeSubmitEditDokumen(){ 
+/* ======================================================
+   SUBMIT EDIT DOKUMEN
+====================================================== */
+async function smartofficeSubmitEditDokumen(){
 
-    console.log( 
-        "EDIT ID", 
-        smartofficeEditDokumenId 
-    ); 
+    console.log(
+        "EDIT ID",
+        smartofficeEditDokumenId
+    );
 
-    const submitBtn = 
-        document.getElementById( 
-            "smartofficeEditDokumenSubmitButton" 
-        ); 
+    const submitBtn =
+        document.getElementById(
+            "smartofficeEditDokumenSubmitButton"
+        );
 
-    /* ========================= 
-       NOMOR DOKUMEN 
-    ========================= */ 
-    const nomorDokumen = 
-        document.getElementById( 
-            "smartofficeEditNomorDokumen" 
-        ).value.trim(); 
+    /* =========================
+       NOMOR DOKUMEN
+    ========================= */
+    const nomorDokumen =
+        document.getElementById(
+            "smartofficeEditNomorDokumen"
+        ).value.trim();
 
-    /* ========================= 
-       KETERANGAN 
-    ========================= */ 
-    const keterangan = 
-        document.getElementById( 
-            "smartofficeEditKeterangan" 
-        ).value.trim(); 
+    /* =========================
+       KETERANGAN
+    ========================= */
+    const keterangan =
+        document.getElementById(
+            "smartofficeEditKeterangan"
+        ).value.trim();
 
-    /* ========================= 
-       FILE 
-    ========================= */ 
-    const fileInput = 
-        document.getElementById( 
-            "smartofficeEditFile" 
-        ); 
+    /* =========================
+       FILE
+    ========================= */
+    const fileInput =
+        document.getElementById(
+            "smartofficeEditFile"
+        );
 
-    const file = 
-        fileInput.files[0]; 
+    const file =
+        fileInput.files[0];
 
-    /* ========================= 
-       VALIDASI FILE 
-    ========================= */ 
-    if( 
-        !file 
-    ){ 
-        smartofficeShowToast( 
-            "Pilih file baru", 
-            "error" 
-        ); 
+    /* =========================
+       VALIDASI FILE
+    ========================= */
+    if(!file){
 
-        return; 
-    } 
+        smartofficeShowToast(
+            "Pilih file baru",
+            "error"
+        );
 
-    /* ========================= 
-       CARI DOKUMEN 
-    ========================= */ 
-    const dokumen = 
-        smartofficeDokumenSayaData.find( 
-            item => 
-                item.idDokumen === 
-                smartofficeEditDokumenId 
-        ); 
+        return;
+    }
 
-    if( 
-        !dokumen 
-    ){ 
-        smartofficeShowToast( 
-            "Dokumen tidak ditemukan", 
-            "error" 
-        ); 
+    /* =========================
+       CARI DOKUMEN
+    ========================= */
+    const dokumen =
+        smartofficeDokumenSayaData.find(
+            item =>
+                item.idDokumen ===
+                smartofficeEditDokumenId
+        );
+    if(!dokumen){
+        smartofficeShowToast(
+            "Dokumen tidak ditemukan",
+            "error"
+        );
 
-        return; 
-    } 
+        return;
+    }
 
-    /* ========================= 
-       SESSION 
-    ========================= */ 
-    const sessionData = 
-        smartofficeGetSession(); 
+    /* =========================
+       SESSION
+    ========================= */
+    const sessionData =
+        smartofficeGetSession();
+    if(
+        !sessionData ||
+        !sessionData.nip
+    ){
+        smartofficeShowToast(
+            "Session tidak ditemukan. Silakan login kembali.",
+            "error"
+        );
 
-    if( 
-        !sessionData || 
-        !sessionData.nip 
-    ){ 
-        smartofficeShowToast( 
-            "Session tidak ditemukan. Silakan login kembali.", 
-            "error" 
-        ); 
+        return;
+    }
 
-        return; 
-    } 
+    /* =========================
+       DISABLE BUTTON
+    ========================= */
+    if(submitBtn){
+        submitBtn.disabled =
+            true;
+    }
 
-    /* ========================= 
-       DISABLE BUTTON 
-    ========================= */ 
-    if( 
-        submitBtn 
-    ){ 
-        submitBtn.disabled = 
-            true; 
-    } 
+    /* =========================
+       PAGE INSTANCE
+    ========================= */
+    const pageInstance =
+        smartofficeDokumenPageInstance;
 
-    /* ========================= 
-       FILE READER 
-    ========================= */ 
-    const reader = 
-        new FileReader(); 
+    /* =========================
+       FILE READER
+    ========================= */
+    const reader =
+        new FileReader();
 
-    reader.onload = 
-        async function(e){ 
+    smartofficeDokumenUploadReader =
+        reader;
+
+    reader.onload =
+        async function(e){
+
+            /* =========================
+               CEK HALAMAN
+            ========================= */
+            if(
+                pageInstance !==
+                smartofficeDokumenPageInstance
+            ){
+
+                return;
+            }
 
             /* =========================
                GLOBAL LOADING
@@ -2101,99 +2291,168 @@ async function smartofficeSubmitEditDokumen(){
                 "Memperbarui dokumen..."
             );
 
-            try{ 
+            try{
+                /* =========================
+                   UPDATE DOKUMEN
+                ========================= */
+                await smartofficeUploadDokumen({
+                    isEdit:
+                        true,
 
-                /* ========================= 
-                   UPDATE DOKUMEN 
-                ========================= */ 
-                await smartofficeUploadDokumen({ 
+                    idDokumen:
+                        smartofficeEditDokumenId,
 
-                    isEdit: 
-                        true, 
+                    nip:
+                        sessionData.nip,
 
-                    idDokumen: 
-                        smartofficeEditDokumenId, 
+                    jenisDokumen:
+                        dokumen.kodeDokumen,
 
-                    nip: 
-                        sessionData.nip, 
+                    nomorDokumen:
+                        nomorDokumen,
 
-                    jenisDokumen: 
-                        dokumen.kodeDokumen, 
+                    keterangan:
+                        keterangan,
 
-                    nomorDokumen: 
-                        nomorDokumen, 
+                    namaFile:
+                        file.name,
 
-                    keterangan: 
-                        keterangan, 
+                    mimeType:
+                        file.type,
 
-                    namaFile: 
-                        file.name, 
+                    base64:
+                        e.target.result
+                });
 
-                    mimeType: 
-                        file.type, 
+                /* =========================
+                   CEK HALAMAN SETELAH API
+                ========================= */
+                if(
+                    pageInstance !==
+                    smartofficeDokumenPageInstance
+                ){
 
-                    base64: 
-                        e.target.result 
-                }); 
+                    return;
+                }
 
-                /* ========================= 
-                   SUCCESS 
-                ========================= */ 
-                smartofficeShowToast( 
-                    "Dokumen berhasil diperbarui", 
-                    "success" 
-                ); 
+                /* =========================
+                   RESET READER
+                ========================= */
+                smartofficeDokumenUploadReader =
+                    null;
 
-                /* ========================= 
-                   CLOSE MODAL 
-                ========================= */ 
-                smartofficeCloseEditDokumenModal(); 
+                /* =========================
+                   CLOSE MODAL
+                ========================= */
+                smartofficeCloseEditDokumenModal();
 
-                /* ========================= 
-                   RELOAD DATA 
-                ========================= */ 
-                await smartofficeLoadDokumenSaya(); 
+                /* =========================
+                   RELOAD DATA
+                ========================= */
+                await smartofficeLoadDokumenSaya();
 
-            } 
-            catch(error){ 
+                /* =========================
+                   CEK HALAMAN
+                   SETELAH RELOAD
+                ========================= */
+                if(
+                    pageInstance !==
+                    smartofficeDokumenPageInstance
+                ){
 
-                smartofficeShowToast( 
-                    error.message || 
-                    "Gagal update dokumen", 
-                    "error" 
-                ); 
+                    return;
+                }
 
-                console.error( 
-                    "Gagal update dokumen:", 
-                    error 
-                ); 
+                /* =========================
+                   SUCCESS TOAST
+                ========================= */
+                smartofficeShowToast(
+                    "Dokumen berhasil diperbarui",
+                    "success"
+                );
+            }
+            catch(error){
 
-            } 
-            finally{ 
+                /* =========================
+                   JIKA HALAMAN SUDAH HANCUR
+                ========================= */
+                if(
+                    pageInstance !==
+                    smartofficeDokumenPageInstance
+                ){
 
-                /* ========================= 
-                   HIDE GLOBAL LOADING 
-                ========================= */ 
-                smartofficeHideGlobalLoading(); 
+                    return;
+                }
 
-                /* ========================= 
-                   ENABLE BUTTON 
-                ========================= */ 
-                if( 
-                    submitBtn 
-                ){ 
-                    submitBtn.disabled = 
-                        false; 
-                } 
-            } 
-        }; 
+                smartofficeShowToast(
+                    error.message ||
+                    "Gagal update dokumen",
+                    "error"
+                );
 
-    /* ========================= 
-       START FILE READER 
-    ========================= */ 
-    reader.readAsDataURL( 
-        file 
-    ); 
+                console.error(
+                    "Gagal update dokumen:",
+                    error
+                );
+            }
+            finally{
+
+                /* =========================
+                   RESET READER
+                ========================= */
+                smartofficeDokumenUploadReader =
+                    null;
+
+                /* =========================
+                   HIDE GLOBAL LOADING
+                ========================= */
+                smartofficeHideGlobalLoading();
+
+                /* =========================
+                   ENABLE BUTTON
+                ========================= */
+                if(submitBtn){
+                    submitBtn.disabled =
+                        false;
+                }
+            }
+        };
+
+    /* =========================
+       ERROR FILE READER
+    ========================= */
+    reader.onerror =
+        function(){
+            smartofficeDokumenUploadReader =
+                null;
+
+            smartofficeHideGlobalLoading();
+
+            if(submitBtn){
+                submitBtn.disabled =
+                    false;
+            }
+
+            if(
+                pageInstance !==
+                smartofficeDokumenPageInstance
+            ){
+
+                return;
+            }
+
+            smartofficeShowToast(
+                "Gagal membaca file",
+                "error"
+            );
+        };
+
+    /* =========================
+       START FILE READER
+    ========================= */
+    reader.readAsDataURL(
+        file
+    );
 }
 
 

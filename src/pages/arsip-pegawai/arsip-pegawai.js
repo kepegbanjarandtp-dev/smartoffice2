@@ -54,6 +54,9 @@ let smartofficeArsipPageInstance =
 const smartofficeArsipPegawaiHandlers =
     new Map();
 
+let smartofficeArsipModalTimer =
+    null;
+
 
 /* ======================================================
    LOAD PAGE
@@ -140,6 +143,16 @@ export async function smartofficeLoadPage(){
 export async function smartofficeDestroyPage(){
 
     ++smartofficeArsipPageInstance;
+
+    /* =========================
+       CLEAR MODAL TIMER
+    ========================= */
+    clearTimeout(
+        smartofficeArsipModalTimer
+    );
+
+    smartofficeArsipModalTimer =
+        null;
 
     console.log(
         "SMARTOFFICE ARSIP PEGAWAI: DESTROY PAGE"
@@ -312,14 +325,14 @@ export async function smartofficeCariArsipPegawai(){
     );
 
     try{
-        const data =
-            await smartofficeGetArsipPegawai(
-                nip
-            );
+        const pageInstance = smartofficeArsipPageInstance;
+        const data = await smartofficeGetArsipPegawai(nip);
 
-        smartofficeRenderArsipPegawai(
-            data
-        );
+        if (pageInstance !== smartofficeArsipPageInstance) {
+            return;
+        }
+
+        smartofficeRenderArsipPegawai(data);
     }
     catch(error){
         console.error(
@@ -1350,8 +1363,18 @@ export async function smartofficeLoadArsipStat(){
     );
 
     try{
+        const pageInstance =
+            smartofficeArsipPageInstance;
+
         const data =
             await smartofficeGetArsipStat();
+
+        if(
+            pageInstance !==
+            smartofficeArsipPageInstance
+        ){
+            return;
+        }
 
         console.log(
             "ARSIP STAT",
@@ -1398,8 +1421,17 @@ export async function smartofficeLoadProgressArsip(){
         /* =========================
            SERVICE
         ========================= */    
+        const pageInstance =
+            smartofficeArsipPageInstance;
         const data =
             await smartofficeGetProgressArsip();
+
+        if(
+            pageInstance !==
+            smartofficeArsipPageInstance
+        ){
+            return;
+        }
 
         if(
             !Array.isArray(data)
@@ -1914,12 +1946,10 @@ export function smartofficeBukaLockDokumenPrompt(
 export function smartofficeOpenBukaLockDokumenModal(
     idDokumen
 ){
-
     const body =
         document.getElementById(
             "smartofficeArsipActionBody"
         );
-
     if(!body){
         return;
     }
@@ -1927,7 +1957,6 @@ export function smartofficeOpenBukaLockDokumenModal(
     body.innerHTML =
     `
     <div class="smartoffice-arsippegawai-modal-icon warning">
-
         <svg
             viewBox="0 0 24 24"
             fill="none"
@@ -1943,7 +1972,6 @@ export function smartofficeOpenBukaLockDokumenModal(
                 height="10"
                 rx="2"
             />
-
             <path
                 d="
                     M8 11V7
@@ -1951,24 +1979,19 @@ export function smartofficeOpenBukaLockDokumenModal(
                     8 0v4
                 "
             />
-
             <path
                 d="M12 15v3"
             />
         </svg>
-
     </div>
-
 
     <div class="smartoffice-arsippegawai-modal-title">
         Buka Lock Dokumen
     </div>
 
-
     <div class="smartoffice-arsippegawai-modal-text">
         Alasan membuka lock wajib diisi.
     </div>
-
 
     <textarea
         id="smartofficeBukaLockAlasan"
@@ -1976,9 +1999,7 @@ export function smartofficeOpenBukaLockDokumenModal(
         placeholder="Tulis alasan membuka lock..."
     ></textarea>
 
-
     <div class="smartoffice-arsippegawai-modal-footer">
-
         <button
             id="smartofficeBukaLockSubmitButton"
             class="smartoffice-arsippegawai-modal-submit"
@@ -1989,7 +2010,6 @@ export function smartofficeOpenBukaLockDokumenModal(
                 )
             "
         >
-
             <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -2005,7 +2025,6 @@ export function smartofficeOpenBukaLockDokumenModal(
                     height="10"
                     rx="2"
                 />
-
                 <path
                     d="
                         M8 11V7
@@ -2018,9 +2037,7 @@ export function smartofficeOpenBukaLockDokumenModal(
             <span>
                 Buka Lock
             </span>
-
         </button>
-
 
         <button
             class="smartoffice-arsippegawai-modal-cancel"
@@ -2031,35 +2048,42 @@ export function smartofficeOpenBukaLockDokumenModal(
         >
             Batal
         </button>
-
     </div>
     `;
-
 
     const modal =
         document.getElementById(
             "smartofficeArsipActionModal"
         );
-
     if(!modal){
         return;
     }
 
-
     modal.style.display =
         "flex";
 
-
-    setTimeout(
-        function(){
-
-            modal.classList.add(
-                "show"
-            );
-
-        },
-        10
+    clearTimeout(
+        smartofficeArsipModalTimer
     );
+
+    smartofficeArsipModalTimer =
+        setTimeout(
+            function(){
+                if(
+                    !modal.isConnected
+                ){
+                    return;
+                }
+
+                modal.classList.add(
+                    "show"
+                );
+
+                smartofficeArsipModalTimer =
+                    null;
+            },
+            10
+        );
 }
 
 
@@ -2205,24 +2229,39 @@ export function smartofficeCloseArsipModal(){
     /* =========================
        HIDE
     ========================= */
-    setTimeout(
-        function(){
-            modal.style.display =
-                "none";
-
-            /* Bersihkan isi modal */
-            const body =
-                document.getElementById(
-                    "smartofficeArsipActionBody"
-                );
-
-            if(body){
-                body.innerHTML =
-                    "";
-            }
-        },
-        200
+    clearTimeout(
+        smartofficeArsipModalTimer
     );
+
+    smartofficeArsipModalTimer =
+        setTimeout(
+            function(){
+                if(
+                    !modal.isConnected
+                ){
+                    smartofficeArsipModalTimer =
+                        null;
+
+                    return;
+                }
+
+                modal.style.display =
+                    "none";
+
+                const body =
+                    document.getElementById(
+                        "smartofficeArsipActionBody"
+                    );
+                if(body){
+                    body.innerHTML =
+                        "";
+                }
+
+                smartofficeArsipModalTimer =
+                    null;
+            },
+            200
+        );
 }
 
 
@@ -2330,10 +2369,20 @@ export async function smartofficeRefreshArsip(){
     /* =========================
        RELOAD DATA
     ========================= */
+    const pageInstance =
+        smartofficeArsipPageInstance;
+
     await Promise.all([
         smartofficeLoadArsipStat(),
         smartofficeLoadPegawaiArsip()
     ]);
+
+    if(
+        pageInstance !==
+        smartofficeArsipPageInstance
+    ){
+        return;
+    }
 
     /* =========================
        TOAST
@@ -2367,7 +2416,17 @@ export async function smartofficeRefreshProgressArsip(){
         "Memuat progres arsip..."
     );
 
+    const pageInstance =
+        smartofficeArsipPageInstance;
+
     await smartofficeLoadProgressArsip();
+
+    if(
+        pageInstance !==
+        smartofficeArsipPageInstance
+    ){
+        return;
+    }
 
     window.smartofficeProgressLoaded =
         true;

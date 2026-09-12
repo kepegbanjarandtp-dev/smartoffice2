@@ -56,6 +56,28 @@ export async function smartofficeSearchPegawai(
 }
 
 
+export async function smartofficeSearchPegawaiCuti(
+    keyword
+){
+    const response =
+        await smartofficeApi(
+            "smartofficeSearchPegawaiCuti",
+            {
+                keyword
+            }
+        );
+    if(
+        !response.success
+    ){
+        throw new Error(
+            response.message
+        );
+    }
+
+    return response.data;
+}
+
+
 /* ======================================================
    GET JUMLAH CUTI
 ====================================================== */
