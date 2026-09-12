@@ -71,17 +71,23 @@ import {
 /* ======================================================
    APPROVAL STATE
 ====================================================== */
-const smartofficeApprovalState = { idCuti:'' };
+const smartofficeApprovalState = {
+  idCuti : ''
+};
+
 let smartofficeApprovalAction = "";
-let smartofficeSubmittingApproval = false;
+
+let smartofficeSubmittingApproval =
+  false;
 
 /* ======================================================
    LIFECYCLE STATE
 ====================================================== */
-let smartofficeApprovalDestroyed = false;
-let smartofficeApprovalPageInstance = 0;
-const smartofficeApprovalHandlers = new Map();
-let smartofficeApprovalModalTimer = null;
+let smartofficeApprovalDestroyed =
+  false;
+
+const smartofficeApprovalHandlers =
+  new Map();
 
 
 /* ================================================================================
@@ -93,16 +99,11 @@ let smartofficeApprovalModalTimer = null;
 ====================================================== */
 export async function smartofficeLoadPage(){
 
-    smartofficeApprovalPageInstance++;
-
-    const pageInstance =
-        smartofficeApprovalPageInstance;
-
     /* =========================
        RESET LIFECYCLE
     ========================= */
-    smartofficeApprovalDestroyed = false;
-    
+    smartofficeApprovalDestroyed =
+        false;
     smartofficeApprovalHandlers.clear();
 
     /* =========================
@@ -140,32 +141,12 @@ export async function smartofficeLoadPage(){
         modal.style.opacity =
             "0";
 
-        if(smartofficeApprovalModalTimer){
-            clearTimeout(
-                smartofficeApprovalModalTimer
-            );
-        }
-
-        smartofficeApprovalModalTimer =
-            setTimeout(
-                function(){
-                    if(!modal.isConnected){
-                        smartofficeApprovalModalTimer =
-                            null;
-                        return;
-                    }
-
-                    modal.style.display =
-                        "none";
-
-                    modal.style.opacity =
-                        "";
-
-                    smartofficeApprovalModalTimer =
-                        null;
-                },
-                50
-            );
+        setTimeout(function(){
+            modal.style.display =
+                "none";
+            modal.style.opacity =
+                "";
+        },50);
     }
 
     /* =========================
@@ -365,9 +346,6 @@ export async function smartofficeLoadApprovalCuti(){
     'LOAD APPROVAL CUTI JALAN'
   );
 
-  const pageInstance =
-    smartofficeApprovalPageInstance;
-
   /* =========================
      SESSION
   ========================= */
@@ -415,13 +393,6 @@ export async function smartofficeLoadApprovalCuti(){
             sessionData.nip
         );
 
-      if(
-          pageInstance !==
-          smartofficeApprovalPageInstance
-      ){
-          return;
-      }
-
       console.log(data);
 
       /* =========================
@@ -433,9 +404,12 @@ export async function smartofficeLoadApprovalCuti(){
           );
 
       if (badge) {
+
           const total =
               data?.length || 0;
+
           badge.textContent = total;
+
           badge.classList.toggle(
               "show",
               total > 0
@@ -521,10 +495,10 @@ export async function smartofficeLoadApprovalCuti(){
             )}`;
             
           html += `
-            <div
-                class="smartoffice-approval-card"
-                data-id-cuti="${item.idCuti}"
-            >
+            <div class="
+              smartoffice-approval-card
+              data-id-cuti="${item.idCuti}"
+            ">
               <div class="
                 smartoffice-approval-card-header
               ">
@@ -539,6 +513,7 @@ export async function smartofficeLoadApprovalCuti(){
                     class="
                       smartoffice-approval-avatar
                     "
+
                     style="
                       background:${avatarColor};
                     "
@@ -554,6 +529,7 @@ export async function smartofficeLoadApprovalCuti(){
                   <div class="
                     smartoffice-approval-card-info
                   ">
+
                     <div class="
                       smartoffice-approval-card-title
                     ">
@@ -565,7 +541,9 @@ export async function smartofficeLoadApprovalCuti(){
                     ">
                       ${item.jabatan || '-'}
                     </div>
+
                   </div>
+
                 </div>
 
                 <!-- STATUS -->
@@ -706,8 +684,10 @@ export async function smartofficeLoadApprovalCuti(){
 
          buttons.forEach(
             function(button){
+
                 const handler =
                     function(){
+
                         if(
                             smartofficeApprovalDestroyed
                         ){
@@ -722,17 +702,21 @@ export async function smartofficeLoadApprovalCuti(){
                         smartofficeOpenApprovalDetail(
                             data[index]
                         );
+
                     };
+
 
                 button.addEventListener(
                     "click",
                     handler
                 );
 
+
                 smartofficeApprovalHandlers.set(
                     button,
                     handler
                 );
+
             }
         );
    }
@@ -765,6 +749,7 @@ function smartofficeRemoveApprovalCutiFromUI(idCuti){
         container.querySelector(
             `.smartoffice-approval-card[data-id-cuti="${idCuti}"]`
         );
+
     if(card){
         card.remove();
     }
@@ -797,9 +782,11 @@ function smartofficeRemoveApprovalCutiFromUI(idCuti){
                 <div class="smartoffice-empty-icon">
                     📭
                 </div>
+
                 <h3>
                     Tidak ada approval
                 </h3>
+
                 <p>
                     Belum ada pengajuan yang perlu diproses
                 </p>
@@ -848,27 +835,13 @@ function smartofficeOpenApprovalDetail(
   modal.style.display =
   'flex';
 
-  if(smartofficeApprovalModalTimer){
-      clearTimeout(
-          smartofficeApprovalModalTimer
-      );
-  }
+  setTimeout(function(){
 
-  smartofficeApprovalModalTimer =
-      setTimeout(function(){
-          if(
-              !modal ||
-              !modal.isConnected
-          ){
-              smartofficeApprovalModalTimer =
-                  null;
-              return;
-          }
-          modal.classList.add('show');
+    modal.classList.add(
+      'show'
+    );
 
-          smartofficeApprovalModalTimer =
-              null;
-      },10);
+  },10);
 
   /* =========================
     RESET ACTION
@@ -1191,6 +1164,7 @@ function smartofficeOpenApprovalDetail(
       <div class="
         smartoffice-approval-action
       ">
+
         <div class="
           smartoffice-approval-action-title
         ">
@@ -1232,6 +1206,7 @@ function smartofficeOpenApprovalDetail(
             display:none;
           "
         >
+
           <textarea
             id="smartofficeApprovalCatatan"
             class="
@@ -1241,6 +1216,7 @@ function smartofficeOpenApprovalDetail(
               Tulis alasan penolakan...
             "
           ></textarea>
+
         </div>
 
         <!-- FOOTER -->
@@ -1271,6 +1247,7 @@ function smartofficeOpenApprovalDetail(
     /* =========================
       EVENT LISTENER
    ========================= */
+
    // Preview Lampiran
    document
       .getElementById("smartofficePreviewLampiranButton")
@@ -1322,6 +1299,7 @@ export function smartofficeCloseApprovalDetail(){
     document.getElementById(
       "smartofficeApprovalDetailModal"
     );
+
   if(!modal){
     return;
   }
@@ -1343,6 +1321,7 @@ export function smartofficeCloseApprovalDetail(){
     document.getElementById(
       "smartofficeApprovalCatatan"
     );
+
   if(
     textarea
   ){
@@ -1354,6 +1333,7 @@ export function smartofficeCloseApprovalDetail(){
     document.getElementById(
       "smartofficeApprovalCatatanWrapper"
     );
+
   if(
     textareaWrapper
   ){
@@ -1385,46 +1365,16 @@ export function smartofficeCloseApprovalDetail(){
   );
 
   /* HIDE AFTER ANIMATION */
-  if(smartofficeApprovalModalTimer){
-      clearTimeout(
-          smartofficeApprovalModalTimer
-      );
-  }
-
-  smartofficeApprovalModalTimer =
-      setTimeout(function(){
-          if(
-              !modal ||
-              !modal.isConnected
-          ){
-              smartofficeApprovalModalTimer =
-                  null;
-              return;
-          }
-
-          if(
-              !modal.classList.contains('show')
-          ){
-              modal.style.display = 'none';
-          }
-
-          smartofficeApprovalModalTimer =
-              null;
-      },250);
+  setTimeout(()=>{
+    modal.style.display =
+      "none";
+  },250);
 }
 
 /* ======================================================
    DESTROY APPROVAL PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
-
-    if(smartofficeApprovalModalTimer){
-        clearTimeout(
-            smartofficeApprovalModalTimer
-        );
-
-        smartofficeApprovalModalTimer = null;
-    }
 
     /* =========================
        MARK DESTROYED
@@ -1566,6 +1516,7 @@ async function smartofficeSubmitApprovalAction(){
   ========================= */
   const action =
     smartofficeApprovalAction;
+
   if(
       action !== "APPROVE" &&
       action !== "REJECT"
@@ -1603,6 +1554,7 @@ async function smartofficeSubmitApprovalAction(){
     &&
     !catatan
   ){
+
     smartofficeShowToast(
       "Catatan reject wajib diisi",
       "error"
@@ -1678,24 +1630,20 @@ async function smartofficeSubmitApprovalAction(){
     );
 
     /* =========================
-      SIMPAN ID CUTI
-    ========================= */
-    const idCuti =
-        smartofficeApprovalState.idCuti;
-
-    /* =========================
        CLOSE MODAL
     ========================= */
     smartofficeCloseApprovalDetail();
 
     /* =========================
-      UPDATE UI LANGSUNG
-      TANPA GET ULANG
+       UPDATE UI LANGSUNG
+       TANPA GET ULANG
     ========================= */
     smartofficeRemoveApprovalCutiFromUI(
-        idCuti
+        smartofficeApprovalState.idCuti
     );
+
   }catch(error){
+
     smartofficeShowToast(
       error.message ||
       "Terjadi kesalahan.",
@@ -1792,6 +1740,7 @@ function smartofficeSetApprovalAction(action){
   if(
     action === "APPROVE"
   ){
+
     approveButton.classList.add(
       "active"
     );
@@ -1847,6 +1796,7 @@ async function smartofficeRefreshApproval(){
         );
     }
     catch(error){
+
         /* =========================
            REQUEST DIBATALKAN
         ========================= */
@@ -1878,6 +1828,7 @@ async function smartofficeRefreshApproval(){
    REFRESH SEMUA DATA APPROVAL
 ====================================================== */
 export async function smartofficeRefreshAllApprovalData(){
+
     await Promise.all([
         smartofficeLoadApprovalCuti(),
         smartofficeLoadApprovalDokumen()
@@ -1968,9 +1919,6 @@ function smartofficeSwitchApprovalTab(tab){
 ====================================================== */
 export async function smartofficeLoadApprovalDokumen(){
 
-    const pageInstance =
-        smartofficeApprovalPageInstance;
-
     /* =========================
        CONTAINER
     ========================= */
@@ -1978,6 +1926,7 @@ export async function smartofficeLoadApprovalDokumen(){
         document.getElementById(
             "smartofficeApprovalDokumenList"
         );
+
     if(!container){
         console.warn(
             "Container Approval Dokumen tidak ditemukan"
@@ -1985,6 +1934,7 @@ export async function smartofficeLoadApprovalDokumen(){
 
         return;
     }
+
 
     /* =========================
        LOADING
@@ -2006,12 +1956,6 @@ export async function smartofficeLoadApprovalDokumen(){
     try{
         const data =
             await smartofficeGetDokumenVerifikasi();
-        if(
-            pageInstance !==
-            smartofficeApprovalPageInstance
-        ){
-            return;
-        }
 
         /* =========================
            LOG
@@ -2028,7 +1972,9 @@ export async function smartofficeLoadApprovalDokumen(){
             document.getElementById(
                 "smartofficeApprovalDokumenBadge"
             );
+
         if(badge){
+
             const total =
                 Array.isArray(data)
                     ? data.length
@@ -2051,6 +1997,7 @@ export async function smartofficeLoadApprovalDokumen(){
         );
     }
     catch(error){
+
         /* =========================
            REQUEST DIBATALKAN
         ========================= */
@@ -2075,9 +2022,11 @@ export async function smartofficeLoadApprovalDokumen(){
                 <div class="smartoffice-empty-icon">
                     ⚠️
                 </div>
+
                 <h3>
                     Gagal memuat dokumen
                 </h3>
+
                 <p>
                     ${error.message}
                 </p>
@@ -2130,9 +2079,11 @@ export function smartofficeRenderApprovalDokumen(
                 <div class="smartoffice-empty-icon">
                     📄
                 </div>
+
                 <h3>
                     Tidak Ada Dokumen
                 </h3>
+
                 <p>
                     Tidak ada dokumen yang menunggu verifikasi
                 </p>
@@ -2177,18 +2128,21 @@ export function smartofficeRenderApprovalDokumen(
                                           a2 2 0 0 0 2-2V8z"/>
 
                                   <polyline points="14 2 14 8 20 8"/>
+
                                   <line
                                       x1="16"
                                       y1="13"
                                       x2="8"
                                       y2="13"
                                   />
+
                                   <line
                                       x1="16"
                                       y1="17"
                                       x2="8"
                                       y2="17"
                                   />
+
                                   <line
                                       x1="10"
                                       y1="9"
@@ -2239,12 +2193,14 @@ export function smartofficeRenderApprovalDokumen(
                                           a2 2 0 0 0 2-2V8z"/>
 
                                   <polyline points="14 2 14 8 20 8"/>
+
                                   <line
                                       x1="16"
                                       y1="13"
                                       x2="8"
                                       y2="13"
                                   />
+
                                   <line
                                       x1="16"
                                       y1="17"
@@ -2286,12 +2242,14 @@ export function smartofficeRenderApprovalDokumen(
                                           cy="12"
                                           r="9"
                                       />
+
                                       <line
                                           x1="12"
                                           y1="8"
                                           x2="12"
                                           y2="12"
                                       />
+
                                       <line
                                           x1="12"
                                           y1="16"
@@ -2378,18 +2336,21 @@ export function smartofficeRenderApprovalDokumen(
                                       a2 2 0 0 0 2-2V8z"/>
 
                               <polyline points="14 2 14 8 20 8"/>
+
                               <line
                                   x1="16"
                                   y1="13"
                                   x2="8"
                                   y2="13"
                               />
+
                               <line
                                   x1="16"
                                   y1="17"
                                   x2="8"
                                   y2="17"
                               />
+
                               <line
                                   x1="10"
                                   y1="9"
@@ -2532,6 +2493,7 @@ export function smartofficeOpenVerifikasiDokumenModal(
         document.getElementById(
             "smartofficeApprovalDokumenActionBody"
         );
+
     if(!body){
         return;
     }
@@ -2563,6 +2525,7 @@ export function smartofficeOpenVerifikasiDokumenModal(
         </div>
 
         <div class="smartoffice-approval-dokumen-modal-footer">
+
             <button
                 id="smartofficeVerifikasiSubmitButton"
                 type="button"
@@ -2601,6 +2564,7 @@ export function smartofficeOpenVerifikasiDokumenModal(
             >
                 Batal
             </button>
+
         </div>
     `;
 
@@ -2615,30 +2579,14 @@ export function smartofficeOpenVerifikasiDokumenModal(
     modal.style.display =
         "flex";
 
-    if(smartofficeApprovalModalTimer){
-        clearTimeout(
-            smartofficeApprovalModalTimer
-        );
-    }
-
-    smartofficeApprovalModalTimer =
-        setTimeout(
-            function(){
-                if(!modal.isConnected){
-                    smartofficeApprovalModalTimer =
-                        null;
-                    return;
-                }
-
-                modal.classList.add(
-                    "show"
-                );
-
-                smartofficeApprovalModalTimer =
-                    null;
-            },
-            10
-        );
+    setTimeout(
+        function(){
+            modal.classList.add(
+                "show"
+            );
+        },
+        10
+    );
 }
 
 
@@ -2653,6 +2601,7 @@ export function smartofficeOpenTolakDokumenModal(
         document.getElementById(
             "smartofficeApprovalDokumenActionBody"
         );
+
     if(!body){
         return;
     }
@@ -2690,6 +2639,7 @@ export function smartofficeOpenTolakDokumenModal(
         ></textarea>
 
         <div class="smartoffice-approval-dokumen-modal-footer">
+
             <button
                 id="smartofficeApprovalDokumenRejectSubmitButton"
                 type="button"
@@ -2729,6 +2679,7 @@ export function smartofficeOpenTolakDokumenModal(
             >
                 Batal
             </button>
+
         </div>
     `;
 
@@ -2743,30 +2694,14 @@ export function smartofficeOpenTolakDokumenModal(
     modal.style.display =
         "flex";
 
-    if(smartofficeApprovalModalTimer){
-        clearTimeout(
-            smartofficeApprovalModalTimer
-        );
-    }
-
-    smartofficeApprovalModalTimer =
-        setTimeout(
-            function(){
-                if(!modal.isConnected){
-                    smartofficeApprovalModalTimer =
-                        null;
-                    return;
-                }
-
-                modal.classList.add(
-                    "show"
-                );
-
-                smartofficeApprovalModalTimer =
-                    null;
-            },
-            10
-        );
+    setTimeout(
+        function(){
+            modal.classList.add(
+                "show"
+            );
+        },
+        10
+    );
 }
 
 
@@ -2782,6 +2717,7 @@ function smartofficeRemoveApprovalDokumenFromUI(
         document.getElementById(
             "smartofficeApprovalDokumenList"
         );
+
     if(!container){
         return;
     }
@@ -2795,10 +2731,12 @@ function smartofficeRemoveApprovalDokumenFromUI(
 
     buttons.forEach(
         function(button){
+
             const onclick =
                 button.getAttribute(
                     "onclick"
                 ) || "";
+
             if(
                 onclick.includes(
                     String(idDokumen)
@@ -2849,14 +2787,17 @@ function smartofficeRemoveApprovalDokumenFromUI(
         ).length;
 
     if(remainingCards === 0){
+
         container.innerHTML = `
             <div class="smartoffice-empty-state">
                 <div class="smartoffice-empty-icon">
                     📄
                 </div>
+
                 <h3>
                     Tidak Ada Dokumen
                 </h3>
+
                 <p>
                     Tidak ada dokumen yang menunggu verifikasi
                 </p>
@@ -2892,6 +2833,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
         document.getElementById(
             "smartofficeVerifikasiSubmitButton"
         );
+
     if(button){
         button.disabled =
             true;
@@ -2900,6 +2842,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
             <span
                 class="smartoffice-approval-dokumen-btn-spinner"
             ></span>
+
             Memverifikasi...
         `;
     }
@@ -2920,6 +2863,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
     let toastType = "";
 
     try{
+
         /* =========================
            API
         ========================= */
@@ -2967,10 +2911,12 @@ export async function smartofficeSubmitVerifikasiDokumen(
         ========================= */
         toastMessage =
             "Dokumen berhasil diverifikasi";
+
         toastType =
             "success";
     }
     catch(error){
+
         /* =========================
            REQUEST DIBATALKAN
         ========================= */
@@ -2992,10 +2938,12 @@ export async function smartofficeSubmitVerifikasiDokumen(
         toastMessage =
             error.message ||
             "Gagal memverifikasi dokumen.";
+
         toastType =
             "error";
     }
     finally{
+
         /* =========================
            STOP GLOBAL LOADING
         ========================= */
@@ -3022,6 +2970,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
                 >
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
+
                 <span>
                     Verifikasi
                 </span>
@@ -3050,6 +2999,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
 export async function smartofficeSubmitTolakDokumen(
     idDokumen
 ){
+
     /* =========================
        AMBIL ALASAN
     ========================= */
@@ -3082,6 +3032,7 @@ export async function smartofficeSubmitTolakDokumen(
         document.getElementById(
             "smartofficeApprovalDokumenRejectSubmitButton"
         );
+
     if(button){
         button.disabled =
             true;
@@ -3110,6 +3061,7 @@ export async function smartofficeSubmitTolakDokumen(
     let toastType = "";
 
     try{
+
         /* =========================
            API
         ========================= */
@@ -3158,6 +3110,7 @@ export async function smartofficeSubmitTolakDokumen(
         ========================= */
         toastMessage =
             "Dokumen ditolak";
+
         toastType =
             "success";
     }
@@ -3184,10 +3137,12 @@ export async function smartofficeSubmitTolakDokumen(
         toastMessage =
             error.message ||
             "Gagal menolak dokumen.";
+
         toastType =
             "error";
     }
     finally{
+
         /* =========================
            STOP GLOBAL LOADING
         ========================= */
@@ -3215,6 +3170,7 @@ export async function smartofficeSubmitTolakDokumen(
                     <path d="M18 6L6 18"/>
                     <path d="M6 6L18 18"/>
                 </svg>
+
                 <span>
                     Tolak Dokumen
                 </span>
@@ -3255,32 +3211,20 @@ export function smartofficeCloseApprovalDokumenModal(){
         'show'
     );
 
-    if(smartofficeApprovalModalTimer){
-        clearTimeout(
-            smartofficeApprovalModalTimer
-        );
-    }
-
-    smartofficeApprovalModalTimer =
-        setTimeout(function(){
+    setTimeout(
+        function(){
             if(
-                !modal ||
-                !modal.isConnected
+                modal &&
+                !modal.classList.contains(
+                    'show'
+                )
             ){
-                smartofficeApprovalModalTimer =
-                    null;
-                return;
+                modal.style.display =
+                    'none';
             }
-
-            if(
-                !modal.classList.contains('show')
-            ){
-                modal.style.display = 'none';
-            }
-
-            smartofficeApprovalModalTimer =
-                null;
-        },250);
+        },
+        250
+    );
 }
 
 

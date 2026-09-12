@@ -1699,11 +1699,7 @@
     .smartoffice-arsippegawai-lock-button, 
     .smartoffice-arsippegawai-lock-open{ 
         min-height:35px; 
-    }
-    
-    .smartoffice-arsippegawai-lock-button{
-        height:35px;
-    }
+    } 
 
     .smartoffice-arsippegawai-lock-open svg{
         width:14px;
