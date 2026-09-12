@@ -25,8 +25,8 @@ let smartofficeCurrentDestroy =
 const smartofficePageCache =
     new Map();
 
-let smartofficeNavigationId = 0;
-let smartofficePageHtmlController = null;
+let smartofficeIsNavigating =
+    false;
 
 
 /* ======================================================
@@ -60,9 +60,9 @@ const smartofficeModules = {
 
     "arsip-pegawai": () =>
         import("../pages/arsip-pegawai/arsip-pegawai.js"),
-
-    "buku-surat": () =>
-        import("../pages/buku-surat/buku-surat.js"),
+    
+    "buku-surat": () => 
+        import("../pages/buku-surat/buku-surat.js"), 
 
     "pusat-dokumen": () =>
         import("../pages/pusat-dokumen/penomoran-sk.js"),
@@ -120,7 +120,6 @@ export async function smartofficeInitializeRouter(){
         return;
     }
 
-
     /* ==================================================
        RESET SESSION SETIAP REFRESH
     ================================================== */
@@ -132,7 +131,6 @@ export async function smartofficeInitializeRouter(){
         "SmartOffice Session dihapus karena refresh"
     );
 
-
     /* ==================================================
        DENGARKAN TOMBOL BACK/FORWARD BROWSER
     ================================================== */
@@ -140,7 +138,6 @@ export async function smartofficeInitializeRouter(){
         "popstate",
         smartofficeHandlePopState
     );
-
 
     /* ==================================================
        LANGSUNG KE LOGIN
@@ -157,7 +154,6 @@ export async function smartofficeInitializeRouter(){
 async function smartofficeHandlePopState(
     event
 ){
-
     const state =
         event.state;
 
@@ -165,7 +161,6 @@ async function smartofficeHandlePopState(
         state &&
         state.page
     ){
-
         await smartofficeNavigate(
             state.page,
             state.params || {},
@@ -215,7 +210,6 @@ export async function smartofficeNavigate(
     params = {},
     options = {}
 ){
-
     if(!pageName){
         return;
     }
@@ -226,105 +220,48 @@ export async function smartofficeNavigate(
 
     let globalLoadingHandled = false;
 
-    /*
-     * Setiap navigasi memiliki ID sendiri.
-     *
-     * Kalau user pindah halaman lagi sebelum proses
-     * sebelumnya selesai, navigasi lama dianggap stale.
-     */
-    const navigationId =
-        ++smartofficeNavigationId;
+    /* ==================================================
+       CEGAH NAVIGASI BERTUMPUK
+       Navigasi baru tidak dijalankan jika router
+       masih memproses navigasi sebelumnya.
+    ================================================== */
+    if(smartofficeIsNavigating){
+        console.warn(
+            "SMARTOFFICE NAVIGATE DIABAIKAN:",
+            pageName
+        );
 
-
-    console.log(
-        "[Router] Navigasi mulai:",
-        pageName,
-        "ID:",
-        navigationId
-    );
-
-
-    /*
-     * Batalkan request HTML halaman sebelumnya.
-     *
-     * Request HTML ini tidak menggunakan api.js,
-     * jadi harus dikelola router sendiri.
-     */
-    if(smartofficePageHtmlController){
-
-        try{
-
-            smartofficePageHtmlController.abort();
-
-        }
-        catch(error){
-
-            console.warn(
-                "[Router] Abort HTML request gagal:",
-                error
-            );
-
-        }
-
-        smartofficePageHtmlController =
-            null;
+        return;
     }
 
+    smartofficeIsNavigating = true;
 
     /* ==================================================
        GLOBAL PAGE LOADING
-
        Login tidak memakai global loading saat
        pertama kali dibuka.
     ================================================== */
     const useGlobalLoading =
         pageName !== "login";
 
-
     if(useGlobalLoading){
-
         smartofficeShowGlobalLoading(
             "Memuat halaman..."
         );
-
     }
-
-
     try{
 
         /* ==================================================
            ABORT SEMUA REQUEST LAMA
-
-           Request halaman sebelumnya tidak boleh
-           menghalangi halaman baru.
+           REQUEST HALAMAN SEBELUMNYA TIDAK BOLEH
+           MENGHALANGI HALAMAN BARU
         ================================================== */
         smartofficeAbortAllRequests();
-
 
         /* ==================================================
            DESTROY CURRENT PAGE
         ================================================== */
         await smartofficeDestroyCurrentPage();
-
-
-        /*
-         * Kalau selama proses destroy user sudah pindah
-         * ke halaman lain, navigasi ini dibatalkan.
-         */
-        if(
-            navigationId !==
-            smartofficeNavigationId
-        ){
-
-            console.log(
-                "[Router] Navigasi stale setelah destroy:",
-                pageName,
-                navigationId
-            );
-
-            return;
-        }
-
 
         /* ==================================================
            AMBIL CONTAINER APP
@@ -334,51 +271,30 @@ export async function smartofficeNavigate(
                 "app"
             );
 
-
         if(!app){
 
             throw new Error(
                 "Container #app tidak ditemukan."
             );
-
         }
-
 
         /* ==================================================
            LOAD HTML
         ================================================== */
         let html;
 
-
         try{
-
             html =
                 await smartofficeGetPageHtml(
-                    pageName,
-                    navigationId
+                    pageName
                 );
-
         }
         catch(error){
-
             console.error(
                 "SMARTOFFICE GAGAL MEMUAT HALAMAN:",
                 pageName,
                 error
             );
-
-
-            /*
-             * Jangan tampilkan error dari navigasi lama.
-             */
-            if(
-                navigationId !==
-                smartofficeNavigationId
-            ){
-
-                return;
-            }
-
 
             app.innerHTML =
                 smartofficeGetErrorHtml(
@@ -388,32 +304,11 @@ export async function smartofficeNavigate(
             return;
         }
 
-
-        /*
-         * Jangan render HTML kalau navigasinya sudah
-         * digantikan oleh navigasi baru.
-         */
-        if(
-            navigationId !==
-            smartofficeNavigationId
-        ){
-
-            console.log(
-                "[Router] HTML stale:",
-                pageName,
-                navigationId
-            );
-
-            return;
-        }
-
-
         /* ==================================================
            RENDER HTML
         ================================================== */
         app.innerHTML =
             html;
-
 
         /* ==================================================
            LOAD MODULE
@@ -423,41 +318,17 @@ export async function smartofficeNavigate(
                 pageName
             ];
 
-
         if(!loader){
-
             throw new Error(
                 `Halaman "${pageName}" tidak ditemukan`
             );
-
         }
-
 
         const module =
             await smartofficeLoadModule(
                 loader,
                 pageName
             );
-
-
-        /*
-         * Module bisa selesai setelah user sudah pindah
-         * halaman. Jangan lanjutkan navigasi lama.
-         */
-        if(
-            navigationId !==
-            smartofficeNavigationId
-        ){
-
-            console.log(
-                "[Router] Module stale:",
-                pageName,
-                navigationId
-            );
-
-            return;
-        }
-
 
         /* ==================================================
            INIT PAGE
@@ -467,40 +338,32 @@ export async function smartofficeNavigate(
             module.smartofficeLoadLoginPage ||
             module.default;
 
-
         if(
             typeof loadFunction ===
             "function"
         ){
-
             /*
-             * Halaman sudah berhasil dimuat.
-             *
-             * Global loading tidak menunggu proses
-             * pengambilan data internal halaman.
-             *
-             * Spinner mini stat / card akan menangani
-             * loading data masing-masing.
-             */
+            * Halaman sudah berhasil dimuat.
+            * Global loading tidak menunggu proses
+            * pengambilan data internal halaman.
+            *
+            * Spinner mini stat / card akan menangani
+            * loading data masing-masing.
+            */
             smartofficeHideGlobalLoading();
 
-
             /*
-             * Lepaskan tanggung jawab global loading
-             * dari finally.
-             */
+            * Lepaskan tanggung jawab global loading
+            * dari finally.
+            */
             globalLoadingHandled = true;
 
-
             /*
-             * Jalankan lifecycle halaman.
-             *
-             * PENTING:
-             * Tidak di-await oleh router.
-             *
-             * Jadi kalau GAS lambat mengambil data,
-             * user tetap bisa pindah halaman.
-             */
+            * Jalankan lifecycle halaman.
+            *
+            * Tidak di-await oleh router karena halaman
+            * sudah memiliki sistem loading internal.
+            */
             Promise.resolve(
                 loadFunction(params)
             ).catch(function(error){
@@ -510,34 +373,16 @@ export async function smartofficeNavigate(
                     pageName,
                     error
                 );
-
             });
-
         }
-
 
         /* ==================================================
            SIMPAN DESTROY FUNCTION
         ================================================== */
-
-        /*
-         * Pastikan navigasi ini masih merupakan
-         * navigasi aktif sebelum memasang destroy.
-         */
-        if(
-            navigationId !==
-            smartofficeNavigationId
-        ){
-
-            return;
-        }
-
-
         smartofficeCurrentDestroy =
             module.smartofficeDestroyPage ||
             module.smartofficeDestroyLoginPage ||
             null;
-
 
         /* ==================================================
            CURRENT PAGE
@@ -545,41 +390,32 @@ export async function smartofficeNavigate(
         smartofficeCurrentPage =
             pageName;
 
-
         /* ==================================================
            URL
         ================================================== */
-        if(
-            pushState &&
-            navigationId === smartofficeNavigationId
-        ){
+        if(pushState){
 
             const query =
                 new URLSearchParams(
                     params
                 ).toString();
 
-
             const hash =
                 query
                     ? `#${pageName}?${query}`
                     : `#${pageName}`;
 
-
             history.pushState(
                 {
                     page:
                         pageName,
-
                     params:
                         params
                 },
                 "",
                 hash
             );
-
         }
-
     }
     catch(error){
 
@@ -592,95 +428,49 @@ export async function smartofficeNavigate(
             error
         );
 
-
-        /*
-         * Jangan menimpa halaman baru dengan error
-         * dari navigasi lama.
-         */
-        if(
-            navigationId !==
-            smartofficeNavigationId
-        ){
-
-            return;
-        }
-
-
         const app =
             document.getElementById(
                 "app"
             );
 
-
         if(app){
-
             app.innerHTML =
                 smartofficeGetErrorHtml(
                     pageName
                 );
-
         }
-
     }
     finally{
 
         /* ==================================================
            GLOBAL PAGE LOADING OFF
-
-           Hanya navigasi yang masih aktif yang boleh
-           mematikan global loading.
+           Login tidak memiliki global loading router.
         ================================================== */
         if(
-            navigationId ===
-            smartofficeNavigationId &&
             useGlobalLoading &&
             !globalLoadingHandled
         ){
 
             smartofficeHideGlobalLoading();
-
         }
 
+        /* ==================================================
+           ROUTER SIAP UNTUK NAVIGASI BERIKUTNYA
+        ================================================== */
+        smartofficeIsNavigating =
+            false;
     }
 }
 
 
 /* ======================================================
    RESET NAVIGATION STATE
-
    Digunakan saat logout / reset aplikasi
 ====================================================== */
 export function smartofficeResetNavigationState(){
 
-    /*
-     * Membuat semua navigasi yang sedang berjalan
-     * dianggap stale.
-     */
-    smartofficeNavigationId++;
-
-
-    /*
-     * Batalkan request HTML aktif.
-     */
-    if(smartofficePageHtmlController){
-
-        try{
-
-            smartofficePageHtmlController.abort();
-
-        }
-        catch(error){
-
-            console.warn(
-                "[Router] Reset navigation abort gagal:",
-                error
-            );
-
-        }
-
-        smartofficePageHtmlController =
-            null;
-    }
+    smartofficeIsNavigating =
+        false;
 }
 
 
@@ -688,16 +478,12 @@ export function smartofficeResetNavigationState(){
    DESTROY CURRENT PAGE
 ====================================================== */
 export async function smartofficeDestroyCurrentPage(){
-
     if(
         typeof smartofficeCurrentDestroy ===
         "function"
     ){
-
         await smartofficeCurrentDestroy();
-
     }
-
 
     smartofficeCurrentDestroy =
         null;
@@ -708,166 +494,59 @@ export async function smartofficeDestroyCurrentPage(){
    GET PAGE HTML
 ====================================================== */
 async function smartofficeGetPageHtml(
-    pageName,
-    navigationId
+    pageName
 ){
-
-    /*
-     * Gunakan cache kalau HTML sudah pernah dimuat.
-     */
     if(
         smartofficePageCache.has(
             pageName
         )
     ){
-
         return smartofficePageCache.get(
             pageName
         );
-
     }
 
-
-    /*
-     * Controller khusus untuk fetch HTML.
-     *
-     * Ini terpisah dari api.js karena request HTML
-     * router bukan request API GAS.
-     */
-    const controller =
-        new AbortController();
-
-
-    smartofficePageHtmlController =
-        controller;
-
-
-    const url =
-        `/pages/${pageName}/${pageName}.html`;
-
-
     const maxAttempts = 2;
-
     let lastError = null;
-
 
     for(
         let attempt = 1;
         attempt <= maxAttempts;
         attempt++
     ){
-
-        /*
-         * Cek apakah navigasi masih aktif.
-         */
-        if(
-            navigationId !==
-            smartofficeNavigationId
-        ){
-
-            return "";
-
-        }
-
-
         try{
-
             const response =
                 await fetch(
-                    url,
+                    `/pages/${pageName}/${pageName}.html`,
                     {
-                        cache: "no-store",
-                        signal: controller.signal
+                        cache: "no-store"
                     }
                 );
 
-
             if(!response.ok){
-
                 throw new Error(
                     `Gagal memuat halaman "${pageName}" (status ${response.status})`
                 );
-
             }
-
-
             const html =
                 await response.text();
-
-
-            /*
-             * Setelah fetch selesai, cek lagi.
-             */
-            if(
-                navigationId !==
-                smartofficeNavigationId
-            ){
-
-                return "";
-
-            }
-
 
             smartofficePageCache.set(
                 pageName,
                 html
             );
-
-
             return html;
-
         }
         catch(error){
-
-            /*
-             * Abort adalah kondisi normal ketika user
-             * pindah halaman dengan cepat.
-             */
-            if(
-                error?.name === "AbortError"
-            ){
-
-                console.log(
-                    "[Router] HTML request dibatalkan:",
-                    pageName,
-                    navigationId
-                );
-
-                return "";
-
-            }
-
-
-            lastError =
-                error;
-
-
-            /*
-             * Jangan retry kalau navigasi sudah stale.
-             */
-            if(
-                navigationId !==
-                smartofficeNavigationId
-            ){
-
-                return "";
-
-            }
-
-
+            lastError = error;
             console.warn(
                 `SMARTOFFICE LOAD PAGE FAILED: ${pageName} - attempt ${attempt}`,
                 error
             );
 
-
-            /*
-             * Retry maksimal satu kali.
-             */
             if(
                 attempt < maxAttempts
             ){
-
                 await new Promise(
                     resolve =>
                         setTimeout(
@@ -875,26 +554,9 @@ async function smartofficeGetPageHtml(
                             500
                         )
                 );
-
-
-                /*
-                 * Cek kembali setelah delay retry.
-                 */
-                if(
-                    navigationId !==
-                    smartofficeNavigationId
-                ){
-
-                    return "";
-
-                }
-
             }
-
         }
-
     }
-
 
     throw (
         lastError ||
@@ -911,17 +573,14 @@ async function smartofficeGetPageHtml(
 function smartofficeGetErrorHtml(
     pageName
 ){
-
     return `
         <div style="padding: 40px; text-align: center;">
             <p style="font-weight: bold; margin-bottom: 8px;">
                 Gagal memuat halaman "${pageName}"
             </p>
-
             <p style="margin-bottom: 16px; color: #666;">
                 Periksa koneksi internet kamu, lalu coba lagi.
             </p>
-
             <button
                 onclick="window.smartofficeLoadPage('${pageName}')"
                 style="padding: 8px 16px; cursor: pointer;"
@@ -939,14 +598,12 @@ function smartofficeGetErrorHtml(
 function smartofficeIsChunkLoadError(
     error
 ){
-
     const message =
         String(
             error?.message ||
             error ||
             ""
         ).toLowerCase();
-
 
     return (
         message.includes(
@@ -975,20 +632,15 @@ async function smartofficeLoadModule(
     loader,
     pageName
 ){
-
     try{
-
         return await loader();
-
     }
     catch(error){
-
         console.warn(
             "SMARTOFFICE MODULE LOAD FAILED:",
             pageName,
             error
         );
-
 
         /* ==============================================
            BUKAN ERROR CHUNK
@@ -998,11 +650,8 @@ async function smartofficeLoadModule(
                 error
             )
         ){
-
             throw error;
-
         }
-
 
         /* ==============================================
            CEK APAKAH SUDAH PERNAH RECOVERY
@@ -1010,23 +659,18 @@ async function smartofficeLoadModule(
         const recoveryKey =
             "smartoffice_chunk_recovery";
 
-
         const alreadyRecovered =
             sessionStorage.getItem(
                 recoveryKey
             );
 
-
         if(alreadyRecovered){
-
             console.error(
                 "SMARTOFFICE CHUNK RECOVERY SUDAH PERNAH DILAKUKAN."
             );
 
             throw error;
-
         }
-
 
         /* ==============================================
            TANDAI RECOVERY
@@ -1036,19 +680,15 @@ async function smartofficeLoadModule(
             "1"
         );
 
-
         /* ==============================================
            BERSIHKAN CACHE PWA
         ============================================== */
         if(
             "caches" in window
         ){
-
             try{
-
                 const cacheNames =
                     await caches.keys();
-
 
                 await Promise.all(
                     cacheNames.map(
@@ -1058,19 +698,14 @@ async function smartofficeLoadModule(
                             )
                     )
                 );
-
             }
             catch(cacheError){
-
                 console.warn(
                     "SMARTOFFICE CACHE CLEAR FAILED:",
                     cacheError
                 );
-
             }
-
         }
-
 
         /* ==============================================
            UPDATE SERVICE WORKER
@@ -1078,14 +713,11 @@ async function smartofficeLoadModule(
         if(
             "serviceWorker" in navigator
         ){
-
             try{
-
                 const registrations =
                     await navigator
                         .serviceWorker
                         .getRegistrations();
-
 
                 await Promise.all(
                     registrations.map(
@@ -1093,19 +725,14 @@ async function smartofficeLoadModule(
                             registration.update()
                     )
                 );
-
             }
             catch(swError){
-
                 console.warn(
                     "SMARTOFFICE SERVICE WORKER UPDATE FAILED:",
                     swError
                 );
-
             }
-
-        }
-
+       }
 
         /* ==============================================
            RELOAD SATU KALI
@@ -1114,14 +741,11 @@ async function smartofficeLoadModule(
             `SMARTOFFICE CHUNK ERROR: ${pageName}. Reload aplikasi untuk mengambil asset terbaru.`
         );
 
-
         window.location.reload();
-
 
         return new Promise(
             () => {}
         );
-
     }
 }
 
