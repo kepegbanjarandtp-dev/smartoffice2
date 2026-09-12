@@ -45,6 +45,11 @@ import {
 let smartofficeDashboardMenuHandlers = {};
 let smartofficeDashboardDestroyed = false;
 
+/* ======================================================
+   LIFECYCLE
+====================================================== */
+let smartofficeDashboardPageInstance = 0;
+
 
 /* ======================================================
    1. LOAD PAGE
@@ -54,6 +59,11 @@ export async function smartofficeLoadPage(){
     /* =========================
        RESET LIFECYCLE
     ========================= */
+    smartofficeDashboardPageInstance++;
+
+    const pageInstance =
+        smartofficeDashboardPageInstance;
+
     smartofficeDashboardDestroyed =
         false;
 
@@ -138,7 +148,8 @@ export async function smartofficeLoadPage(){
        LOAD APPROVAL BADGE
     ========================= */
     smartofficeLoadApprovalBadge(
-        sessionData
+        sessionData,
+        pageInstance
     ).catch(
         error => {
             console.warn(
@@ -169,6 +180,11 @@ export async function smartofficeLoadPage(){
 ====================================================== */
 export async function smartofficeDestroyPage(){
 
+    /* =========================
+       INVALIDATE ASYNC REQUEST
+    ========================= */
+    smartofficeDashboardPageInstance++;
+    
     /* =========================
        MARK PAGE DESTROYED
     ========================= */
@@ -431,7 +447,8 @@ function smartofficeFilterMenuByRole(
    4. LOAD APPROVAL BADGE
 ====================================================== */
 async function smartofficeLoadApprovalBadge(
-    sessionData
+    sessionData,
+    pageInstance
 ){
 
     /* =========================
@@ -466,6 +483,14 @@ async function smartofficeLoadApprovalBadge(
 
             ]);
 
+            if(
+                pageInstance !==
+                smartofficeDashboardPageInstance ||
+                smartofficeDashboardDestroyed
+            ){
+                return;
+            }
+
             total =
                 Number(totalCuti || 0) +
                 (
@@ -476,7 +501,7 @@ async function smartofficeLoadApprovalBadge(
         }
 
         /* =========================
-           ADMIN
+           ADMIN/SUPERADMIN
            DOKUMEN SAJA
         ========================= */
         if(
@@ -485,6 +510,14 @@ async function smartofficeLoadApprovalBadge(
         ){
             const dokumen =
                 await smartofficeGetDokumenVerifikasi();
+
+            if(
+                pageInstance !==
+                smartofficeDashboardPageInstance ||
+                smartofficeDashboardDestroyed
+            ){
+                return;
+            }
 
             total =
                 Array.isArray(dokumen)
@@ -503,11 +536,26 @@ async function smartofficeLoadApprovalBadge(
                 await smartofficeGetTotalPendingApproval(
                     sessionData.nip
                 );
+            if(
+                pageInstance !==
+                smartofficeDashboardPageInstance ||
+                smartofficeDashboardDestroyed
+            ){
+                return;
+            }
         }
 
         /* =========================
            UPDATE BADGE
         ========================= */
+        if(
+            pageInstance !==
+            smartofficeDashboardPageInstance ||
+            smartofficeDashboardDestroyed
+        ){
+            return;
+        }
+
         smartofficeUpdateApprovalBadge(
             total
         );

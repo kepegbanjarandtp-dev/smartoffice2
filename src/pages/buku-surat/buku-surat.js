@@ -97,6 +97,16 @@ let smartofficeSuratKeluarStatusHandler = null;
 let smartofficeSuratKeluarKlasifikasiOutsideClickHandler = null;
 
 
+/* ======================================================
+   BUKU SURAT LIFECYCLE
+====================================================== */
+let smartofficeBukuSuratPageInstance = 0;
+
+let smartofficeBukuSuratDisposisiTimer = null;
+let smartofficeBukuSuratInlineTimer = null;
+let smartofficeBukuSuratDisposisiOutsideClickHandler = null;
+
+
 /* ============================================================================
    LIFECYCLE
 ============================================================================ */
@@ -106,18 +116,29 @@ let smartofficeSuratKeluarKlasifikasiOutsideClickHandler = null;
 ====================================================== */
 export async function smartofficeLoadPage(){
 
-    /* CHECK LOGIN SESSION */
+    /* ==================================================
+       NEW PAGE INSTANCE
+    ================================================== */
+    smartofficeBukuSuratPageInstance++;
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    /* ==================================================
+       CHECK LOGIN SESSION
+    ================================================== */
     if(
         !smartofficeCheckSession()
     ){
         return;
     }
 
-    /* GET SESSION */
+    /* ==================================================
+       GET SESSION
+    ================================================== */
     const sessionData =
         smartofficeGetSession();
 
-    /* SESSION NOT FOUND */
     if(
         !sessionData
     ){
@@ -125,14 +146,16 @@ export async function smartofficeLoadPage(){
         return;
     }
 
-    /* MOBILE NAVBAR */
+    /* ==================================================
+       MOBILE NAVBAR
+    ================================================== */
     smartofficeRenderMobileNavbar(
         sessionData.role,
         "buku-surat"
     );
 
     /* ==================================================
-       INIT TAB TERLEBIH DAHULU
+       INIT TAB
     ================================================== */
     smartofficeInitBukuSuratTab();
 
@@ -147,12 +170,26 @@ export async function smartofficeLoadPage(){
     smartofficeInitAksesSuratMasuk();
 
     /* ==================================================
-       LOAD DATA SURAT MASUK + SURAT KELUAR
+       LOAD SURAT MASUK + SURAT KELUAR
     ================================================== */
     await Promise.all([
-        smartofficeLoadDataSuratMasuk(),
-        loadDataSuratKeluar()
+        smartofficeLoadDataSuratMasuk(
+            pageInstance
+        ),
+        loadDataSuratKeluar(
+            pageInstance
+        )
     ]);
+
+    /* ==================================================
+       CEK HALAMAN MASIH AKTIF
+    ================================================== */
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
 }
 
 
@@ -160,6 +197,54 @@ export async function smartofficeLoadPage(){
    DESTROY PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
+
+    /* ==================================================
+       INVALIDATE PAGE
+    ================================================== */
+    smartofficeBukuSuratPageInstance++;
+
+    /* ==================================================
+       CLEAR TIMER DISPOSISI
+    ================================================== */
+    if(
+        smartofficeBukuSuratDisposisiTimer
+    ){
+        clearTimeout(
+            smartofficeBukuSuratDisposisiTimer
+        );
+
+        smartofficeBukuSuratDisposisiTimer =
+            null;
+    }
+
+    /* ==================================================
+       CLEAR TIMER INLINE
+    ================================================== */
+    if(
+        smartofficeBukuSuratInlineTimer
+    ){
+        clearTimeout(
+            smartofficeBukuSuratInlineTimer
+        );
+
+        smartofficeBukuSuratInlineTimer =
+            null;
+    }
+
+    /* ==================================================
+       CLEAR DISPOSISI DROPDOWN
+    ================================================== */
+    if(
+        smartofficeBukuSuratDisposisiOutsideClickHandler
+    ){
+        document.removeEventListener(
+            "click",
+            smartofficeBukuSuratDisposisiOutsideClickHandler
+        );
+
+        smartofficeBukuSuratDisposisiOutsideClickHandler =
+            null;
+    }
 
     const tabSuratMasuk =
         document.getElementById(
@@ -515,7 +600,10 @@ function smartofficeInitBukuSuratTab(){
 /* ======================================================
    LOAD DATA SURAT MASUK
 ====================================================== */
-async function smartofficeLoadDataSuratMasuk(){
+async function smartofficeLoadDataSuratMasuk(
+    pageInstance =
+        smartofficeBukuSuratPageInstance
+){
     try{
         /* =========================
            LOADING CARD CONTENT
@@ -548,6 +636,13 @@ async function smartofficeLoadDataSuratMasuk(){
         ========================= */
         const res =
             await smartofficeGetAllSuratMasuk();
+        
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
 
         suratMasukAllData =
             res || [];
@@ -556,6 +651,13 @@ async function smartofficeLoadDataSuratMasuk(){
             [
                 ...suratMasukAllData
             ];
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
 
         /* RESET VIEW STATE */
         resetSuratMasukViewState();
@@ -573,6 +675,14 @@ async function smartofficeLoadDataSuratMasuk(){
             true;
     }
     catch(error){
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         console.error(
             "Load Data Surat Masuk Error:",
             error
@@ -723,27 +833,66 @@ function smartofficeInitBukuSuratRefreshButton(){
 
     smartofficeBukuSuratRefreshHandler =
         async function(){
-            if(
-                button.disabled
-            ){
+
+            if(button.disabled){
                 return;
             }
 
-            button.disabled =
-                true;
+            const pageInstance =
+                smartofficeBukuSuratPageInstance;
+
+            button.disabled = true;
 
             try{
-                await smartofficeLoadDataSuratMasuk();
+
+                await Promise.all([
+                    smartofficeLoadDataSuratMasuk(
+                        pageInstance
+                    ),
+
+                    loadDataSuratKeluar(
+                        pageInstance
+                    )
+                ]);
+
+                if(
+                    pageInstance !==
+                    smartofficeBukuSuratPageInstance
+                ){
+                    return;
+                }
+
             }
             catch(error){
+
+                if(
+                    pageInstance !==
+                    smartofficeBukuSuratPageInstance
+                ){
+                    return;
+                }
+
                 console.error(
                     "Refresh Buku Surat Error:",
                     error
                 );
-            }
 
-            button.disabled =
-                false;
+                smartofficeShowToast(
+                    error.message ||
+                    "Gagal memperbarui Buku Surat.",
+                    "error"
+                );
+
+            }
+            finally{
+
+                if(
+                    pageInstance ===
+                    smartofficeBukuSuratPageInstance
+                ){
+                    button.disabled = false;
+                }
+            }
         };
 
     button.addEventListener(
@@ -1468,6 +1617,75 @@ function smartofficeRenderSuratMasuk(
                 `;
             }
 
+            /* DELETE SURAT MASUK */
+            if(
+                canManage
+            ){
+                actionHtml += `
+                    <button
+                        type="button"
+                        class="
+                            smartoffice-suratmasuk-action
+                            delete
+                        "
+                        onclick="
+                            smartofficeDeleteSuratMasukUI(
+                                ${item.rowIndex}
+                            )
+                        "
+                        title="Hapus Surat"
+                        aria-label="Hapus Surat"
+                    >
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <polyline
+                                points="3 6 5 6 21 6"
+                            ></polyline>
+
+                            <path
+                                d="
+                                    M8 6V4
+                                    a1 1 0 0 1 1-1
+                                    h6
+                                    a1 1 0 0 1 1 1
+                                    v2
+                                "
+                            ></path>
+
+                            <path
+                                d="
+                                    M19 6v14
+                                    a1 1 0 0 1-1 1
+                                    H6
+                                    a1 1 0 0 1-1-1
+                                    V6
+                                "
+                            ></path>
+
+                            <line
+                                x1="10"
+                                y1="11"
+                                x2="10"
+                                y2="17"
+                            ></line>
+
+                            <line
+                                x1="14"
+                                y1="11"
+                                x2="14"
+                                y2="17"
+                            ></line>
+                        </svg>
+                    </button>
+                `;
+            }
+
             /* ==========================================
                RENDER CARD
             ========================================== */
@@ -1908,9 +2126,11 @@ function smartofficeCloseBukaLockSuratMasukModal(){
 
 
 /* ======================================================
-   KONFIRMASI BUKA LOCK
+   KONFIRMASI BUKA LOCK SURAT MASUK
+   LIFECYCLE SAFE
 ====================================================== */
 async function smartofficeConfirmBukaLockSuratMasuk(){
+
     const modal =
         document.getElementById(
             "smartofficeSuratMasukLockModal"
@@ -1918,6 +2138,9 @@ async function smartofficeConfirmBukaLockSuratMasuk(){
     if(!modal){
         return;
     }
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
 
     const rowIndex =
         Number(
@@ -1951,14 +2174,24 @@ async function smartofficeConfirmBukaLockSuratMasuk(){
             role
         );
 
-        /* ==================================================
-           RELOAD DATA
-        ================================================== */
-        await smartofficeLoadDataSuratMasuk();
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
 
-        /* ==================================================
-           KEMBALIKAN FILTER
-        ================================================== */
+        await smartofficeLoadDataSuratMasuk(
+            pageInstance
+        );
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         const tanggal =
             document.getElementById(
                 "smartofficeSuratMasukFilterTanggal"
@@ -1989,16 +2222,20 @@ async function smartofficeConfirmBukaLockSuratMasuk(){
                 filterBulan;
         }
 
-        /* TERAPKAN FILTER */
         applyFilterMasuk();
-
-        /* TOAST SUKSES */
         smartofficeShowToast(
             "Surat Masuk berhasil dibuka menjadi DRAFT.",
             "success"
         );
     }
     catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         console.error(
             "Buka Lock Surat Masuk Error:",
             error
@@ -2011,6 +2248,7 @@ async function smartofficeConfirmBukaLockSuratMasuk(){
         );
     }
     finally{
+
         smartofficeHideGlobalLoading();
     }
 }
@@ -2686,8 +2924,16 @@ async function smartofficeRenderFormSuratMasuk(
    CUSTOM MULTI SELECT
 ===================================================== */
 async function renderDisposisiDropdown(
-    data = null
+    data = null,
+    pageInstance = smartofficeBukuSuratPageInstance
 ){
+
+    if(
+        pageInstance !== smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
     const container =
         document.getElementById(
             "smartofficeSuratMasukDisposisi"
@@ -2735,6 +2981,7 @@ async function renderDisposisiDropdown(
         container.querySelector(
             ".smartoffice-disposisi-search-input"
         );
+
     if(
         !values ||
         !options ||
@@ -2772,6 +3019,12 @@ async function renderDisposisiDropdown(
         const result =
             await smartofficeGetMasterSurat();
 
+        if(
+            pageInstance !== smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         const tujuan =
             Array.isArray(
                 result?.tujuan
@@ -2789,8 +3042,8 @@ async function renderDisposisiDropdown(
                 String(
                     keyword || ""
                 )
-                .trim()
-                .toLowerCase();
+                    .trim()
+                    .toLowerCase();
 
             const filtered =
                 tujuan.filter(
@@ -2798,11 +3051,12 @@ async function renderDisposisiDropdown(
                         String(
                             nama || ""
                         )
-                        .toLowerCase()
-                        .includes(
-                            search
-                        )
+                            .toLowerCase()
+                            .includes(
+                                search
+                            )
                 );
+
             if(
                 !filtered.length
             ){
@@ -2815,6 +3069,7 @@ async function renderDisposisiDropdown(
                         Tidak ada nama ditemukan
                     </div>
                 `;
+
                 return;
             }
 
@@ -2831,6 +3086,7 @@ async function renderDisposisiDropdown(
                                 .includes(
                                     value
                                 );
+
                         return `
                             <div
                                 class="
@@ -2889,6 +3145,7 @@ async function renderDisposisiDropdown(
                         option.addEventListener(
                             "click",
                             function(){
+
                                 const value =
                                     this.dataset.value;
 
@@ -2900,12 +3157,14 @@ async function renderDisposisiDropdown(
                                 if(
                                     index === -1
                                 ){
+
                                     smartofficeSuratMasukDisposisiSelected
                                         .push(
                                             value
                                         );
                                 }
                                 else{
+
                                     smartofficeSuratMasukDisposisiSelected
                                         .splice(
                                             index,
@@ -2927,6 +3186,7 @@ async function renderDisposisiDropdown(
            RENDER SELECTED CHIP
         ================================================== */
         function renderSelected(){
+
             values.innerHTML = "";
 
             if(
@@ -2997,6 +3257,7 @@ async function renderDisposisiDropdown(
                                     }
 
                                     renderSelected();
+
                                     renderOptions(
                                         searchInput?.value || ""
                                     );
@@ -3009,8 +3270,20 @@ async function renderDisposisiDropdown(
                     }
                 );
         }
-        document.addEventListener(
-            "click",
+
+        /* ==================================================
+           OUTSIDE CLICK
+        ================================================== */
+        if(
+            smartofficeBukuSuratDisposisiOutsideClickHandler
+        ){
+            document.removeEventListener(
+                "click",
+                smartofficeBukuSuratDisposisiOutsideClickHandler
+            );
+        }
+
+        smartofficeBukuSuratDisposisiOutsideClickHandler =
             function(){
                 container.classList.remove(
                     "open"
@@ -3019,7 +3292,11 @@ async function renderDisposisiDropdown(
                 container.classList.remove(
                     "drop-up"
                 );
-            }
+            };
+
+        document.addEventListener(
+            "click",
+            smartofficeBukuSuratDisposisiOutsideClickHandler
         );
 
         /* ==================================================
@@ -3029,13 +3306,14 @@ async function renderDisposisiDropdown(
             "click",
             function(event){
                 event.stopPropagation();
+
                 const isOpen =
                     container.classList.contains(
                         "open"
                     );
 
                 /* ==========================================
-                TUTUP
+                   TUTUP
                 ========================================== */
                 if(isOpen){
                     container.classList.remove(
@@ -3050,66 +3328,87 @@ async function renderDisposisiDropdown(
                 }
 
                 /* ==========================================
-                BUKA
+                   BUKA
                 ========================================== */
                 container.classList.add(
                     "open"
                 );
 
                 /* ==========================================
-                CEK RUANG DI BAWAH
+                   CEK RUANG DI BAWAH
                 ========================================== */
-                setTimeout(
-                    function(){
-                        const rect =
-                            container.getBoundingClientRect();
+                if(
+                    smartofficeBukuSuratDisposisiTimer
+                ){
+                    clearTimeout(
+                        smartofficeBukuSuratDisposisiTimer
+                    );
+                }
 
-                        const dropdown =
-                            container.querySelector(
-                                ".smartoffice-disposisi-dropdown"
-                            );
-                        if(!dropdown){
-                            return;
-                        }
+                smartofficeBukuSuratDisposisiTimer =
+                    setTimeout(
+                        function(){
 
-                        const dropdownHeight =
-                            Math.min(
-                                dropdown.scrollHeight,
-                                270
-                            );
+                            smartofficeBukuSuratDisposisiTimer = null;
 
-                        const spaceBelow =
-                            window.innerHeight -
-                            rect.bottom;
+                            if(
+                                pageInstance !==
+                                smartofficeBukuSuratPageInstance
+                            ){
+                                return;
+                            }
 
-                        const spaceAbove =
-                            rect.top;
+                            const rect =
+                                container.getBoundingClientRect();
 
-                        /* ======================================
-                        JIKA BAWAH TIDAK CUKUP
-                        BUKA KE ATAS
-                        ====================================== */
-                        if(
-                            spaceBelow <
-                                dropdownHeight
-                            &&
-                            spaceAbove >
-                                spaceBelow
-                        ){
-                            container.classList.add(
-                                "drop-up"
-                            );
-                        }
-                        else{
-                            container.classList.remove(
-                                "drop-up"
-                            );
-                        }
+                            const dropdown =
+                                container.querySelector(
+                                    ".smartoffice-disposisi-dropdown"
+                                );
 
-                        searchInput?.focus();
-                    },
-                    0
-                );
+                            if(!dropdown){
+                                return;
+                            }
+
+                            const dropdownHeight =
+                                Math.min(
+                                    dropdown.scrollHeight,
+                                    270
+                                );
+
+                            const spaceBelow =
+                                window.innerHeight -
+                                rect.bottom;
+
+                            const spaceAbove =
+                                rect.top;
+
+                            /* ======================================
+                               JIKA BAWAH TIDAK CUKUP
+                               BUKA KE ATAS
+                            ====================================== */
+                            if(
+                                spaceBelow <
+                                    dropdownHeight
+                                &&
+                                spaceAbove >
+                                    spaceBelow
+                            ){
+                                container.classList.add(
+                                    "drop-up"
+                                );
+                            }
+                            else{
+                                container.classList.remove(
+                                    "drop-up"
+                                );
+                            }
+
+                            searchInput?.focus();
+
+                        },
+                        0
+                    );
             }
         );
 
@@ -3119,9 +3418,11 @@ async function renderDisposisiDropdown(
         if(
             searchInput
         ){
+
             searchInput.addEventListener(
                 "input",
                 function(){
+
                     renderOptions(
                         this.value
                     );
@@ -3136,6 +3437,13 @@ async function renderDisposisiDropdown(
         renderOptions();
     }
     catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         console.error(
             "Render Disposisi Error:",
             error
@@ -3288,7 +3596,7 @@ function smartofficeFormatFileSize(
 function smartofficeValidateSuratMasuk(){
     const fields = [
         {
-            id: "smartofficeSuratMasukTanggalTerima",
+            id: "smartofficeSuratMasukTglTerima",
             label: "Tanggal Terima"
         },
         {
@@ -3296,7 +3604,7 @@ function smartofficeValidateSuratMasuk(){
             label: "Nomor Surat"
         },
         {
-            id: "smartofficeSuratMasukTanggalSurat",
+            id: "smartofficeSuratMasukTglSurat",
             label: "Tanggal Surat"
         },
         {
@@ -3387,6 +3695,10 @@ function smartofficeValidateSuratMasuk(){
    SUBMIT SURAT MASUK
 ====================================================== */
 export async function smartofficeSubmitSuratMasuk(){
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
     if(isSubmittingMasuk){
         return;
     }
@@ -3587,6 +3899,13 @@ export async function smartofficeSubmitSuratMasuk(){
             payload
         );
 
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         /* ==================================================
            BERHASIL
         ================================================== */
@@ -3622,7 +3941,16 @@ export async function smartofficeSubmitSuratMasuk(){
         /* ==================================================
            LOAD ULANG
         ================================================== */
-        await smartofficeLoadDataSuratMasuk();
+        await smartofficeLoadDataSuratMasuk(
+            pageInstance
+        );
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
     }
     catch(error){
         console.error(
@@ -3685,15 +4013,59 @@ function resetSubmitMasukUI() {
 /* =====================================================
    HELPER NOTIF SURAT MASUK
 ===================================================== */
-function showInlineSuratMasuk() {
+function showInlineSuratMasuk(){
 
-  const el = document.getElementById("inlineSuratMasuk");
+    const el =
+        document.getElementById(
+            "inlineSuratMasuk"
+        );
 
-  if (!el) return;
-  el.classList.remove("hidden");
-  setTimeout(() => {
-    el.classList.add("hidden");
-  }, 1500);
+    if(!el){
+        return;
+    }
+
+    if(
+        smartofficeBukuSuratInlineTimer
+    ){
+        clearTimeout(
+            smartofficeBukuSuratInlineTimer
+        );
+    }
+
+    el.classList.remove(
+        "hidden"
+    );
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    smartofficeBukuSuratInlineTimer =
+        setTimeout(
+            function(){
+
+                smartofficeBukuSuratInlineTimer =
+                    null;
+
+                if(
+                    pageInstance !==
+                    smartofficeBukuSuratPageInstance
+                ){
+                    return;
+                }
+
+                if(
+                    !el.isConnected
+                ){
+                    return;
+                }
+
+                el.classList.add(
+                    "hidden"
+                );
+
+            },
+            1500
+        );
 }
 
 function hideInlineSuratMasuk() {
@@ -3706,6 +4078,9 @@ function hideInlineSuratMasuk() {
    OPEN EDIT MODAL SURAT MASUK
 ===================================================== */
 export async function openEditModalMasuk(rowIndex) {
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
 
     /* ===============================
        RESET UI
@@ -3743,6 +4118,13 @@ export async function openEditModalMasuk(rowIndex) {
         item
     );
 
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
     /* ===============================
        BUKA MODAL
     =============================== */
@@ -3777,7 +4159,10 @@ export async function openEditModalMasuk(rowIndex) {
 /* =====================================================
    LOAD DATA SURAT KELUAR
 ===================================================== */
-async function loadDataSuratKeluar(){
+async function loadDataSuratKeluar(
+    pageInstance =
+        smartofficeBukuSuratPageInstance
+){
 
     const list =
         document.getElementById(
@@ -3810,6 +4195,13 @@ async function loadDataSuratKeluar(){
         const res =
             await smartofficeGetAllSuratKeluar();
 
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         suratKeluarAllData =
             Array.isArray(res)
                 ? res
@@ -3832,11 +4224,26 @@ async function loadDataSuratKeluar(){
         initAutoKodeSurat();
 
         /* RENDER HASIL AWAL */
-        applyFilterSuratKeluar();        
+        applyFilterSuratKeluar();
+        
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
 
         suratKeluarLoaded = true;
 
     }catch(error){
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         console.error(
             "Load Data Surat Keluar Error:",
             error
@@ -3860,16 +4267,74 @@ async function loadDataSuratKeluar(){
 
 /* =====================================================
    MASTER DATA (KODE SURAT, DROPDOWN)
+   CACHE PER HALAMAN
 ===================================================== */
-async function loadMaster(callback){
+async function loadMaster(
+    callback,
+    pageInstance =
+        smartofficeBukuSuratPageInstance
+){
+
+    /* ==================================================
+       CEK HALAMAN MASIH AKTIF
+    ================================================== */
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
+    /* ==================================================
+       JIKA MASTER SUDAH ADA
+       TIDAK PERLU GET ULANG
+    ================================================== */
+    if(
+        masterSurat &&
+        Array.isArray(
+            masterSurat.klasifikasi
+        )
+    ){
+
+        renderMasterDropdown();
+
+        if(
+            typeof callback ===
+            "function"
+        ){
+            callback();
+        }
+
+        return;
+    }
 
     try{
+
+        /* ==================================================
+           GET MASTER DARI GAS
+        ================================================== */
         const res =
             await smartofficeGetMasterSurat();
 
+        /* ==================================================
+           CEK STALE SETELAH GET
+        ================================================== */
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        /* ==================================================
+           SIMPAN MASTER
+        ================================================== */
         masterSurat =
             res || {};
 
+        /* ==================================================
+           BUAT KODE MAP
+        ================================================== */
         masterSurat.kodeMap =
             {};
 
@@ -3878,24 +4343,54 @@ async function loadMaster(callback){
                 masterSurat.klasifikasi
             )
         ){
+
             masterSurat.klasifikasi.forEach(
-                k => {
+                item => {
+
                     masterSurat.kodeMap[
-                        k.klasifikasi
-                    ] = k.kode;
+                        item.klasifikasi
+                    ] =
+                        item.kode;
+
                 }
             );
         }
 
+        /* ==================================================
+           CEK LAGI SEBELUM RENDER
+        ================================================== */
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        /* ==================================================
+           RENDER MASTER
+        ================================================== */
         renderMasterDropdown();
 
         if(
-            typeof callback === "function"
+            typeof callback ===
+            "function"
         ){
             callback();
         }
 
-    }catch(error){
+    }
+    catch(error){
+
+        /* ==================================================
+           JANGAN TAMPILKAN ERROR UNTUK HALAMAN STALE
+        ================================================== */
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         console.error(
             "Load Master Surat Error:",
             error
@@ -4209,32 +4704,52 @@ function initBulanSuratKeluar(){
 
 /* ======================================================
    INIT AUTO KODE SURAT
+   KODE SUDAH DIISI OLEH CUSTOM KLASIFIKASI
 ====================================================== */
 function initAutoKodeSurat(){
 
     const klasifikasi =
-        document.getElementById("klasifikasi");
+        document.getElementById(
+            "smartofficeSuratKeluarKlasifikasi"
+        );
 
-    if(!klasifikasi || klasifikasi.dataset.kodeReady){
+    const kodeField =
+        document.getElementById(
+            "smartofficeSuratKeluarKodeSurat"
+        );
+
+    if(
+        !klasifikasi ||
+        !kodeField
+    ){
         return;
     }
 
-    klasifikasi.addEventListener("change", function(){
-        const selected =
-            this.value;
+    const selected =
+        String(
+            klasifikasi.value || ""
+        ).trim();
 
-        const kode =
-            masterSurat?.kodeMap?.[selected] || "";
+    if(
+        !selected
+    ){
+        return;
+    }
 
-        const kodeField =
-            document.getElementById("kodeSurat");
+    const kode =
+        masterSurat
+            ?.kodeMap
+            ?.[
+                selected
+            ] || "";
 
-        if(kodeField){
-            kodeField.value = kode;
-        }
-    });
-
-    klasifikasi.dataset.kodeReady = "1";
+    if(
+        kode &&
+        !kodeField.value
+    ){
+        kodeField.value =
+            kode;
+    }
 }
 
 
@@ -5387,6 +5902,19 @@ function smartofficeCloseFormSuratKeluar(){
 function smartofficeRenderMasterSuratKeluar(){
 
     /* ==================================================
+       CEK PAGE INSTANCE
+    ================================================== */
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
+    /* ==================================================
        KLASIFIKASI
     ================================================== */
     const klasifikasiOptions =
@@ -5431,15 +5959,6 @@ function smartofficeRenderMasterSuratKeluar(){
             option.className =
                 "smartoffice-suratkeluar-custom-select-option";
 
-            /*
-             * TAMPILKAN KLASIFIKASI SAJA
-             *
-             * Contoh:
-             * 800.1.4.1 - Usulan Tugas Belajar
-             *
-             * BUKAN:
-             * 800.1.4.1 - 800.1.4.1 - Usulan Tugas Belajar
-             */
             option.textContent =
                 item.klasifikasi || "";
 
@@ -5453,47 +5972,38 @@ function smartofficeRenderMasterSuratKeluar(){
                KETIKA KLASIFIKASI DIPILIH
             ================================================== */
             option.onclick = function(){
+
                 const value =
                     this.dataset.value || "";
 
                 const kode =
                     this.dataset.kode || "";
 
-                /*
-                 * SIMPAN KLASIFIKASI
-                 */
+                /* SIMPAN KLASIFIKASI */
                 if(klasifikasiHidden){
                     klasifikasiHidden.value =
                         value;
                 }
 
-                /*
-                 * TAMPILKAN KLASIFIKASI
-                 */
+                /* TAMPILKAN KLASIFIKASI */
                 if(klasifikasiText){
                     klasifikasiText.textContent =
                         value ||
                         "-- Pilih Klasifikasi --";
                 }
 
-                /*
-                 * OTOMATIS ISI KODE SURAT
-                 */
+                /* OTOMATIS ISI KODE SURAT */
                 if(kodeField){
                     kodeField.value =
                         kode;
                 }
 
-                /*
-                 * TUTUP DROPDOWN
-                 */
+                /* TUTUP DROPDOWN */
                 klasifikasiOptions.classList.remove(
                     "show"
                 );
 
-                /*
-                 * HAPUS ACTIVE DARI PILIHAN LAIN
-                 */
+                /* HAPUS ACTIVE */
                 klasifikasiOptions
                     .querySelectorAll(".active")
                     .forEach(el => {
@@ -5502,9 +6012,7 @@ function smartofficeRenderMasterSuratKeluar(){
                         );
                     });
 
-                /*
-                 * ACTIVE PADA PILIHAN TERPILIH
-                 */
+                /* ACTIVE PILIHAN */
                 this.classList.add(
                     "active"
                 );
@@ -5523,10 +6031,10 @@ function smartofficeRenderMasterSuratKeluar(){
         klasifikasiButton.onclick =
             function(event){
                 event.stopPropagation();
+
                 if(!klasifikasiOptions){
                     return;
                 }
-
                 klasifikasiOptions.classList.toggle(
                     "show"
                 );
@@ -5536,10 +6044,7 @@ function smartofficeRenderMasterSuratKeluar(){
     /* ==================================================
        TUTUP DROPDOWN JIKA KLIK DI LUAR
     ================================================== */
-    /*
-     * Hapus handler sebelumnya terlebih dahulu
-     * supaya tidak menumpuk setiap render form.
-     */
+    /* HAPUS HANDLER LAMA */
     if(
         smartofficeSuratKeluarKlasifikasiOutsideClickHandler
     ){
@@ -5549,8 +6054,20 @@ function smartofficeRenderMasterSuratKeluar(){
         );
     }
 
+    /* BUAT HANDLER BARU */
     smartofficeSuratKeluarKlasifikasiOutsideClickHandler =
         function(event){
+
+            /* ==============================================
+               JIKA SUDAH PINDAH HALAMAN
+            ============================================== */
+            if(
+                pageInstance !==
+                smartofficeBukuSuratPageInstance
+            ){
+                return;
+            }
+
             const dropdown =
                 document.getElementById(
                     "smartofficeSuratKeluarKlasifikasiDropdown"
@@ -5560,6 +6077,7 @@ function smartofficeRenderMasterSuratKeluar(){
                 dropdown &&
                 !dropdown.contains(event.target)
             ){
+
                 const options =
                     document.getElementById(
                         "smartofficeSuratKeluarKlasifikasiOptions"
@@ -5598,6 +6116,7 @@ function smartofficeRenderMasterSuratKeluar(){
             Array.isArray(masterSurat.tujuan)
         ){
             masterSurat.tujuan.forEach(item => {
+
                 const option =
                     document.createElement(
                         "option"
@@ -5636,6 +6155,7 @@ function smartofficeRenderMasterSuratKeluar(){
             Array.isArray(masterSurat.penandatangan)
         ){
             masterSurat.penandatangan.forEach(item => {
+
                 const option =
                     document.createElement(
                         "option"
@@ -5682,10 +6202,18 @@ function smartofficeSetSelectValue(id, value){
 
 /* ======================================================
    OPEN EDIT MODAL SURAT KELUAR
+   MASTER SIAP SEBELUM FORM DIBUKA
 ====================================================== */
-async function openEditModalByRowIndex(rowIndex){
+async function openEditModalByRowIndex(
+    rowIndex
+){
 
-    /* CARI DATA */
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    /* ==================================================
+       CARI DATA
+    ================================================== */
     const item =
         suratKeluarAllData.find(
             data =>
@@ -5702,115 +6230,164 @@ async function openEditModalByRowIndex(rowIndex){
         return;
     }
 
-    /* ==================================================
-       BUKA MODAL TERLEBIH DAHULU
-    ================================================== */
-    smartofficeRenderFormSuratKeluar(item);
+    smartofficeShowGlobalLoading(
+        "Menyiapkan form Surat Keluar..."
+    );
 
-    const modal =
-        document.getElementById(
-            "smartofficeSuratKeluarFormModal"
+    try{
+        /* ==================================================
+           MASTER HARUS SIAP DAHULU
+        ================================================== */
+        await loadMaster(
+            null,
+            pageInstance
         );
-
-    if(modal){
-        modal.classList.add("show");
-    }
-
-    /* ==================================================
-       LOAD MASTER JIKA BELUM ADA
-    ================================================== */
-    if(
-        !masterSurat ||
-        !Array.isArray(masterSurat.klasifikasi)
-    ){
-        try{
-            masterSurat =
-                await smartofficeGetMasterSurat();
-
-        }catch(error){
-            console.error(
-                "Gagal memuat master Surat Keluar:",
-                error
-            );
-
-            smartofficeShowToast(
-                "Master Surat Keluar gagal dimuat",
-                "error"
-            );
-
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
             return;
         }
-    }
 
-    /* ==================================================
-       RENDER MASTER
-    ================================================== */
-    smartofficeRenderMasterSuratKeluar();
+        /* ==================================================
+           RENDER FORM
+        ================================================== */
+        smartofficeRenderFormSuratKeluar(
+            item
+        );
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
 
-    /* ==================================================
-       ISI NILAI KLASIFIKASI
-    ================================================== */
-    const klasifikasiHidden =
-        document.getElementById(
-            "smartofficeSuratKeluarKlasifikasi"
+        /* ==================================================
+           ISI NILAI KLASIFIKASI
+        ================================================== */
+        const klasifikasiHidden =
+            document.getElementById(
+                "smartofficeSuratKeluarKlasifikasi"
+            );
+
+        const klasifikasiText =
+            document.getElementById(
+                "smartofficeSuratKeluarKlasifikasiText"
+            );
+
+        const kodeField =
+            document.getElementById(
+                "smartofficeSuratKeluarKodeSurat"
+            );
+
+        const klasifikasiMaster =
+            masterSurat?.klasifikasi?.find(
+                option =>
+                    String(
+                        option.klasifikasi || ""
+                    ).trim() ===
+                    String(
+                        item.klasifikasi || ""
+                    ).trim()
+            );
+
+        if(klasifikasiHidden){
+            klasifikasiHidden.value =
+                item.klasifikasi || "";
+        }
+
+        if(klasifikasiText){
+            klasifikasiText.textContent =
+                item.klasifikasi ||
+                "-- Pilih Klasifikasi --";
+        }
+
+        if(kodeField){
+            kodeField.value =
+                item.kode ||
+                klasifikasiMaster?.kode ||
+                "";
+        }
+
+        /* ==================================================
+           SELECT
+        ================================================== */
+        smartofficeSetSelectValue(
+            "smartofficeSuratKeluarSifat",
+            item.sifat
         );
 
-    const klasifikasiText =
-        document.getElementById(
-            "smartofficeSuratKeluarKlasifikasiText"
+        smartofficeSetSelectValue(
+            "smartofficeSuratKeluarTujuan",
+            item.tujuan
         );
 
-    const kodeField =
-        document.getElementById(
-            "smartofficeSuratKeluarKodeSurat"
+        smartofficeSetSelectValue(
+            "smartofficeSuratKeluarPenandatangan",
+            item.penandatangan
         );
 
-    const klasifikasiMaster =
-        masterSurat?.klasifikasi?.find(
-            option =>
-                String(
-                    option.klasifikasi || ""
-                ).trim() ===
-                String(
-                    item.klasifikasi || ""
-                ).trim()
+        /* ==================================================
+           FIELD TEKS
+        ================================================== */
+        const perihal =
+            document.getElementById(
+                "smartofficeSuratKeluarPerihal"
+            );
+
+        const keterangan =
+            document.getElementById(
+                "smartofficeSuratKeluarKeterangan"
+            );
+
+        if(perihal){
+            perihal.value =
+                item.perihal || "";
+        }
+
+        if(keterangan){
+            keterangan.value =
+                item.keterangan || "";
+        }
+
+        /* ==================================================
+           AUTO KODE
+        ================================================== */
+        initAutoKodeSurat();
+
+        /* ==================================================
+           BUKA MODAL
+        ================================================== */
+        const modal =
+            document.getElementById(
+                "smartofficeSuratKeluarFormModal"
+            );
+        if(modal){
+            modal.classList.add("show");
+        }
+    }
+    catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        console.error(
+            "Open Edit Surat Keluar Error:",
+            error
         );
 
-    if(klasifikasiHidden){
-        klasifikasiHidden.value =
-            item.klasifikasi || "";
+        smartofficeShowToast(
+            error.message ||
+            "Gagal membuka form Surat Keluar.",
+            "error"
+        );
     }
-
-    if(klasifikasiText){
-        klasifikasiText.textContent =
-            item.klasifikasi ||
-            "-- Pilih Klasifikasi --";
+    finally{
+        smartofficeHideGlobalLoading();
     }
-
-    if(kodeField){
-        kodeField.value =
-            item.kode ||
-            klasifikasiMaster?.kode ||
-            "";
-    }
-
-    /* ==================================================
-       ISI SELECT BIASA
-    ================================================== */
-    smartofficeSetSelectValue(
-        "smartofficeSuratKeluarSifat",
-        item.sifat
-    );
-
-    smartofficeSetSelectValue(
-        "smartofficeSuratKeluarTujuan",
-        item.tujuan
-    );
-
-    smartofficeSetSelectValue(
-        "smartofficeSuratKeluarPenandatangan",
-        item.penandatangan
-    );
 }
 
 
@@ -5933,141 +6510,147 @@ function smartofficeCloseBukaLockSuratKeluarModal(){
 }
 
 
-/* ====================================================== 
-   KONFIRMASI BUKA LOCK 
-====================================================== */ 
-async function smartofficeConfirmBukaLockSuratKeluar(){ 
- 
-    const modal = 
-        document.getElementById( 
-            "smartofficeSuratKeluarLockModal" 
-        ); 
- 
-    if(!modal){ 
-        return; 
-    } 
- 
-    const rowIndex = 
-        Number( 
-            modal.dataset.rowIndex 
-        ); 
- 
-    const filterTanggal = 
-        modal.dataset.filterTanggal || ""; 
- 
-    const filterSearch = 
-        modal.dataset.filterSearch || ""; 
- 
-    const filterBulan = 
-        modal.dataset.filterBulan || ""; 
- 
-    const filterStatus = 
-        modal.dataset.filterStatus || ""; 
- 
-    const nip = 
-        modal.dataset.nip || ""; 
- 
-    const role = 
-        modal.dataset.role || ""; 
- 
-    /* ================================================== 
-       GLOBAL LOADING 
-    ================================================== */ 
-    smartofficeShowGlobalLoading( 
-        "Membuka lock Surat Keluar..." 
-    ); 
- 
-    try{ 
-        /* ================================================== 
-           BUKA LOCK DI BACKEND 
-        ================================================== */ 
-        await smartofficeBukaLockSuratKeluar( 
-            rowIndex, 
-            nip, 
-            role 
-        ); 
- 
-        /* ================================================== 
-           TUTUP MODAL SETELAH BERHASIL 
-        ================================================== */ 
-        smartofficeCloseBukaLockSuratKeluarModal(); 
- 
-        /* ================================================== 
-           RELOAD DATA 
-        ================================================== */ 
-        await loadDataSuratKeluar(); 
- 
-        /* ================================================== 
-           KEMBALIKAN FILTER 
-        ================================================== */ 
-        const tanggal = 
-            document.getElementById( 
-                "smartofficeSuratKeluarFilterTanggal" 
-            ); 
- 
-        const search = 
-            document.getElementById( 
-                "smartofficeSuratKeluarFilterSearch" 
-            ); 
- 
-        const bulan = 
-            document.getElementById( 
-                "smartofficeSuratKeluarFilterBulan" 
-            ); 
- 
-        const status = 
-            document.getElementById( 
-                "smartofficeSuratKeluarFilterStatus" 
-            ); 
- 
-        if(tanggal){ 
-            tanggal.value = 
-                filterTanggal; 
-        } 
- 
-        if(search){ 
-            search.value = 
-                filterSearch; 
-        } 
- 
-        if(bulan){ 
-            bulan.value = 
-                filterBulan; 
-        } 
- 
-        if(status){ 
-            status.value = 
-                filterStatus; 
-        } 
- 
-        /* ================================================== 
-           TERAPKAN FILTER 
-        ================================================== */ 
-        applyFilterSuratKeluar(); 
- 
-        /* ================================================== 
-           TOAST SUKSES 
-        ================================================== */ 
-        smartofficeShowToast( 
-            "Surat Keluar berhasil dibuka menjadi DRAFT.", 
-            "success" 
-        ); 
-    } 
-    catch(error){ 
-        console.error( 
-            "Buka Lock Surat Keluar Error:", 
-            error 
-        ); 
- 
-        smartofficeShowToast( 
-            error.message || 
-            "Gagal membuka lock Surat Keluar.", 
-            "error" 
-        ); 
-    } 
-    finally{ 
-        smartofficeHideGlobalLoading(); 
-    } 
+/* ======================================================
+   KONFIRMASI BUKA LOCK SURAT KELUAR
+   LIFECYCLE SAFE
+====================================================== */
+async function smartofficeConfirmBukaLockSuratKeluar(){
+
+    const modal =
+        document.getElementById(
+            "smartofficeSuratKeluarLockModal"
+        );
+    if(!modal){
+        return;
+    }
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    const rowIndex =
+        Number(
+            modal.dataset.rowIndex
+        );
+
+    const filterTanggal =
+        modal.dataset.filterTanggal || "";
+
+    const filterSearch =
+        modal.dataset.filterSearch || "";
+
+    const filterBulan =
+        modal.dataset.filterBulan || "";
+
+    const filterStatus =
+        modal.dataset.filterStatus || "";
+
+    const nip =
+        modal.dataset.nip || "";
+
+    const role =
+        modal.dataset.role || "";
+
+    smartofficeShowGlobalLoading(
+        "Membuka lock Surat Keluar..."
+    );
+
+    try{
+        await smartofficeBukaLockSuratKeluar(
+            rowIndex,
+            nip,
+            role
+        );
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        smartofficeCloseBukaLockSuratKeluarModal();
+
+        await loadDataSuratKeluar(
+            pageInstance
+        );
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        const tanggal =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterTanggal"
+            );
+
+        const search =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterSearch"
+            );
+
+        const bulan =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterBulan"
+            );
+
+        const status =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterStatus"
+            );
+
+        if(tanggal){
+            tanggal.value =
+                filterTanggal;
+        }
+
+        if(search){
+            search.value =
+                filterSearch;
+        }
+
+        if(bulan){
+            bulan.value =
+                filterBulan;
+        }
+
+        if(status){
+            status.value =
+                filterStatus;
+        }
+
+        applyFilterSuratKeluar();
+
+        smartofficeShowToast(
+            "Surat Keluar berhasil dibuka menjadi DRAFT.",
+            "success"
+        );
+    }
+    catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        console.error(
+            "Buka Lock Surat Keluar Error:",
+            error
+        );
+
+        smartofficeShowToast(
+            error.message ||
+            "Gagal membuka lock Surat Keluar.",
+            "error"
+        );
+    }
+    finally{
+
+        smartofficeHideGlobalLoading();
+    }
 }
 
 
@@ -6077,7 +6660,19 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
 async function smartofficeSubmitSuratKeluar(
     event
 ){
+
     event.preventDefault();
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    /* ==================================================
+       CEGAH DOUBLE SUBMIT
+    ================================================== */
+    if(isSubmitting){
+        return;
+    }
+    isSubmitting = true;
 
     /* ==================================================
        AMBIL ELEMENT
@@ -6163,6 +6758,7 @@ async function smartofficeSubmitSuratKeluar(
         );
 
     if(emptyFields.length){
+        isSubmitting = false;
         smartofficeShowToast(
             "Data wajib diisi: " +
             emptyFields
@@ -6175,17 +6771,17 @@ async function smartofficeSubmitSuratKeluar(
     }
 
     /* ==================================================
-       CEK FILE
+       FILE
     ================================================== */
     const file =
         fileInput?.files?.[0] || null;
 
     if(file){
-        /* MAKSIMAL 2 MB */
         if(
             file.size >
             2 * 1024 * 1024
         ){
+            isSubmitting = false;
             smartofficeShowToast(
                 "Ukuran file maksimal 2 MB.",
                 "error"
@@ -6195,8 +6791,15 @@ async function smartofficeSubmitSuratKeluar(
         }
     }
 
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
     /* ==================================================
-       TOMBOL SIMPAN
+       BUTTON
     ================================================== */
     const submitButton =
         document.getElementById(
@@ -6209,7 +6812,15 @@ async function smartofficeSubmitSuratKeluar(
         );
 
     if(submitButton){
-        submitButton.disabled = true;
+        submitButton.disabled =
+            true;
+        if(
+            !submitButton.dataset.originalText
+        ){
+            submitButton.dataset.originalText =
+                submitButton.innerHTML;
+        }
+
         submitButton.innerHTML = `
             <span class="smartoffice-btn-spinner"></span>
             <span>Menyimpan...</span>
@@ -6224,29 +6835,42 @@ async function smartofficeSubmitSuratKeluar(
        PAYLOAD
     ================================================== */
     const payload = {
-        rowIndex:rowIndex,
-        kode:kode,
-        klasifikasi:klasifikasi,
-        sifat:sifat,
-        tujuan:tujuan,
-        perihal:perihal,
-        penandatangan:penandatangan,
-        keterangan:keterangan
+        rowIndex,
+        kode,
+        klasifikasi,
+        sifat,
+        tujuan,
+        perihal,
+        penandatangan,
+        keterangan
     };
 
     try{
         /* ==================================================
-           FILE
+           FILE → BASE64
         ================================================== */
         if(file){
             const base64 =
                 await new Promise(
                     (resolve,reject) => {
+
                         const reader =
                             new FileReader();
-
                         reader.onload =
                             function(){
+                                if(
+                                    pageInstance !==
+                                    smartofficeBukuSuratPageInstance
+                                ){
+                                    reject(
+                                        new Error(
+                                            "Halaman sudah tidak aktif."
+                                        )
+                                    );
+
+                                    return;
+                                }
+
                                 const result =
                                     reader.result;
 
@@ -6265,6 +6889,13 @@ async function smartofficeSubmitSuratKeluar(
                     }
                 );
 
+            if(
+                pageInstance !==
+                smartofficeBukuSuratPageInstance
+            ){
+                return;
+            }
+
             payload.base64 =
                 base64;
 
@@ -6276,11 +6907,18 @@ async function smartofficeSubmitSuratKeluar(
         }
 
         /* ==================================================
-           SIMPAN KE SERVER
+           SAVE
         ================================================== */
         await smartofficeSaveSuratKeluar(
             payload
         );
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
 
         /* ==================================================
            TUTUP MODAL
@@ -6288,19 +6926,32 @@ async function smartofficeSubmitSuratKeluar(
         smartofficeCloseFormSuratKeluar();
 
         /* ==================================================
-           RELOAD DATA
+           RELOAD
         ================================================== */
-        await loadDataSuratKeluar();
+        await loadDataSuratKeluar(
+            pageInstance
+        );
 
-        /* ==================================================
-           TOAST
-        ================================================== */
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         smartofficeShowToast(
             "Surat Keluar berhasil disimpan.",
             "success"
         );
     }
     catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
         console.error(
             "Submit Surat Keluar Error:",
             error
@@ -6311,16 +6962,25 @@ async function smartofficeSubmitSuratKeluar(
             "Gagal menyimpan Surat Keluar.",
             "error"
         );
+    }
+    finally{
+        isSubmitting = false;
 
-        /* KEMBALIKAN TOMBOL */
         if(submitButton){
-            submitButton.disabled = false;
-            submitButton.innerHTML =
-                "Simpan";
+            submitButton.disabled =
+                false;
+
+            if(
+                submitButton.dataset.originalText
+            ){
+                submitButton.innerHTML =
+                    submitButton.dataset.originalText;
+            }
         }
 
         if(cancelButton){
-            cancelButton.disabled = false;
+            cancelButton.disabled =
+                false;
         }
     }
 }

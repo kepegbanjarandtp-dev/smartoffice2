@@ -16,7 +16,6 @@
 /* ======================================================
    CONTENT
 ====================================================== */
-
 .smartoffice-suratmasuk-content,
 .smartoffice-suratkeluar-content {
   width: 100%;
@@ -559,7 +558,7 @@
 
 
 /* ======================================================
-   MOBILE SURAT MASUK
+   MOBILE FILTER SURAT MASUK - OK
    MAX-WIDTH 768px
 ====================================================== */
 @media (max-width: 768px){
@@ -583,7 +582,7 @@
     }
 
     .smartoffice-suratmasuk-search-control{
-        height: 40px;
+        height: 36px;
     }
 
     /* ==================================================
@@ -652,7 +651,7 @@
        TETAP UKURAN MOBILE SEKARANG
     ================================================== */
     .smartoffice-suratmasuk-filter-control{
-        height: 40px;
+        height: 36px;
     }
 
     /* ==================================================
@@ -667,21 +666,37 @@
     ================================================== */
     .smartoffice-suratmasuk-filter-control select,
     .smartoffice-suratmasuk-filter-control input{
-        font-size: 11px;
+        font-size: 10px;
+    }
+
+    .smartoffice-suratmasuk-filter-control svg {
+        width: 14px;
+        height: 14px;
+        min-width: 14px;
+        max-width: 14px;
     }
 
     /* ==================================================
        SEARCH INPUT
     ================================================== */
     .smartoffice-suratmasuk-search-control input{
-        font-size: 11px;
+        font-size: 10px;
+    }
+
+    .smartoffice-suratmasuk-search-control svg {
+        width: 17px !important;
+        height: 17px !important;
+        min-width: 17px;
+        min-height: 17px;
+        max-width: 17px;
+        max-height: 17px;
     }
 
     /* ==================================================
        BUTTON
     ================================================== */
     .smartoffice-suratmasuk-filter-button{
-        height: 40px;
+        height: 36px;
         font-size: 10px;
         padding:
             0 7px;
@@ -1001,6 +1016,11 @@
 }
 
 
+
+
+/* =============================================================================
+   CARD LIST SURAT MASUK
+  ============================================================================= */
 /* ======================================================
    LIST SURAT MASUK
    1 CARD = 1 BARIS
@@ -1017,7 +1037,7 @@
   gap: 14px;
 
   /* JARAK DARI FILTER KE DAFTAR CARD */
-  margin-top: 18px;
+  margin-top: 8px;
 
 }
 
@@ -1633,6 +1653,26 @@
 
 
 /* ======================================================
+   ACTION HAPUS SURAT
+====================================================== */
+
+.smartoffice-suratmasuk-action.delete {
+    flex: 0 0 48px;
+    width: 48px;
+    padding: 0;
+    color: #dc2626;
+    background: #fff1f2;
+    border-color: #fecdd3;
+}
+
+.smartoffice-suratmasuk-action.delete:hover {
+    background: #ffe4e6;
+    border-color: #fda4af;
+    color: #b91c1c;
+}
+
+
+/* ======================================================
    EMPTY STATE
 ====================================================== */
 
@@ -1753,7 +1793,7 @@
 
 
 /* ======================================================
-   MOBILE SURAT MASUK
+   MOBILE SURAT MASUK - OK
    MAX-WIDTH 768px
 ====================================================== */
 @media (max-width: 768px){
@@ -1778,14 +1818,14 @@
        ICON SURAT
     ================================================== */
     .smartoffice-suratmasuk-icon{
-        width: 36px;
-        height: 36px;
+        width: 30px;
+        height: 30px;
         border-radius: 12px;
     }
 
     .smartoffice-suratmasuk-icon svg{
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
     }
 
     /* ==================================================
@@ -1797,16 +1837,16 @@
     }
     
     .smartoffice-suratmasuk-name{
-        font-size: 12px;
-    }
-
-    .smartoffice-suratmasuk-file{
         font-size: 11px;
     }
 
+    .smartoffice-suratmasuk-file{
+        font-size: 10px;
+    }
+
     .smartoffice-suratmasuk-file svg{
-        width: 11px;
-        height: 11px;
+        width: 10px;
+        height: 10px;
     }
 
     /* ==================================================
@@ -1819,7 +1859,7 @@
     }
 
     .smartoffice-suratmasuk-status-title strong{
-        font-size: 10px;
+        font-size: 9px;
     }
 
     .smartoffice-suratmasuk-status-dot{
@@ -1868,7 +1908,7 @@
        TETAP 9px
     ================================================== */
     .smartoffice-suratmasuk-meta-label{
-        font-size: 9px;
+        font-size: 8px;
     }
 
     /* ==================================================
@@ -1876,7 +1916,7 @@
        TETAP 12px
     ================================================== */
     .smartoffice-suratmasuk-meta-value{
-        font-size: 11px;
+        font-size: 10px;
         line-height: 1.45;
     }
 
@@ -1885,7 +1925,7 @@
        TETAP 12px
     ================================================== */
     .smartoffice-suratmasuk-meta-value.note{
-        font-size: 12px;
+        font-size: 11px;
     }
 
     /* ==================================================
@@ -1893,7 +1933,7 @@
     ================================================== */
     .smartoffice-suratmasuk-disposisi
     .smartoffice-suratmasuk-meta-value{
-        font-size: 11px;
+        font-size: 9px;
         padding:
             6px
             9px;
@@ -1921,7 +1961,7 @@
             0
             9px;
         border-radius: 10px;
-        font-size: 11px;
+        font-size: 10px;
     }
 
     /* ==================================================
@@ -1958,7 +1998,7 @@
        TETAP 13px
     ================================================== */
     .smartoffice-suratmasuk-empty strong{
-        font-size: 13px;
+        font-size: 12px;
     }
 
     /* ==================================================
@@ -1966,7 +2006,7 @@
        TETAP 11px
     ================================================== */
     .smartoffice-suratmasuk-empty span{
-        font-size: 11px;
+        font-size: 10px;
     }
 }
 
@@ -4899,7 +4939,7 @@
    MOBILE
 ====================================================== */
 
-@media(max-width:480px){
+@media (max-width: 768px){
 
     .smartoffice-suratkeluar-form-content{
         max-height:94vh;

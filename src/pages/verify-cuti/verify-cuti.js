@@ -10,9 +10,20 @@ import {
 
 
 /* ======================================================
+   STATE
+====================================================== */
+let smartofficeVerifyCutiPageInstance = 0;
+
+
+/* ======================================================
    LOAD VERIFY CUTI
 ====================================================== */
 export async function smartofficeLoadPage(){
+
+    smartofficeVerifyCutiPageInstance++;
+
+    const pageInstance =
+        smartofficeVerifyCutiPageInstance;
 
     /* =========================
        GET URL
@@ -63,6 +74,13 @@ export async function smartofficeLoadPage(){
                 }
             );
         if(
+            pageInstance !==
+            smartofficeVerifyCutiPageInstance
+        ){
+            return;
+        }
+
+        if(
             !response.success
         ){
             smartofficeRenderVerifyCutiError(
@@ -91,11 +109,25 @@ export async function smartofficeLoadPage(){
         const data =
             response.data.data;
 
+        if(
+            pageInstance !==
+            smartofficeVerifyCutiPageInstance
+        ){
+            return;
+        }
+
         smartofficeRenderVerifyCuti(
             data
         );
     }
     catch(error){
+        if(
+            pageInstance !==
+            smartofficeVerifyCutiPageInstance
+        ){
+            return;
+        }
+
         smartofficeRenderVerifyCutiError(
             "Tidak dapat memverifikasi dokumen."
         );

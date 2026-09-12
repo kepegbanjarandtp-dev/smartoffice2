@@ -36,11 +36,24 @@ import {
 let smartofficeBukuTamuData = [];
 let smartofficeBukuTamuFilteredData = [];
 
+/* ======================================================
+   LIFECYCLE
+====================================================== */
+let smartofficeBukuTamuPageInstance = 0;
+
 
 /* ======================================================
    LOAD PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
+
+    /* =========================
+       LIFECYCLE
+    ========================= */
+    smartofficeBukuTamuPageInstance++;
+
+    const pageInstance =
+        smartofficeBukuTamuPageInstance;
 
     /* =========================
        MOBILE NAVBAR
@@ -59,7 +72,16 @@ export async function smartofficeLoadPage(){
     /* =========================
        LOAD DATA
     ========================= */
-    await smartofficeLoadBukuTamu();
+    await smartofficeLoadBukuTamu(
+        pageInstance
+    );
+
+    if(
+        pageInstance !==
+        smartofficeBukuTamuPageInstance
+    ){
+        return;
+    }
 
     /* =========================
        INIT FILTER
@@ -72,14 +94,30 @@ export async function smartofficeLoadPage(){
    REFRESH
 ====================================================== */
 export async function smartofficeRefreshBukuTamu(){
-    await smartofficeLoadBukuTamu();
+
+    const pageInstance =
+        smartofficeBukuTamuPageInstance;
+
+    await smartofficeLoadBukuTamu(
+        pageInstance
+    );
+
+    if(
+        pageInstance !==
+        smartofficeBukuTamuPageInstance
+    ){
+        return;
+    }
 }
 
 
 /* ======================================================
    LOAD DATA
 ====================================================== */
-async function smartofficeLoadBukuTamu(){
+async function smartofficeLoadBukuTamu(
+    pageInstance =
+        smartofficeBukuTamuPageInstance
+){
 
     const container =
         document.getElementById(
@@ -116,6 +154,13 @@ async function smartofficeLoadBukuTamu(){
                 "smartofficeGetBukuTamu"
             );
 
+        if(
+            pageInstance !==
+            smartofficeBukuTamuPageInstance
+        ){
+            return;
+        }
+
         /* =========================
            VALIDASI
         ========================= */
@@ -134,6 +179,13 @@ async function smartofficeLoadBukuTamu(){
         ========================= */
         const data =
             response.data || [];
+        
+        if(
+            pageInstance !==
+            smartofficeBukuTamuPageInstance
+        ){
+            return;
+        }
 
         smartofficeBukuTamuData =
             data.map(
@@ -194,6 +246,13 @@ async function smartofficeLoadBukuTamu(){
            REQUEST DIBATALKAN
            KARENA PINDAH HALAMAN
         ========================= */
+        if(
+            pageInstance !==
+            smartofficeBukuTamuPageInstance
+        ){
+            return;
+        }
+
         if(
             error?.message ===
             "Request dibatalkan."
@@ -1477,11 +1536,20 @@ export async function smartofficePrintBukuTamu(){
 ====================================================== */
 export function smartofficeDestroyPage(){
 
-    /* RESET DATA */
+    /* =========================
+       INVALIDATE ASYNC REQUEST
+    ========================= */
+    smartofficeBukuTamuPageInstance++;
+
+    /* =========================
+       RESET DATA
+    ========================= */
     smartofficeBukuTamuData = [];
     smartofficeBukuTamuFilteredData = [];
 
-    /* CLOSE DETAIL MODAL */
+    /* =========================
+       CLOSE DETAIL MODAL
+    ========================= */
     const modal =
         document.getElementById(
             "smartofficeBukuTamuDetailModal"
