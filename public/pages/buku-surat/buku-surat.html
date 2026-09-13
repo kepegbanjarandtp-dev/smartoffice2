@@ -182,6 +182,126 @@
         Surat Keluar
       </span>
     </button>
+
+    <!-- KODE SURAT -->
+    <button
+      id="smartofficeTabKodeSurat"
+      class="
+        smartoffice-tab-button
+      "
+    >
+      <svg viewBox="0 0 24 24">
+        <path
+          d="
+            M4 5
+            a2 2 0 0 1 2-2
+            h12
+            a2 2 0 0 1 2 2
+            v14
+            a2 2 0 0 1-2 2
+            H6
+            a2 2 0 0 1-2-2
+            z
+          "
+        />
+
+        <line
+          x1="8"
+          y1="9"
+          x2="16"
+          y2="9"
+        />
+
+        <line
+          x1="8"
+          y1="13"
+          x2="16"
+          y2="13"
+        />
+
+        <line
+          x1="8"
+          y1="17"
+          x2="13"
+          y2="17"
+        />
+      </svg>
+
+      <span>
+        Kode Surat
+      </span>
+    </button>
+  </div> 
+
+  <!-- ========================= 
+      CONTENT KODE SURAT 
+  ========================== -->
+  <div
+    id="smartofficeKodeSuratContent"
+    class="smartoffice-tab-content"
+    style="display:none;"
+  >
+
+    <!-- ==================================================
+        HEADER + FILTER
+    ================================================== -->
+    <div class="smartoffice-kode-surat-filter-card">
+
+      <!-- HEADER -->
+      <div class="smartoffice-kode-surat-header">
+
+        <div>
+          <p>
+            Daftar klasifikasi kode surat
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- SEARCH -->
+      <div class="smartoffice-kode-surat-filter">
+
+        <div class="smartoffice-kode-surat-search">
+
+          <svg viewBox="0 0 24 24">
+            <circle
+              cx="11"
+              cy="11"
+              r="7"
+            />
+
+            <line
+              x1="16.5"
+              y1="16.5"
+              x2="21"
+              y2="21"
+            />
+          </svg>
+
+          <input
+            type="text"
+            id="smartofficeKodeSuratSearch"
+            placeholder="Cari klasifikasi kode surat..."
+            autocomplete="off"
+          />
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ==================================================
+        LIST KODE SURAT
+    ================================================== -->
+    <div
+      id="smartofficeKodeSuratList"
+      class="smartoffice-kode-surat-list"
+    >
+    </div>
+
   </div>
 
   <!-- =====================================================
@@ -823,6 +943,148 @@
     </div>
 </div>
 
+
+<!-- ======================================================
+     MODAL HAPUS SURAT MASUK
+====================================================== -->
+<div
+    id="smartofficeSuratMasukDeleteModal"
+    class="smartoffice-suratmasuk-lock-modal"
+>
+    <div
+        class="smartoffice-suratmasuk-lock-modal-overlay"
+        onclick="
+            smartofficeCloseDeleteSuratMasukModal()
+        "
+    ></div>
+
+    <div
+        class="smartoffice-suratmasuk-lock-modal-card"
+    >
+
+        <!-- ICON -->
+        <div
+            class="smartoffice-suratmasuk-lock-modal-icon"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <polyline
+                    points="3 6 5 6 21 6"
+                />
+
+                <path
+                    d="
+                        M19 6
+                        v14
+                        a2 2 0 0 1-2 2
+                        H7
+                        a2 2 0 0 1-2-2
+                        V6
+                    "
+                />
+
+                <path
+                    d="
+                        M8 6V4
+                        a2 2 0 0 1 2-2h4
+                        a2 2 0 0 1 2 2v2
+                    "
+                />
+
+                <line
+                    x1="10"
+                    y1="11"
+                    x2="10"
+                    y2="17"
+                />
+
+                <line
+                    x1="14"
+                    y1="11"
+                    x2="14"
+                    y2="17"
+                />
+            </svg>
+        </div>
+
+        <!-- TITLE -->
+        <h3>
+            Hapus Surat?
+        </h3>
+
+        <!-- TEXT -->
+        <p>
+            Data surat dan file di Google Drive
+            akan dihapus secara permanen.
+        </p>
+
+        <!-- ACTION -->
+        <div
+            class="smartoffice-suratmasuk-lock-modal-actions"
+        >
+
+            <button
+                type="button"
+                class="smartoffice-suratmasuk-lock-modal-cancel"
+                onclick="
+                    smartofficeCloseDeleteSuratMasukModal()
+                "
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="smartoffice-suratmasuk-lock-modal-confirm"
+                onclick="
+                    smartofficeConfirmDeleteSuratMasuk()
+                "
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <polyline
+                        points="3 6 5 6 21 6"
+                    />
+
+                    <path
+                        d="
+                            M19 6
+                            v14
+                            a2 2 0 0 1-2 2
+                            H7
+                            a2 2 0 0 1-2-2
+                            V6
+                        "
+                    />
+
+                    <path
+                        d="
+                            M8 6V4
+                            a2 2 0 0 1 2-2h4
+                            a2 2 0 0 1 2 2v2
+                        "
+                    />
+                </svg>
+
+                Hapus
+            </button>
+
+        </div>
+
+    </div>
+</div>
 
 <!-- =====================================================
     MODAL DETAIL SURAT MASUK
