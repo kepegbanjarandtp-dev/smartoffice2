@@ -125,6 +125,24 @@ export async function smartofficeSaveSuratMasuk(
 }
 
 
+/* ======================================================
+   HAPUS SURAT MASUK
+====================================================== */
+export async function smartofficeDeleteSuratMasuk(
+    rowIndex,
+    role
+){
+
+    return await smartofficeApi(
+        "smartofficeDeleteSuratMasuk",
+        {
+            rowIndex: Number(rowIndex),
+            role: String(role || "")
+        }
+    );
+}
+
+
 /* =================================================================================
    SURAT KELUAR
 ================================================================================= */
@@ -201,3 +219,5 @@ export async function smartofficeBukaLockSuratKeluar(
 
     return response.data;
 }
+
+

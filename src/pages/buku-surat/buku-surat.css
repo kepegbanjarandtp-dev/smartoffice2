@@ -684,12 +684,12 @@
     }
 
     .smartoffice-suratmasuk-search-control svg {
-        width: 17px !important;
-        height: 17px !important;
-        min-width: 17px;
-        min-height: 17px;
-        max-width: 17px;
-        max-height: 17px;
+        width: 15px !important;
+        height: 15px !important;
+        min-width: 15px;
+        min-height: 15px;
+        max-width: 15px;
+        max-height: 15px;
     }
 
     /* ==================================================
@@ -1013,6 +1013,74 @@
         0 5px 12px
         rgba(47, 111, 211, 0.18);
 
+}
+
+
+/* ======================================================
+   MOBILE - BUKA LOCK SURAT MASUK - OK
+====================================================== */
+@media (max-width: 768px) {
+
+    /* MODAL */
+    .smartoffice-suratmasuk-lock-modal {
+        padding: 20px;
+    }
+
+    /* CARD */
+    .smartoffice-suratmasuk-lock-modal-card {
+        width: 100%;
+        max-width: 320px;
+        padding: 20px;
+        border-radius: 18px;
+    }
+
+    /* ICON */
+    .smartoffice-suratmasuk-lock-modal-icon {
+
+        width: 48px;
+        height: 48px;
+        margin:
+            0 auto 14px;
+        border-radius: 14px;
+    }
+
+    .smartoffice-suratmasuk-lock-modal-icon svg {
+        width: 23px;
+        height: 23px;
+    }
+
+    /* TITLE */
+    .smartoffice-suratmasuk-lock-modal-card h3 {
+        font-size: 14px;
+    }
+
+    /* TEXT */
+    .smartoffice-suratmasuk-lock-modal-card p {
+        margin:
+            8px 0 20px;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* ACTION */
+    .smartoffice-suratmasuk-lock-modal-actions {
+        grid-template-columns:
+            1fr 1fr;
+        gap: 9px;
+    }
+
+    /* BUTTON */
+    .smartoffice-suratmasuk-lock-modal-actions button {
+        height: 36px;
+        border-radius: 11px;
+        gap: 6px;
+        font-size: 10px;
+    }
+
+    .smartoffice-suratmasuk-lock-modal-actions svg {
+        width: 14px;
+        height: 14px;
+    }
 }
 
 
@@ -2120,10 +2188,6 @@
 }
 
 
-
-
-
-
 /* ======================================================
    MODAL FORM SURAT MASUK
 ====================================================== */
@@ -3060,52 +3124,6 @@
 
 
 /* ======================================================
-   CURRENT FILE
-====================================================== */
-
-.smartoffice-suratmasuk-form-current-file {
-
-    display: flex;
-    align-items: center;
-
-    gap: 6px;
-
-    margin-top: 2px;
-
-    padding:
-        8px
-        10px;
-
-    border-radius: 9px;
-
-    background: #f8fafc;
-
-    font-size: 10px;
-
-    color: #64748b;
-}
-
-
-.smartoffice-suratmasuk-form-current-file button {
-
-    padding: 0;
-
-    border: none;
-
-    background: transparent;
-
-    color: #3675d7;
-
-    font-family: inherit;
-
-    font-size: 10px;
-    font-weight: 700;
-
-    cursor: pointer;
-}
-
-
-/* ======================================================
    ACTION
 ====================================================== */
 
@@ -3237,15 +3255,304 @@
 }
 
 
+/* ======================================================
+   MOBILE QUERY - SURAT MASUK - OK
+====================================================== */
+@media (max-width: 768px) {
 
+    /* ==================================================
+       MODAL DETAIL SURAT MASUK
+    ================================================== */
+    .smartoffice-suratmasuk-detail-modal {
+        align-items: center;
+        padding: 12px;
+    }
 
+    .smartoffice-suratmasuk-detail-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100vh - 24px);
+        border-radius: 22px;
+    }
 
+    .smartoffice-suratmasuk-detail-header {
+        padding: 16px;
+    }
 
+    .smartoffice-suratmasuk-detail-title {
+        font-size: 15px;
+    }
 
+    .smartoffice-suratmasuk-detail-close {
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+    }
 
+    .smartoffice-suratmasuk-detail-close svg {
+        width: 17px;
+        height: 17px;
+    }
 
+    .smartoffice-suratmasuk-detail-body {
+        padding: 16px;
+    }
 
+    /* ==================================================
+       MODAL FORM
+    ================================================== */
+    .smartoffice-suratmasuk-form-modal {
+        align-items: center;
+        padding: 12px;
+    }
 
+    /* ==================================================
+       FORM CONTENT
+    ================================================== */
+    .smartoffice-suratmasuk-form-content {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100vh - 24px);
+        border-radius: 22px;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+    }
+
+    /* ==================================================
+       HEADER
+    ================================================== */
+    .smartoffice-suratmasuk-form-header {
+        padding:
+            16px
+            16px
+            14px;
+        gap: 10px;
+    }
+
+    .smartoffice-suratmasuk-form-title {
+        font-size: 15px;
+    }
+
+    .smartoffice-suratmasuk-form-subtitle {
+        font-size: 10px;
+    }
+
+    .smartoffice-suratmasuk-form-close {
+        width: 30px;
+        height: 30px;
+        border-radius: 10px;
+    }
+
+    .smartoffice-suratmasuk-form-close svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    /* ==================================================
+       BODY
+    ================================================== */
+    .smartoffice-suratmasuk-form-body {
+        padding: 16px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* ==================================================
+       FORM → 1 KOLOM
+    ================================================== */
+    .smartoffice-suratmasuk-form {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    /* ==================================================
+       FORM GROUP
+    ================================================== */
+    .smartoffice-suratmasuk-form-group,
+    .smartoffice-suratmasuk-form-group.sender,
+    .smartoffice-suratmasuk-form-group.sifat,
+    .smartoffice-suratmasuk-form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    /* ==================================================
+       LABEL
+    ================================================== */
+    .smartoffice-suratmasuk-form-group label {
+        font-size: 10px;
+    }
+
+    /* ==================================================
+       INPUT / SELECT
+    ================================================== */
+    .smartoffice-suratmasuk-form-group input,
+    .smartoffice-suratmasuk-form-group select {
+        height: 38px;
+        font-size: 11px;
+        border-radius: 11px;
+        padding:
+            0
+            11px;
+    }
+
+    /* ==================================================
+       TEXTAREA
+    ================================================== */
+    .smartoffice-suratmasuk-form-group textarea {
+        min-height: 88px;
+        font-size: 12px;
+        padding:
+            10px
+            11px;
+    }
+
+    /* ==================================================
+       DISPOSISI
+    ================================================== */
+    .smartoffice-disposisi-selected {
+        min-height: 38px;
+        padding:
+            6px
+            11px;
+    }
+
+    .smartoffice-disposisi-placeholder {
+        font-size: 11px;
+    }
+
+    .smartoffice-disposisi-chip {
+        font-size: 10px;
+        padding:
+            4px
+            7px;
+    }
+
+    .smartoffice-disposisi-dropdown {
+        max-height: 250px;
+    }
+
+    .smartoffice-disposisi-search {
+        padding:
+            2px
+            10px;
+    }
+
+    .smartoffice-disposisi-search-input {
+        height: 32px;
+        font-size: 11px;
+    }
+
+    .smartoffice-disposisi-options {
+        max-height: 190px;
+        padding: 5px;
+    }
+
+    .smartoffice-disposisi-option {
+        min-height: 34px;
+        padding:
+            8px;
+        font-size: 11px;
+    }
+
+    /* ==================================================
+       UPLOAD
+    ================================================== */
+    .smartoffice-suratmasuk-upload-box {
+        min-height: 100px;
+        padding: 16px;
+    }
+
+    .smartoffice-suratmasuk-upload-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+    }
+
+    .smartoffice-suratmasuk-upload-icon svg {
+        width: 21px;
+        height: 21px;
+    }
+
+    .smartoffice-suratmasuk-upload-title {
+        font-size: 11px;
+    }
+
+    .smartoffice-suratmasuk-upload-info {
+        font-size: 9px;
+    }
+
+    /* ==================================================
+       FILE TERPILIH
+    ================================================== */
+    .smartoffice-suratmasuk-upload-selected {
+        padding:
+            10px
+            11px;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .smartoffice-suratmasuk-upload-file-icon {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        border-radius: 9px;
+    }
+
+    .smartoffice-suratmasuk-upload-file-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .smartoffice-suratmasuk-upload-file-name {
+        font-size: 11px;
+    }
+
+    .smartoffice-suratmasuk-upload-file-size {
+        font-size: 9px;
+    }
+
+    .smartoffice-suratmasuk-upload-remove {
+        width: 30px;
+        height: 30px;
+    }
+
+    /* ==================================================
+       ACTION
+    ================================================== */
+    .smartoffice-suratmasuk-form-actions {
+        display: grid;
+        grid-template-columns:
+            1fr
+            1fr;
+        gap: 8px;
+        margin-top: 4px;
+        padding-top: 12px;
+    }
+
+    /* ==================================================
+       BUTTON
+    ================================================== */
+    .smartoffice-suratmasuk-form-button {
+        width: 100%;
+        min-width: 0;
+        height: 42px;
+        padding:
+            0
+            12px;
+        font-size: 11px;
+        border-radius: 11px;
+    }
+
+    .smartoffice-suratmasuk-form-button.save svg {
+        width: 15px;
+        height: 15px;
+    }
+}
 
 
 
@@ -3743,98 +4050,170 @@
 
 
 /* ======================================================
-   TABLET
+   MOBILE FILTER SURAT MASUK
 ====================================================== */
+@media (max-width: 768px) {
 
-@media (max-width: 900px) {
-
+  /* ====================================================
+     FILTER PANEL
+  ==================================================== */
   .smartoffice-suratkeluar-filter-panel {
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 12px;
-
-  }
-
-
-  .smartoffice-suratkeluar-filter-fields {
-
     width: 100%;
-
-    display: grid;
-
-    grid-template-columns:
-      repeat(4, minmax(0, 1fr));
-
-    gap: 8px;
-
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 16px;
   }
 
-}
+  /* ====================================================
+     SEARCH GROUP
+  ==================================================== */
+  .smartoffice-suratkeluar-search-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
+  /* ====================================================
+     LABEL
+  ==================================================== */
+  .smartoffice-suratkeluar-filter-label {
+    font-size: 10px;
+  }
 
-/* ======================================================
-   MOBILE
-====================================================== */
+  /* ====================================================
+     SEARCH CONTROL
+  ==================================================== */
+  .smartoffice-suratkeluar-search-control {
+    width: 100%;
+    height: 38px;
+    gap: 7px;
+    padding: 0 10px;
+    border-radius: 9px;
+  }
 
-@media (max-width: 600px) {
+  /* ====================================================
+     SEARCH SVG
+  ==================================================== */
+  .smartoffice-suratkeluar-search-control svg {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px;
+    max-width: 15px;
+    min-height: 15px;
+    max-height: 15px;
+  }
 
-  .smartoffice-suratkeluar-filter-panel {
-
-    padding: 14px;
-
-    gap: 12px;
-
-    border-radius: 18px;
-
+  /* ====================================================
+     SEARCH INPUT
+  ==================================================== */
+  .smartoffice-suratkeluar-search-control input {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    font-size: 10px;
   }
 
 
+  /* ====================================================
+     FILTER FIELDS
+     BULAN + TANGGAL + STATUS + RESET
+  ==================================================== */
   .smartoffice-suratkeluar-filter-fields {
-
-    grid-template-columns:
-      repeat(2, minmax(0, 1fr));
-
-    gap: 8px;
-
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    grid-column: auto;
   }
 
+  /* ====================================================
+     FILTER GROUP
+  ==================================================== */
+  .smartoffice-suratkeluar-filter-group {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
+  /* ====================================================
+     FILTER CONTROL
+  ==================================================== */
   .smartoffice-suratkeluar-filter-control {
-
-    padding:
-      0
-      10px;
-
+    width: 100%;
+    height: 38px;
+    gap: 7px;
+    padding: 0 10px;
+    border-radius: 11px;
   }
 
-
+  /* ====================================================
+     FILTER CONTROL SVG
+  ==================================================== */
   .smartoffice-suratkeluar-filter-control svg {
-
-    width: 17px !important;
-
-    height: 17px !important;
-
-    min-width: 17px;
-
-    max-width: 17px;
-
-    min-height: 17px;
-
-    max-height: 17px;
-
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px;
+    max-width: 15px;
+    min-height: 15px;
+    max-height: 15px;
   }
 
-
+  /* ====================================================
+     SELECT & DATE
+  ==================================================== */
   .smartoffice-suratkeluar-filter-control select,
   .smartoffice-suratkeluar-filter-control input {
-
-    font-size: 11px;
-
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    font-size: 10px;
   }
 
+  /* ====================================================
+     DATE INPUT
+  ==================================================== */
+  .smartoffice-suratkeluar-filter-control input[type="date"] {
+    color: #334155;
+  }
+
+  /* ====================================================
+     RESET ACTION
+  ==================================================== */
+  .smartoffice-suratkeluar-filter-actions {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  /* ====================================================
+     RESET BUTTON
+  ==================================================== */
+  .smartoffice-suratkeluar-filter-button {
+    width: 100%;
+    height: 38px;
+    gap: 6px;
+    padding: 0 10px;
+    border-radius: 11px;
+    font-size: 11px;
+  }
+
+  /* ====================================================
+     RESET SVG
+  ==================================================== */
+  .smartoffice-suratkeluar-filter-reset svg {
+    width: 15px !important;
+    height: 15px !important;
+    min-width: 15px;
+    max-width: 15px;
+    min-height: 15px;
+    max-height: 15px;
+  }
 }
 
 
@@ -4197,23 +4576,160 @@
 }
 
 
-/* MOBILE */
+/* ======================================================
+   MOBILE — CARD SURAT KELUAR - OK
+====================================================== */
+@media (max-width: 768px) {
 
-@media(max-width:480px){
-
-    .smartoffice-suratkeluar-card-header{
-        padding:13px 12px;
+    /* ==================================================
+       CARD
+    ================================================== */
+    .smartoffice-suratkeluar-card {
+        width: 100%;
+        border-radius: 14px;
+        margin-bottom: 10px;
     }
 
-    .smartoffice-suratkeluar-card-number{
-        font-size:12px;
+    /* ==================================================
+       HEADER
+    ================================================== */
+    .smartoffice-suratkeluar-card-header {
+        gap: 10px;
+        padding: 11px 10px 8px;
     }
 
-    .smartoffice-suratkeluar-card-footer{
-        padding:9px 10px;
+    .smartoffice-suratkeluar-card-title-wrap {
+        gap: 9px;
     }
 
+    .smartoffice-suratkeluar-card-icon {
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        border-radius: 8px;
+    }
+
+    .smartoffice-suratkeluar-card-icon svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .smartoffice-suratkeluar-card-number {
+        font-size: 11px;
+        line-height: 1.35;
+    }
+
+    .smartoffice-suratkeluar-card-date {
+        gap: 4px;
+        margin-top: 3px;
+        font-size: 10px;
+    }
+
+    .smartoffice-suratkeluar-card-date svg {
+        width: 11px;
+        height: 11px;
+    }
+
+    /* ==================================================
+       STATUS
+    ================================================== */
+    .smartoffice-suratkeluar-card-status {
+        gap: 4px;
+        padding: 4px 8px;
+        border-radius: 18px;
+        font-size: 8px;
+    }
+
+    .smartoffice-suratkeluar-status-dot {
+        width: 5px;
+        height: 5px;
+    }
+
+    /* ==================================================
+       BODY
+    ================================================== */
+    .smartoffice-suratkeluar-card-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .smartoffice-suratkeluar-card-row {
+        padding: 6px 10px;
+    }
+
+    .smartoffice-suratkeluar-card-row + .smartoffice-suratkeluar-card-row {
+        border-left: 1px solid #edf1f5;
+    }
+
+    /* ==================================================
+       LABEL
+    ================================================== */
+    .smartoffice-suratkeluar-card-label {
+        gap: 4px;
+        min-height: 20px;
+        font-size: 9px;
+        line-height: 1.2;
+    }
+
+    /* ==================================================
+       ICON INFORMASI
+    ================================================== */
+    .smartoffice-suratkeluar-card-label svg {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+        min-height: 20px;
+        padding: 4px;
+        border-radius: 7px;
+    }
+
+    /* ==================================================
+       VALUE
+    ================================================== */
+    .smartoffice-suratkeluar-card-value {
+        margin-top: 0px;
+        margin-left: 28px;
+        font-size: 10px;
+        line-height: 1.4;
+    }
+
+    /* ==================================================
+       FULL WIDTH INFORMATION
+    ================================================== */
+    .smartoffice-suratkeluar-card-full {
+        padding: 9px 10px;
+    }
+
+    .smartoffice-suratkeluar-card-perihal {
+        padding: 9px 10px;
+    }
+
+    /* ==================================================
+       FOOTER
+    ================================================== */
+    .smartoffice-suratkeluar-card-footer {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        padding: 9px 10px;
+    }
+
+
+    /* ==================================================
+       ACTION BUTTON
+    ================================================== */
+    .smartoffice-suratkeluar-card-action {
+        width: 100%;
+        height: 32px;
+        border-radius: 8px;
+        gap: 5px;
+        font-size: 9px;
+    }
+
+    .smartoffice-suratkeluar-card-action svg {
+        width: 13px;
+        height: 13px;
+    }
 }
+
 
 
 /* ======================================================
@@ -4274,6 +4790,58 @@
     margin-top:4px;
     font-size:11px;
     color:#64748b;
+}
+
+
+/* ======================================================
+   MOBILE — EMPTY STATE SURAT KELUAR - OK
+====================================================== */
+@media (max-width: 768px) {
+
+    /* ==================================================
+       EMPTY STATE
+    ================================================== */
+    .smartoffice-suratkeluar-empty {
+        padding: 32px 16px;
+    }
+
+    /* ==================================================
+       EMPTY ICON
+    ================================================== */
+    .smartoffice-suratkeluar-empty-icon {
+        width: 42px;
+        height: 42px;
+        margin-bottom: 9px;
+        font-size: 21px;
+        border-radius: 11px;
+    }
+
+    /* ==================================================
+       EMPTY SVG
+    ================================================== */
+    .smartoffice-suratkeluar-empty-icon svg {
+        width: 21px !important;
+        height: 21px !important;
+        max-width: 21px !important;
+        max-height: 21px !important;
+        padding: 0 !important;
+    }
+
+    /* ==================================================
+       EMPTY TITLE
+    ================================================== */
+    .smartoffice-suratkeluar-empty-title {
+        font-size: 13px;
+    }
+
+    /* ==================================================
+       EMPTY TEXT
+    ================================================== */
+    .smartoffice-suratkeluar-empty-text {
+        margin-top: 4px;
+        font-size: 10px;
+        line-height: 1.4;
+    }
 }
 
 
@@ -4389,7 +4957,7 @@
 .smartoffice-suratkeluar-form-modal{
     position:fixed;
     inset:0;
-    z-index:1000;
+    z-index:100000;
 
     display:none;
 
@@ -4472,10 +5040,10 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    font-family:inherit;
+    font-family:Arial, sans-serif;
     font-size:20px;
     font-weight:400;
-    line-height:1;
+    line-height:32px;
     cursor:pointer;
 }
 
@@ -4693,8 +5261,14 @@
     color:#fff;
 }
 
-
-
+#smartofficeSuratKeluarPerihal {
+    min-height: 88px;
+    resize: vertical;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    box-sizing: border-box;
+}
 
 /* ======================================================
    UPLOAD FILE SURAT KELUAR
@@ -4823,9 +5397,10 @@
     font-size:11px;
     font-weight:600;
     color:#172033;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    word-break:break-word;
+    line-height:1.35;
 }
 
 
@@ -4840,12 +5415,19 @@
     width:28px;
     height:28px;
     flex:0 0 28px;
+    padding:0;
+    margin:0;
     border:1px solid #e2e8f0;
     border-radius:7px;
     background:#fff;
     color:#64748b;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:Arial, sans-serif;
     font-size:18px;
-    line-height:1;
+    font-weight:400;
+    line-height:28px;
     cursor:pointer;
 }
 
@@ -4934,30 +5516,313 @@
 
 }
 
-
 /* ======================================================
-   MOBILE
+   RESET BUTTON
 ====================================================== */
 
-@media (max-width: 768px){
+.smartoffice-suratkeluar-form-button.reset{
+    min-width:84px;
+    background:#f1f5f9;
+    border:1px solid #cbd5e1;
+    color:#475569;
+}
 
-    .smartoffice-suratkeluar-form-content{
-        max-height:94vh;
+.smartoffice-suratkeluar-form-button.reset:hover{
+    background:#e2e8f0;
+    border-color:#94a3b8;
+}
+
+
+/* ======================================================
+   MOBILE — MODAL SURAT KELUAR
+====================================================== */
+@media (max-width: 768px) {
+
+    /* ==================================================
+       MODAL DETAIL
+    ================================================== */
+    .smartoffice-suratkeluar-detail-modal {
+        align-items: center;
+        padding: 12px;
     }
 
-    .smartoffice-suratkeluar-form-body{
-        padding:15px;
+    .smartoffice-suratkeluar-detail-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100vh - 24px);
+        border-radius: 22px;
     }
 
-    .smartoffice-suratkeluar-form-grid{
-        grid-template-columns:1fr;
-        gap:12px;
+    .smartoffice-suratkeluar-detail-header {
+        padding: 12px;
     }
 
-    .smartoffice-suratkeluar-form-full{
-        grid-column:auto;
+    .smartoffice-suratkeluar-detail-title {
+        font-size: 13px;
     }
 
+    .smartoffice-suratkeluar-detail-close {
+        width: 28px;
+        height: 28px;
+        border-radius: 10px;
+    }
+
+    .smartoffice-suratkeluar-detail-close svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .smartoffice-suratkeluar-detail-body {
+        padding: 16px;
+    }
+
+    /* ==================================================
+       MODAL FORM
+    ================================================== */
+    .smartoffice-suratkeluar-form-modal {
+        align-items: center;
+        padding: 12px;
+    }
+
+    .smartoffice-suratkeluar-form-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100vh - 24px);
+        border-radius: 14px;
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    /* ==================================================
+       HEADER FORM
+    ================================================== */
+    .smartoffice-suratkeluar-form-header {
+        padding: 12px 14px 10px;
+        gap: 10px;
+    }
+
+    .smartoffice-suratkeluar-form-title {
+        font-size: 13px;
+    }
+
+    .smartoffice-suratkeluar-form-header p {
+        font-size: 9px;
+    }
+
+    .smartoffice-suratkeluar-form-close {
+        width: 24px;
+        height: 24px;
+        border-radius: 10px;
+        flex: 0 0 24px;
+        font-size: 15px;
+    }
+
+    /* ==================================================
+       BODY FORM
+    ================================================== */
+    .smartoffice-suratkeluar-form-body {
+        padding: 14px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* ==================================================
+       FORM GRID
+    ================================================== */
+    .smartoffice-suratkeluar-form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .smartoffice-suratkeluar-form-full {
+        grid-column: 1 / -1;
+    }
+
+    /* ==================================================
+       FORM GROUP
+    ================================================== */
+    .smartoffice-suratkeluar-form-group {
+        min-width: 0;
+    }
+
+    .smartoffice-suratkeluar-form-group label {
+        font-size: 9px;
+        margin-bottom: 6px;
+    }
+
+    /* ==================================================
+       INPUT / SELECT / TEXTAREA
+    ================================================== */
+    .smartoffice-suratkeluar-form-group input,
+    .smartoffice-suratkeluar-form-group select {
+        height: 36px;
+        font-size: 10px;
+        border-radius: 11px;
+        padding: 0 11px;
+    }
+
+    .smartoffice-suratkeluar-form-group textarea {
+        min-height: 88px;
+        font-size: 10px;
+        padding: 10px 11px;
+        border-radius: 11px;
+    }
+
+    #smartofficeSuratKeluarPerihal {
+        min-height: 88px;
+    }
+
+    /* ==================================================
+       KLASIFIKASI
+    ================================================== */
+    .smartoffice-suratkeluar-form-classification-row {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .smartoffice-suratkeluar-custom-select-button {
+        min-height: 36px;
+        padding: 7px 34px 7px 11px;
+        border-radius: 11px;
+        font-size: 10px;
+    }
+
+    .smartoffice-suratkeluar-custom-select-arrow {
+        right: 11px;
+    }
+
+    .smartoffice-suratkeluar-custom-select-options {
+        max-height: 250px;
+        border-radius: 10px;
+    }
+
+    .smartoffice-suratkeluar-custom-select-option {
+        padding: 8px 10px;
+        font-size: 10px;
+    }
+
+    /* ==================================================
+       UPLOAD
+    ================================================== */
+    .smartoffice-suratkeluar-upload-box {
+        min-height: 90px;
+    }
+
+    .smartoffice-suratkeluar-upload-empty {
+        min-height: 90px;
+        padding: 10px;
+    }
+
+    .smartoffice-suratkeluar-upload-icon {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        border-radius: 12px;
+    }
+
+    .smartoffice-suratkeluar-upload-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .smartoffice-suratkeluar-upload-title {
+        font-size: 10px;
+    }
+
+    .smartoffice-suratkeluar-upload-text {
+        font-size: 9px;
+    }
+
+    .smartoffice-suratkeluar-upload-button {
+        height: 30px;
+        padding: 0 11px;
+        font-size: 10px;
+        border-radius: 8px;
+    }
+
+    /* ==================================================
+       FILE TERPILIH
+    ================================================== */
+    .smartoffice-suratkeluar-upload-selected {
+        min-height: 82px;
+        padding: 10px 11px;
+        gap: 10px;
+    }
+
+    .smartoffice-suratkeluar-file-icon {
+        width: 32px;
+        height: 32px;
+        flex: 0 0 32px;
+        border-radius: 9px;
+    }
+
+    .smartoffice-suratkeluar-file-icon svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .smartoffice-suratkeluar-file-name {
+        font-size: 10px;
+    }
+
+    .smartoffice-suratkeluar-file-size {
+        font-size: 9px;
+    }
+
+    .smartoffice-suratkeluar-file-remove {
+        width: 24px;
+        height: 24px;
+        flex: 0 0 26px;
+        font-size: 15px;
+    }
+
+    /* ==================================================
+       ACTION BUTTON
+    ================================================== */
+
+    .smartoffice-suratkeluar-form-actions{
+        display:grid;
+        grid-template-columns:1fr 1fr 1fr;
+        gap:8px;
+        margin-top:4px;
+        padding-top:12px;
+    }
+
+    .smartoffice-suratkeluar-form-button{
+        width:100%;
+        min-width:0;
+        height:36px;
+        padding:0 8px;
+        font-size:10px;
+        border-radius:11px;
+    }
+
+    /* RESET */
+    .smartoffice-suratkeluar-form-button.reset{
+        min-width:0;
+        width:100%;
+        background:#f1f5f9;
+        border:1px solid #cbd5e1;
+        color:#475569;
+    }
+
+    /* BATAL */
+    .smartoffice-suratkeluar-form-cancel{
+        min-width:0;
+        width:100%;
+    }
+
+    /* SIMPAN */
+    .smartoffice-suratkeluar-form-submit{
+        min-width:0;
+        width:100%;
+    }
 }
 
 
@@ -5129,4 +5994,196 @@
     stroke-width:1.8;
     stroke-linecap:round;
     stroke-linejoin:round;
+}
+
+
+
+
+
+/* ======================================================
+   KODE SURAT
+====================================================== */
+
+.smartoffice-kode-surat-content{
+    width:100%;
+}
+
+/* ======================================================
+   CARD HEADER + FILTER KODE SURAT
+====================================================== */
+
+.smartoffice-kode-surat-filter-card{
+    width:100%;
+    padding:16px;
+    margin-bottom:16px;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    box-sizing:border-box;
+}
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.smartoffice-kode-surat-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+}
+
+.smartoffice-kode-surat-header p{
+    margin:4px 0 0;
+    font-size:10px;
+    color:#64748b;
+}
+
+/* ======================================================
+   FILTER
+====================================================== */
+
+.smartoffice-kode-surat-filter{
+    margin:0;
+}
+
+.smartoffice-kode-surat-search{
+    position:relative;
+    width:100%;
+}
+
+.smartoffice-kode-surat-search svg{
+    position:absolute;
+    left:12px;
+    top:50%;
+    width:16px;
+    height:16px;
+    transform:translateY(-50%);
+    fill:none;
+    stroke:#94a3b8;
+    stroke-width:2;
+    stroke-linecap:round;
+}
+
+.smartoffice-kode-surat-search input{
+    width:100%;
+    height:40px;
+    padding:0 12px 0 38px;
+    border:1px solid #dbe3ee;
+    border-radius:10px;
+    background:#fff;
+    font-family:inherit;
+    font-size:11px;
+    color:#172033;
+    outline:none;
+    box-sizing:border-box;
+}
+
+.smartoffice-kode-surat-search input:focus{
+    border-color:#2563eb;
+}
+
+.smartoffice-kode-surat-list{
+    display:grid;
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+    gap:10px;
+}
+
+.smartoffice-kode-surat-card{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-height:70px;
+    padding:12px;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    box-sizing:border-box;
+}
+
+.smartoffice-kode-surat-card-code{
+    width:52px;
+    min-width:52px;
+    height:52px;
+    border-radius:10px;
+    background:#eff6ff;
+    color:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-size:10px;
+    font-weight:700;
+}
+
+.smartoffice-kode-surat-card-info{
+    min-width:0;
+}
+
+.smartoffice-kode-surat-card-title{
+    font-size:11px;
+    font-weight:600;
+    line-height:1.4;
+    color:#172033;
+    overflow-wrap:anywhere;
+}
+
+.smartoffice-kode-surat-empty{
+    grid-column:1 / -1;
+    padding:30px 16px;
+    text-align:center;
+    font-size:11px;
+    color:#94a3b8;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media (max-width:768px){
+
+    .smartoffice-kode-surat-filter-card{
+        padding:12px;
+        margin-bottom:12px;
+        border-radius:11px;
+    }
+
+    .smartoffice-kode-surat-header{
+        margin-bottom:11px;
+    }
+
+    .smartoffice-kode-surat-header p{
+        font-size:10px;
+    }
+
+    .smartoffice-kode-surat-search input{
+        height:40px;
+        font-size:11px;
+    }
+
+    .smartoffice-kode-surat-list{
+        grid-template-columns:1fr;
+        gap:8px;
+    }
+
+    .smartoffice-kode-surat-card{
+        min-height:64px;
+        padding:10px;
+        gap:10px;
+        border-radius:11px;
+    }
+
+    .smartoffice-kode-surat-card-code{
+        width:48px;
+        min-width:48px;
+        height:48px;
+        border-radius:9px;
+        font-size:9px;
+    }
+
+    .smartoffice-kode-surat-card-title{
+        font-size:10px;
+    }
 }

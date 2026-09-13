@@ -2,59 +2,34 @@
    IMPORT
 ====================================================== */
 
-/* ======================================================
-   CORE
-====================================================== */
-import {
-    smartofficeCheckSession,
-    smartofficeGetSession,
-    smartofficeLogout
-} from "../../core/session.js";
+// --- CORE ---
+import { smartofficeCheckSession, smartofficeGetSession, smartofficeLogout } from "../../core/session.js";
+import { smartofficeNavigate } from "../../core/router.js";
 
-import {
-    smartofficeNavigate
-} from "../../core/router.js";
+// --- COMPONENT ---
+import { smartofficeShowToast } from "../../components/toast/toast.js";
+import { smartofficeRenderMobileNavbar } from "../../components/navbar/navbar.js";
+import { smartofficeOpenPreviewDokumen, smartofficeClosePreviewDokumen, smartofficeZoomIn, smartofficeZoomOut } from "../../components/preview/preview.js";
 
-/* ======================================================
-   COMPONENT
-====================================================== */
-import {
-    smartofficeShowToast
-} from "../../components/toast/toast.js";
+// --- LOADING ---
+import { smartofficeShowGlobalLoading, smartofficeHideGlobalLoading, smartofficeShowLoading } from "../../components/loading/loading.js";
 
-import {
-    smartofficeRenderMobileNavbar
-} from "../../components/navbar/navbar.js";
-
-/* ======================================================
-   LOADING
-====================================================== */
-import {
-    smartofficeShowGlobalLoading,
-    smartofficeHideGlobalLoading,
-    smartofficeShowLoading
-} from "../../components/loading/loading.js";
-
-/* ======================================================
-   SERVICE
-====================================================== */
+// --- SERVICE ---
 import {
     smartofficeGetAllSuratMasuk,
     smartofficeBukaLockSuratMasuk,
     smartofficeGetMasterSurat,
     smartofficePreviewNomorAgendaMasuk,
     smartofficeSaveSuratMasuk,
+    smartofficeDeleteSuratMasuk,
     smartofficeGetAllSuratKeluar,
     smartofficeSaveSuratKeluar,
     smartofficeBukaLockSuratKeluar
 } from "../../services/buku-surat.service.js";
 
-/* ======================================================
-   UTILS
-====================================================== */
-import {
-    smartofficeConvertFileToBase64
-} from "../../utils/file.js";
+// --- UTILS ---
+import { smartofficeConvertFileToBase64 } from "../../utils/file.js";
+import { smartofficeGetDriveFileId } from "../../utils/drive.js";
 
 
 /* ======================================================
@@ -70,6 +45,7 @@ let smartofficeBukuSuratTabKeluarHandler = null;
 let smartofficeBukuSuratRefreshHandler = null;
 let smartofficeBukuSuratTambahHandler = null;
 let smartofficeSuratMasukEditRowIndex = null;
+let smartofficeDeleteSuratMasukRowIndex = null;
 
 let smartofficeBukuSuratTanggalHandler = null;
 let smartofficeBukuSuratBulanHandler = null;
@@ -95,6 +71,12 @@ let smartofficeSuratKeluarBulanHandler = null;
 let smartofficeSuratKeluarSearchHandler = null;
 let smartofficeSuratKeluarStatusHandler = null;
 let smartofficeSuratKeluarKlasifikasiOutsideClickHandler = null;
+
+/* =====================================================
+   GLOBAL STATE KODE SURAT
+===================================================== */
+let smartofficeBukuSuratTabKodeHandler = null;
+let smartofficeKodeSuratSearchHandler = null;
 
 
 /* ======================================================
@@ -160,6 +142,11 @@ export async function smartofficeLoadPage(){
     smartofficeInitBukuSuratTab();
 
     /* ==================================================
+       KODES SURAT
+    ================================================== */
+    smartofficeInitKodeSuratSearch();
+
+    /* ==================================================
        INIT REFRESH
     ================================================== */
     smartofficeInitBukuSuratRefreshButton();
@@ -180,6 +167,29 @@ export async function smartofficeLoadPage(){
             pageInstance
         )
     ]);
+
+    /* ==================================================
+      PRELOAD MASTER SURAT
+      BACKGROUND - TIDAK MENAHAN LOAD PAGE
+    ================================================== */
+    loadMaster(
+        null,
+        pageInstance
+    ).catch(error => {
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        console.error(
+            "Background Load Master Surat Error:",
+            error
+        );
+
+    });
 
     /* ==================================================
        CEK HALAMAN MASIH AKTIF
@@ -478,6 +488,78 @@ export async function smartofficeDestroyPage(){
     null;
 
     /* ==================================================
+       CLOSE MODAL DELETE SURAT MASUK
+    ================================================== */
+    const deleteSuratMasukModal =
+        document.getElementById(
+            "smartofficeSuratMasukDeleteModal"
+        );
+
+    if(deleteSuratMasukModal){
+        deleteSuratMasukModal.classList.remove(
+            "is-visible"
+        );
+    }
+
+    smartofficeDeleteSuratMasukRowIndex =
+        null;
+
+    /* ==================================================
+       CLOSE MODAL BUKA LOCK SURAT MASUK
+    ================================================== */
+    const lockSuratMasukModal =
+        document.getElementById(
+            "smartofficeSuratMasukLockModal"
+        );
+
+    if(lockSuratMasukModal){
+        lockSuratMasukModal.classList.remove(
+            "is-visible"
+        );
+    }
+
+    /* ==================================================
+       CLOSE MODAL FORM SURAT MASUK
+    ================================================== */
+    const formSuratMasukModal =
+        document.getElementById(
+            "smartofficeSuratMasukFormModal"
+        );
+
+    if(formSuratMasukModal){
+        formSuratMasukModal.style.display =
+            "none";
+    }
+
+    /* ==================================================
+       CLOSE MODAL FORM SURAT KELUAR
+    ================================================== */
+    const formSuratKeluarModal =
+        document.getElementById(
+            "smartofficeSuratKeluarFormModal"
+        );
+
+    if(formSuratKeluarModal){
+        formSuratKeluarModal.classList.remove(
+            "show"
+        );
+    }
+
+    /* ==================================================
+       CLOSE MODAL BUKA LOCK SURAT KELUAR
+    ================================================== */
+    const lockSuratKeluarModal =
+        document.getElementById(
+            "smartofficeSuratKeluarLockModal"
+        );
+
+    if(lockSuratKeluarModal){
+        lockSuratKeluarModal.classList.remove(
+            "is-visible"
+        );
+    }
+
+    /* ==================================================
        RESET DATA SURAT MASUK
     ================================================== */
     suratMasukAllData = [];
@@ -513,6 +595,11 @@ function smartofficeInitBukuSuratTab(){
             "smartofficeTabSuratKeluar"
         );
 
+    const tabKodeSurat =
+        document.getElementById(
+            "smartofficeTabKodeSurat"
+        );
+
     const suratMasukContent =
         document.getElementById(
             "smartofficeSuratMasukContent"
@@ -521,6 +608,11 @@ function smartofficeInitBukuSuratTab(){
     const suratKeluarContent =
         document.getElementById(
             "smartofficeSuratKeluarContent"
+        );
+
+    const kodeSuratContent =
+        document.getElementById(
+            "smartofficeKodeSuratContent"
         );
 
     /* ==================================================
@@ -539,6 +631,12 @@ function smartofficeInitBukuSuratTab(){
                     );
                 }
 
+                if(tabKodeSurat){
+                    tabKodeSurat.classList.remove(
+                        "active"
+                    );
+                }
+
                 if(suratMasukContent){
                     suratMasukContent.style.display =
                         "";
@@ -546,6 +644,11 @@ function smartofficeInitBukuSuratTab(){
 
                 if(suratKeluarContent){
                     suratKeluarContent.style.display =
+                        "none";
+                }
+
+                if(kodeSuratContent){
+                    kodeSuratContent.style.display =
                         "none";
                 }
             };
@@ -572,8 +675,13 @@ function smartofficeInitBukuSuratTab(){
                     );
                 }
 
-                if(suratKeluarContent){
+                if(tabKodeSurat){
+                    tabKodeSurat.classList.remove(
+                        "active"
+                    );
+                }
 
+                if(suratKeluarContent){
                     suratKeluarContent.style.display =
                         "";
                 }
@@ -582,11 +690,62 @@ function smartofficeInitBukuSuratTab(){
                     suratMasukContent.style.display =
                         "none";
                 }
+
+                if(kodeSuratContent){
+                    kodeSuratContent.style.display =
+                        "none";
+                }
             };
 
         tabSuratKeluar.addEventListener(
             "click",
             smartofficeBukuSuratTabKeluarHandler
+        );
+    }
+
+    /* ==================================================
+       KODE SURAT
+    ================================================== */
+    if(tabKodeSurat){
+        smartofficeBukuSuratTabKodeHandler =
+            function(){
+                tabKodeSurat.classList.add(
+                    "active"
+                );
+
+                if(tabSuratMasuk){
+                    tabSuratMasuk.classList.remove(
+                        "active"
+                    );
+                }
+
+                if(tabSuratKeluar){
+                    tabSuratKeluar.classList.remove(
+                        "active"
+                    );
+                }
+
+                if(kodeSuratContent){
+                    kodeSuratContent.style.display =
+                        "";
+                }
+
+                if(suratMasukContent){
+                    suratMasukContent.style.display =
+                        "none";
+                }
+
+                if(suratKeluarContent){
+                    suratKeluarContent.style.display =
+                        "none";
+                }
+
+                smartofficeRenderKodeSurat();
+            };
+
+        tabKodeSurat.addEventListener(
+            "click",
+            smartofficeBukuSuratTabKodeHandler
         );
     }
 }
@@ -1463,9 +1622,9 @@ function smartofficeRenderSuratMasuk(
                             smartoffice-suratmasuk-action
                         "
                         onclick="
-                            window.open(
-                                '${item.file}',
-                                '_blank'
+                            smartofficeOpenPreviewDokumen(
+                                '${smartofficeGetDriveFileId(item.file)}',
+                                'Surat Masuk'
                             )
                         "
                     >
@@ -1612,14 +1771,13 @@ function smartofficeRenderSuratMasuk(
                         <span>
                             Buka Lock
                         </span>
-
                     </button>
                 `;
             }
 
             /* DELETE SURAT MASUK */
             if(
-                canManage
+                role === "SUPERADMIN"
             ){
                 actionHtml += `
                     <button
@@ -4010,6 +4168,231 @@ function resetSubmitMasukUI() {
 }
 
 
+/* ======================================================
+   HAPUS SURAT MASUK
+   BUKA MODAL KONFIRMASI
+====================================================== */
+async function smartofficeDeleteSuratMasukUI(rowIndex){
+
+    const sessionData =
+        smartofficeGetSession();
+
+    const role =
+        String(
+            sessionData?.role || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    /* =========================
+       VALIDASI ROLE
+    ========================= */
+    if(role !== "SUPERADMIN"){
+        smartofficeShowToast(
+            "Hanya SUPERADMIN yang dapat menghapus Surat Masuk.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* =========================
+       VALIDASI ROW INDEX
+    ========================= */
+    if(!rowIndex){
+        smartofficeShowToast(
+            "Baris Surat Masuk tidak valid.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* =========================
+       BUKA MODAL
+    ========================= */
+    const modal =
+        document.getElementById(
+            "smartofficeSuratMasukDeleteModal"
+        );
+
+    if(!modal){
+        return;
+    }
+
+    modal.dataset.rowIndex =
+        rowIndex;
+
+    modal.classList.add(
+        "is-visible"
+    );
+}
+
+
+/* ======================================================
+   TUTUP MODAL DELETE SURAT MASUK
+====================================================== */
+function smartofficeCloseDeleteSuratMasukModal(){
+
+    const modal =
+        document.getElementById(
+            "smartofficeSuratMasukDeleteModal"
+        );
+    if(modal){
+        modal.classList.remove(
+            "is-visible"
+        );
+    }
+
+    smartofficeDeleteSuratMasukRowIndex =
+        null;
+}
+
+
+/* ======================================================
+   KONFIRMASI HAPUS SURAT MASUK
+====================================================== */
+async function smartofficeConfirmDeleteSuratMasuk(){
+
+    const modal =
+        document.getElementById(
+            "smartofficeSuratMasukDeleteModal"
+        );
+    if(!modal){
+        return;
+    }
+
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
+
+    const rowIndex =
+        Number(
+            modal.dataset.rowIndex
+        );
+
+    const sessionData =
+        smartofficeGetSession();
+
+    const role =
+        String(
+            sessionData?.role || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    /* =========================
+       VALIDASI
+    ========================= */
+    if(
+        !rowIndex ||
+        role !== "SUPERADMIN"
+    ){
+        smartofficeCloseDeleteSuratMasukModal();
+
+        return;
+    }
+
+    /* =========================
+       TUTUP MODAL
+    ========================= */
+    smartofficeCloseDeleteSuratMasukModal();
+    smartofficeShowGlobalLoading(
+        "Menghapus Surat Masuk..."
+    );
+
+    try{
+        /* =========================
+           HAPUS KE BACKEND
+        ========================= */
+        const response =
+            await smartofficeDeleteSuratMasuk(
+                rowIndex,
+                role
+            );
+
+        /* =========================
+           CEK HALAMAN
+        ========================= */
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        /* =========================
+           VALIDASI RESPONSE
+        ========================= */
+        if(
+            !response ||
+            response.success !== true
+        ){
+            throw new Error(
+                response?.message ||
+                "Surat Masuk gagal dihapus."
+            );
+        }
+
+        /* =========================
+           AMBIL ULANG DATA
+           AGAR rowIndex TERBARU
+        ========================= */
+        await smartofficeLoadDataSuratMasuk(
+            pageInstance
+        );
+
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        smartofficeShowToast(
+            response.message ||
+            "Surat Masuk berhasil dihapus.",
+            "success"
+        );
+    }
+    catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        console.error(
+            "Hapus Surat Masuk Error:",
+            error
+        );
+
+        if(
+            error?.message ===
+            "Request dibatalkan."
+        ){
+            return;
+        }
+
+        smartofficeShowToast(
+            error?.message ||
+            "Gagal menghapus Surat Masuk.",
+            "error"
+        );
+    }
+    finally{
+        if(
+            pageInstance ===
+            smartofficeBukuSuratPageInstance
+        ){
+            smartofficeHideGlobalLoading();
+
+        }
+
+    }
+}
+
+
 /* =====================================================
    HELPER NOTIF SURAT MASUK
 ===================================================== */
@@ -4202,10 +4585,7 @@ async function loadDataSuratKeluar(
             return;
         }
 
-        suratKeluarAllData =
-            Array.isArray(res)
-                ? res
-                : [];
+        suratKeluarAllData = Array.isArray(res) ? res : [];
 
         /* DATA UNTUK TAMPILAN */
         suratKeluarViewData =
@@ -4296,7 +4676,7 @@ async function loadMaster(
         )
     ){
 
-        renderMasterDropdown();
+        smartofficeRenderMasterSuratKeluar();
 
         if(
             typeof callback ===
@@ -4369,7 +4749,7 @@ async function loadMaster(
         /* ==================================================
            RENDER MASTER
         ================================================== */
-        renderMasterDropdown();
+        smartofficeRenderMasterSuratKeluar();
 
         if(
             typeof callback ===
@@ -5071,7 +5451,7 @@ function renderSuratKeluar(){
                             smartoffice-suratkeluar-action-lock
                         "
                         onclick="
-                            smartofficeBukaLockSuratKeluarUI(
+                            smartofficeBukaLockSuratKeluar(
                                 ${item.rowIndex}
                             )
                         "
@@ -5306,37 +5686,43 @@ function renderSuratKeluar(){
                          ACTION
                     ================================== -->
                     <div class="${footerClass}">
-                        <!-- LIHAT SURAT
-                             SEMUA ROLE -->
-
-                        <button
-                            type="button"
-                            class="
-                                smartoffice-suratkeluar-card-action
-                                smartoffice-suratkeluar-action-view
-                            "
-                            onclick="
-                                smartofficeOpenSuratKeluar(
-                                    ${item.rowIndex}
-                                )
-                            "
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.8"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                        ${
+                            item.file
+                            ?
+                            `
+                            <button
+                                type="button"
+                                class="
+                                    smartoffice-suratkeluar-card-action
+                                    smartoffice-suratkeluar-action-view
+                                "
+                                onclick="
+                                    smartofficeOpenPreviewDokumen(
+                                        '${smartofficeGetDriveFileId(item.file)}',
+                                        'Surat Keluar'
+                                    )
+                                "
                             >
-                                <path d="M4 4h16v16H4z"/>
-                                <path d="M8 8h8"/>
-                                <path d="M8 12h8"/>
-                                <path d="M8 16h5"/>
-                            </svg>
-                            <span>Lihat Surat</span>
-                        </button>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M4 4h16v16H4z"/>
+                                    <path d="M8 8h8"/>
+                                    <path d="M8 12h8"/>
+                                    <path d="M8 16h5"/>
+                                </svg>
 
+                                <span>Lihat Surat</span>
+                            </button>
+                            `
+                            :
+                            ""
+                        }
                         ${actionButton}
                     </div>
                 </div>
@@ -5514,11 +5900,10 @@ function smartofficeRenderFormSuratKeluar(data = null){
                         Perihal
                     </label>
 
-                    <input
-                        type="text"
+                    <textarea
                         id="smartofficeSuratKeluarPerihal"
-                        value="${data?.perihal || ""}"
-                    >
+                        rows="3"
+                    >${data?.perihal || ""}</textarea>
                 </div>
 
                 <!-- PENANDATANGAN -->
@@ -5638,6 +6023,13 @@ function smartofficeRenderFormSuratKeluar(data = null){
 
             <!-- ACTION -->
             <div class="smartoffice-suratkeluar-form-actions">
+                <button
+                    type="button"
+                    class="smartoffice-suratkeluar-form-button reset"
+                    onclick="smartofficeResetFormSuratKeluar()"
+                >
+                    Reset
+                </button>
                 <button
                     type="button"
                     id="smartofficeSuratKeluarFormCancel"
@@ -5877,6 +6269,148 @@ function formatFileSizeSuratKeluar(bytes){
         (bytes / (1024 * 1024)).toFixed(2) +
         " MB"
     );
+}
+
+
+/* ======================================================
+   RESET FORM SURAT KELUAR
+   NOMOR & TANGGAL SURAT TETAP
+====================================================== */
+function smartofficeResetFormSuratKeluar(){
+
+    /* ==================================================
+       NOMOR SURAT TETAP
+    ================================================== */
+    const nomorSurat =
+        document.getElementById(
+            "smartofficeSuratKeluarNomorSurat"
+        );
+
+    const tanggalSurat =
+        document.getElementById(
+            "smartofficeSuratKeluarTglSurat"
+        );
+
+    /* ==================================================
+       RESET FIELD FORM
+    ================================================== */
+    const klasifikasi =
+        document.getElementById(
+            "smartofficeSuratKeluarKlasifikasi"
+        );
+
+    const klasifikasiText =
+        document.getElementById(
+            "smartofficeSuratKeluarKlasifikasiText"
+        );
+
+    const kodeSurat =
+        document.getElementById(
+            "smartofficeSuratKeluarKodeSurat"
+        );
+
+    const sifat =
+        document.getElementById(
+            "smartofficeSuratKeluarSifat"
+        );
+
+    const tujuan =
+        document.getElementById(
+            "smartofficeSuratKeluarTujuan"
+        );
+
+    const perihal =
+        document.getElementById(
+            "smartofficeSuratKeluarPerihal"
+        );
+
+    const penandatangan =
+        document.getElementById(
+            "smartofficeSuratKeluarPenandatangan"
+        );
+
+    const keterangan =
+        document.getElementById(
+            "smartofficeSuratKeluarKeterangan"
+        );
+
+    /* ==================================================
+       KOSONGKAN
+    ================================================== */
+    if(klasifikasi){
+        klasifikasi.value = "";
+    }
+
+    if(klasifikasiText){
+        klasifikasiText.textContent =
+            "-- Pilih Klasifikasi --";
+    }
+
+    if(kodeSurat){
+        kodeSurat.value = "";
+    }
+
+    if(sifat){
+        sifat.value = "";
+    }
+
+    if(tujuan){
+        tujuan.value = "";
+    }
+
+    if(perihal){
+        perihal.value = "";
+    }
+
+    if(penandatangan){
+        penandatangan.value = "";
+    }
+
+    if(keterangan){
+        keterangan.value = "";
+    }
+
+    /* ==================================================
+       RESET FILE
+    ================================================== */
+    const fileInput =
+        document.getElementById(
+            "smartofficeSuratKeluarFile"
+        );
+
+    const uploadEmpty =
+        document.getElementById(
+            "smartofficeSuratKeluarUploadEmpty"
+        );
+
+    const uploadSelected =
+        document.getElementById(
+            "smartofficeSuratKeluarUploadSelected"
+        );
+
+    if(fileInput){
+        fileInput.value = "";
+    }
+
+    if(uploadSelected){
+        uploadSelected.style.display = "none";
+    }
+
+    if(uploadEmpty){
+        uploadEmpty.style.display = "flex";
+    }
+
+    /* ==================================================
+       NOMOR & TANGGAL TETAP
+       Tidak perlu diubah
+    ================================================== */
+    if(nomorSurat){
+        nomorSurat.value = nomorSurat.value;
+    }
+
+    if(tanggalSurat){
+        tanggalSurat.value = tanggalSurat.value;
+    }
 }
 
 
@@ -6230,24 +6764,7 @@ async function openEditModalByRowIndex(
         return;
     }
 
-    smartofficeShowGlobalLoading(
-        "Menyiapkan form Surat Keluar..."
-    );
-
     try{
-        /* ==================================================
-           MASTER HARUS SIAP DAHULU
-        ================================================== */
-        await loadMaster(
-            null,
-            pageInstance
-        );
-        if(
-            pageInstance !==
-            smartofficeBukuSuratPageInstance
-        ){
-            return;
-        }
 
         /* ==================================================
            RENDER FORM
@@ -6721,55 +7238,7 @@ async function smartofficeSubmitSuratKeluar(
         document.getElementById(
             "smartofficeSuratKeluarFile"
         );
-
-    /* ==================================================
-       VALIDASI
-    ================================================== */
-    const requiredFields = [
-        {
-            value:kode,
-            label:"Kode Surat"
-        },
-        {
-            value:klasifikasi,
-            label:"Klasifikasi Surat"
-        },
-        {
-            value:sifat,
-            label:"Sifat Surat"
-        },
-        {
-            value:tujuan,
-            label:"Tujuan / Penerima"
-        },
-        {
-            value:perihal,
-            label:"Perihal"
-        },
-        {
-            value:penandatangan,
-            label:"Pejabat Penandatangan"
-        }
-    ];
-
-    const emptyFields =
-        requiredFields.filter(
-            field => !field.value
-        );
-
-    if(emptyFields.length){
-        isSubmitting = false;
-        smartofficeShowToast(
-            "Data wajib diisi: " +
-            emptyFields
-                .map(field => field.label)
-                .join(", "),
-            "error"
-        );
-
-        return;
-    }
-
+    
     /* ==================================================
        FILE
     ================================================== */
@@ -6987,6 +7456,155 @@ async function smartofficeSubmitSuratKeluar(
 
 
 /* ======================================================
+   RENDER KODE SURAT
+====================================================== */
+function smartofficeRenderKodeSurat(){
+
+    const list =
+        document.getElementById(
+            "smartofficeKodeSuratList"
+        );
+
+    const searchInput =
+        document.getElementById(
+            "smartofficeKodeSuratSearch"
+        );
+
+    if(!list){
+        return;
+    }
+
+    const keyword =
+        String(
+            searchInput?.value || ""
+        )
+        .trim()
+        .toLowerCase();
+
+    const data =
+        Array.isArray(masterSurat?.klasifikasi)
+            ? masterSurat.klasifikasi
+            : [];
+
+    /* ==================================================
+       BELUM ADA DATA MASTER
+    ================================================== */
+    if(!data.length){
+
+        list.innerHTML = `
+            <div class="smartoffice-kode-surat-empty">
+                Data kode surat belum tersedia.
+            </div>
+        `;
+
+        return;
+    }
+
+    /* ==================================================
+       FILTER SEARCH
+    ================================================== */
+    const filteredData =
+        data.filter(item => {
+
+            const klasifikasi =
+                String(
+                    item.klasifikasi || ""
+                )
+                .toLowerCase();
+
+            const kode =
+                String(
+                    item.kode || ""
+                )
+                .toLowerCase();
+
+            return (
+                !keyword ||
+                klasifikasi.includes(keyword) ||
+                kode.includes(keyword)
+            );
+        });
+
+    /* ==================================================
+       TIDAK DITEMUKAN
+    ================================================== */
+    if(!filteredData.length){
+
+        list.innerHTML = `
+            <div class="smartoffice-kode-surat-empty">
+                Kode surat tidak ditemukan.
+            </div>
+        `;
+
+        return;
+    }
+
+    /* ==================================================
+       RENDER CARD
+    ================================================== */
+    list.innerHTML =
+        filteredData
+            .map(item => {
+
+                const kode =
+                    String(
+                        item.kode || "-"
+                    );
+
+                const klasifikasi =
+                    String(
+                        item.klasifikasi || "-"
+                    );
+
+                return `
+                    <div class="smartoffice-kode-surat-card">
+
+                        <div class="smartoffice-kode-surat-card-code">
+                            ${kode}
+                        </div>
+
+                        <div class="smartoffice-kode-surat-card-info">
+                            <div class="smartoffice-kode-surat-card-title">
+                                ${klasifikasi}
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+            })
+            .join("");
+}
+
+
+/* ======================================================
+   INIT SEARCH KODE SURAT
+====================================================== */
+function smartofficeInitKodeSuratSearch(){
+
+    const searchInput =
+        document.getElementById(
+            "smartofficeKodeSuratSearch"
+        );
+
+    if(!searchInput){
+        return;
+    }
+
+    smartofficeKodeSuratSearchHandler =
+        function(){
+
+            smartofficeRenderKodeSurat();
+
+        };
+
+    searchInput.addEventListener(
+        "input",
+        smartofficeKodeSuratSearchHandler
+    );
+}
+
+
+/* ======================================================
    EXPOSE ACTION KE WINDOW
 ====================================================== */
 window.smartofficeBukaLockSuratMasukUI =
@@ -7004,6 +7622,15 @@ window.smartofficeCloseFormSuratMasuk =
 window.openEditModalMasuk =
     openEditModalMasuk;
 
+window.smartofficeDeleteSuratMasukUI =
+    smartofficeDeleteSuratMasukUI;
+
+window.smartofficeCloseDeleteSuratMasukModal =
+    smartofficeCloseDeleteSuratMasukModal;
+
+window.smartofficeConfirmDeleteSuratMasuk =
+    smartofficeConfirmDeleteSuratMasuk;
+
 window.openEditModalByRowIndex =
     openEditModalByRowIndex;
 
@@ -7018,3 +7645,7 @@ window.smartofficeCloseBukaLockSuratKeluarModal =
 
 window.smartofficeConfirmBukaLockSuratKeluar =
     smartofficeConfirmBukaLockSuratKeluar;
+
+window.smartofficeResetFormSuratKeluar =
+    smartofficeResetFormSuratKeluar;
+
