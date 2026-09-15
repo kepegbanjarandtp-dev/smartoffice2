@@ -19,7 +19,7 @@ const smartofficeActiveRequests =
    Jika lewat, request otomatis dibatalkan.
 ====================================================== */
 const SMARTOFFICE_API_TIMEOUT_MS =
-    20000;
+    30000;
 
 
 /* ======================================================
