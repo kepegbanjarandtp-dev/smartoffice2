@@ -535,36 +535,111 @@ async function smartofficeRegisterFCMInternal(){
                             installationId
                         );
 
-
-                        if(
-                            !installationId
-                        ){
-
+                        if(!installationId){
                             console.error(
                                 "[Smart Office] FID kosong."
                             );
-
                             return;
-
                         }
 
+                        /* =========================
+                        AMBIL NIP SESSION
+                        ========================= */
+
+                        const sessionRaw =
+                            localStorage.getItem(
+                                "smartoffice_session"
+                            );
+
+                        if(!sessionRaw){
+                            console.warn(
+                                "[Smart Office] Session tidak ditemukan."
+                            );
+                            return;
+                        }
+
+                        let session;
+
+                        try{
+                            session =
+                                JSON.parse(sessionRaw);
+                        }
+                        catch(error){
+                            console.error(
+                                "[Smart Office] Session tidak valid."
+                            );
+                            return;
+                        }
+
+                        const nip =
+                            String(
+                                session?.nip ||
+                                session?.NIP ||
+                                ""
+                            ).trim();
+
+                        if(!nip){
+                            console.warn(
+                                "[Smart Office] NIP session tidak ditemukan."
+                            );
+                            return;
+                        }
+
+                        /* =========================
+                        CEK FID LOKAL
+                        ========================= */
+
+                        const storageKey =
+                            "smartoffice_fcm_fid_" + nip;
+
+                        const savedFID =
+                            localStorage.getItem(
+                                storageKey
+                            );
+
+                        /* =========================
+                        FID SUDAH TERDAFTAR
+                        → SKIP GAS
+                        ========================= */
+
+                        if(savedFID === installationId){
+
+                            console.log(
+                                "[Smart Office] FID sudah terdaftar. GAS dilewati."
+                            );
+
+                            return;
+                        }
+
+                        /* =========================
+                        FID BARU / BERUBAH
+                        → KIRIM KE GAS
+                        ========================= */
 
                         smartofficeShowFCMStatus(
-                            "FCM FID: " +
-                            installationId +
-                            "\nMengirim FID ke server..."
+                            "FCM FID baru.\nMengirim FID ke server..."
                         );
-
 
                         const result =
                             await smartofficeRegisterPushToken(
                                 installationId
                             );
 
+                        console.log(
+                            "[Smart Office] Register Push FID:",
+                            result
+                        );
 
-                        if(
-                            result?.success
-                        ){
+                        /* =========================
+                        HANYA SIMPAN JIKA SUKSES
+                        ========================= */
+
+                        if(result?.success){
+
+                            localStorage.setItem(
+                                storageKey,
+                                installationId
+                            );
 
                             smartofficeShowFCMStatus(
                                 "✓ Notifikasi berhasil diaktifkan.",
