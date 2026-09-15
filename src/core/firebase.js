@@ -511,12 +511,6 @@ async function smartofficeRegisterFCMInternal(){
 
         }
 
-
-        smartofficeShowFCMStatus(
-            "FCM: Service Worker berhasil."
-        );
-
-
         /* =================================================
            REGISTER LISTENER SEKALI SAJA
         ================================================= */
