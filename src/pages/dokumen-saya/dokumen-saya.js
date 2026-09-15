@@ -55,6 +55,14 @@ import {
     smartofficeUploadDokumen
 } from "../../services/dokumen-saya.service.js";
 
+import {
+    smartofficeGetPegawaiFromFirestore
+} from "../../services/pegawai-firestore.service.js";
+
+import {
+    smartofficeGetMasterDokumenFirestore,
+    smartofficeGetDokumenPegawaiFirestore
+} from "../../services/dokumen-saya-firestore.service.js";
 
 /* ================================================================================
    GLOBAL STATE
@@ -331,15 +339,14 @@ async function smartofficeLoadDataPegawaiDokumen(
     try{
         const pageInstance =
             smartofficeDokumenPageInstance;
-            
+
         /* =========================
-           GET DATA PEGAWAI
+           GET DATA PEGAWAI FIRESTORE
         ========================= */
-        const data =
-            await smartofficeGetPegawaiByNip(
+        const response =
+            await smartofficeGetPegawaiFromFirestore(
                 nip
             );
-
         if(
             pageInstance !==
             smartofficeDokumenPageInstance
@@ -351,7 +358,9 @@ async function smartofficeLoadDataPegawaiDokumen(
            VALIDASI
         ========================= */
         if(
-            !data
+            !response ||
+            !response.success ||
+            !response.data
         ){
             smartofficeShowToast(
                 "Data pegawai tidak ditemukan",
@@ -360,6 +369,9 @@ async function smartofficeLoadDataPegawaiDokumen(
 
             return;
         }
+
+        const data =
+            response.data;
 
         /* =========================
            NAMA
@@ -375,7 +387,7 @@ async function smartofficeLoadDataPegawaiDokumen(
         document.getElementById(
             "smartofficeDokumenNip"
         ).value =
-            data.nip || "";
+            data.nip || nip || "";
 
         /* =========================
            JABATAN
@@ -400,14 +412,8 @@ async function smartofficeLoadDataPegawaiDokumen(
             "smartofficeDokumenJenis"
         ).value =
             data.jenisPegawai || "";
-
-        /* =========================
-           LOAD MASTER DOKUMEN
-        ========================= */
-        //await smartofficeLoadMasterDokumen();
     }
     catch(error){
-
         /* =========================
            REQUEST DIBATALKAN
            KARENA PINDAH HALAMAN
@@ -420,7 +426,7 @@ async function smartofficeLoadDataPegawaiDokumen(
         }
 
         console.error(
-            "Gagal memuat data pegawai:",
+            "Gagal memuat data pegawai Firestore:",
             error
         );
 
@@ -453,13 +459,12 @@ async function smartofficeLoadMasterDokumen(){
         }
 
         /* =========================
-           GET MASTER DOKUMEN
+           GET MASTER DOKUMEN FIRESTORE
         ========================= */
         const data =
-            await smartofficeGetMasterDokumen(
+            await smartofficeGetMasterDokumenFirestore(
                 sessionData.nip
             );
-
         if(
             pageInstance !==
             smartofficeDokumenPageInstance
@@ -474,6 +479,7 @@ async function smartofficeLoadMasterDokumen(){
             document.getElementById(
                 "smartofficeDokumenJenisDokumen"
             );
+
         if(
             !select
         ){
@@ -507,7 +513,6 @@ async function smartofficeLoadMasterDokumen(){
         );
     }
     catch(error){
-
         /* =========================
            REQUEST DIBATALKAN
            KARENA PINDAH HALAMAN
@@ -520,7 +525,7 @@ async function smartofficeLoadMasterDokumen(){
         }
 
         console.error(
-            "Gagal memuat master dokumen:",
+            "Gagal memuat master dokumen Firestore:",
             error
         );
 
@@ -556,10 +561,9 @@ async function smartofficeLoadDokumenSaya(){
             smartofficeDokumenPageInstance;
 
         const data =
-            await smartofficeGetDokumenPegawai(
+            await smartofficeGetDokumenPegawaiFirestore(
                 sessionData.nip
             );
-
         if(
             pageInstance !==
             smartofficeDokumenPageInstance
@@ -582,7 +586,6 @@ async function smartofficeLoadDokumenSaya(){
             true;
     }
     catch(error){
-
         /* =========================
         REQUEST DIBATALKAN
         KARENA PINDAH HALAMAN
@@ -595,6 +598,7 @@ async function smartofficeLoadDokumenSaya(){
         }
 
         console.error(
+            "Gagal memuat dokumen Firestore:",
             error
         );
 

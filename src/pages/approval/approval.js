@@ -51,6 +51,11 @@ import {
     smartofficeTolakDokumenApi
 } from "../../services/approval.service.js";
 
+import {
+    smartofficeGetApprovalCutiFirestore,
+    smartofficeGetDokumenVerifikasiFirestore
+} from "../../services/approval-firestore.service.js";
+
 /* ======================================================
    UTILS
 ====================================================== */
@@ -411,7 +416,7 @@ export async function smartofficeLoadApprovalCuti(){
   
   try{
       const data =
-        await smartofficeGetApprovalCuti(
+        await smartofficeGetApprovalCutiFirestore(
             sessionData.nip
         );
 
@@ -2005,7 +2010,7 @@ export async function smartofficeLoadApprovalDokumen(){
     ========================= */
     try{
         const data =
-            await smartofficeGetDokumenVerifikasi();
+            await smartofficeGetDokumenVerifikasiFirestore();
         if(
             pageInstance !==
             smartofficeApprovalPageInstance

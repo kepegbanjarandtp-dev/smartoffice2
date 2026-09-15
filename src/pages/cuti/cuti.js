@@ -52,6 +52,16 @@ import {
     smartofficeSubmitCuti
 } from "../../services/cuti.service.js";
 
+import {
+    smartofficeGetRiwayatCutiFirestore,
+    smartofficeGetCutiStatsFirestore
+} from "../../services/cuti-firestore.service.js";
+
+import {
+    smartofficeGetPegawaiFromFirestore,
+    smartofficeGetAllPegawaiFromFirestore
+} from "../../services/pegawai-firestore.service.js";
+
 /* ======================================================
    UTILS
 ====================================================== */
@@ -123,7 +133,13 @@ export async function smartofficeLoadPage(){
         "cuti"
     );
 
-    /* LOAD DATA PEGAWAI & CACHE PEGAWAI */
+    // TAB LANGSUNG AKTIF
+    smartofficeInitTab();
+
+    // TAMPILKAN FORM LANGSUNG
+    smartofficeSwitchCutiTab("form");
+
+    /* LOAD DATA PEGAWAI & CACHE PEGAWAI & RIWAYAT CUTI*/
     await Promise.all([
         smartofficeLoadPegawai(sessionData.nip),
         smartofficeLoadPegawaiCache()
@@ -148,14 +164,8 @@ export async function smartofficeLoadPage(){
     /* INIT COMPONENT */
     smartofficeInitAutoHitungCuti();
     smartofficeInitUploadLampiran();
-    smartofficeInitSubmitButton();
-    smartofficeInitTab();
+    smartofficeInitSubmitButton();    
     smartofficeInitRefreshButton();
-
-    /* DEFAULT TAB */
-    smartofficeSwitchCutiTab(
-        "form"
-    );
 }
 
 /* ======================================================
@@ -227,10 +237,20 @@ export async function smartofficeLoadPegawai(
 
     try{
         /* GET DATA PEGAWAI */
-        const data =
-            await smartofficeGetPegawaiByNip(
+        const result =
+            await smartofficeGetPegawaiFromFirestore(
                 nip
             );
+
+        if(!result.success){
+            smartofficeShowToast(
+                result.message || "Data pegawai tidak ditemukan",
+                "error"
+            );
+            return;
+        }
+
+        const data = result.data;
 
         /* VALIDASI DATA */
         if(
@@ -308,41 +328,48 @@ export async function smartofficeLoadPegawai(
             );
 
         /* MINI STATS */
-        const sisaElement =
-            document.getElementById(
-                "smartofficeStatSisaCuti"
+        const stats =
+            await smartofficeGetCutiStatsFirestore(
+                nip
             );
 
-        sisaElement.innerText =
-            data.sisaCuti || 0;
+        if(stats.success){
+            const sisaElement =
+                document.getElementById(
+                    "smartofficeStatSisaCuti"
+                );
 
-        sisaElement.classList.remove(
-            "smartoffice-skeleton-text"
-        );
+            sisaElement.innerText =
+                stats.data.sisaCuti || 0;
 
-        const menungguElement =
-            document.getElementById(
-                "smartofficeStatMenungguCuti"
+            sisaElement.classList.remove(
+                "smartoffice-skeleton-text"
             );
 
-        menungguElement.innerText =
-            data.totalMenunggu || 0;
+            const menungguElement =
+                document.getElementById(
+                    "smartofficeStatMenungguCuti"
+                );
 
-        menungguElement.classList.remove(
-            "smartoffice-skeleton-text"
-        );
+            menungguElement.innerText =
+                stats.data.totalMenunggu || 0;
 
-        const disetujuiElement =
-            document.getElementById(
-                "smartofficeStatDisetujuiCuti"
+            menungguElement.classList.remove(
+                "smartoffice-skeleton-text"
             );
 
-        disetujuiElement.innerText =
-            data.totalDisetujui || 0;
+            const disetujuiElement =
+                document.getElementById(
+                    "smartofficeStatDisetujuiCuti"
+                );
 
-        disetujuiElement.classList.remove(
-            "smartoffice-skeleton-text"
-        );
+            disetujuiElement.innerText =
+                stats.data.totalDisetujui || 0;
+
+            disetujuiElement.classList.remove(
+                "smartoffice-skeleton-text"
+            );
+        }
 
         /* LOAD JENIS CUTI */
         smartofficeLoadJenisCuti();
@@ -383,29 +410,35 @@ export async function smartofficeLoadPegawai(
     }
 }
 
+
 /* ======================================================
    LOAD CACHE PEGAWAI
 ====================================================== */
 export async function smartofficeLoadPegawaiCache(){
+
     try{
-        /* GET DATA PEGAWAI */
+        /* GET DATA PEGAWAI DARI FIRESTORE */
         const result =
-            await smartofficeSearchPegawaiCuti(
-                ""
+            await smartofficeGetAllPegawaiFromFirestore();
+
+        if(!result.success){
+            throw new Error(
+                result.message ||
+                "Gagal mengambil data pegawai."
             );
+        }
 
         console.log(
-            "CACHE PEGAWAI CUTI:",
-            result
+            "CACHE PEGAWAI CUTI FIRESTORE:",
+            result.data
         );
 
         /* SAVE CACHE */
         smartofficePegawaiCache =
-            result || [];
+            result.data || [];
 
         /* INIT AUTOCOMPLETE */
         smartofficeInitCutiDelegasiAutocomplete();
-
     }
     catch(error){
         console.error(error);
@@ -520,7 +553,6 @@ export function smartofficeLoadJenisCuti(){
 }
 
 
-
 /* ================================================================================
    LOAD RIWAYAT CUTI
 ================================================================================ */
@@ -549,10 +581,7 @@ export async function smartofficeLoadRiwayatCuti(
         /* =========================
            LOAD DATA
         ========================= */
-        const data =
-            await smartofficeGetRiwayatCuti(
-                nip
-            );
+        const data = await smartofficeGetRiwayatCutiFirestore(nip);
 
         /* =========================
            SIMPAN KE CACHE
@@ -1880,37 +1909,31 @@ export async function smartofficeSwitchCutiTab(
 
     /* RIWAYAT */
     else{
-        riwayatContent.style.display =
-            "block";
+        riwayatContent.style.display = "block";
+        formContent.style.display = "none";
 
-        formContent.style.display =
-            "none";
+        riwayatButton.classList.add("active");
+        formButton.classList.remove("active");
 
-        riwayatButton.classList.add(
-            "active"
-        );
+        if(!smartofficeRiwayatCutiCache){
+            const container = document.getElementById("smartofficeRiwayatCutiList");
 
-        /* BELUM ADA CACHE */
-        if(
-            smartofficeRiwayatCutiCache === null
-        ){
-            const session =
-                smartofficeGetSession();
-
-            if(session){
-                await smartofficeLoadRiwayatCuti(
-                    session.nip
-                );
+            if(container){
+                container.innerHTML = `
+                    <div class="smartoffice-loading-state">
+                        Memuat data riwayat cuti...
+                    </div>
+                `;
             }
+
+            const sessionData = smartofficeGetSession();
+
+            await smartofficeLoadRiwayatCuti(sessionData.nip);
         }
 
-        /* SUDAH ADA CACHE */
-        else{
-            smartofficeRenderRiwayatCuti();
-        }
+        smartofficeRenderRiwayatCuti();
     }
 }
-
 
 
 /* ================================================================================

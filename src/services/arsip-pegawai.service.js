@@ -5,94 +5,117 @@ import {
     smartofficeApi
 } from "../core/api.js";
 
+import {
+    smartofficeGetDaftarPegawaiArsipFirestore,
+    smartofficeGetArsipPegawaiFirestore,
+    smartofficeGetArsipStatFirestore,
+    smartofficeGetProgressArsipFirestore
+} from "./arsip-pegawai-firestore.service.js";
+
+import {
+    smartofficeGetDokumenPegawaiFirestore
+} from "./dokumen-saya-firestore.service.js";
+
 
 /* ======================================================
    GET DAFTAR PEGAWAI ARSIP
+   FIRESTORE READ
 ====================================================== */
 export async function smartofficeGetDaftarPegawaiArsip(){
-    const result =
-        await smartofficeApi(
-            "smartofficeGetDaftarPegawaiArsip"
+
+    try{
+        return await smartofficeGetDaftarPegawaiArsipFirestore();
+    }
+    catch(error){
+        console.error(
+            "Firestore Daftar Pegawai Arsip Error:",
+            error
         );
 
-    if(!result.success){
         throw new Error(
-            result.message ||
+            error?.message ||
             "Gagal memuat daftar pegawai."
         );
     }
-
-    return result.data || [];
 }
 
 
 /* ======================================================
    GET ARSIP PEGAWAI
+   FIRESTORE READ
 ====================================================== */
 export async function smartofficeGetArsipPegawai(
     nip
 ){
-    const result =
-        await smartofficeApi(
-            "smartofficeGetArsipPegawai",
-            {
-                nip
-            }
+
+    try{
+        return await smartofficeGetArsipPegawaiFirestore(
+            nip
+        );
+    }
+    catch(error){
+        console.error(
+            "Firestore Arsip Pegawai Error:",
+            error
         );
 
-    if(!result.success){
         throw new Error(
-            result.message ||
+            error?.message ||
             "Gagal memuat arsip pegawai."
         );
     }
-
-    return result.data || {};
 }
 
 
 /* ======================================================
    GET ARSIP STAT
+   FIRESTORE READ
 ====================================================== */
 export async function smartofficeGetArsipStat(){
-    const result =
-        await smartofficeApi(
-            "smartofficeGetArsipStat"
+
+    try{
+        return await smartofficeGetArsipStatFirestore();
+    }
+    catch(error){
+        console.error(
+            "Firestore Arsip Stat Error:",
+            error
         );
 
-    if(!result.success){
         throw new Error(
-            result.message ||
+            error?.message ||
             "Gagal memuat statistik arsip."
         );
     }
-
-    return result.data || {};
 }
 
 
 /* ======================================================
    GET PROGRESS ARSIP
+   FIRESTORE READ
 ====================================================== */
 export async function smartofficeGetProgressArsip(){
-    const result =
-        await smartofficeApi(
-            "smartofficeGetProgressArsipFast"
+
+    try{
+        return await smartofficeGetProgressArsipFirestore();
+    }
+    catch(error){
+        console.error(
+            "Firestore Progress Arsip Error:",
+            error
         );
 
-    if(!result.success){
         throw new Error(
-            result.message ||
+            error?.message ||
             "Gagal memuat progress arsip."
         );
     }
-
-    return result.data || [];
 }
 
 
 /* ======================================================
    BUKA LOCK DOKUMEN
+   WRITE → TETAP GAS
 ====================================================== */
 export async function smartofficeBukaLockDokumen(
     idDokumen,
@@ -100,6 +123,7 @@ export async function smartofficeBukaLockDokumen(
     nip,
     role
 ){
+
     const result =
         await smartofficeApi(
             "smartofficeBukaLockDokumen",

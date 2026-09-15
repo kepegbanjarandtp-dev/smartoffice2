@@ -16,6 +16,11 @@ import {
     smartofficeGetSession
 } from '../../core/session.js';
 
+import {
+    smartofficeGetNotificationsFromFirestore,
+    smartofficeListenNotificationsFromFirestore
+} from '../../services/notification-firestore.service.js';
+
 
 // ============================================================
 // GLOBAL
@@ -25,6 +30,12 @@ let smartofficeNotificationCache = null;
 let smartofficeNotificationOutsideClickHandler = null;
 let smartofficeNotificationEscapeHandler = null;
 let smartofficeNotificationPreviousActiveButton = null;
+
+/* ============================================================
+   FIRESTORE REALTIME LISTENER
+============================================================ */
+let smartofficeNotificationRealtimeUnsubscribe = null;
+let smartofficeNotificationRealtimeNip = null;
 
 
 // ============================================================
@@ -321,6 +332,7 @@ async function smartofficeShowNotificationPanel(){
 async function smartofficeLoadNotifications(content){
 
     try{
+
         const session =
             smartofficeGetSession();
 
@@ -339,6 +351,7 @@ async function smartofficeLoadNotifications(content){
             String(session.role || 'USER')
                 .trim()
                 .toUpperCase();
+
         if(!nip){
             smartofficeRenderNotificationError(
                 content,
@@ -347,32 +360,155 @@ async function smartofficeLoadNotifications(content){
             return;
         }
 
+
         /* ==================================================
-           JIKA CACHE SUDAH ADA
+           JIKA CACHE AKUN YANG SAMA SUDAH ADA
         ================================================== */
+
         if(
             smartofficeNotificationCache &&
             smartofficeNotificationCache.nip === nip &&
             smartofficeNotificationCache.role === role
         ){
+
             smartofficeRenderNotifications(
                 content,
                 smartofficeNotificationCache.notifications
             );
 
+            /*
+             * Kalau cache kosong, tampilkan empty state.
+             */
+            if(
+                !smartofficeNotificationCache.notifications ||
+                smartofficeNotificationCache.notifications.length === 0
+            ){
+
+                smartofficeRenderNotificationEmpty(
+                    content
+                );
+
+            }
+
             return;
         }
 
+
         /* ==================================================
-           REQUEST KE GAS
+           LOAD DARI FIRESTORE
         ================================================== */
+
         console.log(
-            'SMARTOFFICE LOAD NOTIFICATIONS:',
+            'SMARTOFFICE LOAD NOTIFICATIONS FIRESTORE:',
             {
                 nip,
                 role
             }
         );
+
+
+        const firestoreResult =
+            await smartofficeGetNotificationsFromFirestore(
+                nip
+            );
+
+
+        console.log(
+            'SMARTOFFICE FIRESTORE NOTIFICATION RESPONSE:',
+            firestoreResult
+        );
+
+
+        if(
+            firestoreResult?.success
+        ){
+
+            const notifications =
+                Array.isArray(
+                    firestoreResult.notifications
+                )
+                    ? firestoreResult.notifications
+                    : [];
+
+
+            const unreadCount =
+                Number(
+                    firestoreResult.unreadCount ??
+                    notifications.length
+                );
+
+
+            /* ==============================================
+               SIMPAN CACHE
+            ============================================== */
+
+            smartofficeNotificationCache = {
+
+                nip,
+                role,
+
+                notifications,
+
+                unreadCount
+
+            };
+
+
+            /* ==============================================
+               UPDATE BADGE
+            ============================================== */
+
+            smartofficeUpdateNotificationBadge(
+                unreadCount
+            );
+
+
+            /* ==============================================
+               RENDER
+            ============================================== */
+
+            if(
+                notifications.length === 0
+            ){
+
+                smartofficeRenderNotificationEmpty(
+                    content
+                );
+
+            }
+            else{
+
+                smartofficeRenderNotifications(
+                    content,
+                    notifications
+                );
+
+            }
+
+
+            /* ==============================================
+               AKTIFKAN REALTIME
+            ============================================== */
+
+            smartofficeStartNotificationRealtime(
+                nip,
+                role
+            );
+
+
+            return;
+
+        }
+
+
+        /* ==================================================
+           FIRESTORE GAGAL → FALLBACK GAS
+        ================================================== */
+
+        console.warn(
+            'SMARTOFFICE FIRESTORE NOTIFICATION GAGAL. FALLBACK GAS.'
+        );
+
 
         const response =
             await smartofficeApi(
@@ -383,74 +519,228 @@ async function smartofficeLoadNotifications(content){
                 }
             );
 
-        console.log(
-            'SMARTOFFICE NOTIFICATION RESPONSE:',
-            response
-        );
 
         let data =
             response?.data ?? response;
 
-        if(
-            data?.data
-        ){
-            data =
-                data.data;
+
+        if(data?.data){
+            data = data.data;
         }
 
-        const notifications =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(
-                        data?.notifications
-                    )
-                        ? data.notifications
-                        : []
-                );
 
-        /* ==================================================
-           SIMPAN CACHE
-        ================================================== */
-        smartofficeNotificationCache = {
-            nip,
-            role,
-            notifications,
-            unreadCount:
+        const notifications =
+            Array.isArray(
+                data?.notifications
+            )
+                ? data.notifications
+                : [];
+
+
+        const unreadCount =
+            Number(
                 data?.unreadCount ??
                 notifications.length
+            );
+
+
+        smartofficeNotificationCache = {
+
+            nip,
+            role,
+
+            notifications,
+
+            unreadCount
+
         };
 
-        /* ==================================================
-           RENDER
-        ================================================== */
+
+        smartofficeUpdateNotificationBadge(
+            unreadCount
+        );
+
+
         if(
             notifications.length === 0
         ){
+
             smartofficeRenderNotificationEmpty(
                 content
             );
 
-            return;
+        }
+        else{
+
+            smartofficeRenderNotifications(
+                content,
+                notifications
+            );
+
         }
 
-        smartofficeRenderNotifications(
-            content,
-            notifications
+
+        smartofficeStartNotificationRealtime(
+            nip,
+            role
         );
+
     }
     catch(error){
+
         console.error(
             'SMARTOFFICE LOAD NOTIFICATIONS ERROR:',
             error
         );
+
 
         smartofficeRenderNotificationError(
             content,
             error?.message ||
             'Gagal mengambil notifikasi.'
         );
+
     }
+}
+
+
+/* ============================================================
+   START FIRESTORE NOTIFICATION REALTIME
+============================================================ */
+
+function smartofficeStartNotificationRealtime(
+    nip,
+    role
+){
+
+    nip =
+        String(nip || '').trim();
+
+    role =
+        String(role || 'USER')
+            .trim()
+            .toUpperCase();
+
+    if(!nip){
+        return;
+    }
+
+    /* ========================================================
+       JIKA LISTENER SUDAH AKTIF UNTUK AKUN YANG SAMA
+    ======================================================== */
+    if(
+        smartofficeNotificationRealtimeUnsubscribe &&
+        smartofficeNotificationRealtimeNip === nip
+    ){
+        return;
+    }
+
+    /* ========================================================
+       STOP LISTENER LAMA
+    ======================================================== */
+    if(
+        typeof smartofficeNotificationRealtimeUnsubscribe ===
+        'function'
+    ){
+        smartofficeNotificationRealtimeUnsubscribe();
+        smartofficeNotificationRealtimeUnsubscribe =
+            null;
+    }
+
+    /* ========================================================
+       SIMPAN NIP LISTENER
+    ======================================================== */
+    smartofficeNotificationRealtimeNip =
+        nip;
+
+    /* ========================================================
+       AKTIFKAN FIRESTORE REALTIME
+    ======================================================== */
+    smartofficeNotificationRealtimeUnsubscribe =
+        smartofficeListenNotificationsFromFirestore(
+            nip,
+            function(result){
+                if(
+                    !result?.success
+                ){
+                    return;
+                }
+
+                const notifications =
+                    Array.isArray(
+                        result.notifications
+                    )
+                        ? result.notifications
+                        : [];
+
+                const unreadCount =
+                    Number(
+                        result.unreadCount ??
+                        notifications.length
+                    );
+
+                console.log(
+                    'SMARTOFFICE NOTIFICATION UI REALTIME:',
+                    {
+                        nip,
+                        total: notifications.length,
+                        unreadCount
+                    }
+                );
+
+                /* ==========================================
+                   UPDATE CACHE
+                ========================================== */
+                smartofficeNotificationCache = {
+                    nip,
+                    role,
+                    notifications,
+                    unreadCount
+                };
+
+                /* ==========================================
+                   UPDATE BADGE
+                ========================================== */
+                smartofficeUpdateNotificationBadge(
+                    unreadCount
+                );
+
+                /* ==========================================
+                   UPDATE PANEL JIKA SEDANG TERBUKA
+                ========================================== */
+                if(
+                    smartofficeNotificationPanelElement
+                ){
+                    const content =
+                        smartofficeNotificationPanelElement
+                            .querySelector(
+                                '.smartoffice-notification-content'
+                            );
+
+                    if(content){
+                        if(
+                            notifications.length === 0
+                        ){
+                            smartofficeRenderNotificationEmpty(
+                                content
+                            );
+                        }
+                        else{
+                            smartofficeRenderNotifications(
+                                content,
+                                notifications
+                            );
+                        }
+                    }
+                }
+            },
+            function(error){
+                console.error(
+                    'SMARTOFFICE NOTIFICATION REALTIME ERROR:',
+                    error
+                );
+            }
+        );
 }
 
 
@@ -1116,11 +1406,12 @@ export function smartofficeUpdateNotificationBadge(
 }
 
 
-// ============================================================
-// LOAD NOTIFICATION CACHE
-// Dipanggil 1x setelah login.
-// Tidak dipanggil oleh navbar.
-// ============================================================
+/* ============================================================
+   LOAD NOTIFICATION CACHE
+   FIRESTORE V3
+   Dipanggil 1x setelah login.
+============================================================ */
+
 export async function smartofficeLoadNotificationCache(){
 
     try{
@@ -1129,8 +1420,13 @@ export async function smartofficeLoadNotificationCache(){
             smartofficeGetSession();
 
         if(!session){
+
+            smartofficeUpdateNotificationBadge(0);
+
             return;
+
         }
+
 
         const nip =
             String(session.nip || '').trim();
@@ -1140,27 +1436,138 @@ export async function smartofficeLoadNotificationCache(){
                 .trim()
                 .toUpperCase();
 
+
         if(!nip){
+
+            smartofficeUpdateNotificationBadge(0);
+
             return;
+
         }
 
-        // Jangan request kalau cache akun yang sama masih tersedia
+
+        /* ======================================================
+           JIKA CACHE AKUN YANG SAMA SUDAH ADA
+        ====================================================== */
+
         if(
             smartofficeNotificationCache &&
             smartofficeNotificationCache.nip === nip &&
             smartofficeNotificationCache.role === role
         ){
+
             smartofficeUpdateNotificationBadge(
                 smartofficeNotificationCache.unreadCount
             );
 
+
+            /*
+             * Pastikan realtime tetap aktif.
+             */
+            smartofficeStartNotificationRealtime(
+                nip,
+                role
+            );
+
+
             return;
+
         }
 
+
         console.log(
-            'SMARTOFFICE LOAD NOTIFICATION CACHE:',
-            { nip, role }
+            'SMARTOFFICE LOAD NOTIFICATION CACHE FIRESTORE:',
+            {
+                nip,
+                role
+            }
         );
+
+
+        /* ======================================================
+           FIRESTORE
+        ====================================================== */
+
+        const result =
+            await smartofficeGetNotificationsFromFirestore(
+                nip
+            );
+
+
+        console.log(
+            'SMARTOFFICE FIRESTORE CACHE RESULT:',
+            result
+        );
+
+
+        if(
+            result?.success
+        ){
+
+            const notifications =
+                Array.isArray(
+                    result.notifications
+                )
+                    ? result.notifications
+                    : [];
+
+
+            const unreadCount =
+                Number(
+                    result.unreadCount ??
+                    notifications.length
+                );
+
+
+            /* ==================================================
+               SIMPAN CACHE
+            ================================================== */
+
+            smartofficeNotificationCache = {
+
+                nip,
+                role,
+
+                notifications,
+
+                unreadCount
+
+            };
+
+
+            /* ==================================================
+               UPDATE BADGE
+            ================================================== */
+
+            smartofficeUpdateNotificationBadge(
+                unreadCount
+            );
+
+
+            /* ==================================================
+               AKTIFKAN REALTIME
+            ================================================== */
+
+            smartofficeStartNotificationRealtime(
+                nip,
+                role
+            );
+
+
+            return;
+
+        }
+
+
+        /* ======================================================
+           FIRESTORE GAGAL
+           FALLBACK KE GAS
+        ====================================================== */
+
+        console.warn(
+            'SMARTOFFICE FIRESTORE CACHE GAGAL. FALLBACK GAS.'
+        );
+
 
         const response =
             await smartofficeApi(
@@ -1171,17 +1578,26 @@ export async function smartofficeLoadNotificationCache(){
                 }
             );
 
+
         let data =
             response?.data ?? response;
 
+
         if(data?.data){
-            data = data.data;
+
+            data =
+                data.data;
+
         }
 
+
         const notifications =
-            Array.isArray(data?.notifications)
+            Array.isArray(
+                data?.notifications
+            )
                 ? data.notifications
                 : [];
+
 
         const unreadCount =
             Number(
@@ -1189,56 +1605,47 @@ export async function smartofficeLoadNotificationCache(){
                 notifications.length
             );
 
-        /*
-         * PENTING:
-         * Pastikan response masih untuk session yang sama.
-         * Kalau user sudah logout/login akun lain saat request
-         * belum selesai, hasil akun lama jangan dimasukkan cache.
-         */
-        const currentSession =
-            smartofficeGetSession();
 
-        const currentNip =
-            String(currentSession?.nip || '').trim();
-
-        const currentRole =
-            String(currentSession?.role || 'USER')
-                .trim()
-                .toUpperCase();
-
-        if(
-            currentNip !== nip ||
-            currentRole !== role
-        ){
-            return;
-        }
-
-        // ====================================================
-        // SIMPAN CACHE
-        // ====================================================
         smartofficeNotificationCache = {
+
             nip,
             role,
+
             notifications,
+
             unreadCount
+
         };
 
-        // ====================================================
-        // UPDATE BADGE
-        // ====================================================
+
         smartofficeUpdateNotificationBadge(
             unreadCount
+        );
+
+
+        /*
+         * Walaupun fallback GAS dipakai,
+         * realtime Firestore tetap kita aktifkan.
+         */
+
+        smartofficeStartNotificationRealtime(
+            nip,
+            role
         );
 
     }
     catch(error){
 
-        console.warn(
-            'Load notification cache gagal:',
+        console.error(
+            'SMARTOFFICE LOAD NOTIFICATION CACHE ERROR:',
             error
         );
 
+
+        smartofficeUpdateNotificationBadge(0);
+
     }
+
 }
 
 

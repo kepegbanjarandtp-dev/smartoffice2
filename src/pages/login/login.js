@@ -2,6 +2,10 @@
    SMART OFFICE LOGIN
 ========================================================== */
 import {
+    smartofficeApi
+} from "../../core/api.js";
+
+import {
     smartofficeShowToast
 }
 from "../../components/toast/toast.js";
@@ -10,6 +14,10 @@ import {
     smartofficeLogin
 }
 from "../../services/auth.service.js";
+
+import {
+    smartofficeGetPegawaiFromFirestore
+} from "../../services/pegawai-firestore.service.js";
 
 import {
     smartofficeSaveSession
@@ -462,15 +470,10 @@ async function smartofficeProcessLogin(
         "Memverifikasi akun..."
     );
 
-    /* =========================
-       LOGIN TIMER START - LOG
-    ========================= */
-    const t0 =
-        performance.now();
-
     try{
+
         /* =========================
-           LOGIN REQUEST
+           FIREBASE AUTH LOGIN
         ========================= */
         const response =
             await smartofficeLogin(
@@ -479,18 +482,13 @@ async function smartofficeProcessLogin(
             );
 
         /* =========================
-           LOGIN TIMER API - LOG
-        ========================= */
-        const t1 =
-            performance.now();
-
-        /* =========================
-           VALIDASI RESPONSE
+           VALIDASI FIREBASE
         ========================= */
         if(
             !response ||
             !response.success
         ){
+
             smartofficeShowToast(
                 response?.message ||
                 "Login gagal.",
@@ -500,12 +498,41 @@ async function smartofficeProcessLogin(
             return;
         }
 
+
+        /* =========================
+           AMBIL DATA PEGAWAI DARI FIRESTORE
+        ========================= */
+        const pegawaiResponse =
+            await smartofficeGetPegawaiFromFirestore(
+                nip
+            );
+
+
+        /* =========================
+           VALIDASI DATA PEGAWAI
+        ========================= */
+        if(
+            !pegawaiResponse ||
+            !pegawaiResponse.success ||
+            !pegawaiResponse.data
+        ){
+
+            smartofficeShowToast(
+                "Data pegawai tidak ditemukan.",
+                "error"
+            );
+
+            return;
+        }
+
+
         /* =========================
            SAVE SESSION
         ========================= */
         smartofficeSaveSession(
-            response.data
+            pegawaiResponse.data
         );
+
 
         /* =========================
            REGISTER FIREBASE PUSH
@@ -513,49 +540,31 @@ async function smartofficeProcessLogin(
         smartofficeRegisterFCM()
             .then(
                 result => {
+
                     console.log(
                         "[Smart Office] Auto register FCM:",
                         result
                     );
+
                 }
             )
             .catch(
                 error => {
+
                     console.warn(
                         "[Smart Office] Auto register FCM gagal:",
                         error
                     );
+
                 }
             );
 
-        /* =========================
-           LOGIN TIMER SESSION - LOG
-        ========================= */
-        const t2 =
-            performance.now();
-
-        console.log(
-            "API      :",
-            ((t1 - t0) / 1000).toFixed(2),
-            "detik"
-        );
-
-        console.log(
-            "Session  :",
-            ((t2 - t1) / 1000).toFixed(2),
-            "detik"
-        );
-
-        console.log(
-            "Total    :",
-            ((t2 - t0) / 1000).toFixed(2),
-            "detik"
-        );
 
         /* =========================
            START ACTIVITY MONITOR
         ========================= */
         smartofficeStartActivityMonitor();
+
 
         /* =========================
            REMEMBER ME
@@ -566,6 +575,7 @@ async function smartofficeProcessLogin(
             password
         );
 
+
         /* =========================
            LOGIN SUCCESS
         ========================= */
@@ -574,14 +584,17 @@ async function smartofficeProcessLogin(
             "success"
         );
 
+
         /* =========================
            LOAD DASHBOARD
         ========================= */
         await smartofficeNavigate(
             "dashboard"
         );
+
     }
     catch(error){
+
         console.error(
             "SMARTOFFICE LOGIN ERROR:",
             error
@@ -592,6 +605,7 @@ async function smartofficeProcessLogin(
             "Terjadi kesalahan saat login.",
             "error"
         );
+
     }
     finally{
 
@@ -599,6 +613,7 @@ async function smartofficeProcessLogin(
            HIDE GLOBAL LOADING
         ========================= */
         smartofficeHideGlobalLoading();
+
     }
 }
 

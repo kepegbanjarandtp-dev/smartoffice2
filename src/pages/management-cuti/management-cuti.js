@@ -44,6 +44,11 @@ import {
     smartofficeGetKapus
 } from "../../services/management-cuti.service.js";
 
+import {
+    smartofficeGetRekapPegawaiFirestore,
+    smartofficeGetAllRiwayatCutiFirestore
+} from "../../services/management-cuti-firestore.service.js";
+
 /* ======================================================
    UTILS
 ====================================================== */
@@ -387,7 +392,7 @@ export async function smartofficeLoadRekapPegawai(){
            LOAD DATA
         ========================= */
         const data =
-            await smartofficeGetRekapPegawai();
+            await smartofficeGetRekapPegawaiFirestore();
 
         if(
             pageInstance !==
@@ -659,7 +664,7 @@ export async function smartofficeLoadAllRiwayatCuti(){
            LOAD DATA
         ========================= */
         const data =
-            await smartofficeGetAllRiwayatCuti();
+            await smartofficeGetAllRiwayatCutiFirestore();
 
         if(
             pageInstance !==

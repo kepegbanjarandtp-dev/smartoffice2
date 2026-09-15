@@ -31,12 +31,14 @@ import {
    SERVICE
 ====================================================== */
 import {
-    smartofficeGetTotalPendingApproval
+    smartofficeGetTotalPendingApproval,
+    smartofficeGetTotalPendingApprovalAll
 } from "../../services/dashboard.service.js";
 
 import {
-    smartofficeGetDokumenVerifikasi
-} from "../../services/approval.service.js";
+    smartofficeGetTotalPendingApprovalFirestore,
+    smartofficeGetDokumenVerifikasiFirestore
+} from "../../services/approval-firestore.service.js";
 
 
 /* ======================================================
@@ -470,18 +472,11 @@ async function smartofficeLoadApprovalBadge(
         ========================= */
         if(sessionData.role === "PJ"){
 
-            const [
-                totalCuti,
-                dokumen
-            ] = await Promise.all([
-
-                smartofficeGetTotalPendingApproval(
-                    sessionData.nip
-                ),
-
-                smartofficeGetDokumenVerifikasi()
-
-            ]);
+            total =
+                await smartofficeGetTotalPendingApprovalAll(
+                    sessionData.nip,
+                    sessionData.role
+                );
 
             if(
                 pageInstance !==
@@ -489,27 +484,19 @@ async function smartofficeLoadApprovalBadge(
                 smartofficeDashboardDestroyed
             ){
                 return;
-            }
-
-            total =
-                Number(totalCuti || 0) +
-                (
-                    Array.isArray(dokumen)
-                        ? dokumen.length
-                        : 0
-                );
+            }          
         }
 
         /* =========================
            ADMIN/SUPERADMIN
            DOKUMEN SAJA
         ========================= */
-        if(
+        else if(
             sessionData.role === "ADMIN" ||
             sessionData.role === "SUPERADMIN"
         ){
             const dokumen =
-                await smartofficeGetDokumenVerifikasi();
+                await smartofficeGetDokumenVerifikasiFirestore()
 
             if(
                 pageInstance !==
@@ -533,8 +520,9 @@ async function smartofficeLoadApprovalBadge(
             sessionData.role === "KAPUS"
         ){
             total =
-                await smartofficeGetTotalPendingApproval(
-                    sessionData.nip
+                await smartofficeGetTotalPendingApprovalFirestore(
+                    sessionData.nip,
+                    sessionData.role
                 );
             if(
                 pageInstance !==

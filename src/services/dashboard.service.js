@@ -5,6 +5,10 @@ import {
     smartofficeApi
 } from "../core/api.js";
 
+import {
+    smartofficeGetTotalPendingApprovalFirestore
+} from "./approval-firestore.service.js";
+
 
 /* ======================================================
    GET TOTAL PENDING APPROVAL
@@ -51,23 +55,9 @@ export async function smartofficeGetTotalPendingApprovalAll(
     role
 ){
 
-    const response =
-        await smartofficeApi(
-            "smartofficeGetTotalPendingApprovalAll",
-            {
-                nip,
-                role
-            }
-        );
+    return await smartofficeGetTotalPendingApprovalFirestore(
+        nip,
+        role
+    );
 
-    if(!response.success){
-        throw new Error(
-            response.message ||
-            "Gagal memuat total pending approval."
-        );
-    }
-
-    return Number(
-        response.data
-    ) || 0;
 }

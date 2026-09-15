@@ -4,13 +4,13 @@
 export const CONFIG = {
 
     APP_NAME :
-        "SmartOffice V2",
+        "SmartOffice V3",
 
     APP_VERSION :
-        "1.0.0",
+        "3.0.0",
 
     API_URL :
-        "https://script.google.com/macros/s/AKfycbxqLDIwWjg9Ch5ADVEztwhcUllQoaTs-uUcNzYaWujeMkYYabsTvz7RhkSl78UNXzkz/exec",
+        "https://script.google.com/macros/s/AKfycby2Bpu2m5alqOsvxiTrKHWGu3g2g3xX6y5s09fqFvq6AjRd-AzHb_HDiyUjl6gjKF6GsA/exec",
 
     DEBUG :
         true
