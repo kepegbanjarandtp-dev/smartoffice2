@@ -1,6 +1,7 @@
 /* ======================================================
    SMART OFFICE — ARSIP PEGAWAI FIRESTORE SERVICE
 ====================================================== */
+
 import {
     collection,
     getDocs,
@@ -30,11 +31,15 @@ export async function smartofficeGetDaftarPegawaiArsipFirestore(){
     );
 
     const result = [];
+
     snapshot.forEach((docSnapshot) => {
+
         const data = docSnapshot.data();
+
         if(String(data.status || "").trim() !== "AKTIF"){
             return;
         }
+
         if(!data.nama){
             return;
         }
@@ -120,10 +125,12 @@ export async function smartofficeGetArsipPegawaiFirestore(
    GET ARSIP STAT
 ====================================================== */
 export async function smartofficeGetArsipStatFirestore(){
+
     const [
         pegawaiSnapshot,
         dokumenSnapshot
     ] = await Promise.all([
+
         getDocs(
             collection(
                 smartofficeFirestore,
@@ -137,6 +144,7 @@ export async function smartofficeGetArsipStatFirestore(){
                 "dokumenPegawai"
             )
         )
+
     ]);
 
     let totalPegawai = 0;
@@ -147,7 +155,9 @@ export async function smartofficeGetArsipStatFirestore(){
        PEGAWAI AKTIF
     ------------------------------------------------ */
     pegawaiSnapshot.forEach((docSnapshot) => {
+
         const data = docSnapshot.data();
+
         if(
             String(data.status || "").trim() ===
             "AKTIF"
@@ -160,8 +170,11 @@ export async function smartofficeGetArsipStatFirestore(){
        DOKUMEN
     ------------------------------------------------ */
     dokumenSnapshot.forEach((docSnapshot) => {
+
         const data = docSnapshot.data();
+
         totalUpload++;
+
         if(
             String(data.statusVerifikasi || "").trim() ===
             "TERVERIFIKASI"
@@ -210,20 +223,27 @@ export async function smartofficeGetProgressArsipFirestore(){
                 "dokumenPegawai"
             )
         )
+
     ]);
 
     const masterData = [];
+
     masterSnapshot.forEach((docSnapshot) => {
+
         masterData.push(
             docSnapshot.data()
         );
+
     });
 
     const dokumenData = [];
+
     dokumenSnapshot.forEach((docSnapshot) => {
+
         dokumenData.push(
             docSnapshot.data()
         );
+
     });
 
     const result = [];
@@ -232,6 +252,7 @@ export async function smartofficeGetProgressArsipFirestore(){
        LOOP PEGAWAI AKTIF
     ------------------------------------------------ */
     pegawaiSnapshot.forEach((docSnapshot) => {
+
         const pegawai =
             docSnapshot.data();
 
@@ -286,12 +307,22 @@ export async function smartofficeGetProgressArsipFirestore(){
             .toUpperCase()
             .split(",")
             .map(item => item.trim());
+
+        /* -------------------------------------------
+            TOTAL DOKUMEN WAJIB
+            Simpan kode dokumen yang eligible
+            agar verified hanya menghitung dokumen
+            yang benar-benar wajib untuk pegawai ini.
+        -------------------------------------------- */
         let total = 0;
+
+        const kodeDokumenWajib = new Set();
 
         /* -------------------------------------------
            HITUNG MASTER WAJIB
         -------------------------------------------- */
         for(const row of masterData){
+
             if(
                 String(
                     row.statusAktif || ""
@@ -336,7 +367,9 @@ export async function smartofficeGetProgressArsipFirestore(){
             let cocokTahun = true;
 
             if(tahunDokumen > 0){
+
                 if(targetStatus === "BLUD"){
+
                     const tahunMulai =
                         tahunTmtPertama > 0
                             ? tahunTmtPertama
@@ -350,9 +383,12 @@ export async function smartofficeGetProgressArsipFirestore(){
                     cocokTahun =
                         tahunDokumen >= tahunMulai &&
                         tahunDokumen <= tahunSelesai;
+
                 }else{
+
                     cocokTahun =
                         tahunDokumen >= tahunTmtAwal;
+
                 }
             }
 
@@ -381,6 +417,10 @@ export async function smartofficeGetProgressArsipFirestore(){
                 riwayatPendidikan.includes(
                     filterPendidikan
                 );
+
+            /* ---------------------------------------
+               DOKUMEN WAJIB YANG COCOK
+            ---------------------------------------- */
             if(
                 cocokStatus &&
                 cocokJenis &&
@@ -388,15 +428,27 @@ export async function smartofficeGetProgressArsipFirestore(){
                 cocokTahun
             ){
                 total++;
+
+                /* Simpan kode dokumen wajib
+                yang eligible untuk pegawai ini */
+                kodeDokumenWajib.add(
+                    String(
+                        row.kodeDokumen || ""
+                    ).trim()
+                );
             }
         }
 
         /* -------------------------------------------
-           HITUNG TERVERIFIKASI
+           HITUNG DOKUMEN TERVERIFIKASI
+           HANYA dokumen wajib yang eligible
+           untuk pegawai ini yang dihitung.
         -------------------------------------------- */
         let verified = 0;
 
         for(const row of dokumenData){
+
+            /* Hanya dokumen milik pegawai ini */
             if(
                 String(row.nip || "").trim() !==
                 String(nip).trim()
@@ -404,10 +456,28 @@ export async function smartofficeGetProgressArsipFirestore(){
                 continue;
             }
 
+            /* Harus sudah terverifikasi */
             if(
                 String(
                     row.statusVerifikasi || ""
-                ).trim() === "TERVERIFIKASI"
+                ).trim() !== "TERVERIFIKASI"
+            ){
+                continue;
+            }
+
+            /* Ambil kode dokumen */
+            const kodeDokumen =
+                String(
+                    row.kodeDokumen || ""
+                ).trim();
+
+            /* Hanya hitung jika kode tersebut
+            termasuk dokumen WAJIB yang
+            eligible untuk pegawai ini */
+            if(
+                kodeDokumenWajib.has(
+                    kodeDokumen
+                )
             ){
                 verified++;
             }
@@ -451,6 +521,7 @@ export async function smartofficeGetProgressArsipFirestore(){
             verified,
             progress
         });
+
     });
 
     /* -----------------------------------------------
@@ -480,6 +551,7 @@ function smartofficeGetYear(value){
 
     const date =
         new Date(value);
+
     if(
         Number.isNaN(
             date.getTime()
