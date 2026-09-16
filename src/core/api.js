@@ -18,9 +18,8 @@ const smartofficeActiveRequests =
    Request maksimal menunggu 20 detik.
    Jika lewat, request otomatis dibatalkan.
 ====================================================== */
-const SMARTOFFICE_API_TIMEOUT_MS =
-    30000;
-
+const SMARTOFFICE_API_TIMEOUT_MS = 30000;
+const SMARTOFFICE_API_TIMEOUT_UPLOAD_MS = 120000;
 
 /* ======================================================
    RETRY CONFIG
@@ -129,6 +128,11 @@ export async function smartofficeApi(
            dalam 20 detik, otomatis
            dibatalkan.
         ========================= */
+        const timeoutMs =
+            action === "smartofficeUploadDokumen"
+                ? SMARTOFFICE_API_TIMEOUT_UPLOAD_MS
+                : SMARTOFFICE_API_TIMEOUT_MS;
+
         timeoutId =
             setTimeout(
                 function(){
@@ -141,7 +145,7 @@ export async function smartofficeApi(
                     controller.abort();
 
                 },
-                SMARTOFFICE_API_TIMEOUT_MS
+                timeoutMs
             );
 
         /* =========================

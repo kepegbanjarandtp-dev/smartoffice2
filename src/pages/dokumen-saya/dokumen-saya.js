@@ -51,7 +51,7 @@ import {
 import {
     smartofficeGetPegawaiByNip,
     smartofficeGetMasterDokumen,
-    smartofficeGetDokumenPegawai,
+    smartofficeGetDokumenPegawaiCached,
     smartofficeUploadDokumen
 } from "../../services/dokumen-saya.service.js";
 
@@ -63,6 +63,7 @@ import {
     smartofficeGetMasterDokumenFirestore,
     smartofficeGetDokumenPegawaiFirestore
 } from "../../services/dokumen-saya-firestore.service.js";
+
 
 /* ================================================================================
    GLOBAL STATE
@@ -184,9 +185,7 @@ export async function smartofficeLoadPage(){
 
         smartofficeLoadMasterDokumen(),
 
-        smartofficeLoadDokumenSaya(
-            sessionData.nip
-        )
+        smartofficeLoadDokumenSaya()
     ]);
 
     if(
@@ -545,7 +544,7 @@ async function smartofficeLoadMasterDokumen(){
    2. Request backend
    3. Render dokumen
 ========================= */
-async function smartofficeLoadDokumenSaya(){
+async function smartofficeLoadDokumenSaya(forceRefresh = false){
 
     /* SESSION */
     const sessionData =
@@ -561,8 +560,9 @@ async function smartofficeLoadDokumenSaya(){
             smartofficeDokumenPageInstance;
 
         const data =
-            await smartofficeGetDokumenPegawaiFirestore(
-                sessionData.nip
+            await smartofficeGetDokumenPegawaiCached(
+                sessionData.nip,
+                forceRefresh
             );
         if(
             pageInstance !==
@@ -1542,6 +1542,7 @@ async function smartofficeSubmitDokumen(){
     ========================= */
     const sessionData =
         smartofficeGetSession();
+
     if(
         !sessionData ||
         !sessionData.nip
@@ -1583,6 +1584,7 @@ async function smartofficeSubmitDokumen(){
 
     reader.onload =
         async function(e){
+
             if(
                 pageInstance !==
                 smartofficeDokumenPageInstance
@@ -1594,6 +1596,7 @@ async function smartofficeSubmitDokumen(){
                 false;
 
             try{
+
                 /* =========================
                    UPLOAD DOKUMEN
                 ========================= */
@@ -1616,7 +1619,6 @@ async function smartofficeSubmitDokumen(){
                     mimeType:
                         file.type,
 
-                    /* TETAP ASLI */
                     base64:
                         e.target.result
                 });
@@ -1643,14 +1645,19 @@ async function smartofficeSubmitDokumen(){
                 smartofficeResetDokumenForm();
 
                 /* =========================
-                   LOAD ULANG
+                   LOAD DATA TERBARU
+                   FORCE REFRESH FIRESTORE
                 ========================= */
-                await smartofficeLoadDokumenSaya();
+                await smartofficeLoadDokumenSaya(
+                    true
+                );
 
                 success =
                     true;
+
             }
             catch(error){
+
                 smartofficeShowToast(
                     error.message ||
                     "Gagal upload dokumen",
@@ -1658,8 +1665,10 @@ async function smartofficeSubmitDokumen(){
                 );
 
                 console.error(
+                    "Gagal upload dokumen:",
                     error
                 );
+
             }
             finally{
 
@@ -1667,7 +1676,7 @@ async function smartofficeSubmitDokumen(){
                     null;
 
                 /* =========================
-                   HIDE LOADING DULU
+                   HIDE GLOBAL LOADING
                 ========================= */
                 smartofficeHideGlobalLoading();
 
@@ -1680,14 +1689,14 @@ async function smartofficeSubmitDokumen(){
                 }
 
                 /* =========================
-                   TOAST SUCCESS
-                   PALING TERAKHIR
+                   SUCCESS TOAST
                 ========================= */
                 if(
                     success &&
                     pageInstance ===
                     smartofficeDokumenPageInstance
                 ){
+
                     smartofficeDokumenSuccessToastTimer =
                         setTimeout(
                             function(){
@@ -1706,6 +1715,7 @@ async function smartofficeSubmitDokumen(){
 
                                 smartofficeDokumenSuccessToastTimer =
                                     null;
+
                             },
                             100
                         );
@@ -1718,9 +1728,12 @@ async function smartofficeSubmitDokumen(){
     ========================= */
     reader.onerror =
         function(){
+
             smartofficeDokumenUploadReader =
                 null;
+
             smartofficeHideGlobalLoading();
+
             if(submitBtn){
                 submitBtn.disabled =
                     false;
@@ -1837,7 +1850,7 @@ async function smartofficeRefreshDokumen(){
         /* =========================
            RELOAD DATA
         ========================= */
-        await smartofficeLoadDokumenSaya();
+        await smartofficeLoadDokumenSaya(true);
 
         /* =========================
            CEK HALAMAN
@@ -2353,7 +2366,7 @@ async function smartofficeSubmitEditDokumen(){
                 /* =========================
                    RELOAD DATA
                 ========================= */
-                await smartofficeLoadDokumenSaya();
+                await smartofficeLoadDokumenSaya(true);
 
                 /* =========================
                    CEK HALAMAN
