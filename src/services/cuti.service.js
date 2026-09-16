@@ -5,6 +5,12 @@ import {
     smartofficeApi
 } from "../core/api.js";
 
+import {
+    smartofficeCacheGet,
+    smartofficeCacheSet,
+    smartofficeCacheRemove
+} from "../core/cache.js";
+
 
 /* ======================================================
    GET DATA PEGAWAI
@@ -130,24 +136,62 @@ export async function smartofficeSubmitCuti(
 
 /* ======================================================
    GET RIWAYAT CUTI
+   ------------------------------------------------------
+   READ:
+   Cache → Firestore
 ====================================================== */
-export async function smartofficeGetRiwayatCuti(
-    nip
-){
-    const response =
-        await smartofficeApi(
-            "smartofficeGetRiwayatCuti",
-            {
-                nip
-            }
-        );
-    if(
-        !response.success
-    ){
+export async function smartofficeGetRiwayatCuti(nip){
+
+    const nipValue =
+        String(nip || "").trim();
+
+    if(!nipValue){
         throw new Error(
-            response.message
+            "NIP tidak boleh kosong."
         );
     }
 
-    return response.data;
+    const cacheKey =
+        "cuti_riwayat_" + nipValue;
+
+    /* =========================
+       CEK CACHE
+    ========================= */
+
+    const cached =
+        smartofficeCacheGet(
+            cacheKey
+        );
+
+    if(cached){
+
+        return cached;
+
+    }
+
+    /* =========================
+       FIRESTORE
+    ========================= */
+
+    const {
+        smartofficeGetRiwayatCutiFirestore
+    } = await import(
+        "./cuti-firestore.service.js"
+    );
+
+    const data =
+        await smartofficeGetRiwayatCutiFirestore(
+            nipValue
+        );
+
+    /* =========================
+       SIMPAN CACHE
+    ========================= */
+
+    smartofficeCacheSet(
+        cacheKey,
+        data
+    );
+
+    return data;
 }

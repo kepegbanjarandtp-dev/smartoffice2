@@ -16,6 +16,12 @@ import {
     smartofficeNavigate
 } from "../../core/router.js";
 
+import {
+    smartofficeCacheGet,
+    smartofficeCacheSet,
+    smartofficeCacheRemove
+} from "../../core/cache.js";
+
 /* ======================================================
    COMPONENT
 ====================================================== */
@@ -327,11 +333,43 @@ export async function smartofficeLoadPegawai(
                 data.tmtAwal
             );
 
-        /* MINI STATS */
-        const stats =
-            await smartofficeGetCutiStatsFirestore(
-                nip
+        /* =========================
+          MINI STATS
+          CEK CACHE TERLEBIH DAHULU
+        ========================= */
+
+        const statsCacheKey =
+            "cuti_stats_" +
+            String(nip || "").trim();
+
+        let stats =
+            smartofficeCacheGet(
+                statsCacheKey
             );
+
+        if(stats){
+            console.log(
+                "CACHE STATISTIK CUTI:",
+                stats
+            );
+        }
+        else{
+
+            stats =
+                await smartofficeGetCutiStatsFirestore(
+                    nip
+                );
+
+            smartofficeCacheSet(
+                statsCacheKey,
+                stats
+            );
+
+            console.log(
+                "FIRESTORE STATISTIK CUTI:",
+                stats
+            );
+        }
 
         if(stats.success){
             const sisaElement =
@@ -565,6 +603,35 @@ export async function smartofficeLoadRiwayatCuti(
 ){
 
     /* =========================
+       CACHE KEY
+    ========================= */
+    const cacheKey =
+        "cuti_riwayat_" +
+        String(nip || "").trim();
+
+    /* =========================
+       CEK CACHE
+    ========================= */
+    const cached =
+        smartofficeCacheGet(
+            cacheKey
+        );
+
+    console.log(
+        "CACHE RIWAYAT CUTI:",
+        cached
+    );
+
+    if(cached){
+        smartofficeRiwayatCutiCache =
+            cached;
+
+        smartofficeRenderRiwayatCuti();
+
+        return;
+    }
+
+    /* =========================
        SHOW LOADING
     ========================= */
     smartofficeShowLoading(
@@ -572,30 +639,46 @@ export async function smartofficeLoadRiwayatCuti(
         "Memuat riwayat cuti..."
     );
 
-    /* Beri kesempatan browser me-render spinner */
     await new Promise(resolve =>
         requestAnimationFrame(resolve)
     );
 
     try{
         /* =========================
-           LOAD DATA
+           FIRESTORE
         ========================= */
-        const data = await smartofficeGetRiwayatCutiFirestore(nip);
+        const data =
+            await smartofficeGetRiwayatCutiFirestore(
+                nip
+            );
+
+        console.log(
+            "FIRESTORE RIWAYAT CUTI:",
+            data
+        );
 
         /* =========================
-           SIMPAN KE CACHE
+           SIMPAN MEMORY CACHE
         ========================= */
         smartofficeRiwayatCutiCache =
             data || [];
 
         /* =========================
-           RENDER DATA
+           SIMPAN SESSION CACHE
+        ========================= */
+        smartofficeCacheSet(
+            cacheKey,
+            smartofficeRiwayatCutiCache
+        );
+
+        /* =========================
+           RENDER
         ========================= */
         smartofficeRenderRiwayatCuti();
 
     }
     catch(error){
+
         console.error(error);
 
         smartofficeShowToast(
@@ -603,10 +686,14 @@ export async function smartofficeLoadRiwayatCuti(
             "error"
         );
 
-        /* Kosongkan loading bila gagal */
-        document.getElementById(
-            "smartofficeRiwayatCutiList"
-        ).innerHTML = "";
+        const container =
+            document.getElementById(
+                "smartofficeRiwayatCutiList"
+            );
+
+        if(container){
+            container.innerHTML = "";
+        }
     }
 }
 
@@ -637,10 +724,8 @@ function smartofficeRenderRiwayatCuti(){
         !data ||
         data.length === 0
     ){
-
         container.innerHTML = `
             <div class="smartoffice-empty-state">
-
                 <div class="smartoffice-empty-icon">
                     📭
                 </div>
@@ -652,19 +737,15 @@ function smartofficeRenderRiwayatCuti(){
                 <p>
                     Belum ada riwayat cuti
                 </p>
-
             </div>
         `;
 
         return;
-
     }
 
     /* HTML */
     const html = [];
-
     data.forEach(function(item){
-
         let statusClass =
             "waiting";
 
@@ -675,26 +756,22 @@ function smartofficeRenderRiwayatCuti(){
             item.status ===
             "DISETUJUI"
         ){
-
             statusClass =
                 "approved";
 
             statusText =
                 "Disetujui";
-
         }
 
         if(
             item.status ===
             "DITOLAK"
         ){
-
             statusClass =
                 "rejected";
 
             statusText =
                 "Ditolak";
-
         }
 
         const startDate =
@@ -734,14 +811,11 @@ function smartofficeRenderRiwayatCuti(){
             )}`;
 
         html.push(`
-
             <div
                 class="smartoffice-riwayat-cuti-card"
                 onclick='smartofficeOpenRiwayatCutiDetail(${JSON.stringify(item)})'
             >
-
                 <div class="smartoffice-riwayat-date">
-
                     <small>
                         ${month}
                     </small>
@@ -749,17 +823,14 @@ function smartofficeRenderRiwayatCuti(){
                     <strong>
                         ${day}
                     </strong>
-
                 </div>
 
                 <div class="smartoffice-riwayat-cuti-content">
-
                     <h3>
                         ${item.jenisCuti}
                     </h3>
 
                     <small>
-
                         <svg viewBox="0 0 24 24">
                             <path d="
                                 M8 2v3
@@ -768,13 +839,10 @@ function smartofficeRenderRiwayatCuti(){
                                 M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z
                             "/>
                         </svg>
-
                         ${item.jumlahCuti} Hari
-
                     </small>
 
                     <p>
-
                         <svg viewBox="0 0 24 24">
                             <path d="
                                 M12 8v5
@@ -784,15 +852,11 @@ function smartofficeRenderRiwayatCuti(){
                                 10 10 0 000 20z
                             "/>
                         </svg>
-
                         ${periodeCuti}
-
                     </p>
-
                 </div>
 
                 <div class="smartoffice-riwayat-cuti-right">
-
                     <span class="
                         smartoffice-riwayat-status
                         ${statusClass}
@@ -801,24 +865,17 @@ function smartofficeRenderRiwayatCuti(){
                     </span>
 
                     <div class="smartoffice-riwayat-arrow">
-
                         <svg viewBox="0 0 24 24">
                             <path d="M9 18l6-6-6-6"/>
                         </svg>
-
                     </div>
-
                 </div>
-
             </div>
-
         `);
-
     });
 
     container.innerHTML =
         html.join("");
-
 }
 
 
@@ -835,18 +892,15 @@ export function smartofficeInitAutoHitungCuti(){
     /* =========================
        PREVENT DUPLICATE LISTENER
     ========================= */
-
     if(
         smartofficeCutiAutoHitungHandler
     ){
-
         document.removeEventListener(
             "change",
             smartofficeCutiAutoHitungHandler
         );
 
     }
-
 
     smartofficeCutiAutoHitungHandler =
         async function(event){
@@ -2681,19 +2735,26 @@ export async function smartofficeRefreshCuti(){
 
     /* RIWAYAT LOADING */
     if(riwayatList){
-
         riwayatList.innerHTML = `
             <div class="smartoffice-dokumen-loading">
                 <div class="smartoffice-dokumen-spinner"></div>
                 <p>Memuat riwayat...</p>
             </div>
         `;
-
     }
 
     /* RESET CACHE */
-    smartofficeRiwayatCutiCache =
-        null;
+    smartofficeRiwayatCutiCache = null;
+
+    smartofficeCacheRemove(
+        "cuti_riwayat_" +
+        String(sessionData.nip).trim()
+    );
+
+    smartofficeCacheRemove(
+        "cuti_stats_" +
+        String(sessionData.nip).trim()
+    );
 
     /* RELOAD DATA PEGAWAI & RIWAYAT CUTI*/
     await Promise.all([

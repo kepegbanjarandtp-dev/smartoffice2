@@ -1,7 +1,6 @@
 /* =========================================================
    SMART OFFICE - CACHE
 ========================================================= */
-
 const CACHE_PREFIX = "smartoffice_cache_";
 
 export function smartofficeCacheGet(key){
