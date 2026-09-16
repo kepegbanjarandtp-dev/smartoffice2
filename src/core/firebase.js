@@ -59,7 +59,6 @@ const smartofficeMessaging =
 /* =========================================================
    VAPID PUBLIC KEY
 ========================================================= */
-
 const SMARTOFFICE_FCM_VAPID_KEY =
     "BHLvAdvxETbqEaulGDOBAH9VuB2t2vHnqNM59Y2waEHytT12Au3OO1jlx7ohf-pmQwfCne0UzrftllhtOpZg9DE";
 
@@ -67,13 +66,9 @@ const SMARTOFFICE_FCM_VAPID_KEY =
 /* =========================================================
    STATE
 ========================================================= */
-
 let smartofficeMessagingRegistration = null;
-
 let smartofficeFCMRegisteredListener = null;
-
 let smartofficeFCMUnregisteredListener = null;
-
 let smartofficeFCMRegisterPromise = null;
 const SMARTOFFICE_FCM_RESET_KEY =
     "smartoffice_fcm_reset_v1";
@@ -83,19 +78,16 @@ const SMARTOFFICE_FCM_RESET_KEY =
    FCM STATUS UI
    SEMENTARA UNTUK DEBUG ANDROID
 ========================================================= */
-
 function smartofficeShowFCMStatus(
     message,
     type = "info"
 ){
-
     let element =
         document.getElementById(
             "smartofficeFCMDebugStatus"
         );
 
     if(!element){
-
         element =
             document.createElement(
                 "div"
@@ -183,7 +175,6 @@ async function smartofficeGetMessagingServiceWorker(){
     if(smartofficeMessagingRegistration){
         return smartofficeMessagingRegistration;
     }
-
     smartofficeMessagingRegistration =
         await navigator.serviceWorker.register(
             "/sw.js",
@@ -206,14 +197,12 @@ async function smartofficeGetMessagingServiceWorker(){
 /* =========================================================
    REGISTER PUSH FCM
 ========================================================= */
-
 export async function smartofficeRegisterFCM(){
 
     /* =====================================================
        DEVELOPMENT
        FCM tidak dijalankan di localhost.
-       ===================================================== */
-
+    ===================================================== */
     if(!import.meta.env.PROD){
 
         console.log(
@@ -228,29 +217,22 @@ export async function smartofficeRegisterFCM(){
         };
     }
 
-
     if(
         smartofficeFCMRegisterPromise
     ){
-
         return (
             smartofficeFCMRegisterPromise
         );
     }
 
-
     smartofficeFCMRegisterPromise =
         smartofficeRegisterFCMInternal();
 
-
     try{
-
         return await
             smartofficeFCMRegisterPromise;
-
     }
     finally{
-
         smartofficeFCMRegisterPromise =
             null;
     }
@@ -259,12 +241,9 @@ export async function smartofficeRegisterFCM(){
 
 /* =========================================================
    RESET FCM DARI PWA
-   ========================================================= */
-
+========================================================= */
 export async function smartofficeResetFCM(){
-
     try{
-
         smartofficeShowFCMStatus(
             "FCM: menghapus registrasi lama..."
         );
@@ -273,17 +252,14 @@ export async function smartofficeResetFCM(){
             await smartofficeGetMessagingServiceWorker();
 
         if(!registration){
-
             throw new Error(
                 "Service Worker Smart Office tidak ditemukan."
             );
         }
 
-
         /* =========================================
            UNREGISTER FCM
         ========================================= */
-
         const removed =
             await unregister(
                 smartofficeMessaging
@@ -294,11 +270,9 @@ export async function smartofficeResetFCM(){
             String(removed)
         );
 
-
         /* =========================================
            REGISTER FCM KEMBALI
         ========================================= */
-
         await register(
             smartofficeMessaging,
             {
@@ -310,22 +284,18 @@ export async function smartofficeResetFCM(){
             }
         );
 
-
         smartofficeShowFCMStatus(
             "FCM REGISTER ULANG.\n" +
             "Menunggu FID baru..."
         );
-
 
         return {
             success: true,
             message:
                 "FCM berhasil diregistrasikan ulang."
         };
-
     }
     catch(error){
-
         console.error(
             "[Smart Office] Reset FCM gagal:",
             error
@@ -350,10 +320,11 @@ export async function smartofficeResetFCM(){
 }
 
 
+/* =========================================================
+   DELETE FIREBASE INSTALLATION
+========================================================= */
 export async function smartofficeDeleteFirebaseInstallation(){
-
     try{
-
         smartofficeShowFCMStatus(
             "FCM: menghapus Firebase Installation lama..."
         );
@@ -377,10 +348,8 @@ export async function smartofficeDeleteFirebaseInstallation(){
             message:
                 "Firebase Installation lama berhasil dihapus."
         };
-
     }
     catch(error){
-
         console.error(
             "[Smart Office] Gagal menghapus Firebase Installation:",
             error
@@ -407,19 +376,15 @@ export async function smartofficeDeleteFirebaseInstallation(){
 /* =========================================================
    INTERNAL REGISTER
 ========================================================= */
-
 async function smartofficeRegisterFCMInternal(){
 
     try{
-
         /* =================================================
            SUPPORT
         ================================================= */
-
         if(
             !("Notification" in window)
         ){
-
             smartofficeShowFCMStatus(
                 "FCM GAGAL: Browser tidak mendukung Notification.",
                 "error"
@@ -430,14 +395,11 @@ async function smartofficeRegisterFCMInternal(){
                 message:
                     "Browser tidak mendukung Notification."
             };
-
         }
-
 
         if(
             !("serviceWorker" in navigator)
         ){
-
             smartofficeShowFCMStatus(
                 "FCM GAGAL: Service Worker tidak didukung.",
                 "error"
@@ -448,36 +410,28 @@ async function smartofficeRegisterFCMInternal(){
                 message:
                     "Browser tidak mendukung Service Worker."
             };
-
         }
-
 
         /* =================================================
            PERMISSION
         ================================================= */
-
         let permission =
             Notification.permission;
-
 
         if(
             permission !== "granted"
         ){
-
             smartofficeShowFCMStatus(
                 "FCM: meminta izin notifikasi..."
             );
 
             permission =
                 await Notification.requestPermission();
-
         }
-
 
         if(
             permission !== "granted"
         ){
-
             smartofficeShowFCMStatus(
                 "FCM GAGAL: izin notifikasi = " +
                 permission,
@@ -489,36 +443,28 @@ async function smartofficeRegisterFCMInternal(){
                 message:
                     "Izin notifikasi tidak diberikan."
             };
-
         }
-
 
         /* =================================================
            SERVICE WORKER
         ================================================= */
-
         const registration =
             await smartofficeGetMessagingServiceWorker();
-
 
         if(
             !registration
         ){
-
             throw new Error(
                 "Service Worker Smart Office tidak berhasil didaftarkan."
             );
-
         }
 
         /* =================================================
            REGISTER LISTENER SEKALI SAJA
         ================================================= */
-
         if(
             !smartofficeFCMRegisteredListener
         ){
-
             smartofficeFCMRegisteredListener =
                 onRegistered(
                     smartofficeMessaging,
@@ -539,12 +485,10 @@ async function smartofficeRegisterFCMInternal(){
                         /* =========================
                         AMBIL NIP SESSION
                         ========================= */
-
                         const sessionRaw =
                             localStorage.getItem(
                                 "smartoffice_session"
                             );
-
                         if(!sessionRaw){
                             console.warn(
                                 "[Smart Office] Session tidak ditemukan."
@@ -582,7 +526,6 @@ async function smartofficeRegisterFCMInternal(){
                         /* =========================
                         CEK FID LOKAL
                         ========================= */
-
                         const storageKey =
                             "smartoffice_fcm_fid_" + nip;
 
@@ -595,7 +538,6 @@ async function smartofficeRegisterFCMInternal(){
                         FID SUDAH TERDAFTAR
                         → SKIP GAS
                         ========================= */
-
                         if(savedFID === installationId){
 
                             console.log(
@@ -609,7 +551,6 @@ async function smartofficeRegisterFCMInternal(){
                         FID BARU / BERUBAH
                         → KIRIM KE GAS
                         ========================= */
-
                         smartofficeShowFCMStatus(
                             "FCM FID baru.\nMengirim FID ke server..."
                         );
@@ -627,7 +568,6 @@ async function smartofficeRegisterFCMInternal(){
                         /* =========================
                         HANYA SIMPAN JIKA SUKSES
                         ========================= */
-
                         if(result?.success){
 
                             localStorage.setItem(
@@ -641,21 +581,16 @@ async function smartofficeRegisterFCMInternal(){
                             );
 
                             setTimeout(() => {
-
                                 const element =
                                     document.getElementById(
                                         "smartofficeFCMDebugStatus"
                                     );
-
                                 if(element){
                                     element.remove();
                                 }
-
                             }, 3000);
-
                         }
                         else{
-
                             smartofficeShowFCMStatus(
                                 "FCM FID didapat,\n" +
                                 "tetapi gagal dikirim ke GAS.\n" +
@@ -665,38 +600,28 @@ async function smartofficeRegisterFCMInternal(){
                                 ),
                                 "error"
                             );
-
                         }
-
                     }
                 );
-
         }
-
 
         /* =================================================
            UNREGISTER LISTENER SEKALI SAJA
         ================================================= */
-
         if(
             !smartofficeFCMUnregisteredListener
         ){
-
             smartofficeFCMUnregisteredListener =
                 onUnregistered(
                     smartofficeMessaging,
                     async (installationId) => {
-
                         console.warn(
                             "[Smart Office] FID tidak lagi terdaftar:",
                             installationId
                         );
-
                     }
                 );
-
         }
-
 
         /* =================================================
            REGISTER FCM
@@ -706,7 +631,6 @@ async function smartofficeRegisterFCMInternal(){
            
            FID TIDAK DI-RESET SAAT LOGIN.
         ================================================= */
-
         await register(
             smartofficeMessaging,
             {
@@ -718,7 +642,6 @@ async function smartofficeRegisterFCMInternal(){
             }
         );
 
-
         console.log(
             "[Smart Office] FCM register() berhasil."
         );
@@ -727,24 +650,17 @@ async function smartofficeRegisterFCMInternal(){
             "[Smart Office] Register FCM berhasil dijalankan."
         );
 
-
         return {
-
             success: true,
-
             message:
                 "Registrasi push berhasil dijalankan."
-
         };
-
     }
     catch(error){
-
         console.error(
             "[Smart Office] Gagal register FCM:",
             error
         );
-
 
         smartofficeShowFCMStatus(
             "FCM GAGAL:\n" +
@@ -755,102 +671,74 @@ async function smartofficeRegisterFCMInternal(){
             "error"
         );
 
-
         return {
-
             success: false,
-
             message:
                 error?.message ||
                 "Gagal register FCM."
-
         };
-
     }
-
 }
 
 
 /* =========================================================
    REGISTER FID KE GAS
 ========================================================= */
-
 export async function smartofficeRegisterPushToken(
     installationId
 ){
-
     try{
-
         if(
             !installationId
         ){
-
             return {
-
                 success: false,
-
                 message:
                     "Firebase Installation ID kosong."
             };
         }
 
-
         /* =================================================
            AMBIL SESSION
         ================================================= */
-
         const sessionRaw =
             localStorage.getItem(
                 "smartoffice_session"
             );
-
-
         if(
             !sessionRaw
         ){
-
             smartofficeShowFCMStatus(
                 "FCM GAGAL: session tidak ditemukan.",
                 "error"
             );
 
             return {
-
                 success: false,
-
                 message:
                     "Session tidak ditemukan."
             };
         }
 
-
         let session;
 
-
         try{
-
             session =
                 JSON.parse(
                     sessionRaw
                 );
-
         }
         catch(error){
-
             return {
-
                 success: false,
-
                 message:
                     "Session tidak valid."
             };
         }
 
-
         /* =================================================
            NIP
         ================================================= */
-
         const nip =
             String(
                 session?.nip ||
@@ -858,42 +746,34 @@ export async function smartofficeRegisterPushToken(
                 ""
             ).trim();
 
-
         console.log(
             "[Smart Office] NIP FCM:",
             nip
         );
-
 
         console.log(
             "[Smart Office] FID FCM:",
             installationId
         );
 
-
         if(
             !nip
         ){
-
             smartofficeShowFCMStatus(
                 "FCM GAGAL: NIP login tidak ditemukan.",
                 "error"
             );
 
             return {
-
                 success: false,
-
                 message:
                     "NIP login tidak ditemukan."
             };
         }
 
-
         /* =================================================
            KIRIM KE GAS
         ================================================= */
-
         const response =
             await smartofficeApi(
                 "smartofficeRegisterPushToken",
@@ -903,28 +783,21 @@ export async function smartofficeRegisterPushToken(
                 }
             );
 
-
         console.log(
             "[Smart Office] Register Push FID:",
             response
         );
 
-
         return response;
-
     }
     catch(error){
-
         console.error(
             "[Smart Office] Gagal register Push FID:",
             error
         );
 
-
         return {
-
             success: false,
-
             message:
                 error?.message ||
                 "Gagal mendaftarkan Push FID."
@@ -937,14 +810,12 @@ export async function smartofficeRegisterPushToken(
    FOREGROUND MESSAGE
    TAMPILKAN NOTIFIKASI SAAT APLIKASI SEDANG TERBUKA
 ========================================================= */
-
 export function smartofficeListenFCMMessage(callback){
 
     return onMessage(
         smartofficeMessaging,
 
         async (payload) => {
-
             console.log(
                 "[Smart Office] Foreground push:",
                 payload
@@ -969,7 +840,6 @@ export function smartofficeListenFCMMessage(callback){
                 "/";
 
             try {
-
                 const registration =
                     await navigator.serviceWorker.ready;
 
@@ -977,19 +847,14 @@ export function smartofficeListenFCMMessage(callback){
                     title,
                     {
                         body: body,
-
                         icon: "/smartoffice-notification-icon-96.png",
                         badge: "/smartoffice-notification-icon-96.png",
-
                         tag:
                             notificationId,
-
                         renotify:
                             true,
-
                         requireInteraction:
                             false,
-
                         data: {
                             ...(payload?.data || {}),
                             notificationId,
@@ -1003,32 +868,24 @@ export function smartofficeListenFCMMessage(callback){
                 );
 
             } catch(error) {
-
                 console.error(
                     "[Smart Office] Foreground notification gagal:",
                     error
                 );
-
             }
 
             if(typeof callback === "function"){
                 callback(payload);
             }
-
         }
     );
 }
 
-
 /* =========================================================
    EXPORT
 ========================================================= */
-
 export {
-
     smartofficeFirebaseApp,
-
     smartofficeMessaging,
-
     SMARTOFFICE_FCM_VAPID_KEY
 };

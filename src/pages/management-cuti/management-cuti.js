@@ -626,9 +626,6 @@ export async function smartofficeLoadAllRiwayatCuti(){
     const pageInstance =
         smartofficeManagementPageInstance;
 
-    /* =========================
-       LOADING MINI STAT
-    ========================= */
     document.getElementById(
         "smartofficeManagementMenunggu"
     ).innerHTML =
@@ -639,15 +636,11 @@ export async function smartofficeLoadAllRiwayatCuti(){
     ).innerHTML =
         '<span class="smartoffice-mini-loader"></span>';
 
-    /* =========================
-       SHOW LOADING
-    ========================= */
     smartofficeShowLoading(
         "smartofficeManagementRiwayatList",
         "Memuat riwayat cuti..."
     );
 
-    /* Beri kesempatan browser render spinner */
     await new Promise(resolve =>
         requestAnimationFrame(resolve)
     );
@@ -660,11 +653,25 @@ export async function smartofficeLoadAllRiwayatCuti(){
     }
 
     try{
+
         /* =========================
-           LOAD DATA
+           DEFAULT BULAN & TAHUN
+           BULAN BERJALAN
         ========================= */
+        const sekarang =
+            new Date();
+
+        const bulanSekarang =
+            sekarang.getMonth() + 1;
+
+        const tahunSekarang =
+            sekarang.getFullYear();
+
         const data =
-            await smartofficeGetAllRiwayatCutiFirestore();
+            await smartofficeGetAllRiwayatCutiFirestore(
+                bulanSekarang,
+                tahunSekarang
+            );
 
         if(
             pageInstance !==
@@ -674,7 +681,7 @@ export async function smartofficeLoadAllRiwayatCuti(){
         }
 
         /* =========================
-           SAVE CACHE
+           SAVE DATA BULAN TERPILIH
         ========================= */
         smartofficeManagementRiwayatData =
             data || [];
@@ -685,24 +692,30 @@ export async function smartofficeLoadAllRiwayatCuti(){
             ];
 
         /* =========================
-           RENDER LIST
+           RENDER
         ========================= */
         smartofficeRenderManagementRiwayat(
             smartofficeManagementRiwayatData
         );
 
         /* =========================
-           LOAD FILTER
+           SET FILTER UI
         ========================= */
-        //smartofficeLoadPegawaiFilter();
-        smartofficeLoadTahunFilter();
         smartofficeSetDefaultManagementBulan();
+        smartofficeLoadTahunFilter();
 
-        /* DEFAULT FILTER */
-        smartofficeFilterManagementRiwayat();
+        const tahunFilter =
+            document.getElementById(
+                "smartofficeManagementFilterTahun"
+            );
+
+        if(tahunFilter){
+            tahunFilter.value =
+                String(tahunSekarang);
+        }
 
         /* =========================
-           HITUNG MENUNGGU
+           HITUNG STAT
         ========================= */
         const menunggu =
             smartofficeManagementRiwayatData.filter(
@@ -716,9 +729,6 @@ export async function smartofficeLoadAllRiwayatCuti(){
                     "MENUNGGU_APPROVAL_2"
             ).length;
 
-        /* =========================
-           HITUNG DISETUJUI
-        ========================= */
         const disetujui =
             smartofficeManagementRiwayatData.filter(
                 item =>
@@ -726,9 +736,6 @@ export async function smartofficeLoadAllRiwayatCuti(){
                     "DISETUJUI"
             ).length;
 
-        /* =========================
-           UPDATE MINI STAT
-        ========================= */
         document.getElementById(
             "smartofficeManagementMenunggu"
         ).innerText =
@@ -738,13 +745,8 @@ export async function smartofficeLoadAllRiwayatCuti(){
             "smartofficeManagementDisetujui"
         ).innerText =
             disetujui;
-
     }
     catch(error){
-        /* =========================
-           REQUEST DIBATALKAN
-           KARENA PINDAH HALAMAN
-        ========================= */
         if(
             pageInstance !==
             smartofficeManagementPageInstance
@@ -1072,11 +1074,13 @@ function smartofficeLoadTahunFilter(){
         );
 
     /* VALIDASI */
-    if(
-        !select
-    ){
+    if(!select){
         return;
     }
+
+    /* TAHUN SEKARANG */
+    const tahunSekarang =
+        new Date().getFullYear();
 
     /* RESET */
     select.innerHTML = `
@@ -1085,39 +1089,27 @@ function smartofficeLoadTahunFilter(){
         </option>
     `;
 
-    /* AMBIL TAHUN */
-    const tahunList = [
-        ...new Set(
-            smartofficeManagementRiwayatData.map(
-                item =>
-                    new Date(
-                        item.tanggalAwal
-                    ).getFullYear()
-            )
-        )
-    ];
+    /* BUAT DAFTAR TAHUN */
+    const tahunAkhir =
+        tahunSekarang + 3;
 
-    /* URUTKAN */
-    tahunList
-        .sort(function(a,b){
-            return b - a;
-        })
-        .forEach(function(tahun){
-            select.innerHTML += `
-                <option value="${tahun}">
-                    ${tahun}
-                </option>
-            `;
-        });
-
-    /* DEFAULT TAHUN TERBARU */
-    if(
-        tahunList.length > 0
+    for(
+        let tahun = tahunSekarang;
+        tahun <= tahunAkhir;
+        tahun++
     ){
-        select.value =
-            tahunList[0];
+        select.innerHTML += `
+            <option value="${tahun}">
+                ${tahun}
+            </option>
+        `;
     }
+
+    /* DEFAULT → TAHUN SEKARANG */
+    select.value =
+        String(tahunSekarang);
 }
+
 
 /* ======================================================
    SET DEFAULT FILTER BULAN BERJALAN
@@ -1455,6 +1447,152 @@ function smartofficeGetFilteredRiwayatData(){
 }
 
 
+/* ======================================================
+   CARI RIWAYAT CUTI
+====================================================== */
+export async function smartofficeCariRiwayatCuti(){
+
+    const pageInstance =
+        smartofficeManagementPageInstance;
+
+    const bulan =
+        document.getElementById(
+            "smartofficeManagementFilterBulan"
+        )?.value || "";
+
+    const tahun =
+        document.getElementById(
+            "smartofficeManagementFilterTahun"
+        )?.value || "";
+
+    if(!bulan || !tahun){
+        smartofficeShowToast(
+            "Bulan dan tahun harus dipilih.",
+            "warning"
+        );
+        return;
+    }
+
+    smartofficeShowLoading(
+        "smartofficeManagementRiwayatList",
+        "Memuat riwayat cuti..."
+    );
+
+    document.getElementById(
+        "smartofficeManagementMenunggu"
+    ).innerHTML =
+        '<span class="smartoffice-mini-loader"></span>';
+
+    document.getElementById(
+        "smartofficeManagementDisetujui"
+    ).innerHTML =
+        '<span class="smartoffice-mini-loader"></span>';
+
+    try{
+
+        /* =========================
+           QUERY FIRESTORE
+        ========================= */
+        const data =
+            await smartofficeGetAllRiwayatCutiFirestore(
+                Number(bulan) + 1,
+                Number(tahun)
+            );
+
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
+
+        /* =========================
+           SAVE DATA
+        ========================= */
+        smartofficeManagementRiwayatData =
+            data || [];
+
+        /* =========================
+           FILTER PEGAWAI + STATUS
+           TETAP LOKAL
+        ========================= */
+        const filteredData =
+            smartofficeGetFilteredRiwayatData();
+
+        window.smartofficeManagementRiwayatFilteredData =
+            filteredData;
+
+        /* =========================
+           RENDER
+        ========================= */
+        smartofficeRenderManagementRiwayat(
+            filteredData
+        );
+
+        /* =========================
+           HITUNG STATISTIK
+           BERDASARKAN HASIL QUERY
+        ========================= */
+        const menunggu =
+            data.filter(
+                item =>
+                    item.status ===
+                    "MENUNGGU_APPROVAL_1"
+
+                    ||
+
+                    item.status ===
+                    "MENUNGGU_APPROVAL_2"
+            ).length;
+
+        const disetujui =
+            data.filter(
+                item =>
+                    item.status ===
+                    "DISETUJUI"
+            ).length;
+
+        document.getElementById(
+            "smartofficeManagementMenunggu"
+        ).innerText =
+            menunggu;
+
+        document.getElementById(
+            "smartofficeManagementDisetujui"
+        ).innerText =
+            disetujui;
+    }
+    catch(error){
+        if(
+            pageInstance !==
+            smartofficeManagementPageInstance
+        ){
+            return;
+        }
+
+        if(
+            error?.message ===
+            "Request dibatalkan."
+        ){
+            return;
+        }
+
+        console.error(
+            "Gagal mencari riwayat cuti:",
+            error
+        );
+
+        smartofficeShowToast(
+            "Gagal memuat riwayat cuti.",
+            "error"
+        );
+    }
+}
+
+window.smartofficeCariRiwayatCuti =
+    smartofficeCariRiwayatCuti;
+
+
 /* ================================================================================
    RESET FILTER RIWAYAT
 ================================================================================ */
@@ -1462,30 +1600,59 @@ function smartofficeGetFilteredRiwayatData(){
 /* ======================================================
    RESET FILTER RIWAYAT
 ====================================================== */
-export function smartofficeResetManagementRiwayat(){
+export async function smartofficeResetManagementRiwayat(){
 
     /* RESET PEGAWAI */
-    document
-        .getElementById(
+    const filterPegawai =
+        document.getElementById(
             "smartofficeManagementFilterPegawai"
-        )
-        .value = "";
+        );
+
+    if(filterPegawai){
+        filterPegawai.value = "";
+    }
 
     /* RESET STATUS */
-    document
-        .getElementById(
+    const filterStatus =
+        document.getElementById(
             "smartofficeManagementFilterStatus"
-        )
-        .value = "";
+        );
 
-    /* RESET BULAN → BULAN BERJALAN */
-    smartofficeSetDefaultManagementBulan();
+    if(filterStatus){
+        filterStatus.value = "";
+    }
 
-    /* RESET TAHUN */
-    smartofficeLoadTahunFilter();
+    /* BULAN + TAHUN → BULAN BERJALAN */
+    const sekarang = new Date();
 
-    /* FILTER ULANG */
-    smartofficeFilterManagementRiwayat();
+    const bulanSekarang =
+        sekarang.getMonth();
+
+    const tahunSekarang =
+        sekarang.getFullYear();
+
+    const filterBulan =
+        document.getElementById(
+            "smartofficeManagementFilterBulan"
+        );
+
+    if(filterBulan){
+        filterBulan.value =
+            String(bulanSekarang);
+    }
+
+    const filterTahun =
+        document.getElementById(
+            "smartofficeManagementFilterTahun"
+        );
+
+    if(filterTahun){
+        filterTahun.value =
+            String(tahunSekarang);
+    }
+
+    /* QUERY ULANG BULAN BERJALAN */
+    await smartofficeCariRiwayatCuti();
 }
 
 window.smartofficeResetManagementRiwayat =
@@ -1527,7 +1694,23 @@ async function smartofficeRefreshManagementCuti(){
     /* =========================
        RESET RIWAYAT
     ========================= */
-    smartofficeResetManagementRiwayat();
+    const filterPegawai =
+        document.getElementById(
+            "smartofficeManagementFilterPegawai"
+        );
+
+    if(filterPegawai){
+        filterPegawai.value = "";
+    }
+
+    const filterStatusRiwayat =
+        document.getElementById(
+            "smartofficeManagementFilterStatus"
+        );
+
+    if(filterStatusRiwayat){
+        filterStatusRiwayat.value = "";
+    }
 
     /* =========================
        LOADING LIST

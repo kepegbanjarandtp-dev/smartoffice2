@@ -98,17 +98,64 @@ export async function smartofficeGetRekapPegawaiFirestore(){
    GET ALL RIWAYAT CUTI
    SUMBER : FIRESTORE CUTI
 ====================================================== */
-export async function smartofficeGetAllRiwayatCutiFirestore(){
+export async function smartofficeGetAllRiwayatCutiFirestore(
+    bulan,
+    tahun
+){
 
     try{
 
-        const snapshot =
-            await getDocs(
+        const bulanNumber =
+            String(bulan).padStart(2, "0");
+
+        const tahunNumber =
+            String(tahun);
+
+        const tanggalAwal =
+            `${tahunNumber}-${bulanNumber}-01`;
+
+        const bulanBerikutnya =
+            Number(bulanNumber) === 12
+                ? 1
+                : Number(bulanNumber) + 1;
+
+        const tahunBerikutnya =
+            Number(bulanNumber) === 12
+                ? Number(tahunNumber) + 1
+                : Number(tahunNumber);
+
+        const tanggalAkhir =
+            `${tahunBerikutnya}-${String(
+                bulanBerikutnya
+            ).padStart(2, "0")}-01`;
+
+        console.log(
+            "FIRESTORE RIWAYAT CUTI:",
+            tanggalAwal,
+            "sampai",
+            tanggalAkhir
+        );
+
+        const q =
+            query(
                 collection(
                     smartofficeFirestore,
                     "cuti"
+                ),
+                where(
+                    "tanggalAwalCuti",
+                    ">=",
+                    tanggalAwal
+                ),
+                where(
+                    "tanggalAwalCuti",
+                    "<",
+                    tanggalAkhir
                 )
             );
+
+        const snapshot =
+            await getDocs(q);
 
         const result =
             snapshot.docs.map(docSnapshot => {
@@ -117,8 +164,6 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     docSnapshot.data();
 
                 return {
-
-                    // Identitas
                     idCuti:
                         data.idCuti ||
                         docSnapshot.id,
@@ -135,8 +180,6 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     statusKepegawaian:
                         data.statusKepegawaian || "",
 
-
-                    // Cuti
                     jenisCuti:
                         data.jenisCuti || "",
 
@@ -155,8 +198,6 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     keperluan:
                         data.keperluan || "",
 
-
-                    // Lampiran & Delegasi
                     lampiran:
                         data.fileLampiranUrl || "",
 
@@ -169,8 +210,6 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     tugasDelegasi:
                         data.tugasYangDidelegasikan || "",
 
-
-                    // Status & Approval 1
                     status:
                         String(
                             data.status || ""
@@ -191,8 +230,6 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     approval1Catatan:
                         data.approval1Catatan || "",
 
-
-                    // Approval 2
                     approval2:
                         data.approval2 || "",
 
@@ -208,8 +245,6 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     approval2Catatan:
                         data.approval2Catatan || "",
 
-
-                    // PDF, Surat & Tambahan
                     pdfUrl:
                         data.filePdfUrl || "",
 
@@ -222,24 +257,12 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
                     sisaCuti:
                         data.sisaCuti || ""
                 };
-
             });
 
-
-        /* ==================================================
-           SORT TERBARU
-           SAMA SEPERTI GAS:
-           new Date(a.tanggalAwal) -
-           new Date(b.tanggalAwal)
-        ================================================== */
-
         result.sort(function(a, b){
-
             return new Date(a.tanggalAwal) -
                    new Date(b.tanggalAwal);
-
         });
-
 
         return result;
 
@@ -247,13 +270,13 @@ export async function smartofficeGetAllRiwayatCutiFirestore(){
     catch(error){
 
         console.error(
-            "Firestore Get All Riwayat Cuti Error:",
+            "Firestore Get Riwayat Cuti Error:",
             error
         );
 
         throw new Error(
             error?.message ||
-            "Gagal mengambil seluruh riwayat cuti dari Firestore."
+            "Gagal mengambil riwayat cuti dari Firestore."
         );
     }
 }
