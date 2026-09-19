@@ -1725,6 +1725,15 @@ function smartofficeRenderSuratMasuk(
     const role =
         sessionData?.role || "USER";
 
+    const canView =
+        [
+            "USER",
+            "PJ",
+            "ADMIN",
+            "KAPUS",
+            "SUPERADMIN"
+        ].includes(role);
+
     const canManage =
         [
             "ADMIN",
@@ -1732,6 +1741,8 @@ function smartofficeRenderSuratMasuk(
             "KAPUS",
             "SUPERADMIN"
         ].includes(role);
+
+        
 
     /* ==================================================
        EMPTY STATE
@@ -1832,7 +1843,8 @@ function smartofficeRenderSuratMasuk(
 
             /* FILE */
             if(
-                item.file
+                canView &&
+                item.linkDokumen
             ){
                 actionHtml += `
                     <button
@@ -1842,7 +1854,7 @@ function smartofficeRenderSuratMasuk(
                         "
                         onclick="
                             smartofficeOpenPreviewDokumen(
-                                '${smartofficeGetDriveFileId(item.file)}',
+                                '${smartofficeGetDriveFileId(item.linkDokumen)}',
                                 'Surat Masuk'
                             )
                         "
@@ -5793,6 +5805,15 @@ function renderSuratKeluar(){
     const canUnlock =
         currentRole === "SUPERADMIN";
 
+    const canView =
+        [
+            "USER",
+            "PJ",
+            "ADMIN",
+            "KAPUS",
+            "SUPERADMIN"
+        ].includes(currentRole);
+
     /* ==================================================
        EMPTY STATE
     ================================================== */
@@ -6169,7 +6190,8 @@ function renderSuratKeluar(){
                     ================================== -->
                     <div class="${footerClass}">
                         ${
-                            item.file
+                            canView &&
+                            item.fileSurat
                             ?
                             `
                             <button
@@ -6180,7 +6202,7 @@ function renderSuratKeluar(){
                                 "
                                 onclick="
                                     smartofficeOpenPreviewDokumen(
-                                        '${smartofficeGetDriveFileId(item.file)}',
+                                        '${smartofficeGetDriveFileId(item.fileSurat)}',
                                         'Surat Keluar'
                                     )
                                 "
