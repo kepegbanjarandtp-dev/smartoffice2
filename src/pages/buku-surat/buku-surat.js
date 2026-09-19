@@ -72,6 +72,10 @@ let suratKeluarLoaded = false;
 
 let masterSurat = {};
 
+let smartofficeSuratKeluarTujuanSelected = [];
+let smartofficeSuratKeluarTujuanOutsideClickHandler = null;
+let smartofficeSuratKeluarTujuanTimer = null;
+
 let isSubmitting = false;
 
 let smartofficeSuratKeluarTanggalHandler = null;
@@ -2995,7 +2999,7 @@ async function smartofficeRenderFormSuratMasuk(
 
             <!-- ==================================================
                UPLOAD DOKUMEN
-               MAKSIMAL 5 MB
+               MAKSIMAL 2 MB
                FILE SAAT INI HANYA SAAT EDIT
             ================================================== -->
             <div
@@ -3074,7 +3078,7 @@ async function smartofficeRenderFormSuratMasuk(
                                     smartoffice-suratmasuk-upload-info
                                 "
                             >
-                                PDF, DOC, DOCX • Maks. 5 MB
+                                PDF, DOC, DOCX • Maks. 2 MB
                             </span>
                         </div>
                     </label>
@@ -3834,7 +3838,7 @@ async function renderDisposisiDropdown(
 
 /* ======================================================
    INIT UPLOAD SURAT MASUK
-   MAKSIMAL 5 MB
+   MAKSIMAL 2 MB
 ====================================================== */
 function smartofficeInitUploadSuratMasuk(){
     const input =
@@ -3883,15 +3887,15 @@ function smartofficeInitUploadSuratMasuk(){
                 return;
             }
 
-            /* MAKSIMAL 5 MB */
+            /* MAKSIMAL 2 MB */
             const maxSize =
-                5 * 1024 * 1024;
+                2 * 1024 * 1024;
             if(
                 file.size >
                 maxSize
             ){
                 smartofficeShowToast(
-                    "Ukuran dokumen maksimal 5 MB",
+                    "Ukuran dokumen maksimal 2 MB",
                     "error"
                 );
 
@@ -4172,7 +4176,7 @@ export async function smartofficeSubmitSuratMasuk(){
             submitButton.innerHTML;
 
         submitButton.innerHTML = `
-            <span class="smartoffice-btn-spinner"></span>
+            <span class="smartoffice-bukusurat-btn-spinner"></span>
             <span>Menyimpan...</span>
         `;
     }
@@ -6090,7 +6094,7 @@ function renderSuratKeluar(){
                                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                                         <circle cx="12" cy="7" r="4"/>
                                     </svg>
-                                    TUJUAN
+                                    TUJUAN/PENERIMA
                                 </div>
 
                                 <div class="smartoffice-suratkeluar-card-value">
@@ -6147,7 +6151,7 @@ function renderSuratKeluar(){
                                     <path d="M20.59 13.41 11 3.82V3H4v7h.82l9.59 9.59a2 2 0 0 0 2.83 0l3.35-3.35a2 2 0 0 0 0-2.83z"/>
                                     <circle cx="7.5" cy="6.5" r="1"/>
                                 </svg>
-                                KLASIFIKASI
+                                KLASIFIKASI SURAT
                             </div>
 
                             <div class="smartoffice-suratkeluar-card-value">
@@ -6389,13 +6393,79 @@ function smartofficeRenderFormSuratKeluar(data = null){
                         Tujuan / Penerima
                     </label>
 
-                    <select
+                    <div
                         id="smartofficeSuratKeluarTujuan"
+                        class="smartoffice-disposisi-select"
                     >
-                        <option value="">
-                            -- Pilih --
-                        </option>
-                    </select>
+                        <!-- SELECTED -->
+                        <div
+                            class="smartoffice-disposisi-selected"
+                            tabindex="0"
+                        >
+                            <div
+                                class="smartoffice-disposisi-values"
+                            >
+                                <span
+                                    class="smartoffice-disposisi-placeholder"
+                                >
+                                    Pilih Tujuan / Penerima
+                                </span>
+                            </div>
+
+                            <svg
+                                class="smartoffice-disposisi-arrow"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="m6 9 6 6 6-6"/>
+                            </svg>
+                        </div>
+
+                        <!-- DROPDOWN -->
+                        <div
+                            class="smartoffice-disposisi-dropdown"
+                        >
+                            <!-- SEARCH -->
+                            <div
+                                class="smartoffice-disposisi-search"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <circle
+                                        cx="11"
+                                        cy="11"
+                                        r="7"
+                                    />
+
+                                    <path
+                                        d="m20 20-4-4"
+                                    />
+                                </svg>
+
+                                <input
+                                    type="text"
+                                    class="smartoffice-disposisi-search-input"
+                                    placeholder="Cari nama..."
+                                    autocomplete="off"
+                                >
+                            </div>
+
+                            <!-- OPTIONS -->
+                            <div
+                                class="smartoffice-disposisi-options"
+                            ></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- PERIHAL -->
@@ -6557,6 +6627,7 @@ function smartofficeRenderFormSuratKeluar(data = null){
        MASTER DROPDOWN
     ================================================== */
     smartofficeRenderMasterSuratKeluar();
+    renderTujuanSuratKeluar(data);
 
     /* ==================================================
        BATAL
@@ -6754,6 +6825,474 @@ function smartofficeRenderFormSuratKeluar(data = null){
 
 
 /* ======================================================
+   TUJUAN SURAT KELUAR
+   CUSTOM MULTI SELECT
+====================================================== */
+function renderTujuanSuratKeluar(
+    data = null,
+    pageInstance = smartofficeBukuSuratPageInstance
+){
+
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
+    const container =
+        document.getElementById(
+            "smartofficeSuratKeluarTujuan"
+        );
+
+    if(!container){
+        return;
+    }
+
+    /* ==================================================
+       CEGAH KLIK DALAM DROPDOWN
+    ================================================== */
+    if(!container.dataset.clickReady){
+        container.addEventListener(
+            "click",
+            function(event){
+                event.stopPropagation();
+            }
+        );
+
+        container.dataset.clickReady = "1";
+    }
+
+    const values =
+        container.querySelector(
+            ".smartoffice-disposisi-values"
+        );
+
+    const options =
+        container.querySelector(
+            ".smartoffice-disposisi-options"
+        );
+
+    const selectedArea =
+        container.querySelector(
+            ".smartoffice-disposisi-selected"
+        );
+
+    const searchInput =
+        container.querySelector(
+            ".smartoffice-disposisi-search-input"
+        );
+    if(
+        !values ||
+        !options ||
+        !selectedArea
+    ){
+        return;
+    }
+
+    /* ==================================================
+       RESTORE DATA EDIT
+    ================================================== */
+    smartofficeSuratKeluarTujuanSelected =
+        data?.tujuan
+            ? String(data.tujuan)
+                .split(";")
+                .map(
+                    item =>
+                        item.trim()
+                )
+                .filter(Boolean)
+            : [];
+
+    /* ==================================================
+       MASTER TUJUAN
+       SUDAH TERSEDIA DARI renderMaster
+    ================================================== */
+    const tujuan =
+        Array.isArray(
+            masterSurat?.tujuan
+        )
+            ? masterSurat.tujuan
+            : [];
+
+    /* ==================================================
+       RENDER OPTIONS
+    ================================================== */
+    function renderOptions(
+        keyword = ""
+    ){
+
+        const search =
+            String(
+                keyword || ""
+            )
+                .trim()
+                .toLowerCase();
+
+        const filtered =
+            tujuan.filter(
+                nama =>
+                    String(
+                        nama || ""
+                    )
+                        .toLowerCase()
+                        .includes(
+                            search
+                        )
+            );
+        if(
+            !filtered.length
+        ){
+            options.innerHTML = `
+                <div
+                    class="
+                        smartoffice-disposisi-empty
+                    "
+                >
+                    Tidak ada nama ditemukan
+                </div>
+            `;
+
+            return;
+        }
+
+        options.innerHTML =
+            filtered.map(
+                nama => {
+                    const value =
+                        String(
+                            nama || ""
+                        ).trim();
+
+                    const selected =
+                        smartofficeSuratKeluarTujuanSelected
+                            .includes(
+                                value
+                            );
+
+                    return `
+                        <div
+                            class="
+                                smartoffice-disposisi-option
+                                ${selected ? "selected" : ""}
+                            "
+                            data-value="${value.replace(/"/g, "&quot;")}"
+                        >
+
+                            <span
+                                class="
+                                    smartoffice-disposisi-check
+                                "
+                            >
+                                ${
+                                    selected
+                                        ? `
+                                            <svg
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="2.5"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <polyline
+                                                    points="20 6 9 17 4 12"
+                                                />
+                                            </svg>
+                                        `
+                                        : ""
+                                }
+                            </span>
+
+                            <span
+                                class="
+                                    smartoffice-disposisi-option-name
+                                "
+                            >
+                                ${value}
+                            </span>
+
+                        </div>
+                    `;
+                }
+            )
+            .join("");
+
+        /* ==================================================
+           CLICK OPTION
+        ================================================== */
+        options
+            .querySelectorAll(
+                ".smartoffice-disposisi-option"
+            )
+            .forEach(
+                option => {
+                    option.addEventListener(
+                        "click",
+                        function(){
+                            const value =
+                                this.dataset.value;
+
+                            const index =
+                                smartofficeSuratKeluarTujuanSelected
+                                    .indexOf(
+                                        value
+                                    );
+                            if(
+                                index === -1
+                            ){
+                                smartofficeSuratKeluarTujuanSelected
+                                    .push(
+                                        value
+                                    );
+                            }
+                            else{
+                                smartofficeSuratKeluarTujuanSelected
+                                    .splice(
+                                        index,
+                                        1
+                                    );
+                            }
+
+                            renderSelected();
+                            renderOptions(
+                                searchInput?.value || ""
+                            );
+                        }
+                    );
+                }
+            );
+    }
+
+    /* ==================================================
+       RENDER CHIP TERPILIH
+    ================================================== */
+    function renderSelected(){
+        values.innerHTML = "";
+        if(
+            !smartofficeSuratKeluarTujuanSelected.length
+        ){
+            values.innerHTML = `
+                <span
+                    class="
+                        smartoffice-disposisi-placeholder
+                    "
+                >
+                    Pilih Tujuan / Penerima
+                </span>
+            `;
+
+            return;
+        }
+
+        smartofficeSuratKeluarTujuanSelected
+            .forEach(
+                value => {
+                    const chip =
+                        document.createElement(
+                            "span"
+                        );
+
+                    chip.className =
+                        "smartoffice-disposisi-chip";
+
+                    chip.innerHTML = `
+                        <span>
+                            ${value}
+                        </span>
+
+                        <button
+                            type="button"
+                            class="
+                                smartoffice-disposisi-chip-remove
+                            "
+                            aria-label="Hapus ${value}"
+                        >
+                            ×
+                        </button>
+                    `;
+                    chip
+                        .querySelector(
+                            ".smartoffice-disposisi-chip-remove"
+                        )
+                        .addEventListener(
+                            "click",
+                            function(event){
+                                event.stopPropagation();
+                                const index =
+                                    smartofficeSuratKeluarTujuanSelected
+                                        .indexOf(
+                                            value
+                                        );
+
+                                if(
+                                    index !== -1
+                                ){
+                                    smartofficeSuratKeluarTujuanSelected
+                                        .splice(
+                                            index,
+                                            1
+                                        );
+                                }
+                                renderSelected();
+                                renderOptions(
+                                    searchInput?.value || ""
+                                );
+                            }
+                        );
+
+                    values.appendChild(
+                        chip
+                    );
+                }
+            );
+    }
+
+    /* ==================================================
+       OUTSIDE CLICK
+    ================================================== */
+    if(
+        smartofficeSuratKeluarTujuanOutsideClickHandler
+    ){
+        document.removeEventListener(
+            "click",
+            smartofficeSuratKeluarTujuanOutsideClickHandler
+        );
+    }
+
+    smartofficeSuratKeluarTujuanOutsideClickHandler =
+        function(){
+            container.classList.remove(
+                "open"
+            );
+
+            container.classList.remove(
+                "drop-up"
+            );
+        };
+
+    document.addEventListener(
+        "click",
+        smartofficeSuratKeluarTujuanOutsideClickHandler
+    );
+
+    /* ==================================================
+       OPEN / CLOSE
+    ================================================== */
+    selectedArea.addEventListener(
+        "click",
+        function(){
+            const isOpen =
+                container.classList.contains(
+                    "open"
+                );
+            if(isOpen){
+                container.classList.remove(
+                    "open"
+                );
+                container.classList.remove(
+                    "drop-up"
+                );
+
+                return;
+            }
+
+            container.classList.add(
+                "open"
+            );
+
+            if(
+                smartofficeSuratKeluarTujuanTimer
+            ){
+                clearTimeout(
+                    smartofficeSuratKeluarTujuanTimer
+                );
+            }
+
+            smartofficeSuratKeluarTujuanTimer =
+                setTimeout(
+                    function(){
+                        smartofficeSuratKeluarTujuanTimer =
+                            null;
+                        if(
+                            pageInstance !==
+                            smartofficeBukuSuratPageInstance
+                        ){
+                            return;
+                        }
+
+                        const rect =
+                            container.getBoundingClientRect();
+
+                        const dropdown =
+                            container.querySelector(
+                                ".smartoffice-disposisi-dropdown"
+                            );
+                        if(!dropdown){
+                            return;
+                        }
+
+                        const dropdownHeight =
+                            Math.min(
+                                dropdown.scrollHeight,
+                                270
+                            );
+
+                        const spaceBelow =
+                            window.innerHeight -
+                            rect.bottom;
+
+                        const spaceAbove =
+                            rect.top;
+                        if(
+                            spaceBelow <
+                                dropdownHeight
+                            &&
+                            spaceAbove >
+                                spaceBelow
+                        ){
+                            container.classList.add(
+                                "drop-up"
+                            );
+                        }
+                        else{
+                            container.classList.remove(
+                                "drop-up"
+                            );
+                        }
+
+                        searchInput?.focus();
+                    },
+                    0
+                );
+        }
+    );
+
+    /* ==================================================
+       SEARCH
+    ================================================== */
+    if(searchInput){
+
+        searchInput.addEventListener(
+            "input",
+            function(){
+
+                renderOptions(
+                    this.value
+                );
+            }
+        );
+    }
+
+    /* ==================================================
+       FIRST RENDER
+    ================================================== */
+    renderSelected();
+    renderOptions();
+}
+
+
+/* ======================================================
    FORMAT UKURAN FILE SURAT KELUAR
 ====================================================== */
 function formatFileSizeSuratKeluar(bytes){
@@ -6858,8 +7397,19 @@ function smartofficeResetFormSuratKeluar(){
         sifat.value = "";
     }
 
-    if(tujuan){
-        tujuan.value = "";
+    smartofficeSuratKeluarTujuanSelected = [];
+
+    const tujuanValues =
+        document.querySelector(
+            "#smartofficeSuratKeluarTujuan .smartoffice-disposisi-values"
+        );
+
+    if(tujuanValues){
+        tujuanValues.innerHTML = `
+            <span class="smartoffice-disposisi-placeholder">
+                Pilih Tujuan / Penerima
+            </span>
+        `;
     }
 
     if(perihal){
@@ -6923,6 +7473,47 @@ function smartofficeResetFormSuratKeluar(){
 ====================================================== */
 function smartofficeCloseFormSuratKeluar(){
 
+    /* ==================================================
+       CLEANUP TUJUAN
+    ================================================== */
+    if(
+        smartofficeSuratKeluarTujuanOutsideClickHandler
+    ){
+        document.removeEventListener(
+            "click",
+            smartofficeSuratKeluarTujuanOutsideClickHandler
+        );
+
+        smartofficeSuratKeluarTujuanOutsideClickHandler =
+            null;
+    }
+
+    if(
+        smartofficeSuratKeluarTujuanTimer
+    ){
+        clearTimeout(
+            smartofficeSuratKeluarTujuanTimer
+        );
+
+        smartofficeSuratKeluarTujuanTimer =
+            null;
+    }
+
+    const tujuan =
+        document.getElementById(
+            "smartofficeSuratKeluarTujuan"
+        );
+
+    if(tujuan){
+        tujuan.classList.remove("open");
+        tujuan.classList.remove("drop-up");
+    }
+
+    smartofficeSuratKeluarTujuanSelected = [];
+
+    /* ==================================================
+       TUTUP MODAL
+    ================================================== */
     const modal =
         document.getElementById(
             "smartofficeSuratKeluarFormModal"
@@ -7136,7 +7727,7 @@ function smartofficeRenderMasterSuratKeluar(){
 
     /* ==================================================
        TUJUAN
-    ================================================== */
+    ================================================== 
     const tujuan =
         document.getElementById(
             "smartofficeSuratKeluarTujuan"
@@ -7171,7 +7762,7 @@ function smartofficeRenderMasterSuratKeluar(){
                 );
             });
         }
-    }
+    } */
 
     /* ==================================================
        PENANDATANGAN
@@ -7338,10 +7929,10 @@ async function openEditModalByRowIndex(
             item.sifat
         );
 
-        smartofficeSetSelectValue(
+        /* smartofficeSetSelectValue(
             "smartofficeSuratKeluarTujuan",
             item.tujuan
-        );
+        ); */
 
         smartofficeSetSelectValue(
             "smartofficeSuratKeluarPenandatangan",
@@ -7719,9 +8310,9 @@ async function smartofficeSubmitSuratKeluar(
         )?.value.trim() || "";
 
     const tujuan =
-        document.getElementById(
-            "smartofficeSuratKeluarTujuan"
-        )?.value.trim() || "";
+        smartofficeSuratKeluarTujuanSelected
+            .join(";")
+            .trim();
 
     const perihal =
         document.getElementById(
@@ -7795,7 +8386,7 @@ async function smartofficeSubmitSuratKeluar(
         }
 
         submitButton.innerHTML = `
-            <span class="smartoffice-btn-spinner"></span>
+            <span class="smartoffice-bukusurat-btn-spinner"></span>
             <span>Menyimpan...</span>
         `;
     }
