@@ -1105,6 +1105,54 @@ function smartofficeInitBukuSuratRefreshButton(){
                     tabSuratKeluar &&
                     tabSuratKeluar.classList.contains("active")
                 ){
+
+                    const tanggal =
+                        document.getElementById(
+                            "smartofficeSuratKeluarFilterTanggal"
+                        );
+
+                    const bulan =
+                        document.getElementById(
+                            "smartofficeSuratKeluarFilterBulan"
+                        );
+
+                    const search =
+                        document.getElementById(
+                            "smartofficeSuratKeluarFilterSearch"
+                        );
+
+                    const status =
+                        document.getElementById(
+                            "smartofficeSuratKeluarFilterStatus"
+                        );
+
+                    // RESET KE TANGGAL HARI INI
+                    if(tanggal){
+
+                        const sekarang = new Date();
+
+                        const yyyy =
+                            sekarang.getFullYear();
+
+                        const mm =
+                            String(
+                                sekarang.getMonth() + 1
+                            ).padStart(2, "0");
+
+                        const dd =
+                            String(
+                                sekarang.getDate()
+                            ).padStart(2, "0");
+
+                        tanggal.value =
+                            `${yyyy}-${mm}-${dd}`;
+                    }
+
+                    // CLEAR FILTER LAIN
+                    if(bulan) bulan.value = "";
+                    if(search) search.value = "";
+                    if(status) status.value = "";
+
                     await loadDataSuratKeluar(
                         pageInstance
                     );
