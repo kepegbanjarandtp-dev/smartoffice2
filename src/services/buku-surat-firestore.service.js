@@ -176,14 +176,20 @@ export async function smartofficeGetSuratMasukFirestore(
                         perihal:
                             data.perihal || "",
 
-                        sifatSurat:
-                            data.sifatSurat || "",
+                        sifat:
+                            data.sifatSurat ||
+                            data.sifat ||
+                            "",
 
-                        disposisiKe:
-                            data.disposisiKe || "",
+                        disposisi:
+                            data.disposisiKe ||
+                            data.disposisi ||
+                            "",
 
-                        linkDokumen:
-                            data.linkDokumen || "",
+                        file:
+                            data.linkDokumen ||
+                            data.file ||
+                            "",
 
                         status:
                             data.status || ""
@@ -367,9 +373,6 @@ export async function smartofficeGetSuratKeluarFirestore(
                         rowIndex:
                             data.rowIndex || 0,
 
-                        /* =========================
-                           ID INTERNAL
-                        ========================= */
                         nomor:
                             data.nomor ||
                             docSnapshot.id,
@@ -382,16 +385,10 @@ export async function smartofficeGetSuratKeluarFirestore(
                             data.timestampDisplay ||
                             "",
 
-                        /* =========================
-                           NOMOR SURAT LENGKAP
-                        ========================= */
                         nomorSurat:
                             data.nomorSurat ||
                             "",
 
-                        /* =========================
-                           KOMPATIBILITAS FRONTEND
-                        ========================= */
                         tanggal:
                             data.tanggalSuratDisplay ||
                             data.tanggalSurat ||
@@ -405,15 +402,15 @@ export async function smartofficeGetSuratKeluarFirestore(
                             data.tanggalSuratDisplay ||
                             "",
 
-                        kodeSurat:
+                        kode:
                             data.kodeSurat ||
                             "",
 
-                        klasifikasiSurat:
+                        klasifikasi:
                             data.klasifikasiSurat ||
                             "",
 
-                        sifatSurat:
+                        sifat:
                             data.sifatSurat ||
                             "",
 
@@ -421,15 +418,11 @@ export async function smartofficeGetSuratKeluarFirestore(
                             data.tujuanPenerima ||
                             "",
 
-                        tujuanPenerima:
-                            data.tujuanPenerima ||
-                            "",
-
                         perihal:
                             data.perihal ||
                             "",
 
-                        pejabatPenandatangan:
+                        penandatangan:
                             data.pejabatPenandatangan ||
                             "",
 
@@ -437,7 +430,7 @@ export async function smartofficeGetSuratKeluarFirestore(
                             data.keterangan ||
                             "",
 
-                        fileSurat:
+                        file:
                             data.fileSurat ||
                             "",
 
