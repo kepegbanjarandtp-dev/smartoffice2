@@ -1844,7 +1844,7 @@ function smartofficeRenderSuratMasuk(
             /* FILE */
             if(
                 canView &&
-                item.linkDokumen
+                item.file
             ){
                 actionHtml += `
                     <button
@@ -1854,7 +1854,7 @@ function smartofficeRenderSuratMasuk(
                         "
                         onclick="
                             smartofficeOpenPreviewDokumen(
-                                '${smartofficeGetDriveFileId(item.linkDokumen)}',
+                                '${smartofficeGetDriveFileId(item.file)}',
                                 'Surat Masuk'
                             )
                         "
@@ -6191,7 +6191,7 @@ function renderSuratKeluar(){
                     <div class="${footerClass}">
                         ${
                             canView &&
-                            item.fileSurat
+                            item.file
                             ?
                             `
                             <button
@@ -6202,7 +6202,7 @@ function renderSuratKeluar(){
                                 "
                                 onclick="
                                     smartofficeOpenPreviewDokumen(
-                                        '${smartofficeGetDriveFileId(item.fileSurat)}',
+                                        '${smartofficeGetDriveFileId(item.file)}',
                                         'Surat Keluar'
                                     )
                                 "
