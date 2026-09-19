@@ -102,9 +102,7 @@ export async function smartofficeGetAllRiwayatCutiFirestore(
     bulan,
     tahun
 ){
-
     try{
-
         const bulanNumber =
             String(bulan).padStart(2, "0");
 
@@ -265,10 +263,8 @@ export async function smartofficeGetAllRiwayatCutiFirestore(
         });
 
         return result;
-
     }
     catch(error){
-
         console.error(
             "Firestore Get Riwayat Cuti Error:",
             error

@@ -144,7 +144,6 @@ export async function smartofficeGetRiwayatCuti(nip){
 
     const nipValue =
         String(nip || "").trim();
-
     if(!nipValue){
         throw new Error(
             "NIP tidak boleh kosong."
@@ -162,17 +161,13 @@ export async function smartofficeGetRiwayatCuti(nip){
         smartofficeCacheGet(
             cacheKey
         );
-
     if(cached){
-
         return cached;
-
     }
 
     /* =========================
        FIRESTORE
     ========================= */
-
     const {
         smartofficeGetRiwayatCutiFirestore
     } = await import(
@@ -187,7 +182,6 @@ export async function smartofficeGetRiwayatCuti(nip){
     /* =========================
        SIMPAN CACHE
     ========================= */
-
     smartofficeCacheSet(
         cacheKey,
         data

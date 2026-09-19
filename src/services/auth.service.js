@@ -14,18 +14,15 @@ import {
 
 const smartofficeAuth = getAuth(smartofficeFirebaseApp);
 
-
 /* ======================================================
    LOGIN FIREBASE
 ====================================================== */
-
 export async function smartofficeLogin(nip, password) {
 
     const email = `${String(nip).trim()}@auth.smartoffice.internal`;
     console.log("Firebase Auth Email:", email);
 
     try {
-
         const credential = await signInWithEmailAndPassword(
             smartofficeAuth,
             email,
@@ -38,14 +35,12 @@ export async function smartofficeLogin(nip, password) {
         };
 
     } catch (error) {
-
         console.error("Firebase Login Error:", error);
 
         return {
             success: false,
             message: "NIP atau password salah."
         };
-
     }
 }
 
@@ -53,11 +48,9 @@ export async function smartofficeLogin(nip, password) {
 /* ======================================================
    LOGOUT FIREBASE
 ====================================================== */
-
 export async function smartofficeLogoutFirebase() {
 
     try {
-
         await signOut(smartofficeAuth);
 
         return {
@@ -65,13 +58,11 @@ export async function smartofficeLogoutFirebase() {
         };
 
     } catch (error) {
-
         console.error("Firebase Logout Error:", error);
 
         return {
             success: false,
             message: error.message
         };
-
     }
 }

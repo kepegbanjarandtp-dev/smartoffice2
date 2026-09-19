@@ -337,7 +337,6 @@ export async function smartofficeLoadPegawai(
           MINI STATS
           CEK CACHE TERLEBIH DAHULU
         ========================= */
-
         const statsCacheKey =
             "cuti_stats_" +
             String(nip || "").trim();
@@ -354,7 +353,6 @@ export async function smartofficeLoadPegawai(
             );
         }
         else{
-
             stats =
                 await smartofficeGetCutiStatsFirestore(
                     nip
@@ -675,10 +673,8 @@ export async function smartofficeLoadRiwayatCuti(
            RENDER
         ========================= */
         smartofficeRenderRiwayatCuti();
-
     }
     catch(error){
-
         console.error(error);
 
         smartofficeShowToast(
@@ -690,7 +686,6 @@ export async function smartofficeLoadRiwayatCuti(
             document.getElementById(
                 "smartofficeRiwayatCutiList"
             );
-
         if(container){
             container.innerHTML = "";
         }
@@ -899,12 +894,10 @@ export function smartofficeInitAutoHitungCuti(){
             "change",
             smartofficeCutiAutoHitungHandler
         );
-
     }
 
     smartofficeCutiAutoHitungHandler =
         async function(event){
-
             /* HANYA JIKA TANGGAL BERUBAH */
             if(
                 event.target.id !==
@@ -939,7 +932,6 @@ export function smartofficeInitAutoHitungCuti(){
                     document.getElementById(
                         "smartofficeCutiTanggalAwal"
                     );
-
                 if(
                     tanggalAwal &&
                     tanggalAwal.value
@@ -1204,7 +1196,6 @@ export function smartofficeInitAutoHitungCuti(){
         "change",
         smartofficeCutiAutoHitungHandler
     );
-
 }
 
 /* ======================================================
@@ -1323,7 +1314,6 @@ export function smartofficeValidateSunday(
     inputId,
     message
 ){
-
     /* INPUT ELEMENT */
     const input =
         document.getElementById(
@@ -1342,7 +1332,6 @@ export function smartofficeValidateSunday(
         "change",
 
         function(){
-
             /* EMPTY VALUE */
             if(
                 !input.value
@@ -1392,7 +1381,6 @@ export function smartofficeGetMasaKerja(
         String(
             tmtAwal
         ).split("/");
-
     if(
         parts.length !== 3
     ){
@@ -1476,8 +1464,7 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
     }
 
     /* INPUT LISTENER */
-    input.oninput =
-    
+    input.oninput =   
         function(){
             /* KEYWORD */
             const keyword =
@@ -1508,7 +1495,6 @@ export function smartofficeInitCutiDelegasiAutocomplete(){
                 String(
                     sessionData?.nip || ""
                 ).trim();
-
 
             /* =========================
               FILTER DATA DELEGASI
@@ -1609,7 +1595,6 @@ export function smartofficeSelectDelegasi(
     nama,
     nip
 ){
-
     /* SET NAMA */
     document.getElementById(
         "smartofficeCutiDelegasi"
@@ -1646,11 +1631,9 @@ export function smartofficeFilterRiwayatCuti(
 
   /* REMOVE ACTIVE */
   buttons.forEach(function(btn){
-
     btn.classList.remove(
       'active'
     );
-
   });
 
   /* ACTIVE CURRENT */
@@ -1674,11 +1657,9 @@ export function smartofficeFilterRiwayatCuti(
   if(
     status !== 'SEMUA'
   ){
-
     filteredData =
       smartofficeRiwayatCutiCache.filter(
         function(item){
-
           /* MENUNGGU */
           if(
             status === 'MENUNGGU'
@@ -1706,9 +1687,7 @@ export function smartofficeFilterRiwayatCuti(
   if(
     filteredData.length === 0
   ){
-
     container.innerHTML = `
-
       <div class="
         smartoffice-empty-state
       ">
@@ -1727,7 +1706,6 @@ export function smartofficeFilterRiwayatCuti(
           Belum ada riwayat cuti
           dengan status ini
         </p>
-
       </div>
     `;
 
@@ -1739,7 +1717,6 @@ export function smartofficeFilterRiwayatCuti(
 
   filteredData.forEach(
     function(item){
-
       let statusClass =
         'waiting';
 
@@ -1749,7 +1726,6 @@ export function smartofficeFilterRiwayatCuti(
       if(
         item.status === 'DISETUJUI'
       ){
-
         statusClass =
           'approved';
 
@@ -1760,7 +1736,6 @@ export function smartofficeFilterRiwayatCuti(
       if(
         item.status === 'DITOLAK'
       ){
-
         statusClass =
           'rejected';
 
@@ -1790,14 +1765,12 @@ export function smartofficeFilterRiwayatCuti(
         <div class="
           smartoffice-riwayat-cuti-card
         "
-
         onclick='
           smartofficeOpenRiwayatCutiDetail(
             ${JSON.stringify(item)}
           )
         '
         >
-
           <div class="
             smartoffice-riwayat-date
           ">
@@ -2022,7 +1995,6 @@ export function smartofficeInitUploadLampiran(){
     /* CHANGE EVENT */
     input.onchange =
         function(){
-
             /* FILE */
             const file =
                 input.files?.[0] || null;
@@ -2191,7 +2163,6 @@ export async function smartofficeSubmitCutiForm(){
 ){
     return;
 }
-
       const tmtDate =
         new Date(
           parts[2],
@@ -2586,7 +2557,6 @@ export async function smartofficeSubmitCutiForm(){
       );
   }
   finally{
-
       /* =========================
         HIDE GLOBAL LOADING
       ========================= */
@@ -2635,7 +2605,6 @@ export function smartofficeResetCutiForm(){
   ids.forEach(function(id){
     const element =
       document.getElementById(id);
-
     if(element){
       element.value = '';
     }
@@ -2645,7 +2614,6 @@ export function smartofficeResetCutiForm(){
     document.getElementById(
       'smartofficeCutiFileName'
     );
-
   if(fileName){
     fileName.innerText =
       'Belum ada file dipilih';
@@ -2655,7 +2623,6 @@ export function smartofficeResetCutiForm(){
     document.getElementById(
       'smartofficeCutiDelegasiAutocomplete'
     );
-
   if(autocomplete){
     autocomplete.innerHTML = '';
   }
@@ -2766,7 +2733,6 @@ export async function smartofficeRefreshCuti(){
         "Data berhasil diperbarui",
         "success"
     );
-
 }
 
 
@@ -2788,7 +2754,6 @@ export async function smartofficeRefreshCuti(){
 export function smartofficeFormatStatusCuti(
     status
 ){
-
     /* VALIDASI */
     if(
         !status
@@ -2830,7 +2795,6 @@ export function smartofficeFormatStatusCuti(
 export function smartofficeGetApprovalBadge(
     status
 ){
-
     /* VALIDASI */
     if(
         !status
@@ -2915,11 +2879,9 @@ export function smartofficeOpenRiwayatCutiDetail(
     'flex';
 
   setTimeout(function(){
-
     modal.classList.add(
       'show'
     );
-
   },10);
 
   /* STATUS */
@@ -2933,7 +2895,6 @@ export function smartofficeOpenRiwayatCutiDetail(
     item.status ===
     'DISETUJUI'
   ){
-
     statusText =
       'Disetujui';
 
@@ -2945,7 +2906,6 @@ export function smartofficeOpenRiwayatCutiDetail(
     item.status ===
     'DITOLAK'
   ){
-
     statusText =
       'Ditolak';
 
@@ -2977,8 +2937,7 @@ export function smartofficeOpenRiwayatCutiDetail(
     <!-- PROFILE -->
     <div class="
       smartoffice-cuti-riwayat-modal-profile
-    ">
-      
+    ">     
       <div class="
         smartoffice-cuti-riwayat-modal-profile-info
         ">
@@ -2993,14 +2952,12 @@ export function smartofficeOpenRiwayatCutiDetail(
           ${statusText}
         </span>
       </div>
-
     </div>
 
     <!-- DETAIL -->
     <div class="
       smartoffice-cuti-riwayat-modal-grid
     ">
-
       <div class="
         smartoffice-cuti-riwayat-modal-item
       ">
@@ -3052,7 +3009,6 @@ export function smartofficeOpenRiwayatCutiDetail(
           ${item.sisaCuti || 0} Hari
         </span>
       </div>
-
     </div>
 
     <!-- KEPERLUAN -->
@@ -3060,7 +3016,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         Keperluan
       </label>
@@ -3068,7 +3023,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       <span>
         ${item.keperluan || '-'}
       </span>
-
     </div>
 
     <!-- ALAMAT -->
@@ -3076,7 +3030,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         Alamat Selama Menjalani Cuti
       </label>
@@ -3084,7 +3037,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       <span>
         ${item.alamatSaatCuti || '-'}
       </span>
-
     </div>
 
     <!-- LAMPIRAN -->
@@ -3127,7 +3079,6 @@ export function smartofficeOpenRiwayatCutiDetail(
                   )
                 "
               >
-
                 <svg
                   style="
                     flex-shrink:0;
@@ -3150,7 +3101,6 @@ export function smartofficeOpenRiwayatCutiDetail(
                 <span>
                   Lihat Lampiran
                 </span>
-
               </button>
               `
               :
@@ -3198,7 +3148,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         Tugas Yang Didelegasikan
       </label>
@@ -3206,7 +3155,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       <span>
         ${item.tugasDelegasi || '-'}
       </span>
-
     </div>
 
     <!-- APPROVAL 1 -->
@@ -3214,7 +3162,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         Approval 1 - PJ Klaster Manajemen
       </label>
@@ -3222,7 +3169,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       <div class="
         smartoffice-cuti-riwayat-modal-approval-box
       ">
-
         <div>
           <small>Nama</small>
           <strong>
@@ -3250,9 +3196,7 @@ export function smartofficeOpenRiwayatCutiDetail(
             ${item.approval1Catatan || '-'}
           </strong>
         </div>
-
       </div>
-
     </div>
 
     <!-- APPROVAL 2 -->
@@ -3302,7 +3246,6 @@ export function smartofficeOpenRiwayatCutiDetail(
       smartoffice-cuti-riwayat-modal-item
       full-width
     ">
-
       <label>
         File PDF Surat Cuti
       </label>
@@ -3323,7 +3266,6 @@ export function smartofficeOpenRiwayatCutiDetail(
               )
             "
           >
-
             <svg
               style="
                 flex-shrink:0;
@@ -3346,7 +3288,6 @@ export function smartofficeOpenRiwayatCutiDetail(
             <span>
               Lihat PDF
             </span>
-
           </button>
           `
           :
@@ -3359,7 +3300,6 @@ export function smartofficeOpenRiwayatCutiDetail(
     <div class="
       smartoffice-cuti-riwayat-modal-footer
     ">
-
       <button
         class="
           smartoffice-cuti-riwayat-modal-close-button

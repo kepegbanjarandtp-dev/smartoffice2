@@ -2,25 +2,20 @@
    GET TOTAL PENDING APPROVAL
    CUTI + DOKUMEN
 ====================================================== */
-
 export async function smartofficeGetTotalPendingApprovalFirestore(
     nip,
     role
 ){
-
     try{
-
         const loginNip =
             String(nip || "")
                 .replace(/'/g, "")
                 .replace(/\.0$/, "")
                 .trim();
 
-
         /* ==================================================
            PENDING CUTI
         ================================================== */
-
         const cutiSnapshot =
             await getDocs(
                 collection(
@@ -33,7 +28,6 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
 
         cutiSnapshot.docs.forEach(
             docSnapshot => {
-
                 const data =
                     docSnapshot.data();
 
@@ -41,7 +35,6 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
                     String(
                         data.recordStatus || ""
                     ).trim();
-
                 if(recordStatus !== "ACTIVE"){
                     return;
                 }
@@ -67,7 +60,6 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
                     .replace(/\.0$/, "")
                     .trim();
 
-
                 const isApproval1 =
                     status === "MENUNGGU_APPROVAL_1" &&
                     approval1Nip === loginNip;
@@ -75,8 +67,6 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
                 const isApproval2 =
                     status === "MENUNGGU_APPROVAL_2" &&
                     approval2Nip === loginNip;
-
-
                 if(
                     isApproval1 ||
                     isApproval2
@@ -87,11 +77,9 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
             }
         );
 
-
         /* ==================================================
            PENDING DOKUMEN
         ================================================== */
-
         let totalDokumen = 0;
 
         if(
@@ -99,7 +87,6 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
             role === "ADMIN" ||
             role === "SUPERADMIN"
         ){
-
             const dokumenSnapshot =
                 await getDocs(
                     query(
@@ -117,19 +104,15 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
 
             totalDokumen =
                 dokumenSnapshot.size;
-
         }
-
 
         /* ==================================================
            TOTAL
         ================================================== */
-
         return totalCuti + totalDokumen;
 
     }
     catch(error){
-
         console.error(
             "Firestore Total Pending Approval Error:",
             error
@@ -139,7 +122,5 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
             error?.message ||
             "Gagal menghitung total pending approval."
         );
-
     }
-
 }

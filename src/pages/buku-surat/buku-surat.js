@@ -16,6 +16,7 @@ import { smartofficeShowGlobalLoading, smartofficeHideGlobalLoading, smartoffice
 
 // --- SERVICE ---
 import {
+    smartofficeGetInitBukuSurat,
     smartofficeGetAllSuratMasuk,
     smartofficeBukaLockSuratMasuk,
     smartofficeGetMasterSurat,
@@ -26,6 +27,12 @@ import {
     smartofficeSaveSuratKeluar,
     smartofficeBukaLockSuratKeluar
 } from "../../services/buku-surat.service.js";
+
+import {
+    smartofficeGetMasterSuratFirestore,
+    smartofficeGetSuratMasukFirestore,
+    smartofficeGetSuratKeluarFirestore
+} from "../../services/buku-surat-firestore.service.js";
 
 // --- UTILS ---
 import { smartofficeConvertFileToBase64 } from "../../utils/file.js";
@@ -50,6 +57,7 @@ let smartofficeDeleteSuratMasukRowIndex = null;
 let smartofficeBukuSuratTanggalHandler = null;
 let smartofficeBukuSuratBulanHandler = null;
 let smartofficeBukuSuratSearchHandler = null;
+let smartofficeBukuSuratResetMasukHandler = null;
 
 let smartofficeSuratMasukDisposisiSelected = [];
 
@@ -71,6 +79,7 @@ let smartofficeSuratKeluarBulanHandler = null;
 let smartofficeSuratKeluarSearchHandler = null;
 let smartofficeSuratKeluarStatusHandler = null;
 let smartofficeSuratKeluarKlasifikasiOutsideClickHandler = null;
+let smartofficeSuratKeluarResetHandler = null;
 
 /* =====================================================
    GLOBAL STATE KODE SURAT
@@ -94,7 +103,7 @@ let smartofficeBukuSuratDisposisiOutsideClickHandler = null;
 ============================================================================ */
 
 /* ======================================================
-   LOAD PAGE
+   LOAD PAGE BUKU SURAT
 ====================================================== */
 export async function smartofficeLoadPage(){
 
@@ -107,7 +116,7 @@ export async function smartofficeLoadPage(){
         smartofficeBukuSuratPageInstance;
 
     /* ==================================================
-       CHECK LOGIN SESSION
+       CHECK LOGIN
     ================================================== */
     if(
         !smartofficeCheckSession()
@@ -142,7 +151,9 @@ export async function smartofficeLoadPage(){
     smartofficeInitBukuSuratTab();
 
     /* ==================================================
-       KODES SURAT
+       INIT KODE SURAT SEARCH
+       HANYA INIT EVENT
+       BELUM LOAD DATA
     ================================================== */
     smartofficeInitKodeSuratSearch();
 
@@ -152,47 +163,24 @@ export async function smartofficeLoadPage(){
     smartofficeInitBukuSuratRefreshButton();
 
     /* ==================================================
-       INIT AKSES
+       INIT AKSES SURAT MASUK
     ================================================== */
     smartofficeInitAksesSuratMasuk();
 
     /* ==================================================
-       LOAD SURAT MASUK + SURAT KELUAR
+    LOAD MASTER KODE SURAT
+    DIBUTUHKAN UNTUK:
+    - TAMBAH SURAT MASUK
+    - TAMBAH SURAT KELUAR
+    - UBAH SURAT KELUAR
     ================================================== */
-    await Promise.all([
-        smartofficeLoadDataSuratMasuk(
-            pageInstance
-        ),
-        loadDataSuratKeluar(
-            pageInstance
-        )
-    ]);
-
-    /* ==================================================
-      PRELOAD MASTER SURAT
-      BACKGROUND - TIDAK MENAHAN LOAD PAGE
-    ================================================== */
-    loadMaster(
+    await loadMaster(
         null,
         pageInstance
-    ).catch(error => {
-
-        if(
-            pageInstance !==
-            smartofficeBukuSuratPageInstance
-        ){
-            return;
-        }
-
-        console.error(
-            "Background Load Master Surat Error:",
-            error
-        );
-
-    });
+    );
 
     /* ==================================================
-       CEK HALAMAN MASIH AKTIF
+    CEK HALAMAN
     ================================================== */
     if(
         pageInstance !==
@@ -200,6 +188,30 @@ export async function smartofficeLoadPage(){
     ){
         return;
     }
+
+    /* ==================================================
+    LOAD DEFAULT
+    HANYA SURAT MASUK
+    ================================================== */
+    await smartofficeLoadDataSuratMasuk(
+        pageInstance
+    );
+
+    /* ==================================================
+    CEK HALAMAN
+    ================================================== */
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
+    /* ==================================================
+    SURAT KELUAR
+    TIDAK LOAD DI AWAL
+    LOAD SAAT TAB DIKLIK
+    ================================================== */
 }
 
 
@@ -664,7 +676,7 @@ function smartofficeInitBukuSuratTab(){
     ================================================== */
     if(tabSuratKeluar){
         smartofficeBukuSuratTabKeluarHandler =
-            function(){
+            async function(){
                 tabSuratKeluar.classList.add(
                     "active"
                 );
@@ -695,6 +707,20 @@ function smartofficeInitBukuSuratTab(){
                     kodeSuratContent.style.display =
                         "none";
                 }
+
+                /* =========================================
+                LOAD SURAT KELUAR HANYA SAAT DIBUKA
+                ========================================= */
+                if(
+                    !suratKeluarLoaded
+                ){
+                    const pageInstance =
+                        smartofficeBukuSuratPageInstance;
+
+                    await loadDataSuratKeluar(
+                        pageInstance
+                    );
+                }
             };
 
         tabSuratKeluar.addEventListener(
@@ -708,7 +734,11 @@ function smartofficeInitBukuSuratTab(){
     ================================================== */
     if(tabKodeSurat){
         smartofficeBukuSuratTabKodeHandler =
-            function(){
+            async function(){
+
+                /* =========================================
+                AKTIFKAN TAB
+                ========================================= */
                 tabKodeSurat.classList.add(
                     "active"
                 );
@@ -725,6 +755,9 @@ function smartofficeInitBukuSuratTab(){
                     );
                 }
 
+                /* =========================================
+                TAMPILKAN CONTENT
+                ========================================= */
                 if(kodeSuratContent){
                     kodeSuratContent.style.display =
                         "";
@@ -739,6 +772,17 @@ function smartofficeInitBukuSuratTab(){
                     suratKeluarContent.style.display =
                         "none";
                 }
+               
+                /* =========================================
+                LOAD MASTER FIRESTORE
+                ========================================= */
+                const pageInstance =
+                    smartofficeBukuSuratPageInstance;
+
+                await loadMaster(
+                    null,
+                    pageInstance
+                );
 
                 smartofficeRenderKodeSurat();
             };
@@ -771,7 +815,6 @@ async function smartofficeLoadDataSuratMasuk(
             document.getElementById(
                 "smartofficeSuratMasukList"
             );
-
         if(container){
             container.innerHTML = `
                 <div class="
@@ -791,11 +834,50 @@ async function smartofficeLoadDataSuratMasuk(
         }
 
         /* =========================
-           SELESAI LOADING CARD CONTENT
+           QUERY FIRESTORE
+           BULAN BERJALAN
         ========================= */
+        const bulanFilter =
+            document.getElementById(
+                "smartofficeSuratMasukFilterBulan"
+            );
+
+        let bulan;
+        let tahun;
+
+        if(
+            bulanFilter &&
+            bulanFilter.value
+        ){
+            const parts =
+                bulanFilter.value.split("-");
+
+            tahun =
+                Number(parts[0]);
+
+            bulan =
+                Number(parts[1]);
+        }
+        else{
+            const sekarang =
+                new Date();
+
+            bulan =
+                sekarang.getMonth() + 1;
+
+            tahun =
+                sekarang.getFullYear();
+        }
+
         const res =
-            await smartofficeGetAllSuratMasuk();
-        
+            await smartofficeGetSuratMasukFirestore(
+                bulan,
+                tahun
+            );
+
+        /* =========================
+           CEK STALE
+        ========================= */
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -834,7 +916,6 @@ async function smartofficeLoadDataSuratMasuk(
             true;
     }
     catch(error){
-
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -992,7 +1073,6 @@ function smartofficeInitBukuSuratRefreshButton(){
 
     smartofficeBukuSuratRefreshHandler =
         async function(){
-
             if(button.disabled){
                 return;
             }
@@ -1003,27 +1083,34 @@ function smartofficeInitBukuSuratRefreshButton(){
             button.disabled = true;
 
             try{
+                const tabSuratMasuk =
+                    document.getElementById(
+                        "smartofficeTabSuratMasuk"
+                    );
 
-                await Promise.all([
-                    smartofficeLoadDataSuratMasuk(
-                        pageInstance
-                    ),
-
-                    loadDataSuratKeluar(
-                        pageInstance
-                    )
-                ]);
+                const tabSuratKeluar =
+                    document.getElementById(
+                        "smartofficeTabSuratKeluar"
+                    );
 
                 if(
-                    pageInstance !==
-                    smartofficeBukuSuratPageInstance
+                    tabSuratMasuk &&
+                    tabSuratMasuk.classList.contains("active")
                 ){
-                    return;
+                    await smartofficeLoadDataSuratMasuk(
+                        pageInstance
+                    );
                 }
-
+                else if(
+                    tabSuratKeluar &&
+                    tabSuratKeluar.classList.contains("active")
+                ){
+                    await loadDataSuratKeluar(
+                        pageInstance
+                    );
+                }
             }
             catch(error){
-
                 if(
                     pageInstance !==
                     smartofficeBukuSuratPageInstance
@@ -1041,10 +1128,8 @@ function smartofficeInitBukuSuratRefreshButton(){
                     "Gagal memperbarui Buku Surat.",
                     "error"
                 );
-
             }
             finally{
-
                 if(
                     pageInstance ===
                     smartofficeBukuSuratPageInstance
@@ -1105,7 +1190,6 @@ function applyFilterMasuk(){
                                 r.tglTerima
                             )
                         );
-
                     if(
                         isNaN(d)
                     ){
@@ -1197,23 +1281,20 @@ function initFilterSuratMasuk(){
         );
 
     /* ==================================================
-       DEFAULT TANGGAL HARI INI
+       DEFAULT BULAN SAAT HALAMAN DIBUKA
     ================================================== */
-    if(
-        tanggal &&
-        !tanggal.value
-    ){
+    if(tanggal){
+        tanggal.value = "";
+    }
+
+    if(bulan && !bulan.value){
         const today =
             new Date();
 
-        tanggal.value =
+        bulan.value =
             `${today.getFullYear()}-${
                 String(
                     today.getMonth() + 1
-                ).padStart(2, "0")
-            }-${
-                String(
-                    today.getDate()
                 ).padStart(2, "0")
             }`;
     }
@@ -1243,16 +1324,96 @@ function initFilterSuratMasuk(){
     ================================================== */
     if(bulan){
         smartofficeBukuSuratBulanHandler =
-            function(){
-                if(
-                    bulan.value &&
-                    tanggal
-                ){
-                    tanggal.value =
-                        "";
+            async function(){
+                if(!bulan.value){
+                    return;
                 }
 
-                applyFilterMasuk();
+                if(tanggal){
+                    tanggal.value = "";
+                }
+
+                /* =========================
+                PARSE VALUE BULAN
+                FORMAT: yyyy-MM
+                ========================= */
+                const parts =
+                    bulan.value.split("-");
+
+                const tahun =
+                    Number(parts[0]);
+
+                const bulanNumber =
+                    Number(parts[1]);
+
+                if(
+                    !tahun ||
+                    !bulanNumber
+                ){
+                    console.error(
+                        "Format bulan tidak valid:",
+                        bulan.value
+                    );
+                    return;
+                }
+
+                try{
+                    const container =
+                        document.getElementById(
+                            "smartofficeSuratMasukList"
+                        );
+                    if(container){
+                        container.innerHTML = `
+                            <div class="
+                                smartoffice-loading
+                            ">
+                                <div class="
+                                    smartoffice-loading-spinner
+                                "></div>
+
+                                <div class="
+                                    smartoffice-loading-text
+                                ">
+                                    Memuat data Surat Masuk...
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    console.log(
+                        "QUERY SURAT MASUK:",
+                        bulanNumber,
+                        tahun
+                    );
+
+                    const res =
+                        await smartofficeGetSuratMasukFirestore(
+                            bulanNumber,
+                            tahun
+                        );
+
+                    suratMasukAllData =
+                        Array.isArray(res)
+                            ? res
+                            : [];
+
+                    suratMasukViewData =
+                        [
+                            ...suratMasukAllData
+                        ];
+                    applyFilterMasuk();
+                }
+                catch(error){
+                    console.error(
+                        "Load Surat Masuk Firestore Error:",
+                        error
+                    );
+
+                    smartofficeShowToast(
+                        "Gagal memuat data Surat Masuk",
+                        "error"
+                    );
+                }
             };
 
         bulan.addEventListener(
@@ -1275,12 +1436,79 @@ function initFilterSuratMasuk(){
             smartofficeBukuSuratSearchHandler
         );
     }
+
+    /* ==================================================
+       EVENT RESET
+    ================================================== */
+    const resetButton =
+        document.getElementById(
+            "smartofficeSuratMasukResetButton"
+        );
+
+    if(resetButton){
+
+        if(
+            smartofficeBukuSuratResetMasukHandler
+        ){
+            resetButton.removeEventListener(
+                "click",
+                smartofficeBukuSuratResetMasukHandler
+            );
+        }
+
+        smartofficeBukuSuratResetMasukHandler =
+            async function(){
+
+                const tanggal =
+                    document.getElementById(
+                        "smartofficeSuratMasukFilterTanggal"
+                    );
+
+                const bulan =
+                    document.getElementById(
+                        "smartofficeSuratMasukFilterBulan"
+                    );
+
+                const search =
+                    document.getElementById(
+                        "smartofficeSuratMasukFilterSearch"
+                    );
+
+                if(tanggal){
+                    tanggal.value = "";
+                }
+
+                if(search){
+                    search.value = "";
+                }
+
+                const today = new Date();
+
+                if(bulan){
+                    bulan.value =
+                        `${today.getFullYear()}-${
+                            String(
+                                today.getMonth() + 1
+                            ).padStart(2, "0")
+                        }`;
+                }
+
+                await smartofficeLoadDataSuratMasuk(
+                    smartofficeBukuSuratPageInstance
+                );
+            };
+
+        resetButton.addEventListener(
+            "click",
+            smartofficeBukuSuratResetMasukHandler
+        );
+    }
 }
 
 
 /* ======================================================
    INIT DROPDOWN BULAN AGENDA SURAT MASUK
-   AMBIL DARI TANGGAL TERIMA
+   DEFAULT = BULAN BERJALAN
 ====================================================== */
 function initBulanAgendaMasuk(){
 
@@ -1288,116 +1516,59 @@ function initBulanAgendaMasuk(){
         document.getElementById(
             "smartofficeSuratMasukFilterBulan"
         );
-    if(
-        !select
-    ){
+
+    if(!select){
         return;
     }
 
-    /* ==================================================
-       RESET OPTION
-    ================================================== */
-    select.innerHTML =
-        `
+    const today =
+        new Date();
+
+    const tahun =
+        today.getFullYear();
+
+    const bulanSekarang =
+        today.getMonth() + 1;
+
+    select.innerHTML = `
         <option value="">
             Pilih Bulan
         </option>
-        `;
+    `;
 
-    if(
-        !suratMasukAllData ||
-        !suratMasukAllData.length
+    for(
+        let bulan = 1;
+        bulan <= 12;
+        bulan++
     ){
-        return;
+
+        const option =
+            document.createElement(
+                "option"
+            );
+
+        option.value =
+            `${tahun}-${String(
+                bulan
+            ).padStart(2,"0")}`;
+
+        option.textContent =
+            formatBulanIndonesia(
+                option.value
+            );
+
+        select.appendChild(
+            option
+        );
     }
 
-    /* ==================================================
-       KUMPULKAN BULAN UNIK
-    ================================================== */
-    const bulanSet =
-        new Set();
-
-    suratMasukAllData.forEach(
-        function(row){
-            if(
-                !row.tglTerima
-            ){
-                return;
-            }
-
-            /*
-              FORMAT BACKEND:
-              dd-MM-yyyy
-            */
-            const parts =
-                String(
-                    row.tglTerima
-                ).split("-");
-            if(
-                parts.length !== 3
-            ){
-                return;
-            }
-
-            const year =
-                Number(
-                    parts[2]
-                );
-
-            const month =
-                Number(
-                    parts[1]
-                );
-            if(
-                !year ||
-                !month ||
-                month < 1 ||
-                month > 12
-            ){
-                return;
-            }
-
-            const key =
-                `${year}-${String(
-                    month
-                ).padStart(
-                    2,
-                    "0"
-                )}`;
-
-            bulanSet.add(
-                key
-            );
-        }
-    );
-
-    /* ==================================================
-       RENDER BULAN
-    ================================================== */
-    [
-        ...bulanSet
-    ]
-    .sort()
-    .forEach(
-        function(bulan){
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                bulan;
-
-            option.textContent =
-                formatBulanIndonesia(
-                    bulan
-                );
-
-            select.appendChild(
-                option
-            );
-        }
-    );
+    /* =========================
+       DEFAULT BULAN BERJALAN
+    ========================= */
+    select.value =
+        `${tahun}-${String(
+            bulanSekarang
+        ).padStart(2,"0")}`;
 }
 
 
@@ -2182,7 +2353,6 @@ async function smartofficeBukaLockSuratMasukUI(
 ){
     const sessionData =
         smartofficeGetSession();
-
     if(!sessionData){
         smartofficeShowToast(
             "Session pengguna tidak ditemukan.",
@@ -2237,7 +2407,6 @@ function smartofficeOpenBukaLockSuratMasukModal(
         document.getElementById(
             "smartofficeSuratMasukLockModal"
         );
-
     if(!modal){
         return;
     }
@@ -2274,7 +2443,6 @@ function smartofficeCloseBukaLockSuratMasukModal(){
         document.getElementById(
             "smartofficeSuratMasukLockModal"
         );
-
     if(modal){
         modal.classList.remove(
             "is-visible"
@@ -2406,7 +2574,6 @@ async function smartofficeConfirmBukaLockSuratMasuk(){
         );
     }
     finally{
-
         smartofficeHideGlobalLoading();
     }
 }
@@ -2448,7 +2615,6 @@ async function smartofficeRenderFormSuratMasuk(
         document.querySelector(
             ".smartoffice-suratmasuk-form-title"
         );
-
     if(title){
         title.textContent =
             isEdit
@@ -2469,7 +2635,6 @@ async function smartofficeRenderFormSuratMasuk(
         document.getElementById(
             "smartofficeSuratMasukFormClose"
         );
-
     if(closeButton){
         closeButton.onclick =
             function(){
@@ -3019,7 +3184,6 @@ async function smartofficeRenderFormSuratMasuk(
                 document.getElementById(
                     "smartofficeSuratMasukNomorAgenda"
                 );
-
             if(input){
                 input.value =
                     nomorAgenda || "";
@@ -3139,7 +3303,6 @@ async function renderDisposisiDropdown(
         container.querySelector(
             ".smartoffice-disposisi-search-input"
         );
-
     if(
         !values ||
         !options ||
@@ -3176,7 +3339,6 @@ async function renderDisposisiDropdown(
     try{
         const result =
             await smartofficeGetMasterSurat();
-
         if(
             pageInstance !== smartofficeBukuSuratPageInstance
         ){
@@ -3214,7 +3376,6 @@ async function renderDisposisiDropdown(
                                 search
                             )
                 );
-
             if(
                 !filtered.length
             ){
@@ -3303,7 +3464,6 @@ async function renderDisposisiDropdown(
                         option.addEventListener(
                             "click",
                             function(){
-
                                 const value =
                                     this.dataset.value;
 
@@ -3315,14 +3475,12 @@ async function renderDisposisiDropdown(
                                 if(
                                     index === -1
                                 ){
-
                                     smartofficeSuratMasukDisposisiSelected
                                         .push(
                                             value
                                         );
                                 }
                                 else{
-
                                     smartofficeSuratMasukDisposisiSelected
                                         .splice(
                                             index,
@@ -3344,9 +3502,7 @@ async function renderDisposisiDropdown(
            RENDER SELECTED CHIP
         ================================================== */
         function renderSelected(){
-
             values.innerHTML = "";
-
             if(
                 !smartofficeSuratMasukDisposisiSelected.length
             ){
@@ -3415,7 +3571,6 @@ async function renderDisposisiDropdown(
                                     }
 
                                     renderSelected();
-
                                     renderOptions(
                                         searchInput?.value || ""
                                     );
@@ -3446,7 +3601,6 @@ async function renderDisposisiDropdown(
                 container.classList.remove(
                     "open"
                 );
-
                 container.classList.remove(
                     "drop-up"
                 );
@@ -3506,7 +3660,6 @@ async function renderDisposisiDropdown(
                 smartofficeBukuSuratDisposisiTimer =
                     setTimeout(
                         function(){
-
                             smartofficeBukuSuratDisposisiTimer = null;
 
                             if(
@@ -3563,7 +3716,6 @@ async function renderDisposisiDropdown(
                             }
 
                             searchInput?.focus();
-
                         },
                         0
                     );
@@ -3933,7 +4085,6 @@ export async function smartofficeSubmitSuratMasuk(){
             "Disposisi Ke"
         );
     }
-
     if(errors.length){
         alert(
             "Data berikut wajib diisi:\n\n" +
@@ -3974,7 +4125,6 @@ export async function smartofficeSubmitSuratMasuk(){
 
             /* TAMBAH = null
             EDIT = data.rowIndex */
-
             rowIndex:
                 smartofficeSuratMasukEditRowIndex ||
                 null,
@@ -4039,7 +4189,6 @@ export async function smartofficeSubmitSuratMasuk(){
                 await smartofficeConvertFileToBase64(
                     file
                 );
-
             payload.base64 =
                 base64;
 
@@ -4157,7 +4306,6 @@ export async function smartofficeSubmitSuratMasuk(){
 function resetSubmitMasukUI() {
 
     isSubmittingMasuk = false;
-
     document
         .getElementById("btnLoadingMasuk")
         ?.classList.add("hidden");
@@ -4215,7 +4363,6 @@ async function smartofficeDeleteSuratMasukUI(rowIndex){
         document.getElementById(
             "smartofficeSuratMasukDeleteModal"
         );
-
     if(!modal){
         return;
     }
@@ -4288,7 +4435,6 @@ async function smartofficeConfirmDeleteSuratMasuk(){
         role !== "SUPERADMIN"
     ){
         smartofficeCloseDeleteSuratMasukModal();
-
         return;
     }
 
@@ -4386,9 +4532,7 @@ async function smartofficeConfirmDeleteSuratMasuk(){
             smartofficeBukuSuratPageInstance
         ){
             smartofficeHideGlobalLoading();
-
         }
-
     }
 }
 
@@ -4425,10 +4569,8 @@ function showInlineSuratMasuk(){
     smartofficeBukuSuratInlineTimer =
         setTimeout(
             function(){
-
                 smartofficeBukuSuratInlineTimer =
                     null;
-
                 if(
                     pageInstance !==
                     smartofficeBukuSuratPageInstance
@@ -4445,7 +4587,6 @@ function showInlineSuratMasuk(){
                 el.classList.add(
                     "hidden"
                 );
-
             },
             1500
         );
@@ -4480,7 +4621,6 @@ export async function openEditModalMasuk(rowIndex) {
                 String(d.rowIndex) ===
                 String(rowIndex)
         );
-
     if(!item){
         console.error(
             "Data Surat Masuk tidak ditemukan:",
@@ -4515,7 +4655,6 @@ export async function openEditModalMasuk(rowIndex) {
         document.getElementById(
             "smartofficeSuratMasukFormModal"
         );
-
     if(modal){
         modal.style.display =
             "flex";
@@ -4528,7 +4667,6 @@ export async function openEditModalMasuk(rowIndex) {
         document.getElementById(
             "smartofficeSuratMasukFile"
         );
-
     if(fileInput){
         fileInput.value = "";
     }
@@ -4554,30 +4692,8 @@ async function loadDataSuratKeluar(
 
     try{
         /* =========================
-           LOADING CARD CONTENT
+           CEK HALAMAN
         ========================= */
-        if(list){
-            list.innerHTML = `
-                <div class="
-                    smartoffice-loading
-                ">
-                    <div class="
-                        smartoffice-loading-spinner
-                    "></div>
-
-                    <div class="
-                        smartoffice-loading-text
-                    ">
-                        Memuat data Surat Keluar...
-                    </div>
-                </div>
-            `;
-        }
-
-        /* AMBIL DATA */
-        const res =
-            await smartofficeGetAllSuratKeluar();
-
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -4585,27 +4701,127 @@ async function loadDataSuratKeluar(
             return;
         }
 
-        suratKeluarAllData = Array.isArray(res) ? res : [];
+        /* =========================
+           LOADING
+        ========================= */
+        if(list){
+            list.innerHTML = `
+                <div class="smartoffice-loading">
+                    <div class="smartoffice-loading-spinner"></div>
+                    <div class="smartoffice-loading-text">
+                        Memuat data Surat Keluar...
+                    </div>
+                </div>
+            `;
+        }
 
-        /* DATA UNTUK TAMPILAN */
-        suratKeluarViewData =
-            [...suratKeluarAllData];
-
-        /* RESET STATE */
-        resetSuratKeluarViewState();
-
-        /* INIT FILTER */
+        /* =========================
+           INIT FILTER
+        ========================= */
         initSuratKeluarFilter();
 
-        /* INIT BULAN */
+        /* =========================
+           INIT BULAN
+        ========================= */
         initBulanSuratKeluar();
 
-        /* KODE SURAT */
+        /* =========================
+           AMBIL FILTER AKTIF
+        ========================= */
+        const tanggalInput =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterTanggal"
+            );
+
+        const bulanInput =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterBulan"
+            );
+
+        let res;
+
+        /* =========================
+           JIKA BULAN AKTIF
+        ========================= */
+        if(
+            bulanInput &&
+            bulanInput.value
+        ){
+
+            console.log(
+                "QUERY BULAN SURAT KELUAR:",
+                bulanInput.value
+            );
+
+            res =
+                await smartofficeGetSuratKeluarFirestore(
+                    bulanInput.value,
+                    "bulan"
+                );
+
+        }
+        /* =========================
+           JIKA TANGGAL AKTIF
+        ========================= */
+        else{
+
+            const tanggal =
+                tanggalInput &&
+                tanggalInput.value
+                    ? tanggalInput.value
+                    : new Date()
+                        .toISOString()
+                        .slice(0,10);
+
+            console.log(
+                "QUERY TANGGAL SURAT KELUAR:",
+                tanggal
+            );
+
+            res =
+                await smartofficeGetSuratKeluarFirestore(
+                    tanggal
+                );
+        }
+
+        /* =========================
+           CEK STALE
+        ========================= */
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        /* =========================
+           SIMPAN DATA
+        ========================= */
+        suratKeluarAllData =
+            Array.isArray(res)
+                ? res
+                : [];
+
+        suratKeluarViewData =
+            [
+                ...suratKeluarAllData
+            ];
+
+        /* =========================
+           RESET VIEW
+        ========================= */
+        resetSuratKeluarViewState();
+
+        /* =========================
+           AUTO KODE
+        ========================= */
         initAutoKodeSurat();
 
-        /* RENDER HASIL AWAL */
+        /* =========================
+           RENDER
+        ========================= */
         applyFilterSuratKeluar();
-        
+
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -4615,7 +4831,8 @@ async function loadDataSuratKeluar(
 
         suratKeluarLoaded = true;
 
-    }catch(error){
+    }
+    catch(error){
 
         if(
             pageInstance !==
@@ -4625,7 +4842,7 @@ async function loadDataSuratKeluar(
         }
 
         console.error(
-            "Load Data Surat Keluar Error:",
+            "Load Data Surat Keluar Firestore Error:",
             error
         );
 
@@ -4655,6 +4872,12 @@ async function loadMaster(
         smartofficeBukuSuratPageInstance
 ){
 
+    console.log(
+        "LOADMASTER MULAI",
+        pageInstance,
+        smartofficeBukuSuratPageInstance
+    );
+
     /* ==================================================
        CEK HALAMAN MASIH AKTIF
     ================================================== */
@@ -4675,7 +4898,6 @@ async function loadMaster(
             masterSurat.klasifikasi
         )
     ){
-
         smartofficeRenderMasterSuratKeluar();
 
         if(
@@ -4689,12 +4911,20 @@ async function loadMaster(
     }
 
     try{
-
         /* ==================================================
-           GET MASTER DARI GAS
+           GET MASTER DARI FIRESTORE
         ================================================== */
+        console.log(
+            "LOADMASTER: MULAI QUERY FIRESTORE"
+        );
+
         const res =
-            await smartofficeGetMasterSurat();
+            await smartofficeGetMasterSuratFirestore();
+            
+        console.log(
+            "LOADMASTER: HASIL FIRESTORE",
+            res
+        );
 
         /* ==================================================
            CEK STALE SETELAH GET
@@ -4723,15 +4953,12 @@ async function loadMaster(
                 masterSurat.klasifikasi
             )
         ){
-
             masterSurat.klasifikasi.forEach(
                 item => {
-
                     masterSurat.kodeMap[
                         item.klasifikasi
                     ] =
                         item.kode;
-
                 }
             );
         }
@@ -4749,6 +4976,11 @@ async function loadMaster(
         /* ==================================================
            RENDER MASTER
         ================================================== */
+        console.log(
+            "LOADMASTER: RENDER KODE SURAT",
+            masterSurat
+        );
+        
         smartofficeRenderMasterSuratKeluar();
 
         if(
@@ -4757,10 +4989,8 @@ async function loadMaster(
         ){
             callback();
         }
-
     }
     catch(error){
-
         /* ==================================================
            JANGAN TAMPILKAN ERROR UNTUK HALAMAN STALE
         ================================================== */
@@ -4786,50 +5016,14 @@ async function loadMaster(
 
 /* ======================================================
    RESET VIEW STATE SURAT KELUAR
+   TIDAK RESET FILTER
 ====================================================== */
 function resetSuratKeluarViewState(){
 
-    /* RESET TANGGAL */
-    const tanggal =
-        document.getElementById(
-            "smartofficeSuratKeluarFilterTanggal"
-        );
-
-    if(tanggal){
-        tanggal.value = "";
-    }
-
-    /* RESET BULAN */
-    const bulan =
-        document.getElementById(
-            "smartofficeSuratKeluarFilterBulan"
-        );
-
-    if(bulan){
-        bulan.value = "";
-    }
-
-    /* RESET SEARCH */
-    const search =
-        document.getElementById(
-            "smartofficeSuratKeluarFilterSearch"
-        );
-
-    if(search){
-        search.value = "";
-    }
-
-    /* RESET STATUS */
-    const status =
-        document.getElementById(
-            "smartofficeSuratKeluarFilterStatus"
-        );
-
-    if(status){
-        status.value = "";
-    }
-
-    /* RESET DATA VIEW */
+    /* ==================================================
+       RESET DATA VIEW
+       FILTER TETAP DIPERTAHANKAN
+    ================================================== */
     suratKeluarViewData =
         [
             ...suratKeluarAllData
@@ -4864,11 +5058,14 @@ function initSuratKeluarFilter(){
 
     /* ==================================================
        DEFAULT TANGGAL HARI INI
+       HANYA JIKA MASIH KOSONG
     ================================================== */
     if(
         tanggal &&
-        !tanggal.value
+        !tanggal.value &&
+        (!bulan || !bulan.value)
     ){
+
         const today =
             new Date();
 
@@ -4894,13 +5091,69 @@ function initSuratKeluarFilter(){
        EVENT TANGGAL
     ================================================== */
     if(tanggal){
-        smartofficeSuratKeluarTanggalHandler =
-            function(){
 
+        if(
+            smartofficeSuratKeluarTanggalHandler
+        ){
+            tanggal.removeEventListener(
+                "change",
+                smartofficeSuratKeluarTanggalHandler
+            );
+        }
+
+        smartofficeSuratKeluarTanggalHandler =
+            async function(){
+
+                if(!tanggal.value){
+                    return;
+                }
+
+                /* TANGGAL DIPILIH → BULAN KOSONG */
                 if(bulan){
                     bulan.value = "";
                 }
-                applyFilterSuratKeluar();
+
+                try{
+
+                    const res =
+                        await smartofficeGetSuratKeluarFirestore(
+                            tanggal.value
+                        );
+
+                    console.log(
+                        "SURAT KELUAR TANGGAL:",
+                        tanggal.value
+                    );
+
+                    console.log(
+                        "DATA FIRESTORE:",
+                        res
+                    );
+
+                    suratKeluarAllData =
+                        Array.isArray(res)
+                            ? res
+                            : [];
+
+                    suratKeluarViewData =
+                        [
+                            ...suratKeluarAllData
+                        ];
+
+                    applyFilterSuratKeluar();
+
+                }catch(error){
+
+                    console.error(
+                        "Gagal memuat Surat Keluar berdasarkan tanggal:",
+                        error
+                    );
+
+                    smartofficeShowToast(
+                        "Gagal memuat Surat Keluar",
+                        "error"
+                    );
+                }
             };
 
         tanggal.addEventListener(
@@ -4913,15 +5166,75 @@ function initSuratKeluarFilter(){
        EVENT BULAN
     ================================================== */
     if(bulan){
+
+        if(
+            smartofficeSuratKeluarBulanHandler
+        ){
+            bulan.removeEventListener(
+                "change",
+                smartofficeSuratKeluarBulanHandler
+            );
+        }
+
         smartofficeSuratKeluarBulanHandler =
-            function(){
-                if(
-                    bulan.value &&
-                    tanggal
-                ){
+            async function(){
+
+                if(!bulan.value){
+                    return;
+                }
+
+                /* =========================
+                BULAN DIPILIH
+                ========================= */
+                if(tanggal){
                     tanggal.value = "";
                 }
-                applyFilterSuratKeluar();
+
+                try{
+
+                    const res =
+                        await smartofficeGetSuratKeluarFirestore(
+                            bulan.value,
+                            "bulan"
+                        );
+
+                    console.log(
+                        "SURAT KELUAR BULAN:",
+                        bulan.value
+                    );
+
+                    console.log(
+                        "DATA FIRESTORE BULAN:",
+                        res
+                    );
+
+                    suratKeluarAllData =
+                        Array.isArray(res)
+                            ? res
+                            : [];
+
+                    suratKeluarViewData =
+                        [
+                            ...suratKeluarAllData
+                        ];
+
+                    /* =========================
+                    RENDER
+                    ========================= */
+                    applyFilterSuratKeluar();
+
+                }catch(error){
+
+                    console.error(
+                        "Gagal memuat Surat Keluar berdasarkan bulan:",
+                        error
+                    );
+
+                    smartofficeShowToast(
+                        "Gagal memuat Surat Keluar",
+                        "error"
+                    );
+                }
             };
 
         bulan.addEventListener(
@@ -4934,9 +5247,21 @@ function initSuratKeluarFilter(){
        EVENT SEARCH
     ================================================== */
     if(search){
+
+        if(
+            smartofficeSuratKeluarSearchHandler
+        ){
+            search.removeEventListener(
+                "input",
+                smartofficeSuratKeluarSearchHandler
+            );
+        }
+
         smartofficeSuratKeluarSearchHandler =
             function(){
+
                 applyFilterSuratKeluar();
+
             };
 
         search.addEventListener(
@@ -4949,9 +5274,21 @@ function initSuratKeluarFilter(){
        EVENT STATUS
     ================================================== */
     if(status){
+
+        if(
+            smartofficeSuratKeluarStatusHandler
+        ){
+            status.removeEventListener(
+                "change",
+                smartofficeSuratKeluarStatusHandler
+            );
+        }
+
         smartofficeSuratKeluarStatusHandler =
             function(){
+
                 applyFilterSuratKeluar();
+
             };
 
         status.addEventListener(
@@ -4959,12 +5296,76 @@ function initSuratKeluarFilter(){
             smartofficeSuratKeluarStatusHandler
         );
     }
+
+    /* ==================================================
+       EVENT RESET
+    ================================================== */
+    const resetButton =
+        document.getElementById(
+            "smartofficeSuratKeluarResetButton"
+        );
+
+    if(resetButton){
+
+        if(
+            smartofficeSuratKeluarResetHandler
+        ){
+            resetButton.removeEventListener(
+                "click",
+                smartofficeSuratKeluarResetHandler
+            );
+        }
+
+        smartofficeSuratKeluarResetHandler =
+            async function(){
+
+                const today =
+                    new Date();
+
+                const tanggalHariIni =
+                    `${today.getFullYear()}-${
+                        String(
+                            today.getMonth() + 1
+                        ).padStart(2, "0")
+                    }-${
+                        String(
+                            today.getDate()
+                        ).padStart(2, "0")
+                    }`;
+
+                if(tanggal){
+                    tanggal.value =
+                        tanggalHariIni;
+                }
+
+                if(bulan){
+                    bulan.value = "";
+                }
+
+                if(search){
+                    search.value = "";
+                }
+
+                if(status){
+                    status.value = "";
+                }
+
+                await loadDataSuratKeluar(
+                    smartofficeBukuSuratPageInstance
+                );
+            };
+
+        resetButton.addEventListener(
+            "click",
+            smartofficeSuratKeluarResetHandler
+        );
+    }
 }
 
 
 /* ======================================================
    INIT DROPDOWN BULAN SURAT KELUAR
-   AMBIL DARI TANGGAL SURAT
+   SELALU JANUARI - DESEMBER
 ====================================================== */
 function initBulanSuratKeluar(){
 
@@ -4972,6 +5373,7 @@ function initBulanSuratKeluar(){
         document.getElementById(
             "smartofficeSuratKeluarFilterBulan"
         );
+
     if(!select){
         return;
     }
@@ -4979,106 +5381,55 @@ function initBulanSuratKeluar(){
     /* ==================================================
        RESET OPTION
     ================================================== */
-    select.innerHTML =
-        `
+    select.innerHTML = `
         <option value="">
             Pilih Bulan
         </option>
-        `;
-    if(
-        !suratKeluarAllData ||
-        !suratKeluarAllData.length
-    ){
-        return;
-    }
+    `;
 
     /* ==================================================
-       KUMPULKAN BULAN UNIK
+       TAHUN AKTIF
     ================================================== */
-    const bulanSet =
-        new Set();
+    const today =
+        new Date();
 
-    suratKeluarAllData.forEach(
-        function(row){
-            if(!row.tanggal){
-                return;
-            }
+    const tahun =
+        today.getFullYear();
 
-            /*
-              FORMAT BACKEND:
-              dd-MM-yyyy
-            */
-            const parts =
-                String(
-                    row.tanggal
-                ).split("-");
+    /* ==================================================
+       RENDER JANUARI - DESEMBER
+    ================================================== */
+    for(
+        let bulan = 1;
+        bulan <= 12;
+        bulan++
+    ){
 
-            if(
-                parts.length !== 3
-            ){
-                return;
-            }
+        const key =
+            `${tahun}-${String(
+                bulan
+            ).padStart(
+                2,
+                "0"
+            )}`;
 
-            const year =
-                Number(
-                    parts[2]
-                );
+        const option =
+            document.createElement(
+                "option"
+            );
 
-            const month =
-                Number(
-                    parts[1]
-                );
+        option.value =
+            key;
 
-            if(
-                !year ||
-                !month ||
-                month < 1 ||
-                month > 12
-            ){
-                return;
-            }
-
-            const key =
-                `${year}-${String(
-                    month
-                ).padStart(
-                    2,
-                    "0"
-                )}`;
-
-            bulanSet.add(
+        option.textContent =
+            formatBulanIndonesia(
                 key
             );
-        }
-    );
 
-    /* ==================================================
-       RENDER BULAN
-    ================================================== */
-    [
-        ...bulanSet
-    ]
-    .sort()
-    .forEach(
-        function(bulan){
-            const option =
-                document.createElement(
-                    "option"
-                );
-
-            option.value =
-                bulan;
-
-            option.textContent =
-                formatBulanIndonesia(
-                    bulan
-                );
-
-            select.appendChild(
-                option
-            );
-        }
-    );
+        select.appendChild(
+            option
+        );
+    }
 }
 
 
@@ -5167,6 +5518,7 @@ function applyFilterSuratKeluar(){
             if(search){
                 const text = `
                     ${item.nomor || ""}
+                    ${item.nomorSurat || ""}
                     ${item.tujuan || ""}
                     ${item.perihal || ""}
                 `.toLowerCase();
@@ -5228,7 +5580,7 @@ function applyFilterSuratKeluar(){
 /* ======================================================
    RESET FILTER SURAT KELUAR
 ====================================================== */
-function resetFilterSuratKeluar(){
+async function resetFilterSuratKeluar(){
 
     const search =
         document.getElementById(
@@ -5250,26 +5602,108 @@ function resetFilterSuratKeluar(){
             "smartofficeSuratKeluarFilterStatus"
         );
 
+    /* ==================================================
+       RESET SEARCH
+    ================================================== */
     if(search){
         search.value = "";
     }
 
+    /* ==================================================
+       RESET BULAN
+    ================================================== */
     if(bulan){
         bulan.value = "";
     }
 
+    /* ==================================================
+       TANGGAL HARI INI
+    ================================================== */
+    const today =
+        new Date();
+
+    const hariIni =
+        `${today.getFullYear()}-${
+            String(
+                today.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            )
+        }-${
+            String(
+                today.getDate()
+            ).padStart(
+                2,
+                "0"
+            )
+        }`;
+
     if(tanggal){
-        tanggal.value = "";
+        tanggal.value =
+            hariIni;
     }
 
+    /* ==================================================
+       RESET STATUS
+    ================================================== */
     if(status){
         status.value = "";
     }
 
-    suratKeluarViewData =
-        [...suratKeluarAllData];
+    /* ==================================================
+       LOAD ULANG FIRESTORE
+       HANYA HARI INI
+    ================================================== */
+    const pageInstance =
+        smartofficeBukuSuratPageInstance;
 
-    renderSuratKeluar();
+    try{
+        const res =
+            await smartofficeGetSuratKeluarFirestore(
+                hariIni,
+                "tanggal"
+            );
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        suratKeluarAllData =
+            Array.isArray(res)
+                ? res
+                : [];
+
+        suratKeluarViewData =
+            [
+                ...suratKeluarAllData
+            ];
+
+        applyFilterSuratKeluar();
+
+        suratKeluarLoaded =
+            true;
+
+    }catch(error){
+        if(
+            pageInstance !==
+            smartofficeBukuSuratPageInstance
+        ){
+            return;
+        }
+
+        console.error(
+            "Reset Surat Keluar Error:",
+            error
+        );
+
+        smartofficeShowToast(
+            "Gagal memuat ulang Surat Keluar.",
+            "error"
+        );
+    }
 }
 
 
@@ -5522,7 +5956,7 @@ function renderSuratKeluar(){
 
                             <div class="smartoffice-suratkeluar-card-title-content">
                                 <div class="smartoffice-suratkeluar-card-number">
-                                    ${item.nomor || "-"}
+                                    ${item.nomorSurat || item.nomor || "-"}
                                 </div>
 
                                 <div class="smartoffice-suratkeluar-card-date">

@@ -159,7 +159,6 @@ export async function smartofficeLoadPage(){
                             null;
                         return;
                     }
-
                     modal.style.display =
                         "none";
 
@@ -180,7 +179,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeApprovalBackButton"
         );
-
     if(backButton){
         const handler =
             async function(){
@@ -212,7 +210,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeApprovalRefreshButton"
         );
-
     if(refreshButton){
         const handler =
             smartofficeRefreshApproval;
@@ -235,7 +232,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeTabApprovalCuti"
         );
-
     if(tabCuti){
         const handler =
             function(){
@@ -268,7 +264,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeTabApprovalSpd"
         );
-
     if(tabSpd){
         const handler =
             function(){
@@ -300,7 +295,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeTabApprovalDokumen"
         );
-
     if(tabDokumen){
         const handler =
             function(){
@@ -333,7 +327,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeApprovalDetailCloseButton"
         );
-
     if(closeButton){
         const handler =
             smartofficeCloseApprovalDetail;
@@ -436,7 +429,6 @@ export async function smartofficeLoadApprovalCuti(){
           document.getElementById(
               "smartofficeApprovalCutiBadge"
           );
-
       if (badge) {
           const total =
               data?.length || 0;
@@ -451,7 +443,6 @@ export async function smartofficeLoadApprovalCuti(){
         EMPTY DATA
       ========================= */
       if (!data || data.length === 0) {
-
         container.innerHTML = `
           <div class="
             smartoffice-empty-state
@@ -708,7 +699,6 @@ export async function smartofficeLoadApprovalCuti(){
             container.querySelectorAll(
                ".smartoffice-approval-detail-button"
             );
-
          buttons.forEach(
             function(button){
                 const handler =
@@ -1029,7 +1019,6 @@ function smartofficeOpenApprovalDetail(
             ${item.sisaCuti || 0} Hari
           </span>
         </div>
-
       </div>
 
       <!-- KEPERLUAN -->
@@ -1062,7 +1051,6 @@ function smartofficeOpenApprovalDetail(
       <div class="
         smartoffice-approval-detail-grid
       ">
-
         <div class="
           smartoffice-approval-detail-item
         ">
@@ -1082,7 +1070,6 @@ function smartofficeOpenApprovalDetail(
             ${item.nipDelegasi || '-'}
           </span>
         </div>
-
       </div>
 
       <!-- TUGAS -->
@@ -1164,7 +1151,6 @@ function smartofficeOpenApprovalDetail(
                 :
                 'Tidak ada lampiran'
               }
-
             </div>
           </div>
         </div>
@@ -1174,7 +1160,6 @@ function smartofficeOpenApprovalDetail(
       <div class="
         smartoffice-approval-info-box
       ">
-
         <div class="
           smartoffice-approval-info-icon
         ">
@@ -1184,11 +1169,9 @@ function smartofficeOpenApprovalDetail(
         <div class="
           smartoffice-approval-info-text
         ">
-
           Pastikan data pengajuan cuti
           sudah sesuai sebelum
           melakukan approval.
-
         </div>
       </div>
 
@@ -3167,7 +3150,6 @@ export async function smartofficeSubmitTolakDokumen(
             "success";
     }
     catch(error){
-
         /* =========================
            REQUEST DIBATALKAN
         ========================= */

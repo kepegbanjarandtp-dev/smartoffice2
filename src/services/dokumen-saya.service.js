@@ -114,9 +114,7 @@ export async function smartofficeGetDokumenPegawaiCached(
 
         const cached =
             smartofficeCacheGet(cacheKey);
-
         if(cached){
-
             console.log(
                 "DOKUMEN SAYA: DARI CACHE",
                 nipValue

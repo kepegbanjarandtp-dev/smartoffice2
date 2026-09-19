@@ -149,7 +149,6 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                     };
                 }
             )
-
                         .filter(
                             item => {
                                 /* =========================
@@ -182,7 +181,6 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                                                 status
                                             )
                                     );
-
                                 if(
                                     !cocokStatus
                                 ){
@@ -196,7 +194,6 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                                     item.targetJenis === "ALL" ||
                                     item.targetJenis ===
                                         pegawai.jenisPegawai;
-
                                 if(
                                     !cocokJenis
                                 ){
@@ -218,7 +215,6 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                                     riwayatPendidikan.includes(
                                         filterPendidikan
                                     );
-
                                 if(
                                     !cocokPendidikan
                                 ){
@@ -351,7 +347,6 @@ export async function smartofficeGetDokumenPegawaiFirestore(nip){
 
                 const kode =
                     data.kodeDokumen || "";
-
                 if(!kode){
                     return;
                 }
@@ -402,7 +397,6 @@ export async function smartofficeGetDokumenPegawaiFirestore(nip){
            GABUNG MASTER + UPLOAD
         ========================= */
         const result = [];
-
         masterData.forEach(
             master => {
                 const uploadedList =

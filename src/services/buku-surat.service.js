@@ -7,6 +7,26 @@ import {
 
 
 /* =================================================================================
+   MASTER PAYLOAD (INIT)
+================================================================================= */
+/* ======================================================
+   GET INIT BUKU SURAT (SAPU JAGAT)
+   Memuat Surat Masuk, Surat Keluar, dan Master Sekaligus
+====================================================== */
+export async function smartofficeGetInitBukuSurat() {
+    const response = await smartofficeApi("getInitBukuSurat");
+    
+    if (!response.success) {
+        throw new Error(
+            response.message || "Gagal memuat inisiasi data Buku Surat."
+        );
+    }
+
+    return response.data;
+}
+
+
+/* =================================================================================
    SURAT MASUK
 ================================================================================= */
 /* ======================================================

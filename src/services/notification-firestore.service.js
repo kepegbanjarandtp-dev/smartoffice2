@@ -111,7 +111,6 @@ export async function smartofficeGetNotificationsFromFirestore(
     }
 
     try {
-
         /* ==============================================
            COLLECTION
         ============================================== */
@@ -146,7 +145,6 @@ export async function smartofficeGetNotificationsFromFirestore(
         /* ==============================================
            READ FIRESTORE
         ============================================== */
-
         const snapshot =
             await getDocs(
                 notificationQuery
@@ -166,9 +164,7 @@ export async function smartofficeGetNotificationsFromFirestore(
                     smartofficeNormalizeNotification({
                         id:
                             docSnapshot.id,
-
                         ...data
-
                     });
                 if (notification) {
                     notifications.push(

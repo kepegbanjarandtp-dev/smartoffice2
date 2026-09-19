@@ -16,7 +16,6 @@ import {
 export async function smartofficeGetTotalPendingApproval(
     nip
 ){
-
     /* =========================
        REQUEST API
     ========================= */   
@@ -59,5 +58,4 @@ export async function smartofficeGetTotalPendingApprovalAll(
         nip,
         role
     );
-
 }

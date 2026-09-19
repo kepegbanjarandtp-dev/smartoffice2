@@ -421,7 +421,6 @@ export async function smartofficeLoadRekapPegawai(){
             "smartofficeManagementTotalPegawai"
         ).innerText =
             smartofficeManagementRekapData.length;
-
     }
     catch(error){
         /* =========================
@@ -499,7 +498,6 @@ function smartofficeRenderRekapPegawai(
                 : "NIP";
 
         html.push(`
-
             <div
                 class="smartoffice-management-card"
                 data-nip="${item.nip}"
@@ -882,7 +880,6 @@ function smartofficeRenderManagementRiwayat(
 
         /* PERIODE */
         const periodeCuti =
-
             item.tanggalAwal ===
             item.tanggalAkhir
 
@@ -901,7 +898,6 @@ function smartofficeRenderManagementRiwayat(
             )}`;
 
         html.push(`
-
             <div
                 class="smartoffice-management-riwayat-card"
                 onclick='
@@ -1120,7 +1116,6 @@ function smartofficeSetDefaultManagementBulan(){
         document.getElementById(
             "smartofficeManagementFilterBulan"
         );
-
     if(!select){
         return;
     }
@@ -1489,7 +1484,6 @@ export async function smartofficeCariRiwayatCuti(){
         '<span class="smartoffice-mini-loader"></span>';
 
     try{
-
         /* =========================
            QUERY FIRESTORE
         ========================= */
