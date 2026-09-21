@@ -504,48 +504,6 @@
             </span>
           </button>
 
-          <!-- EXPORT -->
-          <button
-            id="smartofficeSuratMasukExportButton"
-            class="
-              smartoffice-suratmasuk-filter-button
-              smartoffice-suratmasuk-filter-export
-            "
-          >
-            <svg
-              viewBox="0 0 24 24"
-            >
-              <path
-                d="M12 3v12"
-              />
-
-              <path
-                d="m7 10 5 5 5-5"
-              />
-
-              <path
-                d="
-                  M5 21
-                  h14
-                  a2 2 0 0 0 2-2
-                  v-3
-                "
-              />
-
-              <path
-                d="
-                  M3 16
-                  v3
-                  a2 2 0 0 0 2 2
-                "
-              />
-            </svg>
-
-            <span>
-              Export
-            </span>
-          </button>
-
           <!-- TAMBAH -->
           <button
             id="smartofficeSuratMasukTambahButton"
@@ -570,6 +528,56 @@
               Tambah Surat
             </span>
           </button>
+
+          <!-- PRINT -->
+          <button
+            id="smartofficeSuratMasukPrintButton"
+            type="button"
+            class="
+              smartoffice-suratmasuk-filter-button
+              smartoffice-suratmasuk-filter-print
+            "
+            title="Cetak Laporan"
+            aria-label="Cetak Laporan"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline
+                points="6 9 6 2 18 2 18 9"
+              ></polyline>
+
+              <path
+                d="
+                  M6 18H4
+                  a2 2 0 0 1-2-2
+                  v-5
+                  a2 2 0 0 1 2-2
+                  h16
+                  a2 2 0 0 1 2 2
+                  v5
+                  a2 2 0 0 1-2 2
+                  h-2
+                "
+              ></path>
+
+              <rect
+                x="6"
+                y="14"
+                width="12"
+                height="8"
+              ></rect>
+            </svg>
+
+            <span>
+              Print
+            </span>
+          </button>         
         </div>
     </div>
   </div>
@@ -597,7 +605,6 @@
     <!-- ======================================================
         FILTER SURAT KELUAR
     ====================================================== -->
-
     <div class="smartoffice-suratkeluar-filter-panel">
 
         <!-- ==================================================
@@ -635,14 +642,12 @@
             </div>
         </div>
 
-
         <!-- ==================================================
             BULAN + TANGGAL + STATUS + ACTION
         ================================================== -->
         <div
             class="smartoffice-suratkeluar-filter-fields"
         >
-
             <!-- BULAN -->
             <div
                 class="smartoffice-suratkeluar-filter-group"
@@ -697,7 +702,6 @@
                 </div>
             </div>
 
-
             <!-- TANGGAL -->
             <div
                 class="smartoffice-suratkeluar-filter-group"
@@ -749,7 +753,6 @@
                 </div>
             </div>
 
-
             <!-- STATUS -->
             <div
                 class="smartoffice-suratkeluar-filter-group"
@@ -780,7 +783,6 @@
                     </select>
                 </div>
             </div>
-
 
             <!-- RESET -->
             <div
@@ -815,10 +817,28 @@
                         Reset
                     </span>
                 </button>
+
+                <button
+                  type="button"
+                  class="smartoffice-suratkeluar-print-button"
+                  title="Cetak Laporan"
+                  aria-label="Cetak Laporan"
+              >
+                  <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                  >
+                      <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                      <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                      <rect x="6" y="14" width="12" height="8"></rect>
+                  </svg>
+              </button>
             </div>
-
         </div>
-
     </div>
 
     <!-- =========================
