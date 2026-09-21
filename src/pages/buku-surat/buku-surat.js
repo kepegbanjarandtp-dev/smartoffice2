@@ -5,6 +5,9 @@
 // --- CORE ---
 import { smartofficeCheckSession, smartofficeGetSession, smartofficeLogout } from "../../core/session.js";
 import { smartofficeNavigate } from "../../core/router.js";
+import {
+    smartofficeApi
+} from "../../core/api.js";
 
 // --- COMPONENT ---
 import { smartofficeShowToast } from "../../components/toast/toast.js";
@@ -37,6 +40,11 @@ import {
 // --- UTILS ---
 import { smartofficeConvertFileToBase64 } from "../../utils/file.js";
 import { smartofficeGetDriveFileId } from "../../utils/drive.js";
+import {
+    smartofficeGenerateLaporanSuratMasuk,
+    smartofficeGenerateLaporanSuratKeluar
+} from "../../utils/print.js";
+
 
 
 /* ======================================================
@@ -58,6 +66,7 @@ let smartofficeBukuSuratTanggalHandler = null;
 let smartofficeBukuSuratBulanHandler = null;
 let smartofficeBukuSuratSearchHandler = null;
 let smartofficeBukuSuratResetMasukHandler = null;
+let smartofficeSuratMasukPrintHandler = null;
 
 let smartofficeSuratMasukDisposisiSelected = [];
 
@@ -84,6 +93,7 @@ let smartofficeSuratKeluarSearchHandler = null;
 let smartofficeSuratKeluarStatusHandler = null;
 let smartofficeSuratKeluarKlasifikasiOutsideClickHandler = null;
 let smartofficeSuratKeluarResetHandler = null;
+let smartofficeSuratKeluarPrintHandler = null;
 
 /* =====================================================
    GLOBAL STATE KODE SURAT
@@ -328,6 +338,16 @@ export async function smartofficeDestroyPage(){
             "smartofficeSuratKeluarFilterStatus"
         );
 
+    const printSuratMasukButton =
+        document.getElementById(
+            "smartofficeSuratMasukPrintButton"
+        );
+
+    const printSuratKeluarButton =
+        document.getElementById(
+            "smartofficeSuratKeluarPrintButton"
+        );
+
     /* ==================================================
        REMOVE TAB
     ================================================== */
@@ -415,6 +435,19 @@ export async function smartofficeDestroyPage(){
     }
 
     /* ==================================================
+       REMOVE PRINT SURAT MASUK
+    ================================================== */
+    if(
+        printSuratMasukButton &&
+        smartofficeSuratMasukPrintHandler
+    ){
+        printSuratMasukButton.removeEventListener(
+            "click",
+            smartofficeSuratMasukPrintHandler
+        );
+    }
+
+    /* ==================================================
        REMOVE FILTER SURAT KELUAR
     ================================================== */
     if(
@@ -468,7 +501,19 @@ export async function smartofficeDestroyPage(){
             "click",
             smartofficeSuratKeluarKlasifikasiOutsideClickHandler
         );
+    }
 
+    /* ==================================================
+       REMOVE PRINT SURAT KELUAR
+    ================================================== */
+    if(
+        printSuratKeluarButton &&
+        smartofficeSuratKeluarPrintHandler
+    ){
+        printSuratKeluarButton.removeEventListener(
+            "click",
+            smartofficeSuratKeluarPrintHandler
+        );
     }
 
     /* ==================================================
@@ -488,7 +533,9 @@ export async function smartofficeDestroyPage(){
         null;
     smartofficeBukuSuratTambahHandler =
         null;
-
+    smartofficeSuratMasukPrintHandler =
+        null;
+    
     /* ==================================================
        RESET HANDLER SURAT KELUAR
     ================================================== */
@@ -501,7 +548,9 @@ export async function smartofficeDestroyPage(){
     smartofficeSuratKeluarStatusHandler =
         null;
     smartofficeSuratKeluarKlasifikasiOutsideClickHandler =
-    null;
+        null;
+    smartofficeSuratKeluarPrintHandler =
+        null;
 
     /* ==================================================
        CLOSE MODAL DELETE SURAT MASUK
@@ -1554,6 +1603,25 @@ function initFilterSuratMasuk(){
             "click",
             smartofficeBukuSuratResetMasukHandler
         );
+
+        /* ==================================================
+        EVENT PRINT
+        ================================================== */
+        const printButton =
+            document.getElementById(
+                "smartofficeSuratMasukPrintButton"
+            );
+        if(printButton){
+            smartofficeSuratMasukPrintHandler =
+                function(){
+                    smartofficePrintSuratMasuk();
+                };
+
+            printButton.addEventListener(
+                "click",
+                smartofficeSuratMasukPrintHandler
+            );
+        }
     }
 }
 
@@ -1623,6 +1691,134 @@ function initBulanAgendaMasuk(){
         ).padStart(2,"0")}`;
 }
 
+
+/* ======================================================
+   PRINT SURAT MASUK
+====================================================== */
+async function smartofficePrintSuratMasuk(){
+
+    const data =
+        suratMasukViewData || [];
+
+    /* =========================
+       VALIDASI DATA
+    ========================= */
+    if(!data.length){
+        smartofficeShowToast(
+            "Tidak ada data untuk dicetak.",
+            "error"
+        );
+
+        return;
+    }
+
+    smartofficeShowGlobalLoading(
+        "Menyiapkan laporan Surat Masuk..."
+    );
+
+    try{
+        /* =========================
+           GET KAPUS
+        ========================= */
+        const response =
+            await smartofficeApi(
+                "smartofficeGetKapus"
+            );
+        if(
+            !response ||
+            !response.success
+        ){
+            throw new Error(
+                response?.message ||
+                "Gagal mengambil data Kepala Puskesmas."
+            );
+        }
+
+        const kapus =
+            response.data || {};
+
+        /* =========================
+           PERIODE
+        ========================= */
+        const tanggal =
+            document.getElementById(
+                "smartofficeSuratMasukFilterTanggal"
+            )?.value || "";
+
+        const bulan =
+            document.getElementById(
+                "smartofficeSuratMasukFilterBulan"
+            )?.value || "";
+
+        let periode =
+            "Semua Data";
+
+        if(tanggal){
+            periode =
+                `Tanggal ${tanggal}`;
+        }
+        else if(bulan){
+            const bulanSelect =
+                document.getElementById(
+                    "smartofficeSuratMasukFilterBulan"
+                );
+
+            periode =
+                bulanSelect
+                    ?.options[
+                        bulanSelect.selectedIndex
+                    ]
+                    ?.text ||
+                bulan;
+        }
+
+        /* =========================
+           GENERATE LAPORAN
+        ========================= */
+        const laporanHtml =
+            smartofficeGenerateLaporanSuratMasuk(
+                data,
+                kapus,
+                periode
+            );
+
+        /* =========================
+           OPEN PRINT
+        ========================= */
+        const win =
+            window.open(
+                "",
+                "_blank"
+            );
+        if(!win){
+            throw new Error(
+                "Popup diblokir browser."
+            );
+        }
+        win.document.open();
+        win.document.write(
+            laporanHtml
+        );
+
+        win.document.close();
+    }
+    catch(error){
+        console.error(
+            "PRINT SURAT MASUK ERROR:",
+            error
+        );
+
+        smartofficeShowToast(
+            error.message ||
+            "Gagal menyiapkan laporan Surat Masuk.",
+            "error"
+        );
+
+    }
+    finally{
+        smartofficeHideGlobalLoading();
+    }
+}
 
 /* ======================================================
    PARSE TANGGAL SURAT MASUK
@@ -4177,7 +4373,7 @@ export async function smartofficeSubmitSuratMasuk(){
 
         submitButton.innerHTML = `
             <span class="smartoffice-bukusurat-btn-spinner"></span>
-            <span>Menyimpan...</span>
+            <span>Menyimpan</span>
         `;
     }
 
@@ -4377,6 +4573,73 @@ function resetSubmitMasukUI() {
     document
         .getElementById("btnSimpanMasuk")
         ?.classList.remove("hidden");
+}
+
+
+/* =====================================================
+   HELPER PERIODE BULAN
+===================================================== */
+function smartofficeGetPeriodeLaporan(
+    tanggalValue,
+    bulanValue
+){
+    if(bulanValue){
+        const parts =
+            String(bulanValue).split("-");
+
+        if(parts.length === 2){
+            const tahun = parts[0];
+            const bulan = Number(parts[1]);
+
+            const namaBulan = [
+                "Januari",
+                "Februari",
+                "Maret",
+                "April",
+                "Mei",
+                "Juni",
+                "Juli",
+                "Agustus",
+                "September",
+                "Oktober",
+                "November",
+                "Desember"
+            ];
+
+            if(
+                bulan >= 1 &&
+                bulan <= 12
+            ){
+                return `${namaBulan[bulan - 1]} ${tahun}`;
+            }
+        }
+    }
+
+    if(tanggalValue){
+        const date =
+            new Date(tanggalValue);
+
+        if(!isNaN(date.getTime())){
+            const namaBulan = [
+                "Januari",
+                "Februari",
+                "Maret",
+                "April",
+                "Mei",
+                "Juni",
+                "Juli",
+                "Agustus",
+                "September",
+                "Oktober",
+                "November",
+                "Desember"
+            ];
+
+            return `${namaBulan[date.getMonth()]} ${date.getFullYear()}`;
+        }
+    }
+
+    return "";
 }
 
 
@@ -5422,6 +5685,21 @@ function initSuratKeluarFilter(){
         resetButton.addEventListener(
             "click",
             smartofficeSuratKeluarResetHandler
+        );
+    }
+
+    /* ==================================================
+       EVENT PRINT
+    ================================================== */
+    const printButton =
+        document.querySelector(
+            ".smartoffice-suratkeluar-print-button"
+        );
+
+    if (printButton) {
+        printButton.addEventListener(
+            "click",
+            smartofficePrintSuratKeluar
         );
     }
 }
@@ -7468,6 +7746,8 @@ function smartofficeResetFormSuratKeluar(){
 }
 
 
+
+
 /* ======================================================
    CLOSE FORM SURAT KELUAR
 ====================================================== */
@@ -7503,7 +7783,6 @@ function smartofficeCloseFormSuratKeluar(){
         document.getElementById(
             "smartofficeSuratKeluarTujuan"
         );
-
     if(tujuan){
         tujuan.classList.remove("open");
         tujuan.classList.remove("drop-up");
@@ -7518,9 +7797,116 @@ function smartofficeCloseFormSuratKeluar(){
         document.getElementById(
             "smartofficeSuratKeluarFormModal"
         );
-
     if(modal){
         modal.classList.remove("show");
+    }
+}
+
+
+/* ======================================================
+   PRINT SURAT KELUAR
+====================================================== */
+async function smartofficePrintSuratKeluar(){
+
+    const data =
+        suratKeluarViewData || [];
+
+    if(!data.length){
+        smartofficeShowToast(
+            "Tidak ada data untuk dicetak",
+            "error"
+        );
+        return;
+    }
+
+    try{
+        /* =========================
+           GLOBAL LOADING
+        ========================= */
+        smartofficeShowGlobalLoading();
+
+        /* =========================
+           GET KAPUS
+        ========================= */
+        const response =
+            await smartofficeApi(
+                "smartofficeGetKapus"
+            );
+
+        if(
+            !response ||
+            !response.success
+        ){
+            throw new Error(
+                response?.message ||
+                "Gagal mengambil data Kepala Puskesmas."
+            );
+        }
+
+        const kapus =
+            response.data || "";
+
+        /* =========================
+           GENERATE LAPORAN
+        ========================= */
+        const filterTanggal =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterTanggal"
+            )?.value || "";
+
+        const filterBulan =
+            document.getElementById(
+                "smartofficeSuratKeluarFilterBulan"
+            )?.value || "";
+
+        const periode =
+            smartofficeGetPeriodeLaporan(
+                filterTanggal,
+                filterBulan
+            );
+
+        const laporanHtml =
+            smartofficeGenerateLaporanSuratKeluar(
+                data,
+                kapus,
+                periode
+            );
+
+        /* =========================
+           OPEN PRINT
+        ========================= */
+        const win =
+            window.open(
+                "",
+                "_blank"
+            );
+        if(!win){
+            throw new Error(
+                "Popup diblokir browser."
+            );
+        }
+
+        win.document.open();
+        win.document.write(
+            laporanHtml
+        );
+
+        win.document.close();
+    }
+    catch(error){
+        console.error(
+            "PRINT SURAT KELUAR ERROR:",
+            error
+        );
+
+        smartofficeShowToast(
+            error.message ||
+            "Gagal menyiapkan laporan",
+            "error"
+        );
+    }
+    finally{
+        smartofficeHideGlobalLoading();
     }
 }
 
@@ -7771,7 +8157,6 @@ function smartofficeRenderMasterSuratKeluar(){
         document.getElementById(
             "smartofficeSuratKeluarPenandatangan"
         );
-
     if(penandatangan){
         penandatangan.innerHTML = `
             <option value="">
@@ -7784,7 +8169,6 @@ function smartofficeRenderMasterSuratKeluar(){
             Array.isArray(masterSurat.penandatangan)
         ){
             masterSurat.penandatangan.forEach(item => {
-
                 const option =
                     document.createElement(
                         "option"
@@ -7811,7 +8195,6 @@ function smartofficeRenderMasterSuratKeluar(){
 function smartofficeSetSelectValue(id, value){
     const select =
         document.getElementById(id);
-
     if(!select || !value){
         return;
     }
@@ -7849,7 +8232,6 @@ async function openEditModalByRowIndex(
                 Number(data.rowIndex) ===
                 Number(rowIndex)
         );
-
     if(!item){
         smartofficeShowToast(
             "Data Surat Keluar tidak ditemukan",
@@ -7860,7 +8242,6 @@ async function openEditModalByRowIndex(
     }
 
     try{
-
         /* ==================================================
            RENDER FORM
         ================================================== */
@@ -8011,7 +8392,6 @@ async function smartofficeBukaLockSuratKeluarUI(
 ){
     const sessionData =
         smartofficeGetSession();
-
     if(!sessionData){
         smartofficeShowToast(
             "Session pengguna tidak ditemukan.",
@@ -8073,7 +8453,6 @@ function smartofficeOpenBukaLockSuratKeluarModal(
         document.getElementById(
             "smartofficeSuratKeluarLockModal"
         );
-
     if(!modal){
         return;
     }
@@ -8113,7 +8492,6 @@ function smartofficeCloseBukaLockSuratKeluarModal(){
         document.getElementById(
             "smartofficeSuratKeluarLockModal"
         );
-
     if(modal){
         modal.classList.remove(
             "is-visible"
@@ -8272,7 +8650,6 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
 async function smartofficeSubmitSuratKeluar(
     event
 ){
-
     event.preventDefault();
 
     const pageInstance =
@@ -8387,7 +8764,7 @@ async function smartofficeSubmitSuratKeluar(
 
         submitButton.innerHTML = `
             <span class="smartoffice-bukusurat-btn-spinner"></span>
-            <span>Menyimpan...</span>
+            <span>Menyimpan</span>
         `;
     }
 

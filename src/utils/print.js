@@ -765,7 +765,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-               LEBAR KOLOM
+               LEBAR KOLOM BUKU TAMU
             ========================= */
             .smartoffice-bukutamu-report-table th:nth-child(1),
             .smartoffice-bukutamu-report-table td:nth-child(1){
@@ -810,6 +810,198 @@ export function smartofficeGenerateTemplateLaporan(
             .smartoffice-bukutamu-report-table th:nth-child(9),
             .smartoffice-bukutamu-report-table td:nth-child(9){
                 width:70px;
+            }
+
+            /* ======================================================
+               TABLE SURAT KELUAR
+            ====================================================== */
+            .smartoffice-suratkeluar-report-table{
+                width:100%;
+                border-collapse:collapse;
+                table-layout:fixed;
+            }
+
+            /* =========================
+               NO
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(1),
+            .smartoffice-suratkeluar-report-table td:nth-child(1){
+                width:35px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+               NOMOR SURAT
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(2),
+            .smartoffice-suratkeluar-report-table td:nth-child(2){
+                width:175px;
+                white-space:nowrap;
+                text-align:left;
+            }
+
+            /* =========================
+            TANGGAL
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(3),
+            .smartoffice-suratkeluar-report-table td:nth-child(3){
+                width:80px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+            KLASIFIKASI
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(4),
+            .smartoffice-suratkeluar-report-table td:nth-child(4){
+                width:175px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
+            }
+
+            /* =========================
+            SIFAT
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(5),
+            .smartoffice-suratkeluar-report-table td:nth-child(5){
+                width:60px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+            TUJUAN / PENERIMA
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(6),
+            .smartoffice-suratkeluar-report-table td:nth-child(6){
+                width:190px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
+            }
+
+            /* =========================
+            PERIHAL
+            ========================= */
+            .smartoffice-suratkeluar-report-table th:nth-child(7),
+            .smartoffice-suratkeluar-report-table td:nth-child(7){
+                width:230px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
+            }
+
+            /* ====================================================== 
+               TABLE SURAT MASUK
+            ====================================================== */ 
+            .smartoffice-suratmasuk-report-table{
+                width:100%;
+                border-collapse:collapse;
+                table-layout:fixed;
+            }
+
+            /* =========================
+               NO
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(1),
+            .smartoffice-suratmasuk-report-table td:nth-child(1){
+                width:35px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+            NOMOR AGENDA
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(2),
+            .smartoffice-suratmasuk-report-table td:nth-child(2){
+                width:150px;
+                white-space:nowrap;
+                overflow:hidden;
+                text-overflow:ellipsis;
+                text-align:left;
+            }
+
+            /* =========================
+            TANGGAL TERIMA
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(3),
+            .smartoffice-suratmasuk-report-table td:nth-child(3){
+                width:90px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+            TANGGAL SURAT
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(4),
+            .smartoffice-suratmasuk-report-table td:nth-child(4){
+                width:85px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+            NOMOR SURAT
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(5),
+            .smartoffice-suratmasuk-report-table td:nth-child(5){
+                width:170px;
+                white-space:nowrap;
+                text-align:left;
+            }
+
+            /* =========================
+            PENGIRIM
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(6),
+            .smartoffice-suratmasuk-report-table td:nth-child(6){
+                width:150px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
+            }
+
+            /* =========================
+            PERIHAL
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(7),
+            .smartoffice-suratmasuk-report-table td:nth-child(7){
+                width:220px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
+            }
+
+            /* =========================
+            SIFAT
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(8),
+            .smartoffice-suratmasuk-report-table td:nth-child(8){
+                width:60px;
+                white-space:nowrap;
+                text-align:center;
+            }
+
+            /* =========================
+            DISPOSISI
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(9),
+            .smartoffice-suratmasuk-report-table td:nth-child(9){
+                width:150px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
             }
 
             </style>
@@ -996,7 +1188,6 @@ export function smartofficeGenerateTemplateLaporan(
         </${'script'}>
         </body>      
     </html>
-
     `;
 
         return html;
@@ -1223,6 +1414,139 @@ export function smartofficePrintLaporan(){
 }
 
 
+/* ======================================================
+   GENERATE LAPORAN SURAT MASUK
+====================================================== */
+export function smartofficeGenerateLaporanSuratMasuk(
+    data,
+    kapus,
+    periode,
+    qrUrl
+){
+    const bodyHtml = `
+        <div class="smartoffice-report-container">
+
+            <table class="smartoffice-report-table smartoffice-suratmasuk-report-table">
+
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nomor Agenda</th>
+                        <th>Tanggal Terima</th>
+                        <th>Tanggal Surat</th>
+                        <th>Nomor Surat</th>
+                        <th>Pengirim</th>
+                        <th>Perihal</th>
+                        <th>Sifat</th>
+                        <th>Disposisi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${data.map(function(item,index){
+                        return `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.nomorAgenda || "-"}</td>
+                                <td>${item.tglTerima || "-"}</td>
+                                <td>${item.tglSurat || "-"}</td>
+                                <td>${item.nomorSurat || "-"}</td>
+                                <td>${item.pengirim || "-"}</td>
+                                <td>${item.perihal || "-"}</td>
+                                <td>${item.sifat || "-"}</td>
+                                <td>${item.disposisi || "-"}</td>
+                            </tr>
+                        `;
+                    }).join("")}
+                </tbody>
+
+            </table>
+
+            <div class="smartoffice-report-keterangan">
+                <strong>
+                    Keterangan :
+                </strong>
+                Laporan ini dihasilkan secara otomatis oleh
+                Smart Office Puskesmas Nambo.
+            </div>
+        </div>
+    `;
+
+    return smartofficeGenerateTemplateLaporan(
+        "REGISTER SURAT MASUK",
+        periode,
+        bodyHtml,
+        data.length,
+        kapus,
+        qrUrl
+    );
+}
+
+
+/* ======================================================
+   GENERATE LAPORAN SURAT KELUAR
+====================================================== */
+export function smartofficeGenerateLaporanSuratKeluar(
+    data = [],
+    kapus = {},
+    periode = "",
+    qrUrl = ""
+){
+    const bodyHtml = `
+        <div class="smartoffice-report-container">
+            <table class="smartoffice-report-table smartoffice-suratkeluar-report-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nomor Surat</th>
+                        <th>Tanggal</th>
+                        <th>Klasifikasi</th>
+                        <th>Sifat</th>
+                        <th>Tujuan / Penerima</th>
+                        <th>Perihal</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${data.map(function(item,index){
+                        return `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${item.nomorSurat || "-"}</td>
+                                <td>${item.tanggal || "-"}</td>                                
+                                <td>${item.klasifikasi || "-"}</td>
+                                <td>${item.sifat || "-"}</td>
+                                <td style="white-space:normal;word-break:break-word;overflow-wrap:anywhere;text-align:left;">
+                                    ${item.tujuan || "-"}
+                                </td>
+                                <td style="white-space:normal;word-break:break-word;overflow-wrap:anywhere;text-align:left;">
+                                    ${item.perihal || "-"}
+                                </td>
+                            </tr>
+                        `;
+                    }).join("")}
+                </tbody>
+            </table>
+
+            <div class="smartoffice-report-keterangan">
+                <strong>
+                    Keterangan :
+                </strong>
+                Laporan ini dihasilkan secara otomatis oleh
+                Smart Office Puskesmas Nambo.
+            </div>
+        </div>
+    `;
+
+    return smartofficeGenerateTemplateLaporan(
+        "REGISTER SURAT KELUAR",
+        periode,
+        bodyHtml,
+        data.length,
+        kapus,
+        qrUrl
+    );
+}
 
 
 /* ======================================================

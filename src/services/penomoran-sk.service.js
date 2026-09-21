@@ -102,3 +102,60 @@ export async function smartofficeAddSKDraft(
 
     return response.data || {};
 }
+
+
+/* ======================================================
+   BUKA LOCK SK
+====================================================== */
+export async function smartofficeBukaLockSK(
+    rowIndex
+){
+    const response =
+        await smartofficeApi(
+            "bukaLockSK",
+            {
+                rowIndex
+            }
+        );
+    if(
+        !response.success
+    ){
+        throw new Error(
+            response.message ||
+            "Gagal membuka kunci Surat Keputusan."
+        );
+    }
+
+    return (
+        response.data ||
+        response
+    );
+}
+
+
+/* ======================================================
+   HAPUS SK
+====================================================== */
+export async function smartofficeHapusSK(
+    rowIndex
+){
+
+    const response =
+        await smartofficeApi(
+            "hapusSK",
+            {
+                rowIndex
+            }
+        );
+    if(
+        !response.success
+    ){
+        throw new Error(
+            response.message ||
+            "Gagal menghapus Surat Keputusan."
+        );
+    }
+
+    return response.data ||
+           response;
+}

@@ -25,6 +25,10 @@ import {
 } from "../../components/toast/toast.js";
 
 import {
+    smartofficeOpenPreviewDokumen
+} from "../../components/preview/preview.js";
+
+import {
     smartofficeShowGlobalLoading,
     smartofficeHideGlobalLoading
 } from "../../components/loading/loading.js";
@@ -33,12 +37,19 @@ import {
     smartofficeGetAllSK,
     smartofficeGetSKMaster,
     smartofficePreviewNomorSK,
-    smartofficeAddSKDraft
+    smartofficeAddSKDraft,
+    smartofficeBukaLockSK,
+    smartofficeHapusSK
 } from "../../services/penomoran-sk.service.js";
 
 import {
     smartofficeConvertFileToBase64
 } from "../../utils/file.js";
+
+import {
+    smartofficeGetDriveFileId
+} from "../../utils/drive.js";
+
 
 
 /* ======================================================
@@ -72,6 +83,8 @@ let smartofficeSKMaster =
         klaster: [],
         statusSK: []
     };
+let smartofficeSKMasterLoaded =
+    false;
 let smartofficeSKFormMode =
     "add";
 let smartofficeSKEditRowIndex =
@@ -404,6 +417,48 @@ function smartofficeRenderPenomoranSK(){
                     const nama =
                         namaKlaster[klaster] || "";
 
+                    const lockStatus =
+                        String(
+                            item.status || ""
+                        )
+                        .trim()
+                        .toUpperCase();
+
+                    const lockStatusText =
+                        lockStatus === "LOCK"
+                            ? "LOCK"
+                            : lockStatus === "DRAFT"
+                                ? "DRAFT"
+                                : "-";
+
+                    const lockStatusBackground =
+                        lockStatus === "LOCK"
+                            ? "#fff7ed"
+                            : lockStatus === "DRAFT"
+                                ? "#eff6ff"
+                                : "#f8fafc";
+
+                    const lockStatusBorder =
+                        lockStatus === "LOCK"
+                            ? "#fed7aa"
+                            : lockStatus === "DRAFT"
+                                ? "#bfdbfe"
+                                : "#e2e8f0";
+
+                    const lockStatusColor =
+                        lockStatus === "LOCK"
+                            ? "#c2410c"
+                            : lockStatus === "DRAFT"
+                                ? "#2563eb"
+                                : "#64748b";
+
+                    const lockStatusDot =
+                        lockStatus === "LOCK"
+                            ? "#f97316"
+                            : lockStatus === "DRAFT"
+                                ? "#3b82f6"
+                                : "#94a3b8";
+
                     return `
                         <div class="smartoffice-penomoransk-item smartoffice-penomoransk-${klaster.toLowerCase().replace("-", "")}">
 
@@ -548,6 +603,26 @@ function smartofficeRenderPenomoranSK(){
 
                                 <!-- ACTION -->
                                 <div class="smartoffice-penomoransk-item-action-wrap">
+
+                                <!-- STATUS LOCK / DRAFT -->
+                                    <div
+                                        class="smartoffice-penomoransk-item-status"
+                                        style="
+                                            background:${lockStatusBackground};
+                                            border-color:${lockStatusBorder};
+                                            color:${lockStatusColor};
+                                        "
+                                    >
+                                        <span
+                                            class="smartoffice-penomoransk-status-dot"
+                                            style="
+                                                background:${lockStatusDot};
+                                            "
+                                        ></span>
+                                        ${lockStatusText}
+                                    </div>
+
+                                    <!-- LIHAT SK -->
                                     <button
                                         type="button"
                                         class="smartoffice-penomoransk-item-action"
@@ -567,11 +642,14 @@ function smartofficeRenderPenomoranSK(){
                                             <path d="M8 16h5"/>
                                         </svg>
                                         <span>Lihat SK</span>
-                                        <span class="smartoffice-penomoransk-action-arrow">
+                                        <span
+                                            class="smartoffice-penomoransk-action-arrow"
+                                        >
                                             ›
                                         </span>
                                     </button>
 
+                                    <!-- MORE -->
                                     <button
                                         type="button"
                                         class="smartoffice-penomoransk-item-more"
@@ -617,15 +695,27 @@ function smartofficeFormatTanggalSK(tanggal){
    AKSI PENOMORAN SK
 ====================================================== */
 function smartofficeInitPenomoranSKAction(){
+
     const list =
         document.getElementById(
             "smartofficePenomoranSKList"
         );
-    if(
-        !list
-    ){
+    if(!list){
         return;
     }
+
+    /* ==================================================
+       ROLE USER
+    ================================================== */
+    const sessionData =
+        smartofficeGetSession();
+
+    const userRole =
+        String(
+            sessionData?.role || ""
+        )
+        .trim()
+        .toUpperCase();
 
     /* =========================
        LIHAT SK
@@ -634,57 +724,96 @@ function smartofficeInitPenomoranSKAction(){
         .querySelectorAll(
             ".smartoffice-penomoransk-item-action"
         )
-        .forEach(function(button){
-            button.addEventListener(
-                "click",
-                function(){
-                    const file =
-                        button.dataset.skFile;
+        .forEach(
+            function(button){
+                button.addEventListener(
+                    "click",
+                    function(){
+                        const file =
+                            button.dataset.skFile;
+                        if(
+                            !file
+                        ){
+                            smartofficeShowToast(
+                                "File SK belum tersedia.",
+                                "error"
+                            );
 
-                    if(
-                        !file
-                    ){
-                        smartofficeShowToast(
-                            "File SK belum tersedia.",
-                            "error"
+                            return;
+                        }
+
+                        /* =========================
+                        AMBIL FILE ID DRIVE
+                        ========================= */
+                        const fileId =
+                            smartofficeGetDriveFileId(
+                                file
+                            );
+                        if(
+                            !fileId
+                        ){
+                            smartofficeShowToast(
+                                "File SK tidak dapat dibuka.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+                        /* =========================
+                        OPEN PREVIEW MODAL
+                        ========================= */
+                        smartofficeOpenPreviewDokumen(
+                            fileId,
+                            "Surat Keputusan"
                         );
-
-                        return;
                     }
-
-                    window.open(
-                        file,
-                        "_blank"
-                    );
-                }
-            );
-        });
+                );
+            }
+        );
 
     /* =========================
-       MENU AKSI
+       MENU MORE / TITIK 3
     ========================= */
     list
         .querySelectorAll(
             ".smartoffice-penomoransk-item-more"
         )
-        .forEach(function(button){
+        .forEach(
+            function(button){
+                button.addEventListener(
+                    "click",
+                    function(){
+                        /* =========================
+                           CEK AKSES
+                        ========================= */
+                        if(
+                            userRole !==
+                            "SUPERADMIN"
+                        ){
+                            smartofficeShowToast(
+                                "Anda tidak punya akses.",
+                                "error"
+                            );
 
-            button.addEventListener(
-                "click",
-                function(){
-                    const rowIndex =
-                        button.dataset.rowIndex;
+                            return;
+                        }
 
-                    const nomorSK =
-                        button.dataset.nomorSk || "";
+                        const rowIndex =
+                            button.dataset.rowIndex;
 
-                    smartofficeShowSKActionSheet(
-                        rowIndex,
-                        nomorSK
-                    );
-                }
-            );
-        });
+                        const nomorSK =
+                            button.dataset.nomorSk ||
+                            "";
+
+                        smartofficeShowSKActionSheet(
+                            rowIndex,
+                            nomorSK
+                        );
+                    }
+                );
+            }
+        );
 }
 
 
@@ -695,8 +824,33 @@ function smartofficeShowSKActionSheet(
     rowIndex,
     nomorSK
 ){
+
     smartofficeCloseSKActionSheet();
 
+    /* =========================
+       AMBIL DATA SK
+    ========================= */
+    const rowData =
+        smartofficeSKAllData.find(
+            function(item){
+                return String(item.rowIndex) ===
+                       String(rowIndex);
+            }
+        );
+
+    const status =
+        String(
+            rowData?.status || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    const isLocked =
+        status === "LOCK";
+
+    /* =========================
+       BUAT SHEET
+    ========================= */
     const sheet =
         document.createElement("div");
 
@@ -730,51 +884,80 @@ function smartofficeShowSKActionSheet(
                 ${nomorSK || "-"}
             </div>
 
-            <!-- BUKA KUNCI -->
-            <button
-                type="button"
-                class="smartoffice-penomoransk-action-option"
-                data-action="unlock"
-                data-row-index="${rowIndex}"
-            >
-                <span
-                    class="smartoffice-penomoransk-action-option-icon"
-                >
-                    🔓
-                </span>
+            ${
+                isLocked
+                ? `
+                    <!-- BUKA KUNCI -->
+                    <button
+                        type="button"
+                        class="smartoffice-penomoransk-action-option"
+                        data-action="unlock"
+                        data-row-index="${rowIndex}"
+                    >
+                        <span
+                            class="smartoffice-penomoransk-action-option-icon"
+                        >
+                            🔓
+                        </span>
 
-                <span
-                    class="smartoffice-penomoransk-action-option-content"
-                >
-                    <strong>Buka Kunci</strong>
-                    <small>
-                        Izinkan perubahan data SK
-                    </small>
-                </span>
-            </button>
+                        <span
+                            class="smartoffice-penomoransk-action-option-content"
+                        >
+                            <strong>Buka Kunci</strong>
+                            <small>
+                                Izinkan perubahan data SK
+                            </small>
+                        </span>
+                    </button>
+                `
+                : `
+                    <!-- UBAH -->
+                    <button
+                        type="button"
+                        class="smartoffice-penomoransk-action-option"
+                        data-action="edit"
+                        data-row-index="${rowIndex}"
+                    >
+                        <span
+                            class="smartoffice-penomoransk-action-option-icon"
+                        >
+                            ✎
+                        </span>
 
-            <!-- UBAH -->
-            <button
-                type="button"
-                class="smartoffice-penomoransk-action-option"
-                data-action="edit"
-                data-row-index="${rowIndex}"
-            >
-                <span
-                    class="smartoffice-penomoransk-action-option-icon"
-                >
-                    ✎
-                </span>
+                        <span
+                            class="smartoffice-penomoransk-action-option-content"
+                        >
+                            <strong>Ubah SK</strong>
+                            <small>
+                                Edit data Surat Keputusan
+                            </small>
+                        </span>
+                    </button>
 
-                <span
-                    class="smartoffice-penomoransk-action-option-content"
-                >
-                    <strong>Ubah SK</strong>
-                    <small>
-                        Edit data Surat Keputusan
-                    </small>
-                </span>
-            </button>
+                    <!-- HAPUS -->
+                    <button
+                        type="button"
+                        class="smartoffice-penomoransk-action-option"
+                        data-action="delete"
+                        data-row-index="${rowIndex}"
+                    >
+                        <span
+                            class="smartoffice-penomoransk-action-option-icon"
+                        >
+                            🗑
+                        </span>
+
+                        <span
+                            class="smartoffice-penomoransk-action-option-content"
+                        >
+                            <strong>Hapus SK</strong>
+                            <small>
+                                Hapus Surat Keputusan
+                            </small>
+                        </span>
+                    </button>
+                `
+            }
 
             <!-- TUTUP -->
             <button
@@ -790,11 +973,13 @@ function smartofficeShowSKActionSheet(
         sheet
     );
 
-    requestAnimationFrame(function(){
-        sheet.classList.add(
-            "active"
-        );
-    });
+    requestAnimationFrame(
+        function(){
+            sheet.classList.add(
+                "active"
+            );
+        }
+    );
 
     /* =========================
        OVERLAY
@@ -805,10 +990,12 @@ function smartofficeShowSKActionSheet(
         );
 
     if(overlay){
+
         overlay.addEventListener(
             "click",
             smartofficeCloseSKActionSheet
         );
+
     }
 
     /* =========================
@@ -820,10 +1007,12 @@ function smartofficeShowSKActionSheet(
         );
 
     if(cancel){
+
         cancel.addEventListener(
             "click",
             smartofficeCloseSKActionSheet
         );
+
     }
 
     /* =========================
@@ -836,31 +1025,260 @@ function smartofficeShowSKActionSheet(
         .forEach(function(button){
             button.addEventListener(
                 "click",
-                function(){
+                async function(){
+
                     const action =
                         button.dataset.action;
 
                     const row =
                         button.dataset.rowIndex;
 
-                    smartofficeCloseSKActionSheet();
-
+                    /* =====================
+                       BUKA KUNCI
+                    ===================== */
                     if(
                         action === "unlock"
                     ){
-                        smartofficeShowToast(
-                            "Fitur Buka Kunci siap digunakan.",
-                            "info"
+                        button.disabled =
+                            true;
+
+                        /* =====================
+                           TUTUP SHEET
+                           LANGSUNG
+                        ===================== */
+                        smartofficeCloseSKActionSheet();
+
+                        /*
+                         * closeSKActionSheet()
+                         * memakai animasi.
+                         * Jadi hapus DOM langsung
+                         * supaya toast tidak tertutup overlay.
+                         */
+                        if(
+                            sheet.parentNode
+                        ){
+                            sheet.parentNode.removeChild(
+                                sheet
+                            );
+                        }
+
+                        /* =====================
+                           GLOBAL LOADING
+                        ===================== */
+                        smartofficeShowGlobalLoading(
+                            "Membuka Dokumen..."
                         );
+
+                        try{
+                            /* =================
+                            API
+                            ================= */
+                            await smartofficeBukaLockSK(
+                                row
+                            );
+
+                            /* =================
+                            RELOAD DATA
+                            ================= */
+                            await smartofficeLoadDataPenomoranSK();
+
+                            /* =================
+                            SUCCESS
+                            ================= */
+                            smartofficeShowToast(
+                                "Surat Keputusan berhasil dibuka.",
+                                "success"
+                            );
+                        }
+                        catch(error){
+                            console.error(
+                                "Buka Lock SK Error:",
+                                error
+                            );
+
+                            smartofficeShowToast(
+                                error.message ||
+                                "Gagal membuka kunci Surat Keputusan.",
+                                "error"
+                            );
+                        }
+                        finally{
+                            /* =================
+                            HIDE GLOBAL LOADING
+                            ================= */
+                            smartofficeHideGlobalLoading();
+                        }
+
+                        return;
                     }
 
+                    /* =====================
+                       UBAH SK
+                    ===================== */
                     if(
                         action === "edit"
                     ){
-                        smartofficeShowToast(
-                            "Fitur Ubah SK siap digunakan.",
-                            "info"
+                        /*
+                         * Double check dari
+                         * data lokal.
+                         */
+                        const latestRow =
+                            smartofficeSKAllData.find(
+                                function(item){
+                                    return String(item.rowIndex) ===
+                                           String(row);
+                                }
+                            );
+
+                        const latestStatus =
+                            String(
+                                latestRow?.status || ""
+                            )
+                            .trim()
+                            .toUpperCase();
+                        if(
+                            latestStatus === "LOCK"
+                        ){
+                            smartofficeCloseSKActionSheet();
+                            smartofficeShowToast(
+                                "SK masih terkunci. Buka Kunci terlebih dahulu.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+                        smartofficeCloseSKActionSheet();
+                        smartofficeOpenTambahSK(
+                            row
                         );
+                    }
+
+                    /* =====================
+                       HAPUS SK
+                    ===================== */
+                    if(
+                        action === "delete"
+                    ){
+                        /* =====================
+                        CEK ROLE
+                        ===================== */
+                        const sessionData =
+                            smartofficeGetSession();
+
+                        const role =
+                            String(
+                                sessionData?.role || ""
+                            )
+                            .trim()
+                            .toUpperCase();
+
+                        if(
+                            role !== "SUPERADMIN"
+                        ){
+                            smartofficeCloseSKActionSheet();
+                            smartofficeShowToast(
+                                "Anda tidak punya akses.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+                        /* =====================
+                        CEK STATUS TERBARU
+                        ===================== */
+                        const latestRow =
+                            smartofficeSKAllData.find(
+                                function(item){
+                                    return String(item.rowIndex) ===
+                                        String(row);
+                                }
+                            );
+
+                        const latestStatus =
+                            String(
+                                latestRow?.status || ""
+                            )
+                            .trim()
+                            .toUpperCase();
+                        if(
+                            latestStatus === "LOCK"
+                        ){
+                            smartofficeCloseSKActionSheet();
+                            smartofficeShowToast(
+                                "SK masih terkunci. Buka Kunci terlebih dahulu.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+                        /* =====================
+                        KONFIRMASI
+                        ===================== */
+                        const nomor =
+                            latestRow?.nomorSK ||
+                            nomorSK ||
+                            "";
+
+                        const confirmed =
+                            window.confirm(
+                                `Hapus Surat Keputusan?\n\n${nomor}\n\nData yang dihapus tidak dapat dikembalikan.`
+                            );
+                        if(
+                            !confirmed
+                        ){
+                            return;
+                        }
+
+                        /* =====================
+                        TUTUP SHEET
+                        ===================== */
+                        smartofficeCloseSKActionSheet();
+
+                        if(
+                            sheet.parentNode
+                        ){
+                            sheet.parentNode.removeChild(
+                                sheet
+                            );
+                        }
+
+                        /* =====================
+                           GLOBAL LOADING
+                        ===================== */
+                        smartofficeShowGlobalLoading(
+                            "Menghapus Surat Keputusan..."
+                        );
+
+                        try{
+                            await smartofficeHapusSK(
+                                row
+                            );
+                            await smartofficeLoadDataPenomoranSK();
+                            smartofficeShowToast(
+                                "Surat Keputusan berhasil dihapus.",
+                                "success"
+                            );
+                        }
+                        catch(error){
+                            console.error(
+                                "Hapus SK Error:",
+                                error
+                            );
+
+                            smartofficeShowToast(
+                                error.message ||
+                                "Gagal menghapus Surat Keputusan.",
+                                "error"
+                            );
+                        }
+                        finally{
+                            smartofficeHideGlobalLoading();
+                        }
+
+                        return;
                     }
                 }
             );
@@ -1029,10 +1447,11 @@ function smartofficeFillSKSelect(
 }
 
 
-/* =========================
+/* ======================================================
    APPLY FILTER SK
-========================= */
+====================================================== */
 function smartofficeApplyFilterSK(){
+
     const nomor =
         document.getElementById(
             "smartofficePenomoranSKFilterNomor"
@@ -1057,19 +1476,43 @@ function smartofficeApplyFilterSK(){
         document.getElementById(
             "smartofficePenomoranSKFilterSearch"
         )?.value
-            .toLowerCase()
-            .trim() || "";
+            ?.trim()
+            .toLowerCase() || "";
 
     smartofficeSKViewData =
         smartofficeSKAllData.filter(
             function(row){
+                /* =========================
+                   SEARCH
+                   NOMOR SK + TENTANG
+                ========================= */
+                if(search){
+                    const text =
+                        `
+                        ${row.nomorSK || ""}
+                        ${row.tentang || ""}
+                        `
+                        .toLowerCase();
+                    if(
+                        !text.includes(
+                            search
+                        )
+                    ){
+                        return false;
+                    }
+                }
 
                 /* =========================
                    NOMOR SK
                 ========================= */
                 if(
                     nomor &&
-                    row.nomorSK !== nomor
+                    String(
+                        row.nomorSK || ""
+                    ) !==
+                    String(
+                        nomor
+                    )
                 ){
                     return false;
                 }
@@ -1077,18 +1520,16 @@ function smartofficeApplyFilterSK(){
                 /* =========================
                    TAHUN
                 ========================= */
-                if(
-                    tahun
-                ){
+                if(tahun){
                     const tahunSK =
                         row.tanggalSK
                             ? String(
                                 row.tanggalSK
                             ).substring(0,4)
                             : "";
-
                     if(
-                        tahunSK !== tahun
+                        tahunSK !==
+                        String(tahun)
                     ){
                         return false;
                     }
@@ -1099,7 +1540,12 @@ function smartofficeApplyFilterSK(){
                 ========================= */
                 if(
                     klaster &&
-                    row.klaster !== klaster
+                    String(
+                        row.klaster || ""
+                    ) !==
+                    String(
+                        klaster
+                    )
                 ){
                     return false;
                 }
@@ -1109,21 +1555,16 @@ function smartofficeApplyFilterSK(){
                 ========================= */
                 if(
                     status &&
-                    row.statusSK !== status
-                ){
-                    return false;
-                }
-
-                /* =========================
-                   CARI TENTANG
-                ========================= */
-                if(
-                    search &&
-                    !String(
-                        row.tentang || ""
+                    String(
+                        row.statusSK || ""
                     )
-                    .toLowerCase()
-                    .includes(search)
+                    .trim()
+                    .toUpperCase() !==
+                    String(
+                        status
+                    )
+                    .trim()
+                    .toUpperCase()
                 ){
                     return false;
                 }
@@ -1224,6 +1665,11 @@ function smartofficeInitFilterSKEvent(){
             "smartofficePenomoranSKFilterStatus"
         );
 
+    const reset =
+        document.querySelector(
+            ".smartoffice-penomoransk-filter-button"
+        );
+
     /* ==================================================
        SEARCH
     ================================================== */
@@ -1265,7 +1711,6 @@ function smartofficeInitFilterSKEvent(){
     ================================================== */
     smartofficePenomoranSKKlasterHandler =
         smartofficeApplyFilterSK;
-
     if(klaster){
         klaster.addEventListener(
             "change",
@@ -1278,20 +1723,31 @@ function smartofficeInitFilterSKEvent(){
     ================================================== */
     smartofficePenomoranSKStatusHandler =
         smartofficeApplyFilterSK;
-
     if(status){
         status.addEventListener(
             "change",
             smartofficePenomoranSKStatusHandler
         );
     }
+
+    /* ==================================================
+       RESET
+    ================================================== */
+    if(reset){
+        reset.onclick =
+            function(){
+                smartofficeResetFilterSK();
+            };
+    }
 }
 
 
 /* ======================================================
    EVENT TAMBAH SK
+   KHUSUS SUPERADMIN
 ====================================================== */
 function smartofficeInitTambahSKEvent(){
+
     const button =
         document.getElementById(
             "smartofficePenomoranSKTambahButton"
@@ -1300,39 +1756,176 @@ function smartofficeInitTambahSKEvent(){
         return;
     }
 
+    /* =========================
+       CEGAH EVENT DOBEL
+    ========================= */
+    if(
+        button.dataset.roleReady === "1"
+    ){
+        return;
+    }
+
     button.addEventListener(
         "click",
-        smartofficeOpenTambahSK
+        function(){
+
+            /* =========================
+               AMBIL ROLE SESSION
+            ========================= */
+            const sessionData =
+                smartofficeGetSession();
+
+            const role =
+                String(
+                    sessionData?.role || ""
+                )
+                .trim()
+                .toUpperCase();
+
+            /* =========================
+               CEK AKSES
+            ========================= */
+            if(
+                role !==
+                "SUPERADMIN"
+            ){
+                smartofficeShowToast(
+                    "Anda tidak punya akses.",
+                    "error"
+                );
+
+                return;
+            }
+
+            /* =========================
+               SUPERADMIN
+            ========================= */
+            smartofficeOpenTambahSK();
+        }
     );
+
+    button.dataset.roleReady =
+        "1";
 }
 
 
 /* ======================================================
-   BUKA MODAL TAMBAH SK
+   BUKA MODAL TAMBAH / EDIT SK
 ====================================================== */
-async function smartofficeOpenTambahSK(){
+async function smartofficeOpenTambahSK(
+    editRowIndex = null
+){
+    /* =========================
+       MODE
+    ========================= */
+    if(
+        editRowIndex !== null &&
+        editRowIndex !== undefined
+    ){
+        const row =
+            smartofficeSKAllData.find(
+                function(item){
+                    return String(item.rowIndex) ===
+                           String(editRowIndex);
+                }
+            );
 
+        const status =
+            String(
+                row?.status || ""
+            )
+            .trim()
+            .toUpperCase();
+
+        /* =========================
+           LOCK = TIDAK BOLEH EDIT
+        ========================= */
+        if(
+            status === "LOCK"
+        ){
+            smartofficeShowToast(
+                "SK masih terkunci. Buka Kunci terlebih dahulu.",
+                "error"
+            );
+
+            return;
+        }
+    }
+
+    const isEdit =
+        editRowIndex !== null &&
+        editRowIndex !== undefined &&
+        String(editRowIndex).trim() !== "";
+
+    /* ==================================================
+       CARI DATA EDIT
+    ================================================== */
+    let row = null;
+
+    if(isEdit){
+        row =
+            smartofficeSKAllData.find(
+                function(item){
+                    return String(
+                        item.rowIndex
+                    ) ===
+                    String(
+                        editRowIndex
+                    );
+                }
+            );
+
+        if(!row){
+            smartofficeShowToast(
+                "Data SK tidak ditemukan.",
+                "error"
+            );
+
+            return;
+        }
+    }
+
+    /* ==================================================
+       SET MODE
+    ================================================== */
     smartofficeSKFormMode =
-        "add";
+        isEdit
+            ? "edit"
+            : "add";
 
     smartofficeSKEditRowIndex =
-        null;
+        isEdit
+            ? Number(editRowIndex)
+            : null;
 
-    smartofficeSKEditNomorUrut =
-        null;
+    if(isEdit){
+        const parts =
+            String(
+                row.nomorSK || ""
+            ).split("/");
 
-    /* =========================
-       RENDER FORM
-    ========================= */
+        smartofficeSKEditNomorUrut =
+            parts[1] || "";
+    }
+    else{
+        smartofficeSKEditNomorUrut =
+            null;
+    }
+
+    /* ==================================================
+       BODY FORM
+    ================================================== */
     const body =
         document.getElementById(
             "smartofficePenomoranSKFormBody"
         );
-
     if(!body){
         return;
     }
 
+    /* ==================================================
+       RENDER FORM
+    ================================================== */
     body.innerHTML = `
         <form
             id="smartofficePenomoranSKForm"
@@ -1340,7 +1933,6 @@ async function smartofficeOpenTambahSK(){
         >
             <!-- =========================
                 BARIS 1
-                PREVIEW NOMOR + KODE
             ========================== -->
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-preview"
@@ -1353,7 +1945,11 @@ async function smartofficeOpenTambahSK(){
                     class="smartoffice-penomoransk-preview-value"
                     id="smartofficePenomoranSKPreviewNomor"
                 >
-                    —
+                    ${
+                        isEdit
+                            ? row.nomorSK || "—"
+                            : "—"
+                    }
                 </div>
             </div>
 
@@ -1369,18 +1965,22 @@ async function smartofficeOpenTambahSK(){
                     id="smartofficeSKKode"
                     readonly
                     placeholder="Otomatis"
+                    value="${
+                        isEdit
+                            ? row.kode || ""
+                            : ""
+                    }"
                 >
             </div>
 
-            <!-- ========================= 
-                BARIS 2 
-                KLASIFIKASI FULL WIDTH 
-            ========================== --> 
-            <div 
-                class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-klasifikasi" 
-            > 
-                <label> 
-                    Klasifikasi 
+            <!-- =========================
+                KLASIFIKASI
+            ========================== -->
+            <div
+                class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-klasifikasi"
+            >
+                <label>
+                    Klasifikasi
                 </label>
 
                 <div
@@ -1395,7 +1995,11 @@ async function smartofficeOpenTambahSK(){
                         <span
                             id="smartofficeSKKlasifikasiText"
                         >
-                            Pilih klasifikasi
+                            ${
+                                isEdit
+                                    ? row.klasifikasi || "Pilih klasifikasi"
+                                    : "Pilih klasifikasi"
+                            }
                         </span>
 
                         <span
@@ -1411,16 +2015,19 @@ async function smartofficeOpenTambahSK(){
                     ></div>
                 </div>
 
-                <!-- VALUE KLASIFIKASI -->
                 <input
                     type="hidden"
                     id="smartofficeSKKlasifikasi"
+                    value="${
+                        isEdit
+                            ? row.klasifikasi || ""
+                            : ""
+                    }"
                     required
                 >
             </div>
 
             <!-- =========================
-                BARIS 3
                 TANGGAL + KLASTER + STATUS
             ========================== -->
             <div
@@ -1433,6 +2040,11 @@ async function smartofficeOpenTambahSK(){
                 <input
                     type="date"
                     id="smartofficeSKTanggal"
+                    value="${
+                        isEdit
+                            ? row.tanggalSK || ""
+                            : ""
+                    }"
                     required
                 >
             </div>
@@ -1472,8 +2084,7 @@ async function smartofficeOpenTambahSK(){
             </div>
 
             <!-- =========================
-                BARIS 4
-                TENTANG FULL WIDTH
+                TENTANG
             ========================== -->
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-tentang"
@@ -1487,12 +2098,15 @@ async function smartofficeOpenTambahSK(){
                     rows="4"
                     placeholder="Isi tentang Surat Keputusan"
                     required
-                ></textarea>
+                >${
+                    isEdit
+                        ? row.tentang || ""
+                        : ""
+                }</textarea>
             </div>
 
             <!-- =========================
-                BARIS 5
-                UPLOAD FULL WIDTH
+                FILE
             ========================== -->
             <div
                 class="smartoffice-penomoransk-form-field smartoffice-penomoransk-field-file"
@@ -1530,14 +2144,19 @@ async function smartofficeOpenTambahSK(){
                         </span>
 
                         <small>
-                            PDF • DOC • DOCX • Maksimal 5 Mb
+                            PDF • DOC • DOCX • Maksimal 3 Mb
                         </small>
                     </div>
+
                     <div
                         class="smartoffice-penomoransk-upload-file"
                         id="smartofficePenomoranSKUploadFileName"
                     >
-                        Belum ada file dipilih
+                        ${
+                            isEdit && row.file
+                                ? "File SK tersimpan • pilih file baru untuk mengganti"
+                                : "Belum ada file dipilih"
+                        }
                     </div>
                 </div>
             </div>
@@ -1550,15 +2169,18 @@ async function smartofficeOpenTambahSK(){
                 class="smartoffice-penomoransk-form-submit"
                 id="smartofficePenomoranSKSubmit"
             >
-                Simpan SK
+                ${
+                    isEdit
+                        ? "Simpan Perubahan"
+                        : "Simpan SK"
+                }
             </button>
         </form>
     `;
 
-    /* =========================
-       BUKA MODAL DULU
-       CONTEK BUKU SURAT
-    ========================= */
+    /* ==================================================
+       MODAL
+    ================================================== */
     const modal =
         document.getElementById(
             "smartofficePenomoranSKFormModal"
@@ -1568,16 +2190,128 @@ async function smartofficeOpenTambahSK(){
             "flex";
     }
 
-    /* =========================
-       INIT FORM EVENT
-    ========================= */
+    /* ==================================================
+       JUDUL HEADER
+       SETELAH FORM DI-RENDER
+    ================================================== */
+    const title =
+        document.querySelector(
+            ".smartoffice-penomoransk-form-title"
+        );
+    if(title){
+        title.textContent =
+            isEdit
+                ? "Edit Surat Keputusan"
+                : "Tambah Surat Keputusan";
+    }
+
+    /* ==================================================
+       INIT EVENT
+    ================================================== */
     smartofficeInitSKFormEvent();
     smartofficeInitUploadSKEvent();
 
-    /* =========================
+    /* ==================================================
        LOAD MASTER
-    ========================= */
-    await smartofficeLoadSKMaster();  
+       HANYA SETELAH FORM SUDAH TAMPIL
+    ================================================== */
+    try{
+        await smartofficeLoadSKMaster();
+        smartofficeRenderSKMaster();
+
+        /* =========================
+           RESTORE NILAI
+           MODE EDIT
+        ========================= */
+        if(isEdit && row){
+            const klasifikasi =
+                document.getElementById(
+                    "smartofficeSKKlasifikasi"
+                );
+
+            const klasifikasiText =
+                document.getElementById(
+                    "smartofficeSKKlasifikasiText"
+                );
+
+            const klaster =
+                document.getElementById(
+                    "smartofficeSKKlaster"
+                );
+
+            const status =
+                document.getElementById(
+                    "smartofficeSKStatusSK"
+                );
+
+            if(klasifikasi){
+                klasifikasi.value =
+                    row.klasifikasi || "";
+            }
+
+            if(klasifikasiText){
+                klasifikasiText.textContent =
+                    row.klasifikasi ||
+                    "Pilih klasifikasi";
+            }
+
+            if(klaster){
+                klaster.value =
+                    row.klaster || "";
+            }
+
+            if(status){
+                status.value =
+                    row.statusSK || "";
+            }
+
+            /* =========================
+               KLASIFIKASI ACTIVE
+            ========================= */
+            const options =
+                document.getElementById(
+                    "smartofficeSKKlasifikasiOptions"
+                );
+
+            if(options){
+                options
+                    .querySelectorAll(
+                        ".smartoffice-penomoransk-custom-select-option"
+                    )
+                    .forEach(
+                        function(option){
+                            option.classList.remove(
+                                "active"
+                            );
+
+                            if(
+                                String(
+                                    option.dataset.value || ""
+                                ) ===
+                                String(
+                                    row.klasifikasi || ""
+                                )
+                            ){
+                                option.classList.add(
+                                    "active"
+                                );
+                            }
+                        }
+                    );
+            }
+        }
+    }
+    catch(error){
+        console.error(
+            "Load Master SK Error:",
+            error
+        );
+
+        smartofficeShowToast(
+            "Gagal memuat master Surat Keputusan.",
+            "error"
+        );
+    }
 }
 
 
@@ -1586,12 +2320,25 @@ async function smartofficeOpenTambahSK(){
 ====================================================== */
 async function smartofficeLoadSKMaster(){
 
+    /* =========================
+       CACHE
+    ========================= */
+    if(
+        smartofficeSKMasterLoaded
+    ){
+        smartofficeRenderSKMaster();
+        return;
+    }
+
     try{
         const master =
             await smartofficeGetSKMaster();
 
         smartofficeSKMaster =
             master || {};
+
+        smartofficeSKMasterLoaded =
+            true;
 
         smartofficeRenderSKMaster();
     }
@@ -1660,10 +2407,8 @@ function smartofficeRenderSKMaster(){
         klasifikasi
     ){
         klasifikasiOptions.innerHTML = "";
-
         klasifikasiText.textContent =
             "Pilih klasifikasi";
-
         klasifikasi.value = "";
         (
             smartofficeSKMaster.klasifikasi ||
@@ -1738,7 +2483,6 @@ function smartofficeRenderSKMaster(){
         klasifikasiButton.onclick =
             function(event){
                 event.stopPropagation();
-
                 klasifikasiOptions
                     .classList
                     .toggle("show");
@@ -1789,7 +2533,6 @@ function smartofficeRenderSKMaster(){
                 document.createElement(
                     "option"
                 );
-
             option.value =
                 item;
 
@@ -1916,6 +2659,7 @@ function smartofficeInitSKFormEvent(){
    PREVIEW NOMOR SK
 ====================================================== */
 async function smartofficeUpdatePreviewNomorSK(){
+
     const kode =
         document.getElementById(
             "smartofficeSKKode"
@@ -1939,6 +2683,72 @@ async function smartofficeUpdatePreviewNomorSK(){
         return;
     }
 
+    /* ==================================================
+       MODE EDIT
+       TIDAK REQUEST GAS
+    ================================================== */
+    if(
+        smartofficeSKFormMode ===
+        "edit"
+    ){
+        const row =
+            smartofficeSKAllData.find(
+                function(item){
+                    return String(
+                        item.rowIndex
+                    ) ===
+                    String(
+                        smartofficeSKEditRowIndex
+                    );
+                }
+            );
+
+        if(!row){
+            preview.textContent =
+                "—";
+
+            return;
+        }
+
+        const nomorLama =
+            String(
+                row.nomorSK || ""
+            );
+
+        const parts =
+            nomorLama.split("/");
+
+        const nomorUrut =
+            parts[1] || "";
+
+        const tahun =
+            parts[4] || "";
+
+        if(
+            !kode ||
+            !klaster ||
+            !nomorUrut ||
+            !tahun
+        ){
+            preview.textContent =
+                nomorLama || "—";
+
+            return;
+        }
+
+        /* =========================
+           SESUAI BACKEND EDIT
+        ========================= */
+        preview.textContent =
+            `${kode}/${nomorUrut}/${klaster}/PKMNAMBO/${tahun}`;
+
+        return;
+    }
+
+    /* ==================================================
+       MODE TAMBAH
+       TETAP PAKAI PREVIEW GAS
+    ================================================== */
     if(
         !kode ||
         !klaster ||
@@ -1949,6 +2759,7 @@ async function smartofficeUpdatePreviewNomorSK(){
 
         return;
     }
+
     preview.textContent =
         "Menentukan nomor...";
 
@@ -1982,6 +2793,9 @@ async function smartofficeSubmitSK(
     event
 ){
     event.preventDefault();
+
+    const isEditMode =
+        smartofficeSKFormMode === "edit";
 
     const kode =
         document.getElementById(
@@ -2038,7 +2852,9 @@ async function smartofficeSubmitSK(
         null;
 
     /* ==================================================
-       UPLOAD FILE PDF
+    UPLOAD FILE SK
+    PDF / DOC / DOCX
+    MAKSIMAL 3 MB
     ================================================== */
     if(
         fileInput &&
@@ -2047,18 +2863,75 @@ async function smartofficeSubmitSK(
     ){
         const file =
             fileInput.files[0];
+
+        /* =========================
+        UKURAN FILE
+        ========================= */
+        const maxSize =
+            3 * 1024 * 1024;
         if(
-            file.type !==
-            "application/pdf"
+            file.size >
+            maxSize
         ){
             smartofficeShowToast(
-                "File SK harus berformat PDF.",
+                "Ukuran file SK maksimal 3 MB.",
                 "error"
             );
 
             return;
         }
 
+        /* =========================
+        FORMAT FILE
+        ========================= */
+        const fileName =
+            String(
+                file.name || ""
+            ).toLowerCase();
+
+        const extension =
+            fileName.includes(".")
+                ? fileName
+                    .split(".")
+                    .pop()
+                : "";
+
+        const allowedExtensions = [
+            "pdf",
+            "doc",
+            "docx"
+        ];
+
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+
+        const validType =
+            allowedTypes.includes(
+                file.type
+            );
+
+        const validExtension =
+            allowedExtensions.includes(
+                extension
+            );
+        if(
+            !validType &&
+            !validExtension
+        ){
+            smartofficeShowToast(
+                "File SK harus berformat PDF, DOC, atau DOCX.",
+                "error"
+            );
+
+            return;
+        }
+
+        /* =========================
+        CONVERT BASE64
+        ========================= */
         try{
             const base64 =
                 await smartofficeConvertFileToBase64(
@@ -2068,8 +2941,16 @@ async function smartofficeSubmitSK(
             filePayload = {
                 name:
                     file.name,
+
                 type:
-                    file.type,
+                    file.type ||
+                    (
+                        extension === "pdf"
+                            ? "application/pdf"
+                            : extension === "doc"
+                                ? "application/msword"
+                                : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    ),
                 data:
                     base64
             };
@@ -2093,7 +2974,6 @@ async function smartofficeSubmitSK(
         document.getElementById(
             "smartofficePenomoranSKSubmit"
         );
-
     if(submit){
         submit.disabled =
             true;
@@ -2151,7 +3031,9 @@ async function smartofficeSubmitSK(
                 false;
 
             submit.textContent =
-                "Simpan SK";
+                isEditMode
+                    ? "Simpan Perubahan"
+                    : "Simpan SK";
         }
     }
 }
