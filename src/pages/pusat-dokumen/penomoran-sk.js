@@ -79,6 +79,7 @@ let smartofficePenomoranSKTahunHandler = null;
 let smartofficePenomoranSKKlasterHandler = null;
 let smartofficePenomoranSKStatusHandler = null;
 let smartofficePenomoranSKKlasifikasiOutsideClickHandler = null;
+let smartofficePenomoranSKRefreshHandler = null;
 
 /* ======================================================
    STATE FORM SK
@@ -309,12 +310,103 @@ function smartofficeInitPenomoranSK(){
         document.getElementById(
             "smartofficePenomoranSKList"
         );
-
     if(
         !list
     ){
         return;
     }
+
+    /* =========================
+       REFRESH BUTTON
+    ========================= */
+    const refreshButton =
+        document.getElementById(
+            "smartofficePenomoranSKRefreshButton"
+        );
+    if(
+        refreshButton &&
+        !refreshButton.dataset.ready
+    ){
+        smartofficePenomoranSKRefreshHandler =
+            async function(){
+
+                /* =========================
+                PASTIKAN TAB SK AKTIF
+                ========================= */
+                const activeTab =
+                    document.querySelector(
+                        ".smartoffice-tab-button.active"
+                    )?.dataset.tab || "";
+                if(
+                    activeTab !==
+                    "penomoran-sk"
+                ){
+                    return;
+                }
+
+                /* =========================
+                TAHUN AKTIF
+                ========================= */
+                const tahun =
+                    document.getElementById(
+                        "smartofficePenomoranSKFilterTahun"
+                    )?.value || "";
+                if(
+                    !tahun
+                ){
+                    smartofficeShowToast(
+                        "Pilih tahun terlebih dahulu.",
+                        "error"
+                    );
+
+                    return;
+                }
+
+                /* =========================
+                REFRESH CACHE
+                ========================= */
+                smartofficeShowGlobalLoading(
+                    "Memperbarui data Surat Keputusan..."
+                );
+
+                try{
+                    await smartofficeRefreshSKAfterMutation();
+
+                    smartofficeShowToast(
+                        "Data Surat Keputusan berhasil diperbarui.",
+                        "success"
+                    );
+                }
+                catch(error){
+                    console.error(
+                        "Refresh SK Error:",
+                        error
+                    );
+
+                    smartofficeShowToast(
+                        error.message ||
+                        "Gagal memperbarui data Surat Keputusan.",
+                        "error"
+                    );
+                }
+                finally{
+                    smartofficeHideGlobalLoading();
+                }
+            };
+        refreshButton.addEventListener(
+            "click",
+            smartofficePenomoranSKRefreshHandler
+        );
+
+        refreshButton.dataset.ready =
+            "1";
+    }
+
+    /* =========================
+       INIT FILTER
+       TAHUN + KLASTER
+    ========================= */
+    smartofficeInitFilterSK();
 
     /* =========================
        RESET DATA
@@ -3498,6 +3590,27 @@ export function smartofficeDestroyPage(){
         document.getElementById(
             "smartofficePenomoranSKFilterStatus"
         );
+
+    const refreshButton =
+        document.getElementById(
+            "smartofficePenomoranSKRefreshButton"
+        );
+
+    /* ==================================================
+       REMOVE REFRESH BUTTON
+    ================================================== */
+    if(
+        refreshButton &&
+        smartofficePenomoranSKRefreshHandler
+    ){
+        refreshButton.removeEventListener(
+            "click",
+            smartofficePenomoranSKRefreshHandler
+        );
+    }
+
+    smartofficePenomoranSKRefreshHandler =
+        null;
 
     /* ==================================================
        REMOVE FILTER SEARCH
