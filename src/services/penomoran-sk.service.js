@@ -86,11 +86,23 @@ export async function smartofficePreviewNomorSK(
 export async function smartofficeAddSKDraft(
     payload
 ){
+
+    const requestPayload = {
+        ...payload,
+
+        file:
+            payload.file &&
+            typeof payload.file === "object"
+                ? JSON.stringify(payload.file)
+                : payload.file || ""
+    };
+
     const response =
         await smartofficeApi(
             "addSKDraft",
-            payload
+            requestPayload
         );
+
     if(
         !response.success
     ){
