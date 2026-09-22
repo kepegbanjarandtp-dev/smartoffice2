@@ -86,7 +86,6 @@ export async function smartofficePreviewNomorSK(
 export async function smartofficeAddSKDraft(
     payload
 ){
-
     const requestPayload = {
         ...payload,
 
@@ -102,7 +101,6 @@ export async function smartofficeAddSKDraft(
             "addSKDraft",
             requestPayload
         );
-
     if(
         !response.success
     ){

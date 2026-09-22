@@ -30,7 +30,8 @@ import {
 
 import {
     smartofficeShowGlobalLoading,
-    smartofficeHideGlobalLoading
+    smartofficeHideGlobalLoading,
+    smartofficeForceHideGlobalLoading
 } from "../../components/loading/loading.js";
 
 import {
@@ -41,6 +42,11 @@ import {
     smartofficeBukaLockSK,
     smartofficeHapusSK
 } from "../../services/penomoran-sk.service.js";
+
+import {
+    smartofficeGetSKByTahunFirestore,
+    smartofficeClearSKFirestoreCache
+} from "../../services/penomoran-sk-firestore.service.js";
 
 import {
     smartofficeConvertFileToBase64
@@ -295,31 +301,101 @@ function smartofficeInitPusatDokumenTab(){
 
 /* ======================================================
    INIT PENOMORAN SK
+   DATA TIDAK DI-LOAD SAAT HALAMAN DIBUKA
 ====================================================== */
-async function smartofficeInitPenomoranSK(){
+function smartofficeInitPenomoranSK(){
+
     const list =
         document.getElementById(
             "smartofficePenomoranSKList"
         );
+
     if(
         !list
     ){
         return;
     }
 
-    await smartofficeLoadDataPenomoranSK();
+    /* =========================
+       RESET DATA
+    ========================= */
+    smartofficeSKAllData = [];
+    smartofficeSKViewData = [];
+    smartofficeSKLoaded =
+        false;
+
+    /* =========================
+       KOSONGKAN LIST
+    ========================= */
+    list.innerHTML = `
+        <div class="smartoffice-empty">
+            <div class="smartoffice-empty-title">
+                Pilih Tahun
+            </div>
+
+            <div class="smartoffice-empty-text">
+                Pilih tahun terlebih dahulu untuk menampilkan Surat Keputusan.
+            </div>
+        </div>
+    `;
 }
 
 
 /* ======================================================
    LOAD DATA PENOMORAN SK
+   READ FIRESTORE BERDASARKAN TAHUN
+   CACHE PER TAHUN
 ====================================================== */
-async function smartofficeLoadDataPenomoranSK(){
-
+async function smartofficeLoadDataPenomoranSK(
+    tahun
+){
     try{
-        const res =
-            await smartofficeGetAllSK();
+        /* =========================
+           CEK PAGE
+        ========================= */
+        if(
+            smartofficePusatDokumenDestroyed
+        ){
+            return;
+        }
 
+        /* =========================
+           VALIDASI TAHUN
+        ========================= */
+        const tahunValue =
+            String(
+                tahun || ""
+            ).trim();
+
+        if(
+            !/^\d{4}$/.test(
+                tahunValue
+            )
+        ){
+            return;
+        }
+
+        /* =========================
+           READ FIRESTORE
+           SERVICE HANDLE CACHE
+        ========================= */
+        const res =
+            await smartofficeGetSKByTahunFirestore(
+                tahunValue
+            );
+
+        /* =========================
+           PAGE SUDAH DI-DESTROY
+        ========================= */
+        if(
+            smartofficePusatDokumenDestroyed
+        ){
+            return;
+        }
+
+        /* =========================
+           SIMPAN DATA TAHUN
+        ========================= */
         smartofficeSKAllData =
             res || [];
 
@@ -328,16 +404,71 @@ async function smartofficeLoadDataPenomoranSK(){
                 ...smartofficeSKAllData
             ];
 
-        smartofficeInitFilterSK();
+        /* =========================
+           ISI DROPDOWN NOMOR SK
+           BERDASARKAN TAHUN TERPILIH
+        ========================= */
+        const nomorList =
+            [
+                ...new Set(
+                    smartofficeSKAllData
+                        .map(
+                            function(row){
+                                return row.nomorSK;
+                            }
+                        )
+                        .filter(Boolean)
+                )
+            ]
+            .sort(
+                function(a,b){
+                    return String(a)
+                        .localeCompare(
+                            String(b),
+                            undefined,
+                            {
+                                numeric: true
+                            }
+                        );
+                }
+            );
 
+        smartofficeFillSKSelect(
+            "smartofficePenomoranSKFilterNomor",
+            nomorList,
+            "Semua"
+        );
+
+        /* =========================
+           STATUS LOAD
+        ========================= */
         smartofficeSKLoaded =
             true;
+
+        /* =========================
+           RENDER DATA TAHUN
+        ========================= */
+        if(
+            smartofficePusatDokumenDestroyed
+        ){
+            return;
+        }
 
         smartofficeRenderPenomoranSK();
     }
     catch(error){
+        /* =========================
+           JANGAN PROSES ERROR
+           KALAU PAGE SUDAH DESTROY
+        ========================= */
+        if(
+            smartofficePusatDokumenDestroyed
+        ){
+            return;
+        }
+
         console.error(
-            "Load Data Penomoran SK Error:",
+            "Load Data Penomoran SK Firestore Error:",
             error
         );
 
@@ -346,6 +477,120 @@ async function smartofficeLoadDataPenomoranSK(){
             "error"
         );
     }
+}
+
+
+/* ======================================================
+   REFRESH CACHE SK SETELAH MUTASI
+   TAMBAH / EDIT / BUKA LOCK / HAPUS
+====================================================== */
+async function smartofficeRefreshSKAfterMutation(){
+
+    if(
+        smartofficePusatDokumenDestroyed
+    ){
+        return;
+    }
+
+    const tahun =
+        document.getElementById(
+            "smartofficePenomoranSKFilterTahun"
+        )?.value || "";
+    if(
+        !tahun
+    ){
+        return;
+    }
+
+    /* =========================
+       SIMPAN FILTER AKTIF
+    ========================= */
+    const search =
+        document.getElementById(
+            "smartofficePenomoranSKFilterSearch"
+        )?.value || "";
+
+    const nomor =
+        document.getElementById(
+            "smartofficePenomoranSKFilterNomor"
+        )?.value || "";
+
+    const klaster =
+        document.getElementById(
+            "smartofficePenomoranSKFilterKlaster"
+        )?.value || "";
+
+    const status =
+        document.getElementById(
+            "smartofficePenomoranSKFilterStatus"
+        )?.value || "";
+
+    /* =========================
+       HAPUS CACHE TAHUN AKTIF
+    ========================= */
+    smartofficeClearSKFirestoreCache(
+        tahun
+    );
+
+    /* =========================
+       LOAD ULANG TAHUN AKTIF
+    ========================= */
+    await smartofficeLoadDataPenomoranSK(
+        tahun
+    );
+    if(
+        smartofficePusatDokumenDestroyed
+    ){
+        return;
+    }
+
+    /* =========================
+       KEMBALIKAN FILTER
+    ========================= */
+    const searchElement =
+        document.getElementById(
+            "smartofficePenomoranSKFilterSearch"
+        );
+
+    const nomorElement =
+        document.getElementById(
+            "smartofficePenomoranSKFilterNomor"
+        );
+
+    const klasterElement =
+        document.getElementById(
+            "smartofficePenomoranSKFilterKlaster"
+        );
+
+    const statusElement =
+        document.getElementById(
+            "smartofficePenomoranSKFilterStatus"
+        );
+
+    if(searchElement){
+        searchElement.value =
+            search;
+    }
+
+    if(nomorElement){
+        nomorElement.value =
+            nomor;
+    }
+
+    if(klasterElement){
+        klasterElement.value =
+            klaster;
+    }
+
+    if(statusElement){
+        statusElement.value =
+            status;
+    }
+
+    /* =========================
+       TERAPKAN KEMBALI FILTER
+    ========================= */
+    smartofficeApplyFilterSK();
 }
 
 
@@ -1078,9 +1323,9 @@ function smartofficeShowSKActionSheet(
                             );
 
                             /* =================
-                            RELOAD DATA
+                            REFRESH CACHE
                             ================= */
-                            await smartofficeLoadDataPenomoranSK();
+                            await smartofficeRefreshSKAfterMutation();
 
                             /* =================
                             SUCCESS
@@ -1256,7 +1501,9 @@ function smartofficeShowSKActionSheet(
                             await smartofficeHapusSK(
                                 row
                             );
-                            await smartofficeLoadDataPenomoranSK();
+
+                            await smartofficeRefreshSKAfterMutation();
+
                             smartofficeShowToast(
                                 "Surat Keputusan berhasil dihapus.",
                                 "success"
@@ -1325,81 +1572,61 @@ function smartofficeCloseSKActionSheet(){
    INIT FILTER SK
 ========================= */
 function smartofficeInitFilterSK(){
-    if(
-        !smartofficeSKAllData.length
+
+    /* =========================
+       TAHUN
+       Tidak tergantung data SK
+    ========================= */
+    const currentYear =
+        new Date().getFullYear();
+
+    const tahunList = [];
+
+    for(
+        let year = currentYear;
+        year >= 2026;
+        year--
     ){
-        return;
+        tahunList.push(
+            String(year)
+        );
     }
 
     /* =========================
-       NOMOR SK
+       KLASTER
+       STATIC
     ========================= */
-    const nomorList =
-        [
-            ...new Set(
-                smartofficeSKAllData
-                    .map(function(row){
-                        return row.nomorSK;
-                    })
-                    .filter(Boolean)
-            )
-        ];
+    const klasterList = [
+        "KL-1",
+        "KL-2",
+        "KL-3",
+        "KL-4",
+        "KL-5"
+    ];
 
     /* =========================
-       TAHUN SK
+       NOMOR SK
+       BELUM ADA DATA
+       DIISI SETELAH TAHUN DIPILIH
     ========================= */
-    const tahunList =
-        [
-            ...new Set(
-                smartofficeSKAllData
-                    .map(function(row){
-                        if(
-                            !row.tanggalSK
-                        ){
-                            return "";
-                        }
+    smartofficeFillSKSelect(
+        "smartofficePenomoranSKFilterNomor",
+        [],
+        "Pilih tahun terlebih dahulu"
+    );
 
-                        return String(
-                            row.tanggalSK
-                        ).substring(0,4);
-
-                    })
-                    .filter(Boolean)
-            )
-        ]
-        .sort(function(a,b){
-            return b - a;
-        });
+    /* =========================
+       TAHUN
+    ========================= */
+    smartofficeFillSKSelect(
+        "smartofficePenomoranSKFilterTahun",
+        tahunList,
+        "Pilih tahun"
+    );
 
     /* =========================
        KLASTER
     ========================= */
-    const klasterList =
-        [
-            ...new Set(
-                smartofficeSKAllData
-                    .map(function(row){
-                        return row.klaster;
-                    })
-                    .filter(Boolean)
-            )
-        ];
-
-    /* =========================
-       ISI SELECT
-    ========================= */
-    smartofficeFillSKSelect(
-        "smartofficePenomoranSKFilterNomor",
-        nomorList,
-        "Semua"
-    );
-
-    smartofficeFillSKSelect(
-        "smartofficePenomoranSKFilterTahun",
-        tahunList,
-        "Semua"
-    );
-
     smartofficeFillSKSelect(
         "smartofficePenomoranSKFilterKlaster",
         klasterList,
@@ -1449,17 +1676,13 @@ function smartofficeFillSKSelect(
 
 /* ======================================================
    APPLY FILTER SK
+   FILTER LOKAL DARI CACHE TAHUN TERPILIH
 ====================================================== */
 function smartofficeApplyFilterSK(){
 
     const nomor =
         document.getElementById(
             "smartofficePenomoranSKFilterNomor"
-        )?.value || "";
-
-    const tahun =
-        document.getElementById(
-            "smartofficePenomoranSKFilterTahun"
         )?.value || "";
 
     const klaster =
@@ -1479,20 +1702,39 @@ function smartofficeApplyFilterSK(){
             ?.trim()
             .toLowerCase() || "";
 
+    /* =========================
+       JIKA BELUM ADA TAHUN
+    ========================= */
+    if(
+        !smartofficeSKLoaded
+    ){
+        smartofficeSKViewData = [];
+        smartofficeRenderPenomoranSK();
+
+        return;
+    }
+
+    /* =========================
+       FILTER DARI CACHE TAHUN
+    ========================= */
     smartofficeSKViewData =
         smartofficeSKAllData.filter(
             function(row){
+
                 /* =========================
                    SEARCH
                    NOMOR SK + TENTANG
                 ========================= */
-                if(search){
+                if(
+                    search
+                ){
                     const text =
                         `
                         ${row.nomorSK || ""}
                         ${row.tentang || ""}
                         `
                         .toLowerCase();
+
                     if(
                         !text.includes(
                             search
@@ -1515,24 +1757,6 @@ function smartofficeApplyFilterSK(){
                     )
                 ){
                     return false;
-                }
-
-                /* =========================
-                   TAHUN
-                ========================= */
-                if(tahun){
-                    const tahunSK =
-                        row.tanggalSK
-                            ? String(
-                                row.tanggalSK
-                            ).substring(0,4)
-                            : "";
-                    if(
-                        tahunSK !==
-                        String(tahun)
-                    ){
-                        return false;
-                    }
                 }
 
                 /* =========================
@@ -1579,8 +1803,10 @@ function smartofficeApplyFilterSK(){
 
 /* =========================
    RESET FILTER SK
+   TAHUN TETAP
 ========================= */
 function smartofficeResetFilterSK(){
+
     const search =
         document.getElementById(
             "smartofficePenomoranSKFilterSearch"
@@ -1589,11 +1815,6 @@ function smartofficeResetFilterSK(){
     const nomor =
         document.getElementById(
             "smartofficePenomoranSKFilterNomor"
-        );
-
-    const tahun =
-        document.getElementById(
-            "smartofficePenomoranSKFilterTahun"
         );
 
     const klaster =
@@ -1606,16 +1827,16 @@ function smartofficeResetFilterSK(){
             "smartofficePenomoranSKFilterStatus"
         );
 
+    /* =========================
+       RESET FILTER
+       TAHUN TIDAK DIUBAH
+    ========================= */
     if(search){
         search.value = "";
     }
 
     if(nomor){
         nomor.value = "";
-    }
-
-    if(tahun){
-        tahun.value = "";
     }
 
     if(klaster){
@@ -1626,6 +1847,10 @@ function smartofficeResetFilterSK(){
         status.value = "";
     }
 
+    /* =========================
+       TAMPILKAN SEMUA DATA
+       DARI CACHE TAHUN
+    ========================= */
     smartofficeSKViewData =
         [
             ...smartofficeSKAllData
@@ -1696,9 +1921,72 @@ function smartofficeInitFilterSKEvent(){
 
     /* ==================================================
        TAHUN
+       TAHUN = PEMICU LOAD FIRESTORE
     ================================================== */
     smartofficePenomoranSKTahunHandler =
-        smartofficeApplyFilterSK;
+        async function(){
+
+            if(
+                smartofficePusatDokumenDestroyed
+            ){
+                return;
+            }
+
+            const tahunValue =
+                tahun?.value || "";
+
+            /* =========================
+            BELUM PILIH TAHUN
+            ========================= */
+            if(
+                !tahunValue
+            ){
+                smartofficeSKAllData = [];
+                smartofficeSKViewData = [];
+                smartofficeSKLoaded =
+                    false;
+
+                const list =
+                    document.getElementById(
+                        "smartofficePenomoranSKList"
+                    );
+                if(list){
+                    list.innerHTML = `
+                        <div class="smartoffice-empty">
+                            <div class="smartoffice-empty-title">
+                                Pilih Tahun
+                            </div>
+
+                            <div class="smartoffice-empty-text">
+                                Pilih tahun terlebih dahulu untuk menampilkan Surat Keputusan.
+                            </div>
+                        </div>
+                    `;
+                }
+
+                return;
+            }
+
+            /* =========================
+            LOAD TAHUN
+            SERVICE HANDLE CACHE
+            ========================= */
+            await smartofficeLoadDataPenomoranSK(
+                tahunValue
+            );
+
+            /* =========================
+            TERAPKAN FILTER LAIN
+            DARI CACHE TAHUN
+            ========================= */
+            if(
+                smartofficePusatDokumenDestroyed
+            ){
+                return;
+            }
+
+            smartofficeApplyFilterSK();
+        };
     if(tahun){
         tahun.addEventListener(
             "change",
@@ -3003,13 +3291,14 @@ async function smartofficeSubmitSK(
             result
         );
 
+        await smartofficeRefreshSKAfterMutation();
+
         smartofficeShowToast(
             "Surat Keputusan berhasil disimpan.",
             "success"
         );
 
         smartofficeCloseSKForm();
-        await smartofficeLoadDataPenomoranSK();
     }
     catch(error){
         console.error(
@@ -3095,7 +3384,6 @@ function smartofficeInitUploadSKEvent(){
         document.getElementById(
             "smartofficePenomoranSKUploadFileName"
         );
-
     if(
         !uploadBox ||
         !fileInput ||
@@ -3104,23 +3392,17 @@ function smartofficeInitUploadSKEvent(){
         return;
     }
 
-
     uploadBox.onclick =
         function(){
-
             fileInput.click();
-
         };
-
 
     fileInput.onchange =
         function(){
-
             const file =
                 fileInput.files?.[0];
 
             if(!file){
-
                 fileName.textContent =
                     "Belum ada file dipilih";
 
@@ -3139,32 +3421,24 @@ function smartofficeInitUploadSKEvent(){
             );
         };
 
-
     uploadBox.ondragover =
         function(event){
-
             event.preventDefault();
-
             uploadBox.classList.add(
                 "dragover"
             );
         };
 
-
     uploadBox.ondragleave =
         function(){
-
             uploadBox.classList.remove(
                 "dragover"
             );
         };
 
-
     uploadBox.ondrop =
         function(event){
-
             event.preventDefault();
-
             uploadBox.classList.remove(
                 "dragover"
             );
@@ -3198,7 +3472,7 @@ export function smartofficeDestroyPage(){
         true;
 
     /* ==================================================
-       FILTER PENOMORAN SK
+       FILTER ELEMENT
     ================================================== */
     const search =
         document.getElementById(
@@ -3291,7 +3565,19 @@ export function smartofficeDestroyPage(){
     }
 
     /* ==================================================
-       RESET HANDLER FILTER
+       REMOVE KLASIFIKASI OUTSIDE CLICK
+    ================================================== */
+    if(
+        smartofficePenomoranSKKlasifikasiOutsideClickHandler
+    ){
+        document.removeEventListener(
+            "click",
+            smartofficePenomoranSKKlasifikasiOutsideClickHandler
+        );
+    }
+
+    /* ==================================================
+       RESET HANDLER
     ================================================== */
     smartofficePenomoranSKSearchHandler =
         null;
@@ -3308,13 +3594,26 @@ export function smartofficeDestroyPage(){
     smartofficePenomoranSKStatusHandler =
         null;
 
+    smartofficePenomoranSKKlasifikasiOutsideClickHandler =
+        null;
+
     /* ==================================================
-       CLOSE ACTION MODAL
+       CLOSE ACTION SHEET
     ================================================== */
     smartofficeCloseSKActionSheet();
 
     /* ==================================================
-       RESET DATA PENOMORAN SK
+       CLOSE FORM
+    ================================================== */
+    smartofficeCloseSKForm();
+
+    /* ==================================================
+       FORCE HIDE GLOBAL LOADING
+    ================================================== */
+    smartofficeForceHideGlobalLoading();
+
+    /* ==================================================
+       RESET DATA SK
     ================================================== */
     smartofficeSKAllData =
         [];
@@ -3324,4 +3623,29 @@ export function smartofficeDestroyPage(){
 
     smartofficeSKLoaded =
         false;
+
+    /* ==================================================
+       RESET MASTER SK
+    ================================================== */
+    smartofficeSKMaster =
+        {
+            klasifikasi: [],
+            klaster: [],
+            statusSK: []
+        };
+
+    smartofficeSKMasterLoaded =
+        false;
+
+    /* ==================================================
+       RESET FORM STATE
+    ================================================== */
+    smartofficeSKFormMode =
+        "add";
+
+    smartofficeSKEditRowIndex =
+        null;
+
+    smartofficeSKEditNomorUrut =
+        null;
 }
