@@ -184,22 +184,22 @@ export async function smartofficeGetSKByTahunFirestore(
         );
 
     /* ==================================================
-      URUTKAN BERDASARKAN ID SK
-      SK-TAHUN-000001 → TERKECIL
-      SK-TAHUN-000002 → BERIKUTNYA
-   ================================================== */
-   result.sort(
-       function(a, b){
-   
-           return String(
-               a.idSK || ""
-           ).localeCompare(
-               String(
-                   b.idSK || ""
-               )
-           );
-       }
-   );
+       URUTKAN BERDASARKAN ID SK
+       SK-TAHUN-000001 → TERKECIL
+       SK-TAHUN-000002 → BERIKUTNYA
+    ================================================== */
+    result.sort(
+        function(a, b){
+
+            return String(
+                a.idSK || ""
+            ).localeCompare(
+                String(
+                    b.idSK || ""
+                )
+            );
+        }
+    );
 
     /* ==================================================
        SIMPAN CACHE PER TAHUN

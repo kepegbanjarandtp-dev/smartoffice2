@@ -3606,7 +3606,7 @@ async function renderDisposisiDropdown(
 
     try{
         const result =
-            await smartofficeGetMasterSuratFirestore();
+            await smartofficeGetMasterSurat();
         if(
             pageInstance !== smartofficeBukuSuratPageInstance
         ){

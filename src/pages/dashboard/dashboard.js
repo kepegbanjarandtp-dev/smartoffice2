@@ -32,7 +32,9 @@ import {
 ====================================================== */
 import {
     smartofficeGetTotalPendingApproval,
-    smartofficeGetTotalPendingApprovalAll
+    smartofficeGetTotalPendingApprovalAll,
+    smartofficeGetDashboardStats,
+    smartofficeGetSedangCutiFirestore
 } from "../../services/dashboard.service.js";
 
 import {
@@ -52,6 +54,13 @@ let smartofficeDashboardDestroyed = false;
 ====================================================== */
 let smartofficeDashboardPageInstance = 0;
 
+/* ======================================================
+   DASHBOARD — SEDANG CUTI STATE
+====================================================== */
+let smartofficeDashboardSedangCutiCache = null;
+let smartofficeDashboardSedangCutiLoading = false;
+let smartofficeDashboardSedangCutiRequest = 0;
+
 
 /* ======================================================
    1. LOAD PAGE
@@ -69,6 +78,18 @@ export async function smartofficeLoadPage(){
     smartofficeDashboardDestroyed =
         false;
 
+    /* =========================
+       RESET SEDANG CUTI STATE
+    ========================= */
+    smartofficeDashboardSedangCutiCache =
+        null;
+    smartofficeDashboardSedangCutiLoading =
+        false;
+    smartofficeDashboardSedangCutiRequest++;
+
+    /* =========================
+       RESET HANDLERS
+    ========================= */
     smartofficeDashboardMenuHandlers =
         {};
 
@@ -94,6 +115,7 @@ export async function smartofficeLoadPage(){
         !sessionData
     ){
         await smartofficeLogout();
+
         return;
     }
 
@@ -124,12 +146,14 @@ export async function smartofficeLoadPage(){
        Setelah router selesai abort request lama
     ========================================== */
     smartofficeLoadNotificationCache()
-    .catch(error => {
-        console.warn(
-            "[Smart Office] Notification preload gagal:",
-            error
-        );
-    });
+    .catch(
+        error => {
+            console.warn(
+                "[Smart Office] Notification preload gagal:",
+                error
+            );
+        }
+    );
 
     /* =========================
        LOGOUT BUTTON
@@ -138,8 +162,9 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeLogoutButton"
         );
-
-    if(logoutButton){
+    if(
+        logoutButton
+    ){
         logoutButton.onclick =
             async function(){
                 await smartofficeLogout();
@@ -148,14 +173,32 @@ export async function smartofficeLoadPage(){
 
     /* =========================
        LOAD APPROVAL BADGE
+       BACKGROUND / NON-BLOCKING
     ========================= */
     smartofficeLoadApprovalBadge(
         sessionData,
         pageInstance
-    ).catch(
+    )
+    .catch(
         error => {
             console.warn(
                 "Load Approval Badge Error:",
+                error
+            );
+        }
+    );
+
+    /* =========================
+       LOAD DASHBOARD STATISTICS
+       BACKGROUND / NON-BLOCKING
+    ========================= */
+    smartofficeLoadDashboardStats(
+        pageInstance
+    )
+    .catch(
+        error => {
+            console.warn(
+                "Load Dashboard Statistics Error:",
                 error
             );
         }
@@ -174,6 +217,15 @@ export async function smartofficeLoadPage(){
        INITIALIZE MENU
     ========================= */
     smartofficeInitDashboardMenu();
+
+    /* =========================
+       INIT SEDANG CUTI
+       HANYA PASANG LISTENER
+       BELUM ADA FIRESTORE READ
+    ========================= */
+    smartofficeInitDashboardCuti(
+        pageInstance
+    );
 }
 
 
@@ -186,7 +238,7 @@ export async function smartofficeDestroyPage(){
        INVALIDATE ASYNC REQUEST
     ========================= */
     smartofficeDashboardPageInstance++;
-    
+
     /* =========================
        MARK PAGE DESTROYED
     ========================= */
@@ -194,21 +246,43 @@ export async function smartofficeDestroyPage(){
         true;
 
     /* =========================
-       REMOVE MENU LISTENERS
+       INVALIDATE SEDANG CUTI
+       REQUEST
+    ========================= */
+    smartofficeDashboardSedangCutiRequest++;
+    smartofficeDashboardSedangCutiLoading =
+        false;
+
+    /* =========================
+       REMOVE DASHBOARD LISTENERS
     ========================= */
     const handlers =
         smartofficeDashboardMenuHandlers;
 
-    const menuIds = [
+    const elementIds = [
+
+        /* ======================
+           MENU
+        ====================== */
         "smartofficeCutiMenuCard",
         "smartofficeApprovalMenuCard",
         "smartofficeManagementCutiMenuCard",
         "smartofficeBukuTamuMenuCard",
-        "smartofficeDokumenSayaMenuCard"
+        "smartofficeDokumenSayaMenuCard",
+        "smartofficeArsipPegawaiMenuCard",
+        "smartofficeESuratMenuCard",
+        "smartofficeDokumenPuskesmasMenuCard",
+
+        /* ======================
+           SEDANG CUTI
+        ====================== */
+        "smartofficeDashboardSummaryCuti",
+        "smartofficeDashboardCutiClose",
     ];
 
-    menuIds.forEach(
+    elementIds.forEach(
         function(id){
+
             const element =
                 document.getElementById(
                     id
@@ -216,6 +290,7 @@ export async function smartofficeDestroyPage(){
 
             const handler =
                 handlers[id];
+
             if(
                 element &&
                 handler
@@ -233,6 +308,15 @@ export async function smartofficeDestroyPage(){
     ========================= */
     smartofficeDashboardMenuHandlers =
         {};
+
+    /* =========================
+       RESET SEDANG CUTI STATE
+    ========================= */
+    smartofficeDashboardSedangCutiCache =
+        null;
+
+    smartofficeDashboardSedangCutiLoading =
+        false;
 
     /* =========================
        RESET APPROVAL BADGE
@@ -985,6 +1069,69 @@ function smartofficeInitDashboardMenu(){
 
 
 /* ======================================================
+   LOAD DASHBOARD STATISTICS
+====================================================== */
+async function smartofficeLoadDashboardStats(){
+
+    try{
+        const stats =
+            await smartofficeGetDashboardStats();
+
+        const pegawaiElement =
+            document.getElementById(
+                "smartofficeDashboardStatPegawai"
+            );
+
+        const cutiElement =
+            document.getElementById(
+                "smartofficeDashboardStatCuti"
+            );
+
+        const arsipElement =
+            document.getElementById(
+                "smartofficeDashboardStatArsip"
+            );
+
+        if(pegawaiElement){
+            pegawaiElement.textContent =
+                stats.totalPegawai;
+        }
+
+        if(cutiElement){
+            cutiElement.textContent =
+                stats.sedangCuti;
+        }
+
+        if(arsipElement){
+            arsipElement.textContent =
+                stats.totalArsip;
+        }
+    }
+    catch(error){
+        console.error(
+            "Dashboard statistics error:",
+            error
+        );
+
+        const elements = [
+            "smartofficeDashboardStatPegawai",
+            "smartofficeDashboardStatCuti",
+            "smartofficeDashboardStatArsip"
+        ];
+
+        elements.forEach(id => {
+            const element =
+                document.getElementById(id);
+            if(element){
+                element.textContent = "-";
+            }
+        });
+    }
+}
+
+
+
+/* ======================================================
    DESTROY DASHBOARD MENU LISTENERS
 ====================================================== */
 function smartofficeDestroyDashboardMenuListeners(){
@@ -1020,4 +1167,651 @@ function smartofficeDestroyDashboardMenuListeners(){
         {};
 }
 
+
+/* ======================================================
+   INIT DASHBOARD — SEDANG CUTI
+====================================================== */
+
+function smartofficeInitDashboardCuti(
+    pageInstance
+){
+
+    const cutiCard =
+        document.getElementById(
+            "smartofficeDashboardSummaryCuti"
+        );
+
+    const cutiClose =
+        document.getElementById(
+            "smartofficeDashboardCutiClose"
+        );
+
+
+    if(
+        !cutiCard
+    ){
+        return;
+    }
+
+
+    /* ==================================================
+       REMOVE OLD LISTENERS
+    ================================================== */
+
+    const oldHandler =
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardSummaryCuti"
+        ];
+
+    if(
+        oldHandler
+    ){
+
+        cutiCard.removeEventListener(
+            "click",
+            oldHandler
+        );
+
+    }
+
+
+    const oldCloseHandler =
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardCutiClose"
+        ];
+
+    if(
+        oldCloseHandler &&
+        cutiClose
+    ){
+
+        cutiClose.removeEventListener(
+            "click",
+            oldCloseHandler
+        );
+
+    }
+
+
+    /* ==================================================
+       ELEMENT DETAIL
+    ================================================== */
+
+    const detail =
+        document.getElementById(
+            "smartofficeDashboardCutiDetail"
+        );
+
+    const loading =
+        document.getElementById(
+            "smartofficeDashboardCutiLoading"
+        );
+
+    const list =
+        document.getElementById(
+            "smartofficeDashboardCutiList"
+        );
+
+
+    /* ==================================================
+       CLICK SEDANG CUTI
+    ================================================== */
+
+    const toggleHandler =
+        async function(){
+
+            if(
+                smartofficeDashboardDestroyed ||
+                pageInstance !==
+                    smartofficeDashboardPageInstance
+            ){
+                return;
+            }
+
+
+            if(
+                !detail
+            ){
+                return;
+            }
+
+
+            /* ==========================================
+               CLOSE
+            ========================================== */
+
+            if(
+                !detail.hidden
+            ){
+
+                detail.hidden =
+                    true;
+
+                cutiCard.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                return;
+            }
+
+
+            /* ==========================================
+               OPEN
+            ========================================== */
+
+            detail.hidden =
+                false;
+
+            cutiCard.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+
+            /* ==========================================
+               GUNAKAN CACHE
+            ========================================== */
+
+            if(
+                Array.isArray(
+                    smartofficeDashboardSedangCutiCache
+                )
+            ){
+
+                smartofficeRenderDashboardCutiList(
+                    smartofficeDashboardSedangCutiCache
+                );
+
+                return;
+            }
+
+
+            /* ==========================================
+               CEK TOTAL STATISTIK
+               AGAR 0 TIDAK MELAKUKAN READ
+            ========================================== */
+
+            const statElement =
+                document.getElementById(
+                    "smartofficeDashboardStatCuti"
+                );
+
+            const totalCuti =
+                Number(
+                    statElement?.textContent
+                ) || 0;
+
+
+            if(
+                totalCuti <= 0
+            ){
+
+                smartofficeDashboardSedangCutiCache =
+                    [];
+
+                smartofficeRenderDashboardCutiList(
+                    []
+                );
+
+                return;
+
+            }
+
+
+            /* ==========================================
+               CEGAH REQUEST GANDA
+            ========================================== */
+
+            if(
+                smartofficeDashboardSedangCutiLoading
+            ){
+                return;
+            }
+
+
+            smartofficeDashboardSedangCutiLoading =
+                true;
+
+
+            const requestId =
+                ++smartofficeDashboardSedangCutiRequest;
+
+
+            /* ==========================================
+               LOADING
+            ========================================== */
+
+            if(
+                loading
+            ){
+
+                loading.hidden =
+                    false;
+
+            }
+
+
+            if(
+                list
+            ){
+
+                list.innerHTML =
+                    "";
+
+            }
+
+
+            try{
+
+                const data =
+                    await smartofficeGetSedangCutiFirestore();
+
+
+                /* ======================================
+                   CEK LIFECYCLE
+                ====================================== */
+
+                if(
+                    smartofficeDashboardDestroyed ||
+                    pageInstance !==
+                        smartofficeDashboardPageInstance ||
+                    requestId !==
+                        smartofficeDashboardSedangCutiRequest
+                ){
+                    return;
+                }
+
+
+                /* ======================================
+                   SIMPAN CACHE
+                ====================================== */
+
+                smartofficeDashboardSedangCutiCache =
+                    Array.isArray(data)
+                        ? data
+                        : [];
+
+
+                /* ======================================
+                   RENDER
+                ====================================== */
+
+                smartofficeRenderDashboardCutiList(
+                    smartofficeDashboardSedangCutiCache
+                );
+
+            }
+            catch(error){
+
+                console.error(
+                    "Load Dashboard Sedang Cuti Error:",
+                    error
+                );
+
+
+                if(
+                    smartofficeDashboardDestroyed ||
+                    pageInstance !==
+                        smartofficeDashboardPageInstance
+                ){
+                    return;
+                }
+
+
+                if(
+                    list
+                ){
+
+                    list.innerHTML =
+                        "";
+
+                    const errorElement =
+                        document.createElement(
+                            "div"
+                        );
+
+                    errorElement.className =
+                        "smartoffice-dashboard-cuti-empty";
+
+                    errorElement.textContent =
+                        "Gagal memuat data cuti.";
+
+                    list.appendChild(
+                        errorElement
+                    );
+
+                }
+
+            }
+            finally{
+
+                if(
+                    requestId ===
+                    smartofficeDashboardSedangCutiRequest
+                ){
+
+                    smartofficeDashboardSedangCutiLoading =
+                        false;
+
+                    if(
+                        loading
+                    ){
+
+                        loading.hidden =
+                            true;
+
+                    }
+
+                }
+
+            }
+
+        };
+
+
+    /* ==================================================
+       ATTACH CLICK
+    ================================================== */
+
+    cutiCard.addEventListener(
+        "click",
+        toggleHandler
+    );
+
+
+    smartofficeDashboardMenuHandlers[
+        "smartofficeDashboardSummaryCuti"
+    ] =
+        toggleHandler;
+
+
+    /* ==================================================
+       ACCESSIBILITY
+    ================================================== */
+
+    cutiCard.setAttribute(
+        "aria-expanded",
+        "false"
+    );
+
+
+    /* ==================================================
+       CLOSE BUTTON
+    ================================================== */
+
+    if(
+        cutiClose
+    ){
+
+        const closeHandler =
+            function(event){
+
+                event.stopPropagation();
+
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
+
+
+                if(
+                    detail
+                ){
+
+                    detail.hidden =
+                        true;
+
+                }
+
+
+                cutiCard.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+            };
+
+
+        cutiClose.addEventListener(
+            "click",
+            closeHandler
+        );
+
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardCutiClose"
+        ] =
+            closeHandler;
+
+    }
+
+}
+
+
+/* ======================================================
+   RENDER DAFTAR PEGAWAI SEDANG CUTI
+====================================================== */
+
+function smartofficeRenderDashboardCutiList(
+    data
+){
+
+    const list =
+        document.getElementById(
+            "smartofficeDashboardCutiList"
+        );
+
+
+    if(
+        !list
+    ){
+        return;
+    }
+
+
+    list.innerHTML =
+        "";
+
+
+    /* ==================================================
+       DATA KOSONG
+    ================================================== */
+
+    if(
+        !Array.isArray(data) ||
+        data.length === 0
+    ){
+
+        const emptyElement =
+            document.createElement(
+                "div"
+            );
+
+        emptyElement.className =
+            "smartoffice-dashboard-cuti-empty";
+
+        emptyElement.textContent =
+            "Tidak ada pegawai yang sedang cuti.";
+
+        list.appendChild(
+            emptyElement
+        );
+
+        return;
+
+    }
+
+
+    /* ==================================================
+       RENDER SEMUA DATA
+    ================================================== */
+
+    data.forEach(
+        function(item){
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+            row.className =
+                "smartoffice-dashboard-cuti-row";
+
+
+            /* ==========================================
+               AVATAR
+            ========================================== */
+
+            const avatar =
+                document.createElement(
+                    "div"
+                );
+
+            avatar.className =
+                "smartoffice-dashboard-cuti-avatar";
+
+
+            const nama =
+                String(
+                    item?.nama || "-"
+                )
+                .trim();
+
+
+            const namaParts =
+                nama
+                    .split(/\s+/)
+                    .filter(Boolean);
+
+
+            const inisial =
+                namaParts.length >= 2
+                    ? (
+                        namaParts[0][0] +
+                        namaParts[1][0]
+                    )
+                    : (
+                        namaParts[0]?.[0] ||
+                        "?"
+                    );
+
+
+            avatar.textContent =
+                inisial.toUpperCase();
+
+
+            /* ==========================================
+               CONTENT
+            ========================================== */
+
+            const content =
+                document.createElement(
+                    "div"
+                );
+
+            content.className =
+                "smartoffice-dashboard-cuti-content";
+
+
+            const namaElement =
+                document.createElement(
+                    "strong"
+                );
+
+            namaElement.textContent =
+                nama;
+
+
+            const periodeElement =
+                document.createElement(
+                    "span"
+                );
+
+            periodeElement.textContent =
+                smartofficeDashboardFormatTanggalCutiRange(
+                    item?.tanggalAwal,
+                    item?.tanggalAkhir
+                );
+
+
+            content.appendChild(
+                namaElement
+            );
+
+            content.appendChild(
+                periodeElement
+            );
+
+
+            /* ==========================================
+               ROW
+            ========================================== */
+
+            row.appendChild(
+                avatar
+            );
+
+            row.appendChild(
+                content
+            );
+
+
+            list.appendChild(
+                row
+            );
+
+        }
+    );
+
+}
+
+
+/* ======================================================
+   FORMAT RENTANG TANGGAL CUTI
+====================================================== */
+
+function smartofficeDashboardFormatTanggalCutiRange(
+    tanggalAwal,
+    tanggalAkhir
+){
+
+    const awal =
+        smartofficeDashboardFormatTanggalCuti(
+            tanggalAwal
+        );
+
+    const akhir =
+        smartofficeDashboardFormatTanggalCuti(
+            tanggalAkhir
+        );
+
+
+    if(
+        awal === "-" &&
+        akhir === "-"
+    ){
+        return "-";
+    }
+
+
+    if(
+        awal === "-"
+    ){
+        return akhir;
+    }
+
+
+    if(
+        akhir === "-"
+    ){
+        return awal;
+    }
+
+
+    return `${awal} – ${akhir}`;
+
+}
 
