@@ -6384,7 +6384,15 @@ function renderSuratKeluar(){
                                 </div>
 
                                 <div class="smartoffice-suratkeluar-card-value">
-                                    ${item.tujuan || "-"}
+                                    ${
+                                        item.tujuan
+                                            ? String(item.tujuan)
+                                                .split(";")
+                                                .map(nama => nama.trim())
+                                                .filter(Boolean)
+                                                .join(" · ")
+                                            : "-"
+                                    }
                                 </div>
                             </div>
 
