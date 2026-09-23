@@ -1151,6 +1151,8 @@
   line-height: 1.5;
   font-weight: 600;
   color: #475569;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 
