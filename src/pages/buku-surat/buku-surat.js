@@ -2561,7 +2561,15 @@ function smartofficeRenderSuratMasuk(
                                 note
                             "
                         >
-                            ${item.disposisi || "-"}
+                            ${
+                                item.disposisi
+                                    ? String(item.disposisi)
+                                        .split(";")
+                                        .map(nama => nama.trim())
+                                        .filter(Boolean)
+                                        .join(" · ")
+                                    : "-"
+                            }
                         </strong>
                     </div>
                 </div>
