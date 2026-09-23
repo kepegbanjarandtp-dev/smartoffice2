@@ -6390,7 +6390,17 @@ function renderSuratKeluar(){
                                                 .split(";")
                                                 .map(nama => nama.trim())
                                                 .filter(Boolean)
-                                                .join(" · ")
+                                                .map(nama => `
+                                                    <span
+                                                        style="
+                                                            color:#7c3aed;
+                                                            font-weight:600;
+                                                        "
+                                                    >
+                                                        ${nama}
+                                                    </span>
+                                                `)
+                                                .join(' <span style="color:#94a3b8;">·</span> ')
                                             : "-"
                                     }
                                 </div>
