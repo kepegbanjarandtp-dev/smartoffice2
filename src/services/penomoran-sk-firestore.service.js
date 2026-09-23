@@ -184,73 +184,20 @@ export async function smartofficeGetSKByTahunFirestore(
         );
 
     /* ==================================================
-      URUTKAN:
-      1. TANGGAL SK TERBARU → TERLAMA
-      2. JIKA TANGGAL SAMA → NOMOR URUT TERKECIL → TERBESAR
+      URUTKAN BERDASARKAN ID SK
+      SK-TAHUN-000001 → TERKECIL
+      SK-TAHUN-000002 → BERIKUTNYA
    ================================================== */
    result.sort(
        function(a, b){
    
-           const tanggalA =
+           return String(
+               a.idSK || ""
+           ).localeCompare(
                String(
-                   a.tanggalSK || ""
-               );
-   
-           const tanggalB =
-               String(
-                   b.tanggalSK || ""
-               );
-   
-           /* =========================
-              TANGGAL SK
-           ========================= */
-           const tanggalCompare =
-               tanggalB.localeCompare(
-                   tanggalA
-               );
-   
-           if(
-               tanggalCompare !== 0
-           ){
-               return tanggalCompare;
-           }
-   
-           /* =========================
-              TANGGAL SAMA
-              AMBIL NOMOR URUT DARI
-              NOMOR SK
-           ========================= */
-           const nomorA =
-               String(
-                   a.nomorSK || ""
-               );
-   
-           const nomorB =
-               String(
-                   b.nomorSK || ""
-               );
-   
-           const matchA =
-               nomorA.match(
-                   /\/(\d+)\/[^/]+\/\d{4}$/
-               );
-   
-           const matchB =
-               nomorB.match(
-                   /\/(\d+)\/[^/]+\/\d{4}$/
-               );
-   
-           const urutA =
-               matchA
-                   ? Number(matchA[1])
-                   : 999999;
-   
-           const urutB =
-               matchB
-                   ? Number(matchB[1])
-                   : 999999;
-   
-           return urutA - urutB;
+                   b.idSK || ""
+               )
+           );
        }
    );
 
