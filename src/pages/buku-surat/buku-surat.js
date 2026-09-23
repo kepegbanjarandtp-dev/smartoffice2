@@ -6393,7 +6393,7 @@ function renderSuratKeluar(){
                                                 .map(nama => `
                                                     <span
                                                         style="
-                                                            color:#7c3aed;
+                                                            color:#5b21b6;
                                                             font-weight:600;
                                                         "
                                                     >
