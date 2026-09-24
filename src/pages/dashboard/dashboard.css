@@ -1550,46 +1550,48 @@ smartofficeDashboardHeaderFade{
     position:absolute;
     top:12px;
     right:12px;
-    width:26px;
-    height:26px;
+    width:22px;
+    height:22px;
     display:flex;
     align-items:center;
     justify-content:center;
     border-radius:7px;
-    background:#ffffff;
-    color:#94a3b8;
-    border:1px solid #edf1f7;
+    background:#eaf3ff;
+    color:#2563eb;
+    border:1px solid #dbeafe;
     transition:
         background .2s ease,
         color .2s ease,
-        transform .2s ease;
+        transform .2s ease,
+        box-shadow .2s ease;
 }
 
 .smartoffice-dashboard-summary-cuti-arrow svg{
-    width:14px;
-    height:14px;
+    width:12px;
+    height:12px;
     flex-shrink:0;
+    stroke:currentColor;
 }
 
 /* ======================================================
    HOVER
 ====================================================== */
-.smartoffice-dashboard-summary-item-cuti:hover{
-    background:#f8fbff;
-}
-
 .smartoffice-dashboard-summary-item-cuti:hover
 .smartoffice-dashboard-summary-cuti-arrow{
-    background:#eaf3ff;
-    color:#2563eb;
+    background:#dbeafe;
+    color:#1d4ed8;
+    box-shadow:
+        0 3px 8px rgba(37,99,235,.12);
     transform:translateX(1px);
 }
 
 /* ======================================================
    ACTIVE
 ====================================================== */
-.smartoffice-dashboard-summary-item-cuti:active{
-    background:#f1f6ff;
+.smartoffice-dashboard-summary-item-cuti:active
+.smartoffice-dashboard-summary-cuti-arrow{
+    background:#bfdbfe;
+    color:#1d4ed8;
 }
 
 /* ======================================================
@@ -1603,13 +1605,9 @@ smartofficeDashboardHeaderFade{
 /* ======================================================
    SAAT DETAIL TERBUKA
 ====================================================== */
-.smartoffice-dashboard-summary-item-cuti[aria-expanded="true"]{
-    background:#f8fbff;
-}
-
 .smartoffice-dashboard-summary-item-cuti[aria-expanded="true"]
 .smartoffice-dashboard-summary-cuti-arrow{
-    background:#eaf3ff;
+    background:#dbeafe;
     color:#2563eb;
     transform:rotate(90deg);
 }
@@ -1811,14 +1809,17 @@ smartofficeDashboardHeaderFade{
     .smartoffice-dashboard-summary-cuti-arrow{
         top:6px;
         right:6px;
-        width:18px;
-        height:18px;
-        border-radius:6px;
+        width:20px;
+        height:20px;
+        border-radius:7px;
+        background:#e5f0ff;
+        color:#2563eb;
+        border:1px solid #d5e5ff;
     }
 
     .smartoffice-dashboard-summary-cuti-arrow svg{
-        width:10px;
-        height:10px;
+        width:11px;
+        height:11px;
     }
 
     .smartoffice-dashboard-cuti-detail{
