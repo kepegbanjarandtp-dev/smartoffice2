@@ -67,6 +67,9 @@ const smartofficeModules = {
     "pusat-dokumen": () =>
         import("../pages/pusat-dokumen/penomoran-sk.js"),
 
+    "smartspd-blud": () =>
+        import("../pages/smartspd-blud/smartspd-blud.js")
+
 };
 
 

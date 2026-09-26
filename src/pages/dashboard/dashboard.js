@@ -821,6 +821,41 @@ function smartofficeInitDashboardMenu(){
     }
 
     /* =========================
+       SMARTSPD BLUD
+    ========================= */
+    const spdBludMenu =
+        document.getElementById(
+            "smartofficeSPDBLUDMenuCard"
+        );
+    if(
+        spdBludMenu
+    ){
+        const handler =
+            async function(){
+
+                if(
+                    smartofficeDashboardDestroyed
+                ){
+                    return;
+                }
+
+                await smartofficeNavigate(
+                    "smartspd-blud"
+                );
+            };
+
+        spdBludMenu.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeSPDBLUDMenuCard"
+        ] =
+            handler;
+    }
+
+    /* =========================
        BUKU TAMU
     ========================= */
     const bukuTamuMenu =
