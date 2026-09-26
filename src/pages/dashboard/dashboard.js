@@ -27,6 +27,8 @@ import {
     smartofficeLoadNotificationCache
 } from "../../components/notifikasi/notifikasi_PWA.js";
 
+import logoSimbok from "../../assets/icons/logo-simbok.svg";
+
 /* ======================================================
    SERVICE
 ====================================================== */
@@ -125,6 +127,20 @@ export async function smartofficeLoadPage(){
     smartofficeRenderWelcome(
         sessionData
     );
+
+    /* =========================
+       SET ICON SIMBOK
+    ========================= */
+    const simbokIcon =
+        document.getElementById(
+            "smartofficeSimbokIcon"
+        );
+    if(
+        simbokIcon
+    ){
+        simbokIcon.src =
+            logoSimbok;
+    }
 
     /* =========================
        FILTER MENU BY ROLE
@@ -1026,6 +1042,13 @@ function smartofficeInitDashboardMenu(){
                 "smartofficeDataPajakMenuCard",
             message:
                 "Fitur Data Pajak sedang dalam pengembangan."
+        },
+        
+        {
+            id:
+                "smartofficeSimbokMenuCard",
+            message:
+                "Fitur simBOK sedang dalam pengembangan."
         }
 
     ];
@@ -1171,11 +1194,9 @@ function smartofficeDestroyDashboardMenuListeners(){
 /* ======================================================
    INIT DASHBOARD — SEDANG CUTI
 ====================================================== */
-
 function smartofficeInitDashboardCuti(
     pageInstance
 ){
-
     const cutiCard =
         document.getElementById(
             "smartofficeDashboardSummaryCuti"
@@ -1185,58 +1206,45 @@ function smartofficeInitDashboardCuti(
         document.getElementById(
             "smartofficeDashboardCutiClose"
         );
-
-
     if(
         !cutiCard
     ){
         return;
     }
 
-
     /* ==================================================
        REMOVE OLD LISTENERS
     ================================================== */
-
     const oldHandler =
         smartofficeDashboardMenuHandlers[
             "smartofficeDashboardSummaryCuti"
         ];
-
     if(
         oldHandler
     ){
-
         cutiCard.removeEventListener(
             "click",
             oldHandler
         );
-
     }
-
 
     const oldCloseHandler =
         smartofficeDashboardMenuHandlers[
             "smartofficeDashboardCutiClose"
         ];
-
     if(
         oldCloseHandler &&
         cutiClose
     ){
-
         cutiClose.removeEventListener(
             "click",
             oldCloseHandler
         );
-
     }
-
 
     /* ==================================================
        ELEMENT DETAIL
     ================================================== */
-
     const detail =
         document.getElementById(
             "smartofficeDashboardCutiDetail"
@@ -1252,14 +1260,11 @@ function smartofficeInitDashboardCuti(
             "smartofficeDashboardCutiList"
         );
 
-
     /* ==================================================
        CLICK SEDANG CUTI
     ================================================== */
-
     const toggleHandler =
         async function(){
-
             if(
                 smartofficeDashboardDestroyed ||
                 pageInstance !==
@@ -1268,18 +1273,15 @@ function smartofficeInitDashboardCuti(
                 return;
             }
 
-
             if(
                 !detail
             ){
                 return;
             }
 
-
             /* ==========================================
                CLOSE
             ========================================== */
-
             if(
                 !detail.hidden
             ){
@@ -1295,11 +1297,9 @@ function smartofficeInitDashboardCuti(
                 return;
             }
 
-
             /* ==========================================
                OPEN
             ========================================== */
-
             detail.hidden =
                 false;
 
@@ -1308,17 +1308,14 @@ function smartofficeInitDashboardCuti(
                 "true"
             );
 
-
             /* ==========================================
                GUNAKAN CACHE
             ========================================== */
-
             if(
                 Array.isArray(
                     smartofficeDashboardSedangCutiCache
                 )
             ){
-
                 smartofficeRenderDashboardCutiList(
                     smartofficeDashboardSedangCutiCache
                 );
@@ -1326,12 +1323,10 @@ function smartofficeInitDashboardCuti(
                 return;
             }
 
-
             /* ==========================================
                CEK TOTAL STATISTIK
                AGAR 0 TIDAK MELAKUKAN READ
             ========================================== */
-
             const statElement =
                 document.getElementById(
                     "smartofficeDashboardStatCuti"
@@ -1341,12 +1336,9 @@ function smartofficeInitDashboardCuti(
                 Number(
                     statElement?.textContent
                 ) || 0;
-
-
             if(
                 totalCuti <= 0
             ){
-
                 smartofficeDashboardSedangCutiCache =
                     [];
 
@@ -1355,63 +1347,56 @@ function smartofficeInitDashboardCuti(
                 );
 
                 return;
-
             }
-
 
             /* ==========================================
                CEGAH REQUEST GANDA
             ========================================== */
-
             if(
                 smartofficeDashboardSedangCutiLoading
             ){
                 return;
             }
 
-
             smartofficeDashboardSedangCutiLoading =
                 true;
-
 
             const requestId =
                 ++smartofficeDashboardSedangCutiRequest;
 
-
             /* ==========================================
                LOADING
             ========================================== */
-
             if(
                 loading
             ){
-
                 loading.hidden =
                     false;
-
             }
-
 
             if(
                 list
             ){
-
                 list.innerHTML =
                     "";
-
             }
 
-
             try{
+                console.log(
+                    "DASHBOARD CUTI — mulai mengambil data"
+                );
 
                 const data =
                     await smartofficeGetSedangCutiFirestore();
 
+                console.log(
+                    "DASHBOARD CUTI — data Firestore:",
+                    data
+                );
 
                 /* ======================================
-                   CEK LIFECYCLE
+                CEK LIFECYCLE
                 ====================================== */
-
                 if(
                     smartofficeDashboardDestroyed ||
                     pageInstance !==
@@ -1422,33 +1407,45 @@ function smartofficeInitDashboardCuti(
                     return;
                 }
 
-
                 /* ======================================
-                   SIMPAN CACHE
+                SIMPAN CACHE
                 ====================================== */
-
                 smartofficeDashboardSedangCutiCache =
                     Array.isArray(data)
                         ? data
                         : [];
 
+                console.log(
+                    "DASHBOARD CUTI — cache:",
+                    smartofficeDashboardSedangCutiCache
+                );
 
                 /* ======================================
-                   RENDER
+                RENDER
                 ====================================== */
-
                 smartofficeRenderDashboardCutiList(
                     smartofficeDashboardSedangCutiCache
                 );
 
+                console.log(
+                    "DASHBOARD CUTI — render berhasil"
+                );
             }
             catch(error){
-
                 console.error(
-                    "Load Dashboard Sedang Cuti Error:",
+                    "LOAD DASHBOARD SEDANG CUTI ERROR:",
                     error
                 );
 
+                console.error(
+                    "ERROR MESSAGE:",
+                    error?.message
+                );
+
+                console.error(
+                    "ERROR STACK:",
+                    error?.stack
+                );
 
                 if(
                     smartofficeDashboardDestroyed ||
@@ -1457,7 +1454,6 @@ function smartofficeInitDashboardCuti(
                 ){
                     return;
                 }
-
 
                 if(
                     list
@@ -1480,75 +1476,55 @@ function smartofficeInitDashboardCuti(
                     list.appendChild(
                         errorElement
                     );
-
                 }
-
-            }
+            }            
             finally{
-
                 if(
                     requestId ===
                     smartofficeDashboardSedangCutiRequest
                 ){
-
                     smartofficeDashboardSedangCutiLoading =
                         false;
-
                     if(
                         loading
                     ){
-
                         loading.hidden =
                             true;
-
                     }
-
                 }
-
             }
-
         };
-
 
     /* ==================================================
        ATTACH CLICK
     ================================================== */
-
     cutiCard.addEventListener(
         "click",
         toggleHandler
     );
-
 
     smartofficeDashboardMenuHandlers[
         "smartofficeDashboardSummaryCuti"
     ] =
         toggleHandler;
 
-
     /* ==================================================
        ACCESSIBILITY
     ================================================== */
-
     cutiCard.setAttribute(
         "aria-expanded",
         "false"
     );
 
-
     /* ==================================================
        CLOSE BUTTON
     ================================================== */
-
     if(
         cutiClose
     ){
-
         const closeHandler =
             function(event){
-
                 event.stopPropagation();
-
 
                 if(
                     smartofficeDashboardDestroyed
@@ -1556,75 +1532,58 @@ function smartofficeInitDashboardCuti(
                     return;
                 }
 
-
                 if(
                     detail
                 ){
-
                     detail.hidden =
                         true;
-
                 }
-
 
                 cutiCard.setAttribute(
                     "aria-expanded",
                     "false"
                 );
-
             };
-
 
         cutiClose.addEventListener(
             "click",
             closeHandler
         );
 
-
         smartofficeDashboardMenuHandlers[
             "smartofficeDashboardCutiClose"
         ] =
             closeHandler;
-
     }
-
 }
 
 
 /* ======================================================
    RENDER DAFTAR PEGAWAI SEDANG CUTI
 ====================================================== */
-
 function smartofficeRenderDashboardCutiList(
     data
 ){
-
     const list =
         document.getElementById(
             "smartofficeDashboardCutiList"
         );
-
-
     if(
         !list
     ){
         return;
     }
 
-
     list.innerHTML =
         "";
-
 
     /* ==================================================
        DATA KOSONG
     ================================================== */
-
     if(
         !Array.isArray(data) ||
         data.length === 0
     ){
-
         const emptyElement =
             document.createElement(
                 "div"
@@ -1641,17 +1600,13 @@ function smartofficeRenderDashboardCutiList(
         );
 
         return;
-
     }
-
 
     /* ==================================================
        RENDER SEMUA DATA
     ================================================== */
-
     data.forEach(
         function(item){
-
             const row =
                 document.createElement(
                     "div"
@@ -1660,11 +1615,9 @@ function smartofficeRenderDashboardCutiList(
             row.className =
                 "smartoffice-dashboard-cuti-row";
 
-
             /* ==========================================
                AVATAR
             ========================================== */
-
             const avatar =
                 document.createElement(
                     "div"
@@ -1673,19 +1626,16 @@ function smartofficeRenderDashboardCutiList(
             avatar.className =
                 "smartoffice-dashboard-cuti-avatar";
 
-
             const nama =
                 String(
                     item?.nama || "-"
                 )
                 .trim();
 
-
             const namaParts =
                 nama
                     .split(/\s+/)
                     .filter(Boolean);
-
 
             const inisial =
                 namaParts.length >= 2
@@ -1698,15 +1648,12 @@ function smartofficeRenderDashboardCutiList(
                         "?"
                     );
 
-
             avatar.textContent =
                 inisial.toUpperCase();
-
 
             /* ==========================================
                CONTENT
             ========================================== */
-
             const content =
                 document.createElement(
                     "div"
@@ -1715,7 +1662,6 @@ function smartofficeRenderDashboardCutiList(
             content.className =
                 "smartoffice-dashboard-cuti-content";
 
-
             const namaElement =
                 document.createElement(
                     "strong"
@@ -1723,7 +1669,6 @@ function smartofficeRenderDashboardCutiList(
 
             namaElement.textContent =
                 nama;
-
 
             const periodeElement =
                 document.createElement(
@@ -1736,7 +1681,6 @@ function smartofficeRenderDashboardCutiList(
                     item?.tanggalAkhir
                 );
 
-
             content.appendChild(
                 namaElement
             );
@@ -1745,11 +1689,9 @@ function smartofficeRenderDashboardCutiList(
                 periodeElement
             );
 
-
             /* ==========================================
                ROW
             ========================================== */
-
             row.appendChild(
                 avatar
             );
@@ -1758,26 +1700,92 @@ function smartofficeRenderDashboardCutiList(
                 content
             );
 
-
             list.appendChild(
                 row
             );
-
         }
     );
-
 }
 
 
 /* ======================================================
-   FORMAT RENTANG TANGGAL CUTI
+   FORMAT TANGGAL CUTI
+   INPUT  : YYYY-MM-DD
+   OUTPUT : DD MMMM YYYY
 ====================================================== */
+function smartofficeDashboardFormatTanggalCuti(
+    tanggal
+){
+    if(
+        !tanggal
+    ){
+        return "-";
+    }
 
+    const parts =
+        String(
+            tanggal
+        ).split("-");
+    if(
+        parts.length !== 3
+    ){
+        return String(
+            tanggal
+        );
+    }
+
+    const tahun =
+        Number(
+            parts[0]
+        );
+
+    const bulan =
+        Number(
+            parts[1]
+        );
+
+    const hari =
+        Number(
+            parts[2]
+        );
+
+    const namaBulan = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+    if(
+        !tahun ||
+        !bulan ||
+        !hari ||
+        !namaBulan[bulan - 1]
+    ){
+        return String(
+            tanggal
+        );
+    }
+
+    return `${hari} ${namaBulan[bulan - 1]} ${tahun}`;
+}
+
+
+/* ======================================================
+   FORMAT RANGE TANGGAL CUTI
+====================================================== */
 function smartofficeDashboardFormatTanggalCutiRange(
     tanggalAwal,
     tanggalAkhir
 ){
-
     const awal =
         smartofficeDashboardFormatTanggalCuti(
             tanggalAwal
@@ -1788,7 +1796,21 @@ function smartofficeDashboardFormatTanggalCutiRange(
             tanggalAkhir
         );
 
+    /* ==================================================
+       JIKA CUTI HANYA 1 HARI
+    ================================================== */
+    if(
+        tanggalAwal &&
+        tanggalAkhir &&
+        String(tanggalAwal) ===
+            String(tanggalAkhir)
+    ){
+        return awal;
+    }
 
+    /* ==================================================
+       JIKA CUTI LEBIH DARI 1 HARI
+    ================================================== */
     if(
         awal === "-" &&
         akhir === "-"
@@ -1796,13 +1818,11 @@ function smartofficeDashboardFormatTanggalCutiRange(
         return "-";
     }
 
-
     if(
         awal === "-"
     ){
         return akhir;
     }
-
 
     if(
         akhir === "-"
@@ -1810,8 +1830,6 @@ function smartofficeDashboardFormatTanggalCutiRange(
         return awal;
     }
 
-
     return `${awal} – ${akhir}`;
-
 }
 
