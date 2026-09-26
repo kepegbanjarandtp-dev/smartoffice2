@@ -3,8 +3,12 @@
    VITE / SPA / PWA MODULE
 ====================================================== */
 
+/* ================================================================================================
+   1. IMPORT
+================================================================================================ */
+
 /* ======================================================
-   CORE
+   1.1 CORE
 ====================================================== */
 import {
     smartofficeCheckSession,
@@ -17,7 +21,7 @@ import {
 } from "../../core/router.js";
 
 /* ======================================================
-   COMPONENT
+   1.2 COMPONENT
 ====================================================== */
 import {
     smartofficeShowToast
@@ -28,7 +32,7 @@ import {
 } from "../../components/navbar/navbar.js";
 
 /* ======================================================
-   SERVICE
+   1.3 SERVICE
 ====================================================== */
 import {
     smartofficeSubmitSPD
@@ -40,7 +44,7 @@ import {
 } from "../../services/pegawai-firestore.service.js";
 
 /* ======================================================
-   UTILS
+   1.4 UTILS
 ====================================================== */
 import {
     smartofficeConvertFileToBase64
@@ -49,21 +53,51 @@ import {
 import "./smartspd-blud.css";
 
 
+
+/* ================================================================================================
+   2. STATE
+================================================================================================ */
+
 /* ======================================================
-   STATE
+   2.1 DATA PEGAWAI
 ====================================================== */
 let smartofficeSPDPegawai = {};
 let smartofficeSPDPegawaiCache = [];
 let smartofficeSPDRiwayat = [];
+
+/* ======================================================
+   2.2 DATA FORM
+====================================================== */
 let smartofficeSPDJumlahPengikut = 0;
+
+/* ======================================================
+   2.3 DATA PENGIKUT
+====================================================== */
 let smartofficeSPDFile = null;
+
+/* ======================================================
+   2.4 FILE UPLOAD
+====================================================== */
 let smartofficeSubmitting = false;
+
+/* ======================================================
+   2.5 SUBMIT
+====================================================== */
 let smartofficeSPDHandlers = new Map();
+
+/* ======================================================
+   2.6 EVENT / LIFECYCLE
+====================================================== */
 let smartofficeSPDPageInstance = 0;
 
 
+
+/* ================================================================================================
+   3. PAGE LIFECYCLE
+================================================================================================ */
+
 /* ======================================================
-   LOAD PAGE
+   3.1 LOAD SMARTSPD BLUD PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
 
@@ -136,9 +170,8 @@ export async function smartofficeLoadPage(){
     smartofficeRenderRiwayatSPDUnavailable();
 }
 
-
 /* ======================================================
-   DESTROY PAGE
+   3.2 DESTROY SMARTSPD BLUD PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
 
@@ -162,7 +195,6 @@ export async function smartofficeDestroyPage(){
     );
 
     smartofficeSPDHandlers.clear();
-
     smartofficeSPDPegawai = {};
     smartofficeSPDPegawaiCache = [];
     smartofficeSPDRiwayat = [];
@@ -172,8 +204,13 @@ export async function smartofficeDestroyPage(){
 }
 
 
+
+/* ================================================================================================
+   4. EVENT MANAGEMENT
+================================================================================================ */
+
 /* ======================================================
-   EVENT REGISTRY
+   4.1 REGISTER EVENT HANDLER
 ====================================================== */
 function smartofficeSPDAddHandler(
     element,
@@ -196,9 +233,8 @@ function smartofficeSPDAddHandler(
     );
 }
 
-
 /* ======================================================
-   INIT PAGE EVENTS
+   4.2 INIT PAGE EVENTS
 ====================================================== */
 function smartofficeInitSPDEvents(pageInstance){
 
@@ -290,18 +326,21 @@ function smartofficeInitSPDEvents(pageInstance){
 }
 
 
+
+/* ================================================================================================
+   5. DATA PEGAWAI
+================================================================================================ */
+
 /* ======================================================
-   LOAD PEGAWAI — FIRESTORE
+   5.1 LOAD DATA PEGAWAI — FIRESTORE
 ====================================================== */
 async function smartofficeLoadSPDpegawai(nip){
 
     try{
-
         const result =
             await smartofficeGetPegawaiFromFirestore(
                 nip
             );
-
         if(!result || !result.success){
             throw new Error(
                 result?.message ||
@@ -313,10 +352,8 @@ async function smartofficeLoadSPDpegawai(nip){
             result.data || {};
 
         smartofficeRenderSPDPegawai();
-
     }
     catch(error){
-
         console.error(
             "SMARTSPD BLUD LOAD PEGAWAI ERROR:",
             error
@@ -332,15 +369,13 @@ async function smartofficeLoadSPDpegawai(nip){
 
 
 /* ======================================================
-   LOAD CACHE PEGAWAI — FIRESTORE
+   5.2 LOAD CACHE SEMUA PEGAWAI — FIRESTORE
 ====================================================== */
 async function smartofficeLoadSPDPegawaiCache(){
 
     try{
-
         const result =
             await smartofficeGetAllPegawaiFromFirestore();
-
         if(!result || !result.success){
             throw new Error(
                 result?.message ||
@@ -352,10 +387,8 @@ async function smartofficeLoadSPDPegawaiCache(){
             Array.isArray(result.data)
                 ? result.data
                 : [];
-
     }
     catch(error){
-
         console.error(
             "SMARTSPD BLUD CACHE PEGAWAI ERROR:",
             error
@@ -368,9 +401,8 @@ async function smartofficeLoadSPDPegawaiCache(){
     }
 }
 
-
 /* ======================================================
-   RENDER PEGAWAI
+   5.3 RENDER DATA PEGAWAI
 ====================================================== */
 function smartofficeRenderSPDPegawai(){
 
@@ -384,15 +416,12 @@ function smartofficeRenderSPDPegawai(){
     ];
 
     fields.forEach(function(item){
-
         const element =
             document.getElementById(item[0]);
-
         if(element){
             element.value =
                 smartofficeSPDPegawai?.[item[1]] || "";
         }
-
     });
 
     smartofficeInitMainPegawaiAutocomplete();
@@ -401,8 +430,13 @@ function smartofficeRenderSPDPegawai(){
 }
 
 
+
+/* ================================================================================================
+   6. AUTOCOMPLETE PEGAWAI UTAMA
+================================================================================================ */
+
 /* ======================================================
-   MAIN PEGAWAI AUTOCOMPLETE
+   6.1 INIT AUTOCOMPLETE PEGAWAI UTAMA
 ====================================================== */
 function smartofficeInitMainPegawaiAutocomplete(){
 
@@ -415,7 +449,6 @@ function smartofficeInitMainPegawaiAutocomplete(){
         document.getElementById(
             "smartofficeSPDNamaAutocomplete"
         );
-
     if(!input || !resultBox){
         return;
     }
@@ -424,14 +457,12 @@ function smartofficeInitMainPegawaiAutocomplete(){
         input,
         "input",
         function(){
-
             const keyword =
                 input.value
                     .trim()
                     .toLowerCase();
 
             resultBox.innerHTML = "";
-
             if(keyword.length < 1){
                 return;
             }
@@ -447,7 +478,6 @@ function smartofficeInitMainPegawaiAutocomplete(){
                         .includes(keyword);
                     })
                     .slice(0,10);
-
             if(filtered.length === 0){
                 resultBox.innerHTML =
                     `<div class="smartoffice-cuti-autocomplete-empty">
@@ -457,7 +487,6 @@ function smartofficeInitMainPegawaiAutocomplete(){
             }
 
             filtered.forEach(function(item){
-
                 const div =
                     document.createElement("div");
 
@@ -483,9 +512,8 @@ function smartofficeInitMainPegawaiAutocomplete(){
     );
 }
 
-
 /* ======================================================
-   SELECT MAIN PEGAWAI
+   6.2 PILIH PEGAWAI UTAMA
 ====================================================== */
 function smartofficeSelectMainPegawai(item){
 
@@ -505,8 +533,13 @@ function smartofficeSelectMainPegawai(item){
 }
 
 
+
+/* ================================================================================================
+   7. PAGE ACTION
+================================================================================================ */
+
 /* ======================================================
-   REFRESH
+   7.1 REFRESH DATA SPD
 ====================================================== */
 export async function smartofficeRefreshSPD(){
 
@@ -534,9 +567,8 @@ export async function smartofficeRefreshSPD(){
     );
 }
 
-
 /* ======================================================
-   TAB
+   7.2 SWITCH TAB SPD
 ====================================================== */
 export function smartofficeSwitchSPDTab(tab){
 
@@ -578,8 +610,13 @@ export function smartofficeSwitchSPDTab(tab){
 }
 
 
+
+/* ================================================================================================
+   8. DATA PENGIKUT
+================================================================================================ */
+
 /* ======================================================
-   PENGIKUT
+   8.1 INIT TOMBOL TAMBAH PENGIKUT
 ====================================================== */
 function smartofficeInitPengikut(){
 
@@ -597,7 +634,9 @@ function smartofficeInitPengikut(){
     smartofficeUpdateButtonTambahPengikut();
 }
 
-
+/* ======================================================
+   8.2 TAMBAH PENGIKUT
+====================================================== */
 function smartofficeTambahPengikut(){
 
     if(smartofficeSPDJumlahPengikut >= 4){
@@ -641,7 +680,7 @@ function smartofficeTambahPengikut(){
             </button>
         </div>
 
-        <div class="smartoffice-cuti-form-group">
+        <div class="smartoffice-spd-form-group">
             <label>Nama Pegawai</label>
 
             <div class="smartoffice-spd-autocomplete-wrapper">
@@ -655,7 +694,7 @@ function smartofficeTambahPengikut(){
             </div>
         </div>
 
-        <div class="smartoffice-cuti-form-group">
+        <div class="smartoffice-spd-form-group">
             <label>NIP / NRP</label>
             <input
                 type="text"
@@ -664,7 +703,7 @@ function smartofficeTambahPengikut(){
             >
         </div>
 
-        <div class="smartoffice-cuti-form-group">
+        <div class="smartoffice-spd-form-group">
             <label>Tanggal Lahir</label>
             <input
                 type="text"
@@ -673,7 +712,7 @@ function smartofficeTambahPengikut(){
             >
         </div>
 
-        <div class="smartoffice-cuti-form-group">
+        <div class="smartoffice-spd-form-group">
             <label>No. WhatsApp</label>
             <input
                 type="text"
@@ -703,7 +742,9 @@ function smartofficeTambahPengikut(){
     smartofficeUpdateProgress();
 }
 
-
+/* ======================================================
+   8.3 HAPUS PENGIKUT
+====================================================== */
 function smartofficeHapusPengikut(card){
 
     if(!card){
@@ -711,13 +752,14 @@ function smartofficeHapusPengikut(card){
     }
 
     card.remove();
-
     smartofficeRefreshNomorPengikut();
     smartofficeUpdateButtonTambahPengikut();
     smartofficeUpdateProgress();
 }
 
-
+/* ======================================================
+   8.4 REFRESH NOMOR PENGIKUT
+====================================================== */
 function smartofficeRefreshNomorPengikut(){
 
     const cards =
@@ -739,7 +781,6 @@ function smartofficeRefreshNomorPengikut(){
             card.querySelector(
                 ".smartoffice-spd-pengikut-title"
             );
-
         if(title){
             title.textContent =
                 "Pengikut " + nomor;
@@ -747,14 +788,15 @@ function smartofficeRefreshNomorPengikut(){
     });
 }
 
-
+/* ======================================================
+   8.5 UPDATE TOMBOL TAMBAH PENGIKUT
+====================================================== */
 function smartofficeUpdateButtonTambahPengikut(){
 
     const button =
         document.getElementById(
             "smartofficeSPDBtnTambahPengikut"
         );
-
     if(button){
         button.disabled =
             smartofficeSPDJumlahPengikut >= 4;
@@ -762,8 +804,12 @@ function smartofficeUpdateButtonTambahPengikut(){
 }
 
 
+/* ================================================================================================
+   9. AUTOCOMPLETE PENGIKUT
+================================================================================================ */
+
 /* ======================================================
-   AUTOCOMPLETE PENGIKUT
+   9.1 INIT AUTOCOMPLETE PENGIKUT
 ====================================================== */
 function smartofficeInitPengikutAutocomplete(card){
 
@@ -776,14 +822,12 @@ function smartofficeInitPengikutAutocomplete(card){
         card.querySelector(
             ".smartoffice-spd-autocomplete"
         );
-
     if(!input || !resultBox){
         return;
     }
 
     const render =
         function(){
-
             const keyword =
                 input.value
                     .trim()
@@ -796,7 +840,6 @@ function smartofficeInitPengikutAutocomplete(card){
             }
 
             smartofficeCloseAllPengikutAutocomplete();
-
             smartofficeRenderPengikutAutocomplete(
                 keyword,
                 card
@@ -813,12 +856,10 @@ function smartofficeInitPengikutAutocomplete(card){
         input,
         "focus",
         function(){
-
             const keyword =
                 input.value
                     .trim()
                     .toLowerCase();
-
             if(keyword){
                 smartofficeRenderPengikutAutocomplete(
                     keyword,
@@ -829,12 +870,13 @@ function smartofficeInitPengikutAutocomplete(card){
     );
 }
 
-
+/* ======================================================
+   9.2 RENDER HASIL AUTOCOMPLETE PENGIKUT
+====================================================== */
 function smartofficeRenderPengikutAutocomplete(
     keyword,
     card
 ){
-
     const input =
         card.querySelector(
             ".smartoffice-spd-pengikut-nama"
@@ -913,7 +955,6 @@ function smartofficeRenderPengikutAutocomplete(
             .slice(0,10);
 
     if(filtered.length === 0){
-
         resultBox.innerHTML = `
             <div class="smartoffice-spd-autocomplete-empty">
                 Pegawai tidak ditemukan
@@ -939,7 +980,6 @@ function smartofficeRenderPengikutAutocomplete(
         div.addEventListener(
             "click",
             function(){
-
                 input.value =
                     item.nama || "";
 
@@ -954,10 +994,8 @@ function smartofficeRenderPengikutAutocomplete(
                     item.noWA ||
                     item.no_wa ||
                     "";
-
                 smartofficeCloseAllPengikutAutocomplete();
                 smartofficeUpdateProgress();
-
             }
         );
 
@@ -965,9 +1003,10 @@ function smartofficeRenderPengikutAutocomplete(
     });
 }
 
-
+/* ======================================================
+   9.3 TUTUP SEMUA AUTOCOMPLETE PENGIKUT
+====================================================== */
 function smartofficeCloseAllPengikutAutocomplete(){
-
     document
         .querySelectorAll(
             ".smartoffice-spd-autocomplete"
@@ -978,8 +1017,13 @@ function smartofficeCloseAllPengikutAutocomplete(){
 }
 
 
+
+/* ================================================================================================
+   10. JADWAL PERJALANAN
+================================================================================================ */
+
 /* ======================================================
-   SCHEDULE / TANGGAL
+   10.1 INIT INPUT TANGGAL
 ====================================================== */
 function smartofficeInitSchedule(){
 
@@ -990,7 +1034,6 @@ function smartofficeInitSchedule(){
     ];
 
     ids.forEach(function(id){
-
         const input =
             document.getElementById(id);
 
@@ -998,18 +1041,21 @@ function smartofficeInitSchedule(){
             input,
             "change",
             function(){
-
-                smartofficeValidateDateSunday(input);
+                smartofficeValidateDateSunday(
+                    input
+                );
                 smartofficeHitungJumlahHariSPD();
                 smartofficeRenderSPDTimeline();
                 smartofficeUpdateProgress();
-
+                smartofficeUpdateSubmitButton();
             }
         );
     });
 }
 
-
+/* ======================================================
+   10.2 VALIDASI TANGGAL — HARI MINGGU
+====================================================== */
 function smartofficeValidateDateSunday(input){
 
     if(!input || !input.value){
@@ -1022,7 +1068,6 @@ function smartofficeValidateDateSunday(input){
         );
 
     if(date.getDay() === 0){
-
         smartofficeShowToast(
             "Tanggal tidak boleh hari Minggu.",
             "error"
@@ -1032,7 +1077,9 @@ function smartofficeValidateDateSunday(input){
     }
 }
 
-
+/* ======================================================
+   10.3 HITUNG JUMLAH HARI SPD
+====================================================== */
 function smartofficeHitungJumlahHariSPD(){
 
     const mulai =
@@ -1049,9 +1096,10 @@ function smartofficeHitungJumlahHariSPD(){
         document.getElementById(
             "smartofficeSPDJumlahHari"
         );
-
-    if(!mulai || !selesai){
-
+    if(
+        !mulai ||
+        !selesai
+    ){
         if(output){
             output.value = "";
         }
@@ -1060,13 +1108,16 @@ function smartofficeHitungJumlahHariSPD(){
     }
 
     const start =
-        new Date(mulai + "T00:00:00");
+        new Date(
+            mulai + "T00:00:00"
+        );
 
     const end =
-        new Date(selesai + "T00:00:00");
+        new Date(
+            selesai + "T00:00:00"
+        );
 
     if(end < start){
-
         if(output){
             output.value = "";
         }
@@ -1079,65 +1130,83 @@ function smartofficeHitungJumlahHariSPD(){
         return 0;
     }
 
-    const days =
+    const jumlahHari =
         Math.floor(
             (
                 end.getTime() -
                 start.getTime()
             ) / 86400000
         ) + 1;
-
     if(output){
-        output.value = String(days);
+        output.value =
+            String(jumlahHari);
     }
 
-    return days;
+    return jumlahHari;
 }
 
-
+/* ======================================================
+   10.4 INIT TIPE PERJALANAN
+====================================================== */
 function smartofficeInitTripType(){
-
     document
         .querySelectorAll(
             "#smartofficeSPDTipeContainer [data-value]"
         )
         .forEach(function(button){
-
             smartofficeSPDAddHandler(
                 button,
                 "click",
                 function(){
-
+                    /* =========================
+                       ACTIVE BUTTON
+                    ========================= */
                     document
                         .querySelectorAll(
                             "#smartofficeSPDTipeContainer [data-value]"
                         )
                         .forEach(function(item){
-                            item.classList.remove("active");
+                            item.classList.remove(
+                                "active"
+                            );
                         });
 
-                    button.classList.add("active");
+                    button.classList.add(
+                        "active"
+                    );
 
+                    /* =========================
+                       SIMPAN TIPE
+                    ========================= */
                     const hidden =
                         document.getElementById(
                             "smartofficeSPDTipeKeberangkatan"
                         );
-
                     if(hidden){
                         hidden.value =
                             button.dataset.value || "";
                     }
 
+                    /* =========================
+                       HITUNG & RENDER
+                    ========================= */
+                    smartofficeHitungJumlahHariSPD();
+                    smartofficeRenderSPDTimeline();
+
+                    /* =========================
+                       LANGSUNG BUKA
+                    ========================= */
+                    smartofficeOpenSPDJadwal();
                     smartofficeUpdateProgress();
                     smartofficeUpdateSubmitButton();
-
                 }
             );
-
         });
 }
 
-
+/* ======================================================
+   10.5 RENDER DETAIL JADWAL PERJALANAN
+====================================================== */
 function smartofficeRenderSPDTimeline(){
 
     const container =
@@ -1145,63 +1214,185 @@ function smartofficeRenderSPDTimeline(){
             "smartofficeSPDTimelineContainer"
         );
 
+    const emptyState =
+        document.getElementById(
+            "smartofficeSPDDetailJadwalEmpty"
+        );
+
     if(!container){
         return;
     }
 
+    /* =========================
+       SIMPAN NILAI SEBELUM RENDER
+    ========================= */
+    const previousValues = {};
+
+    container
+        .querySelectorAll("input")
+        .forEach(function(input){
+
+            previousValues[input.id] =
+                input.value || "";
+
+        });
+
+    container.innerHTML = "";
+
+    if(emptyState){
+        emptyState.style.display =
+            "none";
+    }
+
+    /* =========================
+       JUMLAH HARI
+    ========================= */
     const jumlahHari =
         smartofficeHitungJumlahHariSPD();
 
-    if(!jumlahHari){
-        container.innerHTML = "";
+    /* =========================
+       TIPE
+    ========================= */
+    const tipe =
+        document.getElementById(
+            "smartofficeSPDTipeKeberangkatan"
+        )?.value || "";
+
+    /* =========================
+       BELUM SIAP
+    ========================= */
+    if(
+        !jumlahHari ||
+        !tipe
+    ){
+        if(emptyState){
+            emptyState.textContent =
+                !jumlahHari
+                    ? "Isi tanggal berangkat dan tanggal pulang terlebih dahulu."
+                    : "Pilih tipe perjalanan untuk menampilkan detail jadwal.";
+
+            emptyState.style.display =
+                "block";
+        }
+
         return;
     }
 
-    const maxHari =
-        Math.min(
-            Number(jumlahHari),
-            3
-        );
+    /* =========================
+       PULANG PERGI > 3 HARI
+    ========================= */
+    if(
+        tipe === "PULANG_PERGI" &&
+        Number(jumlahHari) > 3
+    ){
 
-    let html = "";
-
-    for(let hari = 1; hari <= maxHari; hari++){
-
-        html += `
-            <div class="smartoffice-spd-timeline-day">
-                <div class="smartoffice-spd-timeline-day-title">
-                    Hari ${hari}
-                </div>
-                <div class="smartoffice-spd-jadwal-grid">
+        container.innerHTML = `
+            <div class="smartoffice-spd-empty-state">
+                Perjalanan Pulang Pergi maksimal 3 hari.
+                Silakan sesuaikan tanggal perjalanan.
+            </div>
         `;
 
-        html += smartofficeRenderTimeField(
-            `spd-berangkat-${hari}`,
-            `Berangkat Hari ${hari}`,
-            `smartofficeSPD_BerangkatHari${hari}`
-        );
+        smartofficeUpdateSubmitButton();
 
-        html += smartofficeRenderTimeField(
-            `spd-pulang-${hari}`,
-            `Pulang Hari ${hari}`,
-            `smartofficeSPD_PulangHari${hari}`
-        );
+        return;
+    }
 
-        if(hari >= 2){
+    /* =========================
+       MENGINAP
+       HANYA HARI 1
+    ========================= */
+    const totalHari =
+        tipe === "MENGINAP"
+            ? 1
+            : Number(jumlahHari);
 
+    /* =========================
+       TIMELINE
+    ========================= */
+    const timeline =
+        document.createElement("div");
+
+    timeline.className =
+        "smartoffice-spd-timeline";
+    for(
+        let hari = 1;
+        hari <= totalHari;
+        hari++
+    ){
+        const tanggal =
+            smartofficeGetScheduleDate(
+                hari
+            );
+
+        const dayCard =
+            document.createElement("div");
+
+        dayCard.className =
+            "smartoffice-spd-timeline-day";
+
+        let html = `
+            <div class="smartoffice-spd-timeline-day-title">
+                <span>
+                    Hari ${hari}
+                </span>
+
+                <span class="smartoffice-spd-timeline-date">
+                    ${smartofficeFormatSPDScheduleDate(tanggal)}
+                </span>
+            </div>
+
+            <div class="smartoffice-spd-jadwal-grid">
+        `;
+
+        /* =========================
+           HARI 2 & 3
+           PULANG PERGI
+        ========================= */
+        if(
+            tipe === "PULANG_PERGI" &&
+            hari >= 2
+        ){
             html += `
                 <div class="smartoffice-spd-field">
-                    <label>Lokasi Hari ${hari}</label>
+                    <label>Lokasi</label>
+
                     <input
                         type="text"
                         id="smartofficeSPD_LokasiHari${hari}"
                         maxlength="100"
-                        placeholder="Lokasi perjalanan hari ${hari}"
+                        placeholder="Lokasi perjalanan"
                     >
                 </div>
+            `;
+        }
 
+        /* =========================
+           BERANGKAT
+        ========================= */
+        html += `
+            <div class="smartoffice-spd-field">
+                <label>Berangkat</label>
+
+                <input
+                    type="time"
+                    id="smartofficeSPD_BerangkatHari${hari}"
+                >
+            </div>
+        `;
+
+        /* =========================
+           TIBA
+           HARI 2 & 3 PULANG PERGI
+        ========================= */
+        if(
+            tipe === "PULANG_PERGI" &&
+            hari >= 2
+        ){
+            html += `
                 <div class="smartoffice-spd-field">
-                    <label>Tiba Hari ${hari}</label>
+                    <label>Tiba</label>
+
                     <input
                         type="time"
                         id="smartofficeSPD_TibaHari${hari}"
@@ -1210,24 +1401,60 @@ function smartofficeRenderSPDTimeline(){
             `;
         }
 
+        /* =========================
+           PULANG
+        ========================= */
         html += `
-                </div>
+            <div class="smartoffice-spd-field">
+                <label>Pulang</label>
+
+                <input
+                    type="time"
+                    id="smartofficeSPD_PulangHari${hari}"
+                >
             </div>
         `;
-    }
 
-    if(Number(jumlahHari) > 3){
         html += `
-            <div class="smartoffice-spd-empty-state">
-                Detail jadwal tersedia sampai Hari 3 pada struktur SPD BLUD saat ini.
             </div>
         `;
+        dayCard.innerHTML =
+            html;
+
+        timeline.appendChild(
+            dayCard
+        );
     }
 
-    container.innerHTML = html;
+    container.appendChild(
+        timeline
+    );
+
+    /* =========================
+       KEMBALIKAN NILAI LAMA
+    ========================= */
+    Object.keys(
+        previousValues
+    ).forEach(function(id){
+        const input =
+            document.getElementById(id);
+        if(input){
+            input.value =
+                previousValues[id];
+        }
+    });
+
+    /* =========================
+       UPDATE
+    ========================= */
+    smartofficeInitRenderedScheduleEvents();
+    smartofficeUpdateProgress();
+    smartofficeUpdateSubmitButton();
 }
 
-
+/* ======================================================
+   10.6 RENDER FIELD WAKTU JADWAL
+====================================================== */
 function smartofficeRenderTimeField(
     key,
     label,
@@ -1244,7 +1471,9 @@ function smartofficeRenderTimeField(
     `;
 }
 
-
+/* ======================================================
+   10.7 INIT EVENT FIELD JADWAL HASIL RENDER
+====================================================== */
 function smartofficeInitRenderedScheduleEvents(){
     const container =
         document.getElementById(
@@ -1268,7 +1497,9 @@ function smartofficeInitRenderedScheduleEvents(){
         });
 }
 
-
+/* ======================================================
+   10.8 OBSERVER PERUBAHAN TIMELINE
+====================================================== */
 function smartofficeInitScheduleObserver(){
     const container =
         document.getElementById(
@@ -1305,8 +1536,67 @@ function smartofficeInitScheduleObserver(){
     );
 }
 
+/* ======================================================
+   10.9 AMBIL TANGGAL DETAIL JADWAL
+====================================================== */
+function smartofficeGetScheduleDate(hari){
 
-function smartofficeToggleSPDJadwal(){
+    const value =
+        document.getElementById(
+            "smartofficeSPDTanggalBerangkat"
+        )?.value;
+    if(!value){
+        return null;
+    }
+
+    const date =
+        new Date(
+            value + "T00:00:00"
+        );
+    date.setDate(
+        date.getDate() +
+        (
+            Number(hari) - 1
+        )
+    );
+
+    return date;
+}
+
+/* ======================================================
+   10.10 FORMAT TANGGAL DETAIL JADWAL
+====================================================== */
+function smartofficeFormatSPDScheduleDate(date){
+
+    if(!date){
+        return "";
+    }
+
+    return new Intl.DateTimeFormat(
+        "id-ID",
+        {
+            day: "numeric",
+            month: "long",
+            year: "numeric"
+        }
+    ).format(date);
+}
+
+
+
+/* ================================================================================================
+   11. ACCORDION DETAIL JADWAL
+================================================================================================ */
+
+/* ======================================================
+   11.1 BUKA DETAIL JADWAL
+====================================================== */
+function smartofficeOpenSPDJadwal(){
+
+    const accordion =
+        document.querySelector(
+            ".smartoffice-spd-accordion"
+        );
 
     const body =
         document.getElementById(
@@ -1317,38 +1607,112 @@ function smartofficeToggleSPDJadwal(){
         document.getElementById(
             "smartofficeSPDJadwalIcon"
         );
-
-    if(!body){
+    if(
+        !accordion ||
+        !body
+    ){
         return;
     }
 
-    const isHidden =
-        body.style.display === "none" ||
-        body.style.display === "";
+    accordion.classList.add(
+        "active"
+    );
 
     body.style.display =
-        isHidden ? "block" : "none";
+        "block";
 
     if(icon){
-        icon.classList.toggle(
-            "open",
-            isHidden
+        icon.classList.add(
+            "open"
         );
     }
 }
 
+/* ======================================================
+   11.2 TUTUP DETAIL JADWAL
+====================================================== */
+function smartofficeCloseSPDJadwal(){
+
+    const accordion =
+        document.querySelector(
+            ".smartoffice-spd-accordion"
+        );
+
+    const body =
+        document.getElementById(
+            "smartofficeSPDDetailJadwal"
+        );
+
+    const icon =
+        document.getElementById(
+            "smartofficeSPDJadwalIcon"
+        );
+    if(
+        !accordion ||
+        !body
+    ){
+        return;
+    }
+
+    accordion.classList.remove(
+        "active"
+    );
+
+    body.style.display =
+        "none";
+
+    if(icon){
+        icon.classList.remove(
+            "open"
+        );
+    }
+}
 
 /* ======================================================
-   PROGRESS
+   11.3 TOGGLE DETAIL JADWAL
+====================================================== */
+function smartofficeToggleSPDJadwal(){
+
+    const accordion =
+        document.querySelector(
+            ".smartoffice-spd-accordion"
+        );
+
+    if(!accordion){
+        return;
+    }
+    if(
+        accordion.classList.contains(
+            "active"
+        )
+    ){
+
+        smartofficeCloseSPDJadwal();
+    }
+    else{
+
+        smartofficeOpenSPDJadwal();
+    }
+}
+
+
+
+/* ================================================================================================
+   12. PROGRESS FORM
+================================================================================================ */
+
+/* ======================================================
+   12.1 INIT PROGRESS
 ====================================================== */
 function smartofficeInitProgress(){
     smartofficeUpdateProgress();
     smartofficeInitScheduleObserver();
 }
 
-
+/* ======================================================
+   12.2 UPDATE PROGRESS
+====================================================== */
 function smartofficeUpdateProgress(){
-
     const checks = [
         document.getElementById("smartofficeSPDNama")?.value,
         document.getElementById("smartofficeSPDNip")?.value,
@@ -1397,8 +1761,13 @@ function smartofficeUpdateProgress(){
 }
 
 
+
+/* ================================================================================================
+   13. LAMPIRAN
+================================================================================================ */
+
 /* ======================================================
-   FILE UPLOAD
+   13.1 INIT FILE UPLOAD
 ====================================================== */
 function smartofficeInitFileUpload(){
 
@@ -1455,8 +1824,13 @@ function smartofficeInitFileUpload(){
 }
 
 
+
+/* ================================================================================================
+   14. VALIDASI & SUBMIT SPD
+================================================================================================ */
+
 /* ======================================================
-   SUBMIT BUTTON
+   14.1 UPDATE STATUS TOMBOL SUBMIT
 ====================================================== */
 function smartofficeUpdateSubmitButton(){
 
@@ -1482,7 +1856,6 @@ function smartofficeUpdateSubmitButton(){
             document.getElementById("smartofficeSPDTipeKeberangkatan")?.value.trim() &&
             document.getElementById("smartofficeSPDConfirm")?.checked
         );
-
     button.disabled =
         !valid || smartofficeSubmitting;
 
@@ -1492,7 +1865,9 @@ function smartofficeUpdateSubmitButton(){
     );
 }
 
-
+/* ======================================================
+   14.2 INIT TOMBOL SUBMIT
+====================================================== */
 function smartofficeInitSubmitButton(){
 
     const button =
@@ -1514,7 +1889,6 @@ function smartofficeInitSubmitButton(){
     ];
 
     ids.forEach(function(id){
-
         const element =
             document.getElementById(id);
 
@@ -1538,9 +1912,8 @@ function smartofficeInitSubmitButton(){
     });
 }
 
-
 /* ======================================================
-   SUBMIT SPD
+   14.3 PROSES SUBMIT SPD
 ====================================================== */
 async function smartofficeHandleSubmitSPD(){
 
@@ -1552,7 +1925,6 @@ async function smartofficeHandleSubmitSPD(){
     smartofficeUpdateSubmitButton();
 
     try{
-
         const data =
             await smartofficeBuildSubmitPayload();
 
@@ -1574,10 +1946,8 @@ async function smartofficeHandleSubmitSPD(){
 
         smartofficeResetSPDForm();
         smartofficeSwitchSPDTab("riwayat");
-
     }
     catch(error){
-
         console.error(
             "SMARTSPD BLUD SUBMIT ERROR:",
             error
@@ -1588,16 +1958,16 @@ async function smartofficeHandleSubmitSPD(){
             "SPD gagal disimpan.",
             "error"
         );
-
     }
     finally{
-
         smartofficeSubmitting = false;
         smartofficeUpdateSubmitButton();
     }
 }
 
-
+/* ======================================================
+   14.4 BUILD PAYLOAD SUBMIT SPD
+====================================================== */
 async function smartofficeBuildSubmitPayload(){
 
     let lampiranBase64 = "";
@@ -1605,7 +1975,6 @@ async function smartofficeBuildSubmitPayload(){
     let lampiranFileName = "";
 
     if(smartofficeSPDFile){
-
         lampiranBase64 =
             await smartofficeConvertFileToBase64(
                 smartofficeSPDFile
@@ -1621,7 +1990,6 @@ async function smartofficeBuildSubmitPayload(){
     }
 
     const payload = {
-
         nama:
             document.getElementById(
                 "smartofficeSPDNama"
@@ -1775,8 +2143,13 @@ async function smartofficeBuildSubmitPayload(){
 }
 
 
+
+/* ================================================================================================
+   15. RESET FORM SPD
+================================================================================================ */
+
 /* ======================================================
-   RESET FORM
+   15.1 RESET SELURUH FORM SPD
 ====================================================== */
 function smartofficeResetSPDForm(){
 
@@ -1793,7 +2166,6 @@ function smartofficeResetSPDForm(){
     ];
 
     formIds.forEach(function(id){
-
         const element =
             document.getElementById(id);
 
@@ -1863,8 +2235,13 @@ function smartofficeResetSPDForm(){
 }
 
 
+
+/* ================================================================================================
+   16. RIWAYAT SPD
+================================================================================================ */
+
 /* ======================================================
-   RIWAYAT FILTER
+   16.1 FILTER RIWAYAT BERDASARKAN STATUS
 ====================================================== */
 export function smartofficeFilterRiwayatSPD(
     status,
@@ -1914,7 +2291,9 @@ export function smartofficeFilterRiwayatSPD(
     );
 }
 
-
+/* ======================================================
+   16.2 RENDER DAFTAR RIWAYAT SPD
+====================================================== */
 function smartofficeRenderRiwayatSPDList(data){
 
     const list =
@@ -1925,10 +2304,8 @@ function smartofficeRenderRiwayatSPDList(data){
     if(!list){
         return;
     }
-
     list.innerHTML =
         data.map(function(item){
-
             return `
                 <div class="smartoffice-spd-riwayat-card">
                     <div class="smartoffice-spd-riwayat-header">
@@ -1959,12 +2336,13 @@ function smartofficeRenderRiwayatSPDList(data){
                     </div>
                 </div>
             `;
-
         })
         .join("");
 }
 
-
+/* ======================================================
+   16.3 TAMPILKAN STATUS RIWAYAT BELUM TERSEDIA
+====================================================== */
 function smartofficeRenderRiwayatSPDUnavailable(){
 
     const list =
@@ -1975,7 +2353,6 @@ function smartofficeRenderRiwayatSPDUnavailable(){
     if(!list){
         return;
     }
-
     list.innerHTML = `
         <div class="smartoffice-spd-riwayat-empty">
             Riwayat SPD akan dimuat dari Firestore setelah collection mirror SmartSPD BLUD terhubung.
@@ -1985,9 +2362,10 @@ function smartofficeRenderRiwayatSPDUnavailable(){
     smartofficeUpdateSPDStats();
 }
 
-
+/* ======================================================
+   16.4 UPDATE MINI STAT SPD
+====================================================== */
 function smartofficeUpdateSPDStats(){
-
     const total =
         smartofficeSPDRiwayat.length;
 
@@ -2006,7 +2384,6 @@ function smartofficeUpdateSPDStats(){
         ["smartofficeStatSPDMenunggu", menunggu],
         ["smartofficeStatSPDDisetujui", disetujui]
     ];
-
     elements.forEach(function(item){
         const element =
             document.getElementById(item[0]);
@@ -2018,8 +2395,13 @@ function smartofficeUpdateSPDStats(){
 }
 
 
+
+/* ================================================================================================
+   17. GLOBAL AUTOCOMPLETE
+================================================================================================ */
+
 /* ======================================================
-   GLOBAL CLICK OUTSIDE
+   17.1 INIT CLICK OUTSIDE AUTOCOMPLETE
 ====================================================== */
 function smartofficeInitOutsideAutocomplete(){
 
@@ -2050,8 +2432,13 @@ function smartofficeInitOutsideAutocomplete(){
 }
 
 
+
+/* ================================================================================================
+   18. HELPER
+================================================================================================ */
+
 /* ======================================================
-   TEXT / URL HELPERS
+   18.1 ESCAPE HTML
 ====================================================== */
 function smartofficeEscapeHtml(value){
 
@@ -2063,15 +2450,16 @@ function smartofficeEscapeHtml(value){
         .replaceAll("'", "&#039;");
 }
 
+/* ======================================================
+   18.2 VALIDASI / NORMALISASI URL
+====================================================== */
 function smartofficeSafeUrl(value){
-
     try{
         const url =
             new URL(
                 String(value || ""),
                 window.location.origin
             );
-
         if(
             url.protocol !== "http:" &&
             url.protocol !== "https:"

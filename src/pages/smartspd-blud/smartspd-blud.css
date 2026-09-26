@@ -144,17 +144,17 @@
 
 /* Form Grid */
 .smartoffice-spd-card-pegawai
-.smartoffice-cuti-form-grid{
+.smartoffice-spd-form-grid{
     row-gap:16px;
     column-gap:20px;
 }
 
 /* Form Group */
 .smartoffice-spd-card-pegawai
-.smartoffice-cuti-form-group,
+.smartoffice-spd-form-group,
 
 .smartoffice-spd-card-perjalanan
-.smartoffice-cuti-form-group{
+.smartoffice-spd-form-group{
     display:flex;
     flex-direction:column;
     gap:6px;

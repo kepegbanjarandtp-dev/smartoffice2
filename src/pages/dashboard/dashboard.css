@@ -1773,7 +1773,7 @@ smartofficeDashboardHeaderFade{
 
 .smartoffice-dashboard-cuti-content strong{
     color:#172554;
-    font-size:11px;
+    font-size:13px;
     line-height:1.25;
     font-weight:700;
     overflow:hidden;
@@ -1783,7 +1783,7 @@ smartofficeDashboardHeaderFade{
 
 .smartoffice-dashboard-cuti-content span{
     color:#94a3b8;
-    font-size:10px;
+    font-size:12px;
     line-height:1.25;
     font-weight:500;
 }
@@ -1881,5 +1881,23 @@ smartofficeDashboardHeaderFade{
     .smartoffice-dashboard-cuti-empty{
         padding:12px 4px;
         font-size:9px;
+    }
+}
+
+
+/* ======================================================
+   ICON SIMBOK
+====================================================== */
+#smartofficeSimbokIcon{
+    width:72px;
+    height:72px;
+    object-fit:contain;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    #smartofficeSimbokIcon{
+        width:36px;
+        height:36px;
     }
 }

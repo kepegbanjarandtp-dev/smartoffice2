@@ -1,5 +1,9 @@
+/* ============================================================================================
+   IMPORT
+============================================================================================ */
+
 /* ======================================================
-   CORE
+   IMPORT — CORE
 ====================================================== */
 import {
     smartofficeCheckSession,
@@ -13,7 +17,7 @@ import {
 } from "../../core/router.js";
 
 /* ======================================================
-   COMPONENT
+   IMPORT — COMPONENT
 ====================================================== */
 import {
     smartofficeRenderMobileNavbar
@@ -27,10 +31,8 @@ import {
     smartofficeLoadNotificationCache
 } from "../../components/notifikasi/notifikasi_PWA.js";
 
-import logoSimbok from "../../assets/icons/logo-simbok.svg";
-
 /* ======================================================
-   SERVICE
+   IMPORT — SERVICE
 ====================================================== */
 import {
     smartofficeGetTotalPendingApproval,
@@ -44,15 +46,25 @@ import {
     smartofficeGetDokumenVerifikasiFirestore
 } from "../../services/approval-firestore.service.js";
 
+/* ======================================================
+   IMPORT — ASSET
+====================================================== */
+import logoSimbok from "../../assets/icons/logo-simbok.svg";
+
+
+
+/* ============================================================================================
+   DASHBOARD STATE
+============================================================================================ */
 
 /* ======================================================
-   DASHBOARD STATE
+   DASHBOARD MENU STATE
 ====================================================== */
 let smartofficeDashboardMenuHandlers = {};
 let smartofficeDashboardDestroyed = false;
 
 /* ======================================================
-   LIFECYCLE
+   LIFECYCLE STATE
 ====================================================== */
 let smartofficeDashboardPageInstance = 0;
 
@@ -64,8 +76,12 @@ let smartofficeDashboardSedangCutiLoading = false;
 let smartofficeDashboardSedangCutiRequest = 0;
 
 
+/* ============================================================================================
+   1. PAGE LIFECYCLE
+============================================================================================ */
+
 /* ======================================================
-   1. LOAD PAGE
+   1.1 LOAD DASHBOARD PAGE
 ====================================================== */
 export async function smartofficeLoadPage(){
 
@@ -262,7 +278,7 @@ export async function smartofficeLoadPage(){
 
 
 /* ======================================================
-   DESTROY PAGE
+   1.2 DESTROY DASHBOARD PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
 
@@ -370,8 +386,12 @@ export async function smartofficeDestroyPage(){
 }
 
 
+/* ============================================================================================
+   2. WELCOME & USER INFORMATION
+============================================================================================ */
+
 /* ======================================================
-   2. RENDER WELCOME
+   2.1 RENDER WELCOME CARD
 ====================================================== */
 function smartofficeRenderWelcome(
     sessionData
@@ -448,7 +468,7 @@ function smartofficeRenderWelcome(
 
 
 /* ======================================================
-   3. FILTER MENU BY ROLE
+   2.2 FILTER MENU BERDASARKAN ROLE
 ====================================================== */
 function smartofficeFilterMenuByRole(
     role
@@ -561,8 +581,12 @@ function smartofficeFilterMenuByRole(
 }
 
 
+/* ============================================================================================
+   3. APPROVAL BADGE
+============================================================================================ */
+
 /* ======================================================
-   4. LOAD APPROVAL BADGE
+   3.1 LOAD TOTAL APPROVAL
 ====================================================== */
 async function smartofficeLoadApprovalBadge(
     sessionData,
@@ -674,7 +698,7 @@ async function smartofficeLoadApprovalBadge(
 
 
 /* ======================================================
-   UPDATE APPROVAL BADGE
+   3.2 UPDATE APPROVAL BADGE
 ====================================================== */
 function smartofficeUpdateApprovalBadge(
     total
@@ -727,8 +751,12 @@ function smartofficeUpdateApprovalBadge(
 }
 
 
+/* ============================================================================================
+   4. DASHBOARD MENU
+============================================================================================ */
+
 /* ======================================================
-   INIT DASHBOARD MENU
+   4.1 INIT DASHBOARD MENU
 ====================================================== */
 function smartofficeInitDashboardMenu(){
 
@@ -1143,7 +1171,48 @@ function smartofficeInitDashboardMenu(){
 
 
 /* ======================================================
-   LOAD DASHBOARD STATISTICS
+   4.2 DESTROY DASHBOARD MENU LISTENERS
+====================================================== */
+function smartofficeDestroyDashboardMenuListeners(){
+
+    const handlers =
+        smartofficeDashboardMenuHandlers;
+
+    Object.keys(
+        handlers
+    ).forEach(
+        function(id){
+            const element =
+                document.getElementById(
+                    id
+                );
+
+            const handler =
+                handlers[id];
+
+            if(
+                element &&
+                handler
+            ){
+                element.removeEventListener(
+                    "click",
+                    handler
+                );
+            }
+        }
+    );
+
+    smartofficeDashboardMenuHandlers =
+        {};
+}
+
+
+/* ============================================================================================
+   5. DASHBOARD STATISTICS
+============================================================================================ */
+
+/* ======================================================
+   5.1 LOAD DASHBOARD STATISTICS
 ====================================================== */
 async function smartofficeLoadDashboardStats(){
 
@@ -1204,46 +1273,12 @@ async function smartofficeLoadDashboardStats(){
 }
 
 
+/* ============================================================================================
+   6. DASHBOARD — SEDANG CUTI
+============================================================================================ */
 
 /* ======================================================
-   DESTROY DASHBOARD MENU LISTENERS
-====================================================== */
-function smartofficeDestroyDashboardMenuListeners(){
-
-    const handlers =
-        smartofficeDashboardMenuHandlers;
-
-    Object.keys(
-        handlers
-    ).forEach(
-        function(id){
-            const element =
-                document.getElementById(
-                    id
-                );
-
-            const handler =
-                handlers[id];
-
-            if(
-                element &&
-                handler
-            ){
-                element.removeEventListener(
-                    "click",
-                    handler
-                );
-            }
-        }
-    );
-
-    smartofficeDashboardMenuHandlers =
-        {};
-}
-
-
-/* ======================================================
-   INIT DASHBOARD — SEDANG CUTI
+   6.1 INIT SEDANG CUTI
 ====================================================== */
 function smartofficeInitDashboardCuti(
     pageInstance
@@ -1610,7 +1645,7 @@ function smartofficeInitDashboardCuti(
 
 
 /* ======================================================
-   RENDER DAFTAR PEGAWAI SEDANG CUTI
+   6.2 RENDER DAFTAR PEGAWAI SEDANG CUTI
 ====================================================== */
 function smartofficeRenderDashboardCutiList(
     data
@@ -1760,9 +1795,9 @@ function smartofficeRenderDashboardCutiList(
 
 
 /* ======================================================
-   FORMAT TANGGAL CUTI
-   INPUT  : YYYY-MM-DD
-   OUTPUT : DD MMMM YYYY
+   6.3 FORMAT TANGGAL CUTI
+       INPUT  : YYYY-MM-DD
+       OUTPUT : DD MMMM YYYY
 ====================================================== */
 function smartofficeDashboardFormatTanggalCuti(
     tanggal
@@ -1831,7 +1866,7 @@ function smartofficeDashboardFormatTanggalCuti(
 
 
 /* ======================================================
-   FORMAT RANGE TANGGAL CUTI
+   6.4 FORMAT RANGE TANGGAL CUTI
 ====================================================== */
 function smartofficeDashboardFormatTanggalCutiRange(
     tanggalAwal,
