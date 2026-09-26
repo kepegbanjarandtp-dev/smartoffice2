@@ -135,11 +135,27 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeSimbokIcon"
         );
+
+    console.log(
+        "SIMBOK ELEMENT:",
+        simbokIcon
+    );
+
+    console.log(
+        "SIMBOK LOGO IMPORT:",
+        logoSimbok
+    );
+
     if(
         simbokIcon
     ){
         simbokIcon.src =
             logoSimbok;
+
+        console.log(
+            "SIMBOK SRC SET:",
+            simbokIcon.src
+        );
     }
 
     /* =========================
