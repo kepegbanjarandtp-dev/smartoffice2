@@ -1,0 +1,754 @@
+<div class="smartoffice-wrapper">
+
+    <!-- =========================
+        HEADER
+    ========================== -->
+    <div class="smartoffice-header">
+
+        <!-- LEFT -->
+        <div class="smartoffice-header-info">
+
+            <!-- BACK -->
+            <button
+                class="smartoffice-back-button"
+                data-action="back-dashboard"
+                title="Kembali ke Dashboard"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+            </button>
+
+            <!-- ICON -->
+            <div class="smartoffice-header-icon">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <path d="M8 12h8"/>
+                    <path d="M8 16h6"/>
+                </svg>
+            </div>
+
+            <!-- TITLE -->
+            <div class="smartoffice-header-title">
+                <h2>
+                    SmartSPD BLUD
+                </h2>
+                <p>
+                    Pengajuan Surat Perjalanan Dinas
+                </p>
+            </div>
+        </div>
+
+        <!-- REFRESH -->
+        <button
+            id="smartofficeSPDRefreshButton"
+            class="smartoffice-refresh-button"
+            data-action="refresh"
+            title="Refresh Data"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.75"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M21 12a9 9 0 1 1-3-6.7"/>
+                <polyline points="21 3 21 9 15 9"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- =========================
+        MINI STATS
+    ========================= -->
+    <div class="smartoffice-cuti-stats-row">
+
+        <!-- TOTAL SPD -->
+        <div class="smartoffice-cuti-stat-card smartoffice-cuti-stat-blue">
+            <div class="smartoffice-cuti-stat-top">
+                <p>
+                    Total SPD
+                </p>
+
+                <div class="smartoffice-cuti-stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h3 id="smartofficeStatTotalSPD">
+                <span class="smartoffice-mini-loader"></span>
+            </h3>
+        </div>
+
+        <!-- MENUNGGU -->
+        <div class="smartoffice-cuti-stat-card smartoffice-cuti-stat-orange">
+            <div class="smartoffice-cuti-stat-top">
+                <p>
+                    Menunggu
+                </p>
+
+                <div class="smartoffice-cuti-stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h3 id="smartofficeStatSPDMenunggu">
+                <span class="smartoffice-mini-loader"></span>
+            </h3>
+        </div>
+
+        <!-- DISETUJUI -->
+        <div class="smartoffice-cuti-stat-card smartoffice-cuti-stat-green">
+            <div class="smartoffice-cuti-stat-top">
+                <p>
+                    Disetujui
+                </p>
+
+                <div class="smartoffice-cuti-stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 6L9 17l-5-5"/>
+                    </svg>
+                </div>
+            </div>
+
+            <h3 id="smartofficeStatSPDDisetujui">
+                <span class="smartoffice-mini-loader"></span>
+            </h3>
+        </div>
+    </div>
+
+    <!-- =========================
+        TAB NAVIGATION
+    ========================== -->
+    <div class="smartoffice-tab-wrapper">
+
+        <!-- FORM SPD -->
+        <button
+            id="smartofficeTabFormSPD"
+            class="smartoffice-tab-button active"
+            data-tab="form"
+        >
+            <svg viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+            </svg>
+
+            <span>
+                Form SPD
+            </span>
+        </button>
+
+        <!-- RIWAYAT SPD -->
+        <button
+            id="smartofficeTabRiwayatSPD"
+            class="smartoffice-tab-button"
+            data-tab="riwayat"
+        >
+            <svg viewBox="0 0 24 24">
+                <path d="M3 3v5h5"/>
+                <path d="M3.05 13a9 9 0 1 0 .5-4L3 8"/>
+                <polyline points="12 7 12 12 16 14"/>
+            </svg>
+
+            <span>
+                Riwayat SPD
+            </span>
+        </button>
+    </div>
+
+    <!-- =========================
+        FORM SPD
+    ========================= -->
+    <div
+      id="smartofficeFormSPDContent"
+      class="smartoffice-cuti-content"
+    >
+      <div class="smartoffice-spd-form-card">
+
+        <!-- =========================
+            PROGRESS BAR
+        ========================= -->
+        <div class="smartoffice-spd-progress">
+
+            <div class="smartoffice-spd-progress-header">
+                <span class="smartoffice-spd-progress-title">
+                    Progress Form SPD
+                </span>
+                <span
+                    id="smartofficeSPDProgressPercent"
+                    class="smartoffice-spd-progress-percent"
+                >
+                    0%
+                </span>
+            </div>
+
+            <div class="smartoffice-spd-progress-bar">
+                <div
+                    id="smartofficeSPDProgressFill"
+                    class="smartoffice-spd-progress-fill"
+                ></div>
+            </div>          
+        </div>
+
+        <!-- =========================
+            DATA PEGAWAI
+        ========================= -->
+        <div class="smartoffice-spd-card smartoffice-spd-card-pegawai">
+
+            <div class="smartoffice-spd-card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21a8 8 0 0 0-16 0"/>
+                    <circle cx="12" cy="8" r="4"/>
+                </svg>
+                <span>Data Pegawai</span>
+            </div>
+
+            <div class="smartoffice-cuti-form-grid">
+                <div class="smartoffice-cuti-form-group">
+                    <label>Nama <span class="required">*</span></label>
+
+                    <input
+                        id="smartofficeSPDNama"
+                        type="text"
+                        placeholder="Cari atau pilih pegawai..."
+                        autocomplete="off"
+                    >
+
+                    <div
+                        id="smartofficeSPDNamaAutocomplete"
+                        class="smartoffice-cuti-autocomplete-list"
+                    ></div>
+                </div>
+
+                <div class="smartoffice-cuti-form-group">
+                    <label>NIP / NRP</label>
+                    <input
+                        id="smartofficeSPDNip"
+                        type="text"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-cuti-form-group">
+                    <label>Pangkat & Golongan</label>
+                    <input
+                        id="smartofficeSPDPangkat"
+                        type="text"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-cuti-form-group">
+                    <label>Jabatan</label>
+                    <input
+                        id="smartofficeSPDJabatan"
+                        type="text"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-cuti-form-group">
+                    <label>Email</label>
+                    <input
+                        id="smartofficeSPDEmail"
+                        type="email"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-cuti-form-group">
+                    <label>No. WhatsApp</label>
+                    <input
+                        id="smartofficeSPDNoWA"
+                        type="text"
+                        readonly
+                    >
+                </div>
+            </div>
+        </div>    
+
+        <!-- =========================
+            DETAIL PERJALANAN
+        ========================= -->
+        <div class="smartoffice-spd-card smartoffice-spd-card-perjalanan">
+
+            <div class="smartoffice-spd-card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M14 16H9m10 0h2m-2 0a2 2 0 1 1-4 0m4 0H7m0 0a2 2 0 1 1-4 0m4 0H5m2-8h10l2 5H5l2-5z"/>
+                </svg>
+                <span>Detail Perjalanan</span>
+            </div>
+
+            <div class="smartoffice-cuti-form-grid">
+                <div class="smartoffice-cuti-form-group">
+                    <label>
+                        Alat Angkut
+                        <span class="required">*</span>
+                    </label>
+
+                    <select id="smartofficeSPDAlatAngkut">
+                        <option value="">
+                            Pilih Alat Angkut
+                        </option>
+
+                        <option value="KENDARAAN RODA DUA">
+                            Kendaraan Roda Dua
+                        </option>
+
+                        <option value="KENDARAAN RODA EMPAT">
+                            Kendaraan Roda Empat
+                        </option>
+
+                        <option value="KENDARAAN AMBULANS">
+                            Kendaraan Ambulans
+                        </option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="smartoffice-cuti-form-group">
+                <label>
+                    Kegiatan
+                    <span class="required">*</span>
+                </label>
+
+                <textarea
+                    id="smartofficeSPDKegiatan"
+                    rows="2"
+                    maxlength="200"
+                    placeholder="Masukkan nama kegiatan..."
+                ></textarea>
+            </div>
+
+            <div class="smartoffice-cuti-form-group">
+                <label>
+                    Lokasi
+                    <span class="required">*</span>
+                </label>
+                <textarea
+                    id="smartofficeSPDLokasi"
+                    rows="2"
+                    maxlength="45"
+                    placeholder="Masukkan lokasi tujuan..."
+                ></textarea>
+
+                <div class="smartoffice-spd-character-counter">
+                    <span id="smartofficeSPDLokasiCounter">
+                        0
+                    </span>
+                    /45 Karakter
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================
+            JADWAL PERJALANAN
+        ========================= -->
+        <div class="smartoffice-spd-card smartoffice-spd-card-jadwal">
+
+            <div class="smartoffice-spd-card-title">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>Jadwal Perjalanan</span>
+            </div>
+
+            <div class="smartoffice-spd-jadwal-grid">
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Tanggal SPD Dibuat
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="smartofficeSPDTanggalSPD"
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Tanggal Berangkat
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="smartofficeSPDTanggalBerangkat"
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Tanggal Pulang
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="date"
+                        id="smartofficeSPDTanggalPulang"
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>Jumlah Hari</label>
+                    <input
+                        type="text"
+                        id="smartofficeSPDJumlahHari"
+                        placeholder="Otomatis"
+                        readonly
+                    >
+                </div>
+            </div>
+
+            <!-- TIPE PERJALANAN -->
+            <div class="smartoffice-spd-trip-section">
+
+                <label>
+                    Tipe Perjalanan
+                </label>
+
+                <div
+                    id="smartofficeSPDTipeContainer"
+                    class="smartoffice-spd-trip-type"
+                >
+                    <button
+                        type="button"
+                        id="smartofficeSPDTipePulangPergi"
+                        class="smartoffice-spd-trip-button"
+                        data-value="PULANG_PERGI"
+                    >
+                        Pulang Pergi
+                    </button>
+
+                    <button
+                        type="button"
+                        id="smartofficeSPDTipeMenginap"
+                        class="smartoffice-spd-trip-button"
+                        data-value="MENGINAP"
+                    >
+                        Menginap
+                    </button>
+                </div>
+
+                <!-- Nilai yang nanti dikirim -->
+                <input
+                    type="hidden"
+                    id="smartofficeSPDTipeKeberangkatan"
+                    value=""
+                >
+            </div>
+
+            <!-- =========================
+                DETAIL JADWAL PERJALANAN
+            ========================= -->
+            <div class="smartoffice-spd-accordion">
+                <button
+                    type="button"
+                    class="smartoffice-spd-accordion-header"
+                    data-action="toggle-schedule"
+                >
+                    <div class="smartoffice-spd-card-title">
+                      <svg viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2">
+                          <rect x="8" y="2" width="8" height="4" rx="1"/>
+                          <path d="M9 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-3"/>
+                          <line x1="8" y1="11" x2="16" y2="11"/>
+                          <line x1="8" y1="15" x2="16" y2="15"/>
+                      </svg>
+                      <span>Detail Jadwal Perjalanan</span>
+                  </div>
+                    <svg
+                        id="smartofficeSPDJadwalIcon"
+                        class="smartoffice-spd-accordion-icon"
+                        viewBox="0 0 24 24"
+                    >
+                        <path d="M6 9l6 6 6-6"/>
+                    </svg>
+                </button>
+
+                <div
+                    id="smartofficeSPDDetailJadwal"
+                    class="smartoffice-spd-accordion-body"
+                    style="display:none;"
+                >
+                    <div class="smartoffice-spd-empty-state">
+                        Detail perjalanan akan dibuat otomatis
+                        setelah tanggal perjalanan dipilih.
+                    </div>
+
+                    <div id="smartofficeSPDTimelineContainer">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =========================
+            DATA PENGIKUT
+        ========================= -->
+        <div class="smartoffice-spd-card smartoffice-spd-card-pengikut">
+            <div class="smartoffice-spd-card-header">
+                <div class="smartoffice-spd-card-title">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>Data Pengikut</span>
+                </div>
+
+                <button
+                    type="button"
+                    id="smartofficeSPDBtnTambahPengikut"
+                    class="smartoffice-spd-add-button"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    <span>Tambah</span>
+                </button>
+            </div>
+
+            <!-- =========================
+                LIST PENGIKUT
+            ========================= -->
+            <div
+                id="smartofficeSPDPengikutContainer"
+                class="smartoffice-spd-pengikut-container"
+            ></div>
+        </div>
+
+        <!-- =========================
+            LAMPIRAN
+        ========================= -->
+        <div class="smartoffice-spd-card smartoffice-spd-card-upload">
+          <div class="smartoffice-spd-subtitle">
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l9.2-9.19a4 4 0 0 1 5.65 5.66l-9.2 9.19a2 2 0 1 1-2.83-2.83l8.49-8.48"/>
+            </svg>
+            <span>Lampiran</span>
+          </div>
+
+          <div class="smartoffice-spd-upload-wrapper">         
+              <label
+                for="smartofficeSPDLampiran"
+                class="smartoffice-spd-upload-box"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line
+                    x1="12"
+                    y1="3"
+                    x2="12"
+                    y2="15"
+                  />
+                </svg>
+
+                <div class="smartoffice-spd-upload-content">
+                    <strong>Upload Lampiran</strong>
+                    <p>PDF / JPG / PNG</p>
+                    <small>Maksimal 2 MB</small>
+                    <span id="smartofficeSPDLampiranName">
+                        Belum ada file dipilih
+                    </span>
+                </div>
+              </label>
+              <input
+                type="file"
+                id="smartofficeSPDLampiran"
+                accept=".pdf,.jpg,.jpeg,.png"
+                hidden
+              >         
+          </div>
+        </div>
+      
+        <!-- =========================
+            KONFIRMASI
+        ========================= -->
+        <div class="smartoffice-spd-confirm">
+            <label class="smartoffice-spd-confirm-label">
+                <input
+                    type="checkbox"
+                    id="smartofficeSPDConfirm"
+                >
+                <span>
+                    Saya memastikan seluruh data perjalanan dinas yang diisi sudah benar.
+                </span>
+            </label>
+        </div>
+
+        <!-- =========================
+            SUBMIT
+        ========================= -->
+        <button
+            type="button"
+            id="smartofficeSPDSubmitButton"
+            class="smartoffice-spd-submit-button"
+            disabled
+        >
+            Ajukan SPD
+        </button>
+
+      </div>
+      <!-- END FORM CARD -->
+
+    </div>
+    <!-- END FORM CONTENT -->
+
+    <!-- =========================
+        RIWAYAT SPD
+    ========================= -->
+    <div
+      id="smartofficeRiwayatSPDContent"
+      class="smartoffice-cuti-content"
+      style="display:none;"
+    >
+      <!-- FILTER -->
+      <div class="smartoffice-spd-riwayat-filter">
+
+        <!-- SEMUA -->
+        <button
+          class="smartoffice-spd-riwayat-filter-item active"
+          data-status="SEMUA"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="
+              M4 4h6v6H4z
+              M14 4h6v6h-6z
+              M4 14h6v6H4z
+              M14 14h6v6h-6z
+            "/>
+          </svg>
+          <span>Semua</span>
+        </button>
+
+        <!-- MENUNGGU -->
+        <button
+          class="smartoffice-spd-riwayat-filter-item"
+          data-status="MENUNGGU REVIEW"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="
+              M6 2v6h12V2
+              M6 22v-6h12v6
+              M6 8l12 8
+            "/>
+          </svg>
+          <span>Menunggu</span>
+        </button>
+
+        <!-- DISETUJUI -->
+        <button
+          class="smartoffice-spd-riwayat-filter-item"
+          data-status="DISETUJUI"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+          <span>Disetujui</span>
+        </button>
+
+        <!-- REVISI -->
+        <button
+          class="smartoffice-spd-riwayat-filter-item"
+          data-status="PERLU REVISI"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="
+              M12 20h9
+            "/>
+            <path d="
+              M16.5 3.5
+              a2.1 2.1 0 013 3
+              L7 19l-4 1
+              1-4Z
+            "/>
+          </svg>
+          <span>Revisi</span>
+        </button>
+
+        <!-- DIBATALKAN -->
+        <button
+          class="smartoffice-spd-riwayat-filter-item"
+          data-status="DIBATALKAN"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="
+              M18 6L6 18
+              M6 6l12 12
+            "/>
+          </svg>
+          <span>Dibatalkan</span>
+        </button>
+      </div>
+
+      <!-- LIST -->
+      <div
+        id="smartofficeRiwayatSPDList"
+      >
+        <div class="smartoffice-approval-skeleton-card"></div>
+        <div class="smartoffice-approval-skeleton-card"></div>
+        <div class="smartoffice-approval-skeleton-card"></div>
+      </div>
+    </div>
+</div>
