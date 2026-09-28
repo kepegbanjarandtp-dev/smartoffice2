@@ -917,7 +917,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            NOMOR AGENDA
+               NOMOR AGENDA
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(2),
             .smartoffice-suratmasuk-report-table td:nth-child(2){
@@ -929,7 +929,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            TANGGAL TERIMA
+               TANGGAL TERIMA
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(3),
             .smartoffice-suratmasuk-report-table td:nth-child(3){
@@ -939,7 +939,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            TANGGAL SURAT
+               TANGGAL SURAT
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(4),
             .smartoffice-suratmasuk-report-table td:nth-child(4){
@@ -949,7 +949,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            NOMOR SURAT
+               NOMOR SURAT
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(5),
             .smartoffice-suratmasuk-report-table td:nth-child(5){
@@ -959,7 +959,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            PENGIRIM
+               PENGIRIM
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(6),
             .smartoffice-suratmasuk-report-table td:nth-child(6){
@@ -971,7 +971,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            PERIHAL
+               PERIHAL
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(7),
             .smartoffice-suratmasuk-report-table td:nth-child(7){
@@ -983,7 +983,7 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            SIFAT
+               SIFAT
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(8),
             .smartoffice-suratmasuk-report-table td:nth-child(8){
@@ -993,11 +993,23 @@ export function smartofficeGenerateTemplateLaporan(
             }
 
             /* =========================
-            DISPOSISI
+               DISPOSISI
             ========================= */
             .smartoffice-suratmasuk-report-table th:nth-child(9),
             .smartoffice-suratmasuk-report-table td:nth-child(9){
                 width:150px;
+                white-space:normal;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                text-align:left;
+            }
+
+            /* =========================
+               CATATAN DISPOSISI
+            ========================= */
+            .smartoffice-suratmasuk-report-table th:nth-child(10),
+            .smartoffice-suratmasuk-report-table td:nth-child(10){
+                width:220px;
                 white-space:normal;
                 word-break:break-word;
                 overflow-wrap:anywhere;
@@ -1439,6 +1451,7 @@ export function smartofficeGenerateLaporanSuratMasuk(
                         <th>Perihal</th>
                         <th>Sifat</th>
                         <th>Disposisi</th>
+                        <th>Catatan Disposisi</th>
                     </tr>
                 </thead>
 
@@ -1455,6 +1468,7 @@ export function smartofficeGenerateLaporanSuratMasuk(
                                 <td>${item.perihal || "-"}</td>
                                 <td>${item.sifat || "-"}</td>
                                 <td>${item.disposisi || "-"}</td>
+                                <td>${item.catatanDisposisi || "-"}</td>
                             </tr>
                         `;
                     }).join("")}

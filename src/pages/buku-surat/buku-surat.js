@@ -2572,6 +2572,32 @@ function smartofficeRenderSuratMasuk(
                             }
                         </strong>
                     </div>
+
+                    <!-- CATATAN DISPOSISI -->
+                    <div
+                        class="
+                            smartoffice-suratmasuk-meta
+                            smartoffice-suratmasuk-catatan-disposisi
+                            full
+                        "
+                    >
+                        <span
+                            class="
+                                smartoffice-suratmasuk-meta-label
+                            "
+                        >
+                            Catatan Disposisi
+                        </span>
+
+                        <strong
+                            class="
+                                smartoffice-suratmasuk-meta-value
+                                note
+                            "
+                        >
+                            ${item.catatanDisposisi || "-"}
+                        </strong>
+                    </div>
                 </div>
 
                 <!-- ==================================
@@ -3095,6 +3121,24 @@ async function smartofficeRenderFormSuratMasuk(
                     </option>
                 </select>
             </div>
+            
+            <!-- PERIHAL -->
+            <div
+                class="
+                    smartoffice-suratmasuk-form-group
+                    full
+                "
+            >
+                <label>
+                    Perihal
+                </label>
+
+                <textarea
+                    id="smartofficeSuratMasukPerihal"
+                    rows="3"
+                    required
+                >${data?.perihal || ""}</textarea>
+            </div>
 
             <!-- DISPOSISI -->
             <div
@@ -3182,7 +3226,7 @@ async function smartofficeRenderFormSuratMasuk(
                 </div>
             </div>
 
-            <!-- PERIHAL -->
+            <!-- CATATAN DISPOSISI -->
             <div
                 class="
                     smartoffice-suratmasuk-form-group
@@ -3190,15 +3234,118 @@ async function smartofficeRenderFormSuratMasuk(
                 "
             >
                 <label>
-                    Perihal
+                    Catatan Disposisi
                 </label>
 
-                <textarea
-                    id="smartofficeSuratMasukPerihal"
-                    rows="3"
-                    required
-                >${data?.perihal || ""}</textarea>
+                <div
+                    id="smartofficeSuratMasukCatatanDisposisiDropdown"
+                    class="smartoffice-catatan-disposisi-select"
+                >
 
+                    <!-- SELECTED -->
+                    <div
+                        class="smartoffice-catatan-disposisi-selected"
+                        tabindex="0"
+                    >
+                        <div
+                            class="smartoffice-catatan-disposisi-values"
+                        >
+                            <span
+                                class="smartoffice-catatan-disposisi-placeholder"
+                            >
+                                Pilih Catatan Disposisi
+                            </span>
+                        </div>
+
+                        <svg
+                            class="smartoffice-catatan-disposisi-arrow"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="m6 9 6 6 6-6"/>
+                        </svg>
+                    </div>
+
+                    <!-- DROPDOWN -->
+                    <div
+                        class="smartoffice-catatan-disposisi-dropdown"
+                    >
+
+                        <div
+                            class="smartoffice-catatan-disposisi-options"
+                        >
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Wakili / Hadiri / Terima / Laporkan Hasilnya"
+                            >
+                                Wakili / Hadiri / Terima / Laporkan Hasilnya
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Agendakan / Persiapkan / Koordinasikan"
+                            >
+                                Agendakan / Persiapkan / Koordinasikan
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Selesaikan sesuai ketentuan / Peraturan yang berlaku"
+                            >
+                                Selesaikan sesuai ketentuan / Peraturan yang berlaku
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Pelajari / Telaah / Sarannya"
+                            >
+                                Pelajari / Telaah / Sarannya
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Untuk ditindaklanjuti / Dipedoman / Dipantau Pelaksanaannya"
+                            >
+                                Untuk ditindaklanjuti / Dipedoman / Dipantau Pelaksanaannya
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Untuk dijawab / Dicatat / File"
+                            >
+                                Untuk dijawab / Dicatat / File
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Siapkan pointer / bahan"
+                            >
+                                Siapkan pointer / bahan
+                            </div>
+
+                            <div
+                                class="smartoffice-catatan-disposisi-option"
+                                data-value="Untuk bahan rapat / bahan lebih lanjut"
+                            >
+                                Untuk bahan rapat / bahan lebih lanjut
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- VALUE ASLI UNTUK SUBMIT -->
+                <input
+                    type="hidden"
+                    id="smartofficeSuratMasukCatatanDisposisi"
+                    value="${data?.catatanDisposisi || ""}"
+                >
             </div>
 
             <!-- ==================================================
@@ -3440,6 +3587,10 @@ async function smartofficeRenderFormSuratMasuk(
         data
     );
 
+    renderCatatanDisposisiDropdown(
+        data
+    );
+
     /* ==================================================
     LOAD NOMOR AGENDA
     ================================================== */
@@ -3606,7 +3757,7 @@ async function renderDisposisiDropdown(
 
     try{
         const result =
-            await smartofficeGetMasterSurat();
+            await smartofficeGetMasterSuratFirestore();
         if(
             pageInstance !== smartofficeBukuSuratPageInstance
         ){
@@ -3996,7 +4147,6 @@ async function renderDisposisiDropdown(
         if(
             searchInput
         ){
-
             searchInput.addEventListener(
                 "input",
                 function(){
@@ -4037,6 +4187,380 @@ async function renderDisposisiDropdown(
             </div>
         `;
     }
+}
+
+
+/* =====================================================
+   CATATAN DISPOSISI SURAT MASUK
+   CUSTOM MULTI SELECT
+===================================================== */
+function renderCatatanDisposisiDropdown(
+    data = null,
+    pageInstance = smartofficeBukuSuratPageInstance
+){
+    if(
+        pageInstance !== smartofficeBukuSuratPageInstance
+    ){
+        return;
+    }
+
+    const container =
+        document.getElementById(
+            "smartofficeSuratMasukCatatanDisposisiDropdown"
+        );
+    if(!container){
+        return;
+    }
+
+    const selectedArea =
+        container.querySelector(
+            ".smartoffice-catatan-disposisi-selected"
+        );
+
+    const values =
+        container.querySelector(
+            ".smartoffice-catatan-disposisi-values"
+        );
+
+    const options =
+        container.querySelectorAll(
+            ".smartoffice-catatan-disposisi-option"
+        );
+
+    const hiddenInput =
+        document.getElementById(
+            "smartofficeSuratMasukCatatanDisposisi"
+        );
+
+    if(
+        !selectedArea ||
+        !values ||
+        !hiddenInput
+    ){
+        return;
+    }
+
+    /* ==================================================
+       RESTORE DATA EDIT
+    ================================================== */
+    let selectedValues = String(
+        data?.catatanDisposisi ||
+        hiddenInput.value ||
+        ""
+    )
+        .split(";")
+        .map(value => value.trim())
+        .filter(Boolean);
+
+    /* ==================================================
+       RENDER SELECTED
+    ================================================== */
+    function renderSelected(){
+
+        values.innerHTML = "";
+
+        /* ==============================================
+           TIDAK ADA PILIHAN
+        ============================================== */
+        if(!selectedValues.length){
+            values.innerHTML = `
+                <span
+                    class="smartoffice-catatan-disposisi-placeholder"
+                >
+                    Pilih Catatan Disposisi
+                </span>
+            `;
+
+            hiddenInput.value = "";
+            options.forEach(option => {
+
+                option.classList.remove(
+                    "selected"
+                );
+            });
+
+            return;
+        }
+
+        /* ==============================================
+           RENDER PILIHAN
+        ============================================== */
+        selectedValues.forEach(value => {
+            const selectedOption =
+                Array.from(options)
+                    .find(
+                        option =>
+                            option.dataset.value === value
+                    );
+
+            const displayValue =
+                selectedOption
+                    ? selectedOption.textContent.trim()
+                    : value;
+
+            /* ==========================================
+               CHIP / ITEM TERPILIH
+            ========================================== */
+            const item =
+                document.createElement("span");
+
+            item.className =
+                "smartoffice-catatan-disposisi-value";
+
+            /* ==========================================
+               TEXT
+            ========================================== */
+            const text =
+                document.createElement("span");
+
+            text.textContent =
+                displayValue;
+
+            /* ==========================================
+               BUTTON HAPUS
+            ========================================== */
+            const remove =
+                document.createElement("button");
+
+            remove.type = "button";
+            remove.className =
+                "smartoffice-catatan-disposisi-remove";
+            remove.innerHTML = "×";
+            remove.title =
+                "Hapus pilihan";
+            remove.addEventListener(
+                "click",
+                function(event){
+                    event.preventDefault();
+                    event.stopPropagation();
+                    selectedValues =
+                        selectedValues.filter(
+                            itemValue =>
+                                itemValue !== value
+                        );
+
+                    renderSelected();
+                }
+            );
+
+            item.appendChild(text);
+            item.appendChild(remove);
+            values.appendChild(item);
+        });
+
+        /* ==============================================
+           UPDATE HIDDEN INPUT
+        ============================================== */
+        hiddenInput.value =
+            selectedValues.join(";");
+
+        /* ==============================================
+           UPDATE STATUS OPTION
+        ============================================== */
+        options.forEach(option => {
+            option.classList.toggle(
+                "selected",
+                selectedValues.includes(
+                    option.dataset.value
+                )
+            );
+        });
+    }
+
+    /* ==================================================
+       CLICK OPTION
+    ================================================== */
+    options.forEach(option => {
+        option.addEventListener(
+            "click",
+            function(event){
+                event.stopPropagation();
+
+                const value =
+                    String(
+                        this.dataset.value || ""
+                    ).trim();
+                if(!value){
+                    return;
+                }
+
+                /* ======================================
+                   JIKA SUDAH DIPILIH
+                   → HAPUS
+                ====================================== */
+                if(
+                    selectedValues.includes(value)
+                ){
+                    selectedValues =
+                        selectedValues.filter(
+                            item =>
+                                item !== value
+                        );
+                }
+
+                /* ======================================
+                   JIKA BELUM DIPILIH
+                   → TAMBAH
+                ====================================== */
+                else{
+                    selectedValues.push(
+                        value
+                    );
+                }
+
+                renderSelected();
+
+                /* ======================================
+                   JANGAN TUTUP DROPDOWN
+                   KARENA MULTI SELECT
+                ====================================== */
+                container.classList.add(
+                    "open"
+                );
+            }
+        );
+    });
+
+    /* ==================================================
+       OUTSIDE CLICK
+    ================================================== */
+    if(
+        window.smartofficeCatatanDisposisiOutsideClickHandler
+    ){
+        document.removeEventListener(
+            "click",
+            window.smartofficeCatatanDisposisiOutsideClickHandler
+        );
+    }
+
+    window.smartofficeCatatanDisposisiOutsideClickHandler =
+        function(){
+            container.classList.remove(
+                "open"
+            );
+
+            container.classList.remove(
+                "drop-up"
+            );
+        };
+
+    document.addEventListener(
+        "click",
+        window.smartofficeCatatanDisposisiOutsideClickHandler
+    );
+
+    /* ==================================================
+       CEGAH KLIK DALAM DROPDOWN
+    ================================================== */
+    if(
+        !container.dataset.clickReady
+    ){
+        container.addEventListener(
+            "click",
+            function(event){
+                event.stopPropagation();
+            }
+        );
+
+        container.dataset.clickReady =
+            "1";
+    }
+
+    /* ==================================================
+       OPEN / CLOSE
+    ================================================== */
+    selectedArea.addEventListener(
+        "click",
+        function(event){
+            event.stopPropagation();
+
+            const isOpen =
+                container.classList.contains(
+                    "open"
+                );
+
+            /* ==========================================
+               TUTUP
+            ========================================== */
+            if(isOpen){
+                container.classList.remove(
+                    "open"
+                );
+
+                container.classList.remove(
+                    "drop-up"
+                );
+
+                return;
+            }
+
+            /* ==========================================
+               BUKA
+            ========================================== */
+            container.classList.add(
+                "open"
+            );
+
+            /* ==========================================
+               CEK RUANG
+            ========================================== */
+            requestAnimationFrame(
+                function(){
+                    if(
+                        pageInstance !==
+                        smartofficeBukuSuratPageInstance
+                    ){
+                        return;
+                    }
+
+                    const rect =
+                        container.getBoundingClientRect();
+
+                    const dropdown =
+                        container.querySelector(
+                            ".smartoffice-catatan-disposisi-dropdown"
+                        );
+                    if(!dropdown){
+                        return;
+                    }
+
+                    const dropdownHeight =
+                        Math.min(
+                            dropdown.scrollHeight,
+                            320
+                        );
+
+                    const spaceBelow =
+                        window.innerHeight -
+                        rect.bottom;
+
+                    const spaceAbove =
+                        rect.top;
+                    if(
+                        spaceBelow <
+                            dropdownHeight
+                        &&
+                        spaceAbove >
+                            spaceBelow
+                    ){
+                        container.classList.add(
+                            "drop-up"
+                        );
+                    }
+                    else{
+                        container.classList.remove(
+                            "drop-up"
+                        );
+                    }
+                }
+            );
+        }
+    );
+
+    /* ==================================================
+       FIRST RENDER
+    ================================================== */
+    renderSelected();
 }
 
 
@@ -4308,6 +4832,10 @@ export async function smartofficeSubmitSuratMasuk(){
         {
             id: "smartofficeSuratMasukPerihal",
             label: "Perihal"
+        },
+        {
+            id: "smartofficeSuratMasukCatatanDisposisi",
+            label: "Catatan Disposisi"
         }
     ];
 
@@ -4426,7 +4954,14 @@ export async function smartofficeSubmitSuratMasuk(){
                DISIMPAN DALAM SATU KOLOM */
             disposisi:
                 smartofficeSuratMasukDisposisiSelected
-                    .join(";")
+                    .join(";"),
+
+            /* CATATAN DISPOSISI
+               DISIMPAN DI KOLOM L */
+            catatanDisposisi:
+                document.getElementById(
+                    "smartofficeSuratMasukCatatanDisposisi"
+                )?.value || ""
         };
 
         /* ==================================================

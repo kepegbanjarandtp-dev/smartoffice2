@@ -186,6 +186,9 @@ export async function smartofficeGetSuratMasukFirestore(
                             data.disposisi ||
                             "",
 
+                        catatanDisposisi:
+                            data.catatanDisposisi || "",
+
                         file:
                             data.linkDokumen ||
                             data.file ||

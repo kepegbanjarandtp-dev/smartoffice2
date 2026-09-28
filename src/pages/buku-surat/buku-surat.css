@@ -2199,6 +2199,238 @@
 }
 
 
+/* =====================================================
+   CATATAN DISPOSISI
+   CUSTOM MULTI SELECT
+===================================================== */
+.smartoffice-catatan-disposisi-select {
+    position: relative;
+    width: 100%;
+}
+
+/* =====================================================
+   SELECTED
+===================================================== */
+.smartoffice-catatan-disposisi-selected {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    background: #ffffff;
+    border: 1px solid #d7dce5;
+    border-radius: 10px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition:
+        border-color .18s ease,
+        box-shadow .18s ease;
+}
+
+.smartoffice-catatan-disposisi-selected:hover {
+    border-color: #aeb7c5;
+}
+
+.smartoffice-catatan-disposisi-select.open
+.smartoffice-catatan-disposisi-selected {
+    border-color: #7c3aed;
+    box-shadow:
+        0 0 0 3px
+        rgba(124, 58, 237, .10);
+}
+
+/* =====================================================
+   VALUES
+===================================================== */
+.smartoffice-catatan-disposisi-values {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 5px;
+}
+
+/* =====================================================
+   PLACEHOLDER
+===================================================== */
+.smartoffice-catatan-disposisi-placeholder {
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+/* =====================================================
+   VALUE TERPILIH
+===================================================== */
+.smartoffice-catatan-disposisi-value {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    box-sizing: border-box;
+}
+
+/* =====================================================
+   TEXT VALUE
+===================================================== */
+.smartoffice-catatan-disposisi-value > span:first-child {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* =====================================================
+   ARROW
+===================================================== */
+.smartoffice-catatan-disposisi-arrow {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: #64748b;
+    transition:
+        transform .18s ease;
+}
+
+.smartoffice-catatan-disposisi-select.open
+.smartoffice-catatan-disposisi-arrow {
+    transform: rotate(180deg);
+}
+
+/* =====================================================
+   DROPDOWN
+===================================================== */
+.smartoffice-catatan-disposisi-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: none;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow:
+        0 12px 30px
+        rgba(15, 23, 42, .14);
+    box-sizing: border-box;
+}
+
+.smartoffice-catatan-disposisi-select.open
+.smartoffice-catatan-disposisi-dropdown {
+    display: block;
+}
+
+/* =====================================================
+   DROP UP
+===================================================== */
+.smartoffice-catatan-disposisi-select.drop-up
+.smartoffice-catatan-disposisi-dropdown {
+    top: auto;
+    bottom: calc(100% + 6px);
+}
+
+/* =====================================================
+   OPTIONS
+===================================================== */
+.smartoffice-catatan-disposisi-options {
+    max-height: 320px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+/* =====================================================
+   OPTION
+===================================================== */
+.smartoffice-catatan-disposisi-option {
+    position: relative;
+    padding: 11px 12px;
+    border-radius: 8px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.45;
+    cursor: pointer;
+    transition:
+        background .15s ease,
+        color .15s ease;
+}
+
+.smartoffice-catatan-disposisi-option:hover {
+    background: #f5f3ff;
+    color: #5b21b6;
+}
+
+
+/* =====================================================
+   SELECTED OPTION
+===================================================== */
+.smartoffice-catatan-disposisi-option.selected {
+    background: #f5f3ff;
+    color: #5b21b6;
+    font-weight: 600;
+}
+
+.smartoffice-catatan-disposisi-option.selected::after {
+    content: "✓";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    font-weight: 700;
+    color: #7c3aed;
+}
+
+/* =====================================================
+   REMOVE BUTTON
+===================================================== */
+.smartoffice-catatan-disposisi-remove {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #94a3b8;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 20px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition:
+        background .15s ease,
+        color .15s ease,
+        transform .15s ease;
+}
+
+.smartoffice-catatan-disposisi-remove:hover {
+    background: #ede9fe;
+    color: #6d28d9;
+    transform: scale(1.05);
+}
+
+.smartoffice-catatan-disposisi-remove:active {
+    transform: scale(.94);
+}
+
 /* ======================================================
    UPLOAD DOKUMEN SURAT MASUK
 ====================================================== */
@@ -2286,16 +2518,12 @@
 ====================================================== */
 .smartoffice-suratmasuk-upload-selected{
     width:100%;
-
     display:flex;
     align-items:center;
     gap:11px;
-
     padding:11px 12px;
-
     border:1px solid #dbe5f0;
     border-radius:12px;
-
     background:#f8fafc;
 }
 
@@ -2326,7 +2554,6 @@
     font-size:12px;
     font-weight:700;
     color:#334155;
-
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
@@ -2535,29 +2762,30 @@
     ================================================== */
     .smartoffice-suratmasuk-form-header {
         padding:
+            10px
             16px
-            16px
-            14px;
+            8px;
         gap: 10px;
     }
 
     .smartoffice-suratmasuk-form-title {
-        font-size: 15px;
+        font-size: 13px;
     }
 
     .smartoffice-suratmasuk-form-subtitle {
         font-size: 10px;
+        margin: 0;
     }
 
     .smartoffice-suratmasuk-form-close {
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
         border-radius: 10px;
     }
 
     .smartoffice-suratmasuk-form-close svg {
-        width: 15px;
-        height: 15px;
+        width: 13px;
+        height: 13px;
     }
 
     /* ==================================================
@@ -2599,7 +2827,7 @@
     ================================================== */
     .smartoffice-suratmasuk-form-group input,
     .smartoffice-suratmasuk-form-group select {
-        height: 38px;
+        height: 34px;
         font-size: 11px;
         border-radius: 11px;
         padding:
@@ -2664,6 +2892,91 @@
         padding:
             8px;
         font-size: 11px;
+    }
+
+    /* ================================================
+       CATATAN DISPOSISI
+    ================================================ */
+    .smartoffice-catatan-disposisi-selected {
+        min-height: 48px;
+        padding: 10px 13px;
+        gap: 10px;
+    }
+
+    /* ================================================
+       VALUES
+    ================================================ */
+    .smartoffice-catatan-disposisi-values {
+        gap: 4px;
+    }
+
+    /* ================================================
+       PLACEHOLDER
+    ================================================ */
+    .smartoffice-catatan-disposisi-placeholder {
+        font-size: 11px;
+        line-height: 1.4;
+    }
+
+    /* ================================================
+       VALUE TERPILIH
+    ================================================ */
+    .smartoffice-catatan-disposisi-value {
+        font-size: 11px;
+        line-height: 1.4;
+        gap: 6px;
+    }
+
+    /* ================================================
+       REMOVE
+    ================================================ */
+    .smartoffice-catatan-disposisi-remove {
+        flex-basis: 18px;
+        width: 18px;
+        height: 18px;
+        font-size: 13px;
+        line-height: 18px;
+    }
+
+    /* ================================================
+       ARROW
+    ================================================ */
+    .smartoffice-catatan-disposisi-arrow {
+        width: 17px;
+        height: 17px;
+    }
+
+    /* ================================================
+       DROPDOWN
+    ================================================ */
+    .smartoffice-catatan-disposisi-dropdown {
+        border-radius: 11px;
+        padding: 5px;
+    }
+
+    /* ================================================
+       OPTIONS
+    ================================================ */
+    .smartoffice-catatan-disposisi-options {
+        max-height: 300px;
+    }
+
+    /* ================================================
+       OPTION
+    ================================================ */
+    .smartoffice-catatan-disposisi-option {
+        padding: 6px;
+        padding-right: 34px;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    /* ================================================
+       SELECTED OPTION
+    ================================================ */
+    .smartoffice-catatan-disposisi-option.selected::after {
+        right: 11px;
+        font-size: 12px;
     }
 
     /* ==================================================
@@ -2748,7 +3061,7 @@
     .smartoffice-suratmasuk-form-button {
         width: 100%;
         min-width: 0;
-        height: 42px;
+        height: 36px;
         padding:
             0
             12px;
