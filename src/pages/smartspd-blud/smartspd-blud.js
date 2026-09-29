@@ -1041,11 +1041,65 @@ function smartofficeInitSchedule(){
             input,
             "change",
             function(){
+                /* =========================
+                   VALIDASI HARI MINGGU
+                ========================= */
                 smartofficeValidateDateSunday(
                     input
                 );
+
+                /* =========================
+                   VALIDASI URUTAN TANGGAL
+                ========================= */
+                const tanggalValid =
+                    smartofficeValidateSPDDateRange(
+                        input
+                    );
+
+                if(!tanggalValid){
+                    const jumlahHari =
+                        document.getElementById(
+                            "smartofficeSPDJumlahHari"
+                        );
+                    if(jumlahHari){
+                        jumlahHari.value = "";
+                    }
+
+                    smartofficeRenderSPDTimeline();
+                    smartofficeUpdateProgress();
+                    smartofficeUpdateSubmitButton();
+
+                    return;
+                }
+
+                /* =========================
+                HITUNG JUMLAH HARI
+                ========================= */
                 smartofficeHitungJumlahHariSPD();
+
+                /* =========================
+                KUNCI TIPE JIKA 1 HARI
+                ========================= */
+                smartofficeUpdateTripTypeLock();
+
+                /* =========================
+                RENDER DETAIL
+                ========================= */
                 smartofficeRenderSPDTimeline();
+
+                /* =========================
+                BUKA OTOMATIS JIKA 1 HARI
+                ========================= */
+                const jumlahHari =
+                    Number(
+                        document.getElementById(
+                            "smartofficeSPDJumlahHari"
+                        )?.value || 0
+                    );
+                if(jumlahHari === 1){
+                    smartofficeOpenSPDJadwal();
+                }
+
                 smartofficeUpdateProgress();
                 smartofficeUpdateSubmitButton();
             }
@@ -1078,7 +1132,82 @@ function smartofficeValidateDateSunday(input){
 }
 
 /* ======================================================
-   10.3 HITUNG JUMLAH HARI SPD
+   10.3 VALIDASI URUTAN TANGGAL SPD
+        SPD DIBUAT <= BERANGKAT <= PULANG
+====================================================== */
+function smartofficeValidateSPDDateRange(changedInput){
+
+    const tanggalSPD =
+        document.getElementById(
+            "smartofficeSPDTanggalSPD"
+        );
+
+    const tanggalBerangkat =
+        document.getElementById(
+            "smartofficeSPDTanggalBerangkat"
+        );
+
+    const tanggalPulang =
+        document.getElementById(
+            "smartofficeSPDTanggalPulang"
+        );
+
+    if(
+        !tanggalSPD ||
+        !tanggalBerangkat ||
+        !tanggalPulang
+    ){
+        return true;
+    }
+
+    /* =========================
+       SPD DIBUAT
+       HARUS <= BERANGKAT
+    ========================= */
+    if(
+        tanggalSPD.value &&
+        tanggalBerangkat.value &&
+        tanggalSPD.value >
+        tanggalBerangkat.value
+    ){
+        changedInput.value = "";
+
+        smartofficeShowToast(
+            "Tanggal SPD dibuat tidak boleh melebihi tanggal berangkat.",
+            "error"
+        );
+
+        return false;
+    }
+
+    /* =========================
+       BERANGKAT
+       HARUS <= PULANG
+    ========================= */
+    if(
+        tanggalBerangkat.value &&
+        tanggalPulang.value &&
+        tanggalBerangkat.value >
+        tanggalPulang.value
+    ){
+        changedInput.value = "";
+
+        smartofficeShowToast(
+            "Tanggal berangkat tidak boleh melebihi tanggal pulang.",
+            "error"
+        );
+
+        return false;
+    }
+
+    /* =========================
+       SEMUA VALID
+    ========================= */
+    return true;
+}
+
+/* ======================================================
+   10.4 HITUNG JUMLAH HARI SPD
 ====================================================== */
 function smartofficeHitungJumlahHariSPD(){
 
@@ -1146,7 +1275,87 @@ function smartofficeHitungJumlahHariSPD(){
 }
 
 /* ======================================================
-   10.4 INIT TIPE PERJALANAN
+   10.5 KUNCI TIPE PERJALANAN UNTUK 1 HARI
+====================================================== */
+function smartofficeUpdateTripTypeLock(){
+
+    const jumlahHari =
+        Number(
+            document.getElementById(
+                "smartofficeSPDJumlahHari"
+            )?.value || 0
+        );
+
+    const pulangPergi =
+        document.querySelector(
+            '#smartofficeSPDTipeContainer [data-value="PULANG_PERGI"]'
+        );
+
+    const menginap =
+        document.querySelector(
+            '#smartofficeSPDTipeContainer [data-value="MENGINAP"]'
+        );
+
+    const hidden =
+        document.getElementById(
+            "smartofficeSPDTipeKeberangkatan"
+        );
+
+    /* =========================
+       1 HARI
+    ========================= */
+    if(jumlahHari === 1){
+
+        /* Kunci Pulang Pergi */
+        if(pulangPergi){
+            pulangPergi.classList.add("active");
+            pulangPergi.disabled = true;
+            pulangPergi.setAttribute(
+                "aria-pressed",
+                "true"
+            );
+        }
+
+        /* Nonaktifkan Menginap */
+        if(menginap){
+            menginap.disabled = true;
+            menginap.classList.remove("active");
+            menginap.setAttribute(
+                "aria-disabled",
+                "true"
+            );
+        }
+
+        /* Paksa tipe menjadi Pulang Pergi */
+        if(hidden){
+            hidden.value =
+                "PULANG_PERGI";
+        }
+
+        return;
+    }
+
+    /* =========================
+       LEBIH DARI 1 HARI
+    ========================= */
+
+    if(pulangPergi){
+        pulangPergi.disabled = false;
+        pulangPergi.removeAttribute(
+            "aria-pressed"
+        );
+    }
+
+    if(menginap){
+        menginap.disabled = false;
+        menginap.removeAttribute(
+            "aria-disabled"
+        );
+    }
+}
+
+/* ======================================================
+   10.6 INIT TIPE PERJALANAN
 ====================================================== */
 function smartofficeInitTripType(){
     document
@@ -1202,10 +1411,16 @@ function smartofficeInitTripType(){
                 }
             );
         });
+
+    /* ==================================================
+       CEK KONDISI AWAL
+    ================================================== */
+    smartofficeUpdateTripTypeLock();
 }
 
 /* ======================================================
-   10.5 RENDER DETAIL JADWAL PERJALANAN
+   10.7 RENDER DETAIL JADWAL PERJALANAN
+        DETAIL OTOMATIS DARI TANGGAL SPD
 ====================================================== */
 function smartofficeRenderSPDTimeline(){
 
@@ -1223,25 +1438,10 @@ function smartofficeRenderSPDTimeline(){
         return;
     }
 
-    /* =========================
-       SIMPAN NILAI SEBELUM RENDER
-    ========================= */
-    const previousValues = {};
-
-    container
-        .querySelectorAll("input")
-        .forEach(function(input){
-
-            previousValues[input.id] =
-                input.value || "";
-
-        });
-
     container.innerHTML = "";
 
     if(emptyState){
-        emptyState.style.display =
-            "none";
+        emptyState.style.display = "none";
     }
 
     /* =========================
@@ -1251,7 +1451,7 @@ function smartofficeRenderSPDTimeline(){
         smartofficeHitungJumlahHariSPD();
 
     /* =========================
-       TIPE
+       TIPE PERJALANAN
     ========================= */
     const tipe =
         document.getElementById(
@@ -1259,7 +1459,7 @@ function smartofficeRenderSPDTimeline(){
         )?.value || "";
 
     /* =========================
-       BELUM SIAP
+       BELUM LENGKAP
     ========================= */
     if(
         !jumlahHari ||
@@ -1279,13 +1479,12 @@ function smartofficeRenderSPDTimeline(){
     }
 
     /* =========================
-       PULANG PERGI > 3 HARI
+       PULANG PERGI MAX 3 HARI
     ========================= */
     if(
         tipe === "PULANG_PERGI" &&
         Number(jumlahHari) > 3
     ){
-
         container.innerHTML = `
             <div class="smartoffice-spd-empty-state">
                 Perjalanan Pulang Pergi maksimal 3 hari.
@@ -1293,6 +1492,93 @@ function smartofficeRenderSPDTimeline(){
             </div>
         `;
 
+        return;
+    }
+
+    /* ==================================================
+       MENGINAP
+       TAMPILKAN RANGE TANGGAL DALAM 1 CARD
+    ================================================== */
+    if(tipe === "MENGINAP"){
+
+        const tanggalAwal =
+            smartofficeGetScheduleDate(1);
+
+        const tanggalAkhir =
+            smartofficeGetScheduleDate(
+                Number(jumlahHari)
+            );
+
+        const tanggalAwalText =
+            smartofficeFormatSPDScheduleDate(
+                tanggalAwal
+            );
+
+        const tanggalAkhirText =
+            smartofficeFormatSPDScheduleDate(
+                tanggalAkhir
+            );
+
+        const rangeHari =
+            Number(jumlahHari) > 1
+                ? `Hari 1 - ${jumlahHari}`
+                : "Hari 1";
+
+        const rangeTanggal =
+            Number(jumlahHari) > 1
+                ? `${tanggalAwalText} - ${tanggalAkhirText}`
+                : tanggalAwalText;
+
+        const dayCard =
+            document.createElement("div");
+
+        dayCard.className =
+            "smartoffice-spd-timeline-day";
+
+        dayCard.innerHTML = `
+
+            <div class="smartoffice-spd-timeline-day-title">
+                <span>
+                    ${rangeHari}
+                </span>
+
+                <span class="smartoffice-spd-timeline-date">
+                    ${rangeTanggal}
+                </span>
+            </div>
+
+            <div class="smartoffice-spd-jadwal-grid">
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Berangkat
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${tanggalAwalText}"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Pulang
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${tanggalAkhirText}"
+                        readonly
+                    >
+                </div>
+            </div>
+        `;
+
+        container.appendChild(
+            dayCard
+        );
+
+        smartofficeUpdateProgress();
         smartofficeUpdateSubmitButton();
 
         return;
@@ -1300,21 +1586,37 @@ function smartofficeRenderSPDTimeline(){
 
     /* =========================
        MENGINAP
-       HANYA HARI 1
+       HANYA DETAIL HARI 1
     ========================= */
     const totalHari =
-        tipe === "MENGINAP"
-            ? 1
-            : Number(jumlahHari);
+        Number(jumlahHari);
+
+    /* =========================
+       AMBIL LOKASI TUJUAN
+    ========================= */
+    const lokasiTujuan =
+        document.getElementById(
+            "smartofficeSPDLokasi"
+        )?.value.trim() || "";
+
+    /* =========================
+       ASAL / KEMBALI
+       SEMENTARA PUSKESMAS NAMBO
+    ========================= */
+    const lokasiKembali =
+        "Puskesmas Nambo";
 
     /* =========================
        TIMELINE
     ========================= */
     const timeline =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     timeline.className =
         "smartoffice-spd-timeline";
+
     for(
         let hari = 1;
         hari <= totalHari;
@@ -1325,99 +1627,133 @@ function smartofficeRenderSPDTimeline(){
                 hari
             );
 
+        const tanggalText =
+            smartofficeFormatSPDScheduleDate(
+                tanggal
+            );
+
         const dayCard =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
         dayCard.className =
             "smartoffice-spd-timeline-day";
 
         let html = `
             <div class="smartoffice-spd-timeline-day-title">
-                <span>
-                    Hari ${hari}
-                </span>
-
-                <span class="smartoffice-spd-timeline-date">
-                    ${smartofficeFormatSPDScheduleDate(tanggal)}
-                </span>
+                ${
+                    jumlahHari === 1
+                        ? tanggalText
+                        : `Hari ${hari} : ${tanggalText}`
+                }
             </div>
 
             <div class="smartoffice-spd-jadwal-grid">
         `;
 
-        /* =========================
-           HARI 2 & 3
-           PULANG PERGI
-        ========================= */
-        if(
-            tipe === "PULANG_PERGI" &&
-            hari >= 2
-        ){
+        /* ==================================================
+           HARI 1
+           JIKA 1 HARI → LABEL CUKUP BERANGKAT / PULANG
+        ================================================== */
+        if(hari === 1){
             html += `
                 <div class="smartoffice-spd-field">
-                    <label>Lokasi</label>
+                    <label>
+                        ${
+                            jumlahHari === 1
+                                ? "Berangkat"
+                                : "Berangkat Hari 1"
+                        }
+                    </label>
 
                     <input
                         type="text"
-                        id="smartofficeSPD_LokasiHari${hari}"
-                        maxlength="100"
-                        placeholder="Lokasi perjalanan"
+                        value="${tanggalText}"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        ${
+                            jumlahHari === 1
+                                ? "Pulang"
+                                : "Pulang Hari 1"
+                        }
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${tanggalText}"
+                        readonly
                     >
                 </div>
             `;
         }
 
-        /* =========================
-           BERANGKAT
-        ========================= */
-        html += `
-            <div class="smartoffice-spd-field">
-                <label>Berangkat</label>
-
-                <input
-                    type="time"
-                    id="smartofficeSPD_BerangkatHari${hari}"
-                >
-            </div>
-        `;
-
-        /* =========================
-           TIBA
-           HARI 2 & 3 PULANG PERGI
-        ========================= */
+        /* ==================================================
+           HARI 2 & 3
+        ================================================== */
         if(
-            tipe === "PULANG_PERGI" &&
-            hari >= 2
+            hari >= 2 &&
+            tipe === "PULANG_PERGI"
         ){
             html += `
                 <div class="smartoffice-spd-field">
-                    <label>Tiba</label>
+                    <label>
+                        Berangkat Hari ${hari}
+                    </label>
 
                     <input
-                        type="time"
-                        id="smartofficeSPD_TibaHari${hari}"
+                        type="text"
+                        value="${tanggalText}"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Pulang Hari ${hari}
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${tanggalText}"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Lokasi Hari ${hari}
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${smartofficeEscapeHtml(lokasiTujuan)}"
+                        readonly
+                    >
+                </div>
+
+                <div class="smartoffice-spd-field">
+                    <label>
+                        Tiba Hari ${hari}
+                    </label>
+
+                    <input
+                        type="text"
+                        value="${smartofficeEscapeHtml(lokasiKembali)}"
+                        readonly
                     >
                 </div>
             `;
         }
 
-        /* =========================
-           PULANG
-        ========================= */
-        html += `
-            <div class="smartoffice-spd-field">
-                <label>Pulang</label>
-
-                <input
-                    type="time"
-                    id="smartofficeSPD_PulangHari${hari}"
-                >
-            </div>
-        `;
-
         html += `
             </div>
         `;
+
         dayCard.innerHTML =
             html;
 
@@ -1430,30 +1766,13 @@ function smartofficeRenderSPDTimeline(){
         timeline
     );
 
-    /* =========================
-       KEMBALIKAN NILAI LAMA
-    ========================= */
-    Object.keys(
-        previousValues
-    ).forEach(function(id){
-        const input =
-            document.getElementById(id);
-        if(input){
-            input.value =
-                previousValues[id];
-        }
-    });
-
-    /* =========================
-       UPDATE
-    ========================= */
-    smartofficeInitRenderedScheduleEvents();
     smartofficeUpdateProgress();
     smartofficeUpdateSubmitButton();
 }
 
+
 /* ======================================================
-   10.6 RENDER FIELD WAKTU JADWAL
+   10.8 RENDER FIELD WAKTU JADWAL
 ====================================================== */
 function smartofficeRenderTimeField(
     key,
@@ -1472,7 +1791,7 @@ function smartofficeRenderTimeField(
 }
 
 /* ======================================================
-   10.7 INIT EVENT FIELD JADWAL HASIL RENDER
+   10.9 INIT EVENT FIELD JADWAL HASIL RENDER
 ====================================================== */
 function smartofficeInitRenderedScheduleEvents(){
     const container =
@@ -1498,7 +1817,7 @@ function smartofficeInitRenderedScheduleEvents(){
 }
 
 /* ======================================================
-   10.8 OBSERVER PERUBAHAN TIMELINE
+   10.10 OBSERVER PERUBAHAN TIMELINE
 ====================================================== */
 function smartofficeInitScheduleObserver(){
     const container =
@@ -1537,7 +1856,7 @@ function smartofficeInitScheduleObserver(){
 }
 
 /* ======================================================
-   10.9 AMBIL TANGGAL DETAIL JADWAL
+   10.11 AMBIL TANGGAL DETAIL JADWAL
 ====================================================== */
 function smartofficeGetScheduleDate(hari){
 
@@ -1564,7 +1883,7 @@ function smartofficeGetScheduleDate(hari){
 }
 
 /* ======================================================
-   10.10 FORMAT TANGGAL DETAIL JADWAL
+   10.12 FORMAT TANGGAL DETAIL JADWAL
 ====================================================== */
 function smartofficeFormatSPDScheduleDate(date){
 
