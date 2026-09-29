@@ -1557,6 +1557,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_BerangkatHari1"
                         value="${tanggalAwalText}"
                         readonly
                     >
@@ -1569,6 +1570,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_PulangHari1"
                         value="${tanggalAkhirText}"
                         readonly
                     >
@@ -1587,8 +1589,7 @@ function smartofficeRenderSPDTimeline(){
     }
 
     /* =========================
-       MENGINAP
-       HANYA DETAIL HARI 1
+       TIMELINE PULANG PERGI
     ========================= */
     const totalHari =
         Number(jumlahHari);
@@ -1671,6 +1672,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_BerangkatHari1"
                         value="${tanggalText}"
                         readonly
                     >
@@ -1687,6 +1689,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_PulangHari1"
                         value="${tanggalText}"
                         readonly
                     >
@@ -1696,6 +1699,7 @@ function smartofficeRenderSPDTimeline(){
 
         /* ==================================================
            HARI 2 & 3
+           PULANG PERGI
         ================================================== */
         if(
             hari >= 2 &&
@@ -1709,6 +1713,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_BerangkatHari${hari}"
                         value="${tanggalText}"
                         readonly
                     >
@@ -1721,6 +1726,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_PulangHari${hari}"
                         value="${tanggalText}"
                         readonly
                     >
@@ -1733,10 +1739,11 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_LokasiHari${hari}"
                         value="${smartofficeEscapeHtml(lokasiTujuan)}"
                         readonly
                     >
-                </div>
+               </div>
 
                 <div class="smartoffice-spd-field">
                     <label>
@@ -1745,6 +1752,7 @@ function smartofficeRenderSPDTimeline(){
 
                     <input
                         type="text"
+                        id="smartofficeSPD_TibaHari${hari}"
                         value="${smartofficeEscapeHtml(lokasiKembali)}"
                         readonly
                     >
@@ -2289,6 +2297,11 @@ async function smartofficeHandleSubmitSPD(){
     try{
         const data =
             await smartofficeBuildSubmitPayload();
+
+        console.log(
+            "SMARTSPD PAYLOAD:",
+            data
+        );
 
         const response =
             await smartofficeSubmitSPD(data);

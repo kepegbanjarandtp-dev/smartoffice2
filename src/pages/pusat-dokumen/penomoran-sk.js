@@ -49,6 +49,11 @@ import {
 } from "../../services/penomoran-sk-firestore.service.js";
 
 import {
+    smartofficeInitPenomoranSOP,
+    smartofficeLoadPenomoranSOP
+} from "./penomoran-sop.js";
+
+import {
     smartofficeConvertFileToBase64
 } from "../../utils/file.js";
 
@@ -166,6 +171,7 @@ export async function smartofficeLoadPage(){
    INIT TAB PUSAT DOKUMEN
 ====================================================== */
 function smartofficeInitPusatDokumenTab(){
+
     const tabButtons =
         document.querySelectorAll(
             ".smartoffice-tab-button"
@@ -176,14 +182,64 @@ function smartofficeInitPusatDokumenTab(){
         return;
     }
 
-    /* =========================
+    /* ==================================================
+       CONTENT TAB
+    ================================================== */
+    const contentSK =
+        document.getElementById(
+            "smartofficePenomoranSKContent"
+        );
+
+    const contentSOP =
+        document.getElementById(
+            "smartofficePenomoranSOPContent"
+        );
+
+    /* ==================================================
+       FUNGSI TAMPILKAN TAB
+    ================================================== */
+    function showTabContent(tab){
+
+        /* =========================
+           SEMBUNYIKAN SEMUA
+        ========================= */
+        if(contentSK){
+            contentSK.style.display =
+                "none";
+        }
+
+        if(contentSOP){
+            contentSOP.style.display =
+                "none";
+        }
+
+        /* =========================
+           TAMPILKAN YANG AKTIF
+        ========================= */
+        if(
+            tab === "penomoran-sk" &&
+            contentSK
+        ){
+            contentSK.style.display =
+                "";
+        }
+
+        if(
+            tab === "penomoran-sop" &&
+            contentSOP
+        ){
+            contentSOP.style.display =
+                "";
+        }
+    }
+
+    /* ==================================================
        TAB DATA
-    ========================= */
+    ================================================== */
     const tabData = {
         "penomoran-sk": {
             title:
                 "Penomoran SK",
-
             description:
                 "Pengelolaan dan penomoran Surat Keputusan"
         },
@@ -191,7 +247,6 @@ function smartofficeInitPusatDokumenTab(){
         "penomoran-sop": {
             title:
                 "Penomoran SOP",
-
             description:
                 "Pengelolaan dan penomoran Standar Operasional Prosedur"
         },
@@ -199,7 +254,6 @@ function smartofficeInitPusatDokumenTab(){
         "template-dokumen": {
             title:
                 "Template Dokumen",
-
             description:
                 "Pusat template dokumen yang dapat digunakan"
         },
@@ -207,15 +261,35 @@ function smartofficeInitPusatDokumenTab(){
         "arsip-puskesmas": {
             title:
                 "Arsip Puskesmas",
-
             description:
                 "Pusat penyimpanan dan pengelolaan arsip Puskesmas"
         }
     };
 
-    /* =========================
+    /* ==================================================
+       DEFAULT TAB
+       PENOMORAN SK
+    ================================================== */
+    const activeButton =
+        document.querySelector(
+            ".smartoffice-tab-button.active"
+        );
+
+    const defaultTab =
+        activeButton?.dataset.tab ||
+        "penomoran-sk";
+
+    showTabContent(
+        defaultTab
+    );
+
+    smartofficeUpdatePusatDokumenInfoCard(
+        defaultTab
+    );
+
+    /* ==================================================
        TAB CLICK
-    ========================= */
+    ================================================== */
     tabButtons.forEach(
         function(button){
             button.addEventListener(
@@ -241,6 +315,7 @@ function smartofficeInitPusatDokumenTab(){
                     ========================= */
                     tabButtons.forEach(
                         function(item){
+
                             item.classList.remove(
                                 "active"
                             );
@@ -249,6 +324,17 @@ function smartofficeInitPusatDokumenTab(){
 
                     button.classList.add(
                         "active"
+                    );
+
+                    /* =========================
+                       SHOW CONTENT TAB
+                    ========================= */
+                    showTabContent(
+                        tab
+                    );
+
+                    smartofficeUpdatePusatDokumenInfoCard(
+                        tab
                     );
 
                     /* =========================
@@ -270,6 +356,7 @@ function smartofficeInitPusatDokumenTab(){
                             info.querySelector(
                                 ".smartoffice-pusatdokumen-tab-info-description"
                             );
+
                         if(
                             title
                         ){
@@ -293,10 +380,90 @@ function smartofficeInitPusatDokumenTab(){
                     ){
                         smartofficeInitPenomoranSK();
                     }
+
+                    if(
+                        tab === "penomoran-sop"
+                    ){
+                        smartofficeInitPenomoranSOP();
+                        smartofficeLoadPenomoranSOP();
+                    }
                 }
             );
         }
     );
+}
+
+
+/* ======================================================
+   UPDATE INFO CARD PUSAT DOKUMEN
+====================================================== */
+function smartofficeUpdatePusatDokumenInfoCard(
+    tab
+){
+
+    const infoCard =
+        document.getElementById(
+            "smartofficePenomoranSKInfo"
+        );
+    if(
+        !infoCard
+    ){
+        return;
+    }
+
+    const title =
+        infoCard.querySelector(
+            "h2"
+        );
+
+    const description =
+        infoCard.querySelector(
+            ".smartoffice-penomoransk-info-content p"
+        );
+
+    const badge =
+        infoCard.querySelector(
+            ".smartoffice-penomoransk-art-badge"
+        );
+
+    if(
+        tab === "penomoran-sop"
+    ){
+        if(title){
+            title.textContent =
+                "Penomoran SOP";
+        }
+
+        if(description){
+            description.textContent =
+                "Buat dan kelola nomor Standar Operasional Prosedur (SOP) secara otomatis dengan format sesuai ketentuan penomoran Puskesmas.";
+        }
+
+        if(badge){
+            badge.textContent =
+                "SOP";
+        }
+
+        return;
+    }
+
+    /* ==================================================
+       DEFAULT → PENOMORAN SK
+    ================================================== */
+    if(title){
+        title.textContent =
+            "Penomoran SK";
+    }
+
+    if(description){
+        description.textContent =
+            "Buat dan kelola nomor Surat Keputusan (SK) secara otomatis dengan format sesuai ketentuan penomoran Puskesmas.";
+    }
+
+    if(badge){
+        badge.textContent =
+            "SK";
+    }
 }
 
 
