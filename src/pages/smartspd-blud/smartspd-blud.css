@@ -209,7 +209,7 @@
 }
 
 /* Character Counter */
-smartoffice-spd-character-counter{
+.smartoffice-spd-character-counter{
     margin-top:6px;
     font-size:11px;
     line-height:1.2;
@@ -219,7 +219,7 @@ smartoffice-spd-character-counter{
     letter-spacing:.2px;
 }
 
-smartoffice-spd-character-counter span{
+.smartoffice-spd-character-counter span{
     font-weight:600;
     color:#64748b;
 }
@@ -636,6 +636,71 @@ input[readonly]{
 
     pointer-events:none;
 
+}
+
+/* ======================================================
+   FORM PENGIKUT - GRID DESKTOP
+====================================================== */
+
+.smartoffice-spd-pengikut-item{
+    display:flex;
+    flex-direction:column;
+}
+
+.smartoffice-spd-pengikut-item
+.smartoffice-spd-form-group{
+    width:100%;
+}
+
+/* ======================================================
+   FORM PENGIKUT
+====================================================== */
+
+.smartoffice-spd-pengikut-item
+.smartoffice-spd-form-group{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:16px;
+}
+
+.smartoffice-spd-pengikut-item
+.smartoffice-spd-form-group label{
+    font-size:13px;
+    font-weight:600;
+    line-height:1.3;
+    letter-spacing:.2px;
+    color:#334155;
+}
+
+.smartoffice-spd-pengikut-item
+.smartoffice-spd-form-group input{
+    width:100%;
+    height:46px;
+    padding:0 14px;
+    border:1px solid #dbe2ea;
+    border-radius:16px;
+    background:#f8fafc;
+    font-size:14px;
+    color:#334155;
+    outline:none;
+    box-sizing:border-box;
+    transition:.2s ease;
+}
+
+.smartoffice-spd-pengikut-item
+.smartoffice-spd-form-group input:focus{
+    border-color:#2563eb;
+    background:#ffffff;
+    box-shadow:
+        0 0 0 3px rgba(37,99,235,.08);
+}
+
+.smartoffice-spd-pengikut-item
+.smartoffice-spd-form-group input[readonly]{
+    background:#f8fafc;
+    color:#475569;
+    font-weight:600;
 }
 
 /* ======================================================

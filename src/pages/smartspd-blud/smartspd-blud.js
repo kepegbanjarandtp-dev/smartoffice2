@@ -987,7 +987,9 @@ function smartofficeRenderPengikutAutocomplete(
                     item.nip || "";
 
                 tglInput.value =
-                    item.tanggalLahir || "";
+                    smartofficeFormatTanggalLahirPengikut(
+                        item.tanggalLahir
+                    );
 
                 waInput.value =
                     item.noWa ||
@@ -1899,6 +1901,47 @@ function smartofficeFormatSPDScheduleDate(date){
             year: "numeric"
         }
     ).format(date);
+}
+
+/* ======================================================
+   10.13 FORMAT TANGGAL LAHIR PENGIKUT
+         FIRESTORE : M/D/YYYY
+         DISPLAY   : DD/MM/YYYY
+====================================================== */
+function smartofficeFormatTanggalLahirPengikut(
+    tanggal
+){
+
+    if(!tanggal){
+        return "";
+    }
+
+    const value =
+        String(tanggal).trim();
+
+    const match =
+        value.match(
+            /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+        );
+
+    if(!match){
+        return value;
+    }
+
+    const bulan =
+        String(
+            Number(match[1])
+        ).padStart(2,"0");
+
+    const hari =
+        String(
+            Number(match[2])
+        ).padStart(2,"0");
+
+    const tahun =
+        match[3];
+
+    return `${hari}/${bulan}/${tahun}`;
 }
 
 
