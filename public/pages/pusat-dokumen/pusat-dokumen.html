@@ -603,4 +603,193 @@
         </div>
     </div>
   </div>
+
+  <!-- ======================================================
+      PENOMORAN SOP
+  ====================================================== -->
+  <div
+    id="smartofficePenomoranSOPContent"
+    class="smartoffice-penomoransk-content"
+  >
+
+    <!-- ==================================================
+        FILTER BAR PENOMORAN SOP
+    ================================================== -->
+    <div class="smartoffice-penomoransk-filter">
+
+        <!-- SEARCH NOMOR / JUDUL -->
+        <div class="smartoffice-penomoransk-filter-field smartoffice-penomoransk-filter-search">
+            <label>
+                Cari Nomor SOP / Judul
+            </label>
+
+            <input
+                type="text"
+                id="smartofficePenomoranSOPFilterSearch"
+                placeholder="Cari nomor SOP atau judul"
+            >
+        </div>
+
+        <!-- TAHUN -->
+        <div class="smartoffice-penomoransk-filter-field">
+            <label>
+                Tahun
+            </label>
+
+            <select
+                id="smartofficePenomoranSOPFilterTahun"
+            >
+                <option value="">
+                    Pilih tahun
+                </option>
+            </select>
+        </div>
+
+        <!-- KLASTER -->
+        <div class="smartoffice-penomoransk-filter-field">
+            <label>
+                Klaster
+            </label>
+
+            <select
+                id="smartofficePenomoranSOPFilterKlaster"
+            >
+                <option value="">
+                    Semua
+                </option>
+            </select>
+        </div>
+
+        <!-- RESET FILTER -->
+        <button
+            type="button"
+            id="smartofficePenomoranSOPResetButton"
+            class="smartoffice-penomoransk-filter-button"
+            title="Reset Filter"
+            aria-label="Reset Filter"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M3 12a9 9 0 1 0 3-6.7"/>
+                <polyline points="3 4 3 10 9 10"/>
+            </svg>
+
+            <span>
+                Reset
+            </span>
+        </button>
+
+        <!-- TAMBAH SOP -->
+        <button
+            type="button"
+            id="smartofficePenomoranSOPTambahButton"
+            class="smartoffice-penomoransk-tambah-button"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M12 5v14"/>
+                <path d="M5 12h14"/>
+            </svg>
+
+            <span>
+                Tambah SOP
+            </span>
+        </button>
+
+    </div>
+
+
+    <!-- ==================================================
+        LIST SOP
+    ================================================== -->
+    <div
+        id="smartofficePenomoranSOPList"
+        class="smartoffice-penomoransk-list"
+    >
+        <div class="smartoffice-loading">
+            <div class="smartoffice-loading-spinner"></div>
+
+            <div class="smartoffice-loading-text">
+                Pilih tahun untuk memuat data SOP...
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ==================================================
+        MODAL FORM SOP
+    ================================================== -->
+    <div
+        id="smartofficePenomoranSOPFormModal"
+        class="smartoffice-penomoransk-form-modal"
+    >
+
+        <div
+            class="smartoffice-penomoransk-form-overlay"
+            id="smartofficePenomoranSOPFormOverlay"
+        ></div>
+
+
+        <div
+            class="smartoffice-penomoransk-form-content"
+        >
+
+            <!-- HEADER -->
+            <div
+                class="smartoffice-penomoransk-form-header"
+            >
+
+                <div>
+
+                    <h3
+                        class="smartoffice-penomoransk-form-title"
+                        id="smartofficePenomoranSOPFormTitle"
+                    >
+                        Tambah SOP
+                    </h3>
+
+                    <p>
+                        Lengkapi data Standar Operasional Prosedur
+                    </p>
+
+                </div>
+
+
+                <!-- CLOSE -->
+                <button
+                    type="button"
+                    id="smartofficePenomoranSOPFormClose"
+                    class="smartoffice-penomoransk-form-close"
+                    aria-label="Tutup"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- BODY DINAMIS -->
+            <div
+                id="smartofficePenomoranSOPFormBody"
+                class="smartoffice-penomoransk-form-body"
+            ></div>
+
+        </div>
+
+    </div>
+
+  </div>
+
 </div>
