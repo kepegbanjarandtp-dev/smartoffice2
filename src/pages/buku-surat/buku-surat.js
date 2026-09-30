@@ -862,12 +862,24 @@ async function smartofficeLoadDataSuratMasuk(
 ){
     try{
         /* =========================
+           SIMPAN FILTER AKTIF
+        ========================= */
+        const bulanFilter =
+            document.getElementById(
+                "smartofficeSuratMasukFilterBulan"
+            );
+
+        const filterBulanAktif =
+            bulanFilter?.value || "";
+
+        /* =========================
            LOADING CARD CONTENT
         ========================= */
         const container =
             document.getElementById(
                 "smartofficeSuratMasukList"
             );
+
         if(container){
             container.innerHTML = `
                 <div class="
@@ -888,22 +900,14 @@ async function smartofficeLoadDataSuratMasuk(
 
         /* =========================
            QUERY FIRESTORE
-           BULAN BERJALAN
+           PAKAI FILTER AKTIF
         ========================= */
-        const bulanFilter =
-            document.getElementById(
-                "smartofficeSuratMasukFilterBulan"
-            );
-
         let bulan;
         let tahun;
 
-        if(
-            bulanFilter &&
-            bulanFilter.value
-        ){
+        if(filterBulanAktif){
             const parts =
-                bulanFilter.value.split("-");
+                filterBulanAktif.split("-");
 
             tahun =
                 Number(parts[0]);
@@ -953,16 +957,40 @@ async function smartofficeLoadDataSuratMasuk(
             return;
         }
 
-        /* RESET VIEW STATE */
+        /* =========================
+           RESET VIEW STATE
+        ========================= */
         resetSuratMasukViewState();
 
-        /* INIT FILTER */
+        /* =========================
+           INIT FILTER
+        ========================= */
         initFilterSuratMasuk();
 
-        /* INIT BULAN */
+        /* =========================
+           INIT BULAN
+        ========================= */
         initBulanAgendaMasuk();
 
-        /* RENDER HASIL AWAL */
+        /* ==================================================
+           KEMBALIKAN FILTER BULAN/YANG SEDANG AKTIF
+           AGAR TIDAK KEMBALI KE BULAN BERJALAN
+        ================================================== */
+        if(filterBulanAktif){
+            const bulanFilterSetelahInit =
+                document.getElementById(
+                    "smartofficeSuratMasukFilterBulan"
+                );
+
+            if(bulanFilterSetelahInit){
+                bulanFilterSetelahInit.value =
+                    filterBulanAktif;
+            }
+        }
+
+        /* =========================
+           RENDER HASIL
+        ========================= */
         applyFilterMasuk();
 
         suratMasukLoaded =
