@@ -74,12 +74,110 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
             .trim();
 
         const statusPegawai =
-            [statusPegawaiSaatIni];
+            [
+                statusPegawaiSaatIni
+            ];
         if(
             tahunTmtPertama > 0
         ){
-            statusPegawai.push("BLUD");
+            statusPegawai.push(
+                "BLUD"
+            );
         }
+
+        /* =========================
+           RIWAYAT GOLONGAN OTOMATIS
+
+           GOLONGAN PERTAMA
+           DIANGGAP SUDAH ADA
+           DI SK CPNS
+
+           CONTOH:
+
+           II/a → mulai II/b
+           II/c → mulai II/d
+           III/a → mulai III/b
+
+           TAPI JIKA CURRENT GRADE
+           MASIH SAMA DENGAN GOLONGAN
+           PERTAMA, MAKA TIDAK ADA
+           TARGET KENAIKAN.
+        ========================= */
+        const URUTAN_GOLONGAN = [
+            "I/a",
+            "I/b",
+            "I/c",
+            "I/d",
+
+            "II/a",
+            "II/b",
+            "II/c",
+            "II/d",
+
+            "III/a",
+            "III/b",
+            "III/c",
+            "III/d",
+
+            "IV/a",
+            "IV/b",
+            "IV/c",
+            "IV/d"
+        ];
+
+        const golonganPertama =
+            String(
+                pegawai.golonganPertama || ""
+            ).trim();
+
+        const golonganSekarang =
+            String(
+                pegawai.pangkatGolongan || ""
+            ).trim();
+
+        const indexAwal =
+            URUTAN_GOLONGAN.indexOf(
+                golonganPertama
+            );
+
+        const indexAkhir =
+            URUTAN_GOLONGAN.indexOf(
+                golonganSekarang
+            );
+
+        let riwayatGolongan = [];
+
+        if(
+            indexAwal >= 0 &&
+            indexAkhir >= 0 &&
+            indexAkhir > indexAwal
+        ){
+            /*
+             * +1 karena golongan pertama
+             * sudah tercakup dalam SK CPNS
+             */
+            riwayatGolongan =
+                URUTAN_GOLONGAN.slice(
+                    indexAwal + 1,
+                    indexAkhir + 1
+                );
+        }
+
+        /* =========================
+           RIWAYAT JENJANG JABATAN
+        ========================= */
+        const riwayatJenjangJabatan =
+            String(
+                pegawai.jenjangJabatan || ""
+            )
+            .toUpperCase()
+            .split(/[;,]/)
+            .map(
+                item => item.trim()
+            )
+            .filter(
+                Boolean
+            );
 
         /* =========================
            RIWAYAT PENDIDIKAN
@@ -89,9 +187,12 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                 pegawai.riwayatPendidikan || ""
             )
             .toUpperCase()
-            .split(",")
+            .split(/[;,]/)
             .map(
                 item => item.trim()
+            )
+            .filter(
+                Boolean
             );
 
         /* =========================
@@ -106,7 +207,7 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
             );
 
         /* =========================
-           FILTER
+           FILTER MASTER DOKUMEN
         ========================= */
         return snapshot.docs
             .map(
@@ -145,138 +246,262 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                         tahunDokumen:
                             Number(
                                 data.tahunDokumen || 0
-                            )
+                            ),
+
+                        pangkatGolongan:
+                            data.pangkatGolongan || "",
+
+                        jenjangJabatan:
+                            data.jenjangJabatan || ""
                     };
                 }
             )
-                        .filter(
-                            item => {
-                                /* =========================
-                                STATUS AKTIF
-                                ========================= */
-                                if(
-                                    item.statusAktif !== "AKTIF"
-                                ){
-                                    return false;
-                                }
 
-                                /* =========================
-                                TARGET STATUS
-                                ========================= */
-                                const listStatus =
-                                    String(
-                                        item.targetStatus || ""
-                                    )
-                                    .toUpperCase()
-                                    .split(",")
-                                    .map(
-                                        status => status.trim()
-                                    );
-
-                                const cocokStatus =
-                                    listStatus.includes("ALL") ||
-                                    listStatus.some(
-                                        status =>
-                                            statusPegawai.includes(
-                                                status
-                                            )
-                                    );
-                                if(
-                                    !cocokStatus
-                                ){
-                                    return false;
-                                }
-
-                                /* =========================
-                                TARGET JENIS
-                                ========================= */
-                                const cocokJenis =
-                                    item.targetJenis === "ALL" ||
-                                    item.targetJenis ===
-                                        pegawai.jenisPegawai;
-                                if(
-                                    !cocokJenis
-                                ){
-                                    return false;
-                                }
-
-                                /* =========================
-                                FILTER PENDIDIKAN
-                                ========================= */
-                                const filterPendidikan =
-                                    String(
-                                        item.filterPendidikan || "ALL"
-                                    )
-                                    .trim()
-                                    .toUpperCase();
-
-                                const cocokPendidikan =
-                                    filterPendidikan === "ALL" ||
-                                    riwayatPendidikan.includes(
-                                        filterPendidikan
-                                    );
-                                if(
-                                    !cocokPendidikan
-                                ){
-                                    return false;
-                                }
-
-                                /* =========================
-                                FILTER TAHUN
-                                ========================= */
-                                let cocokTahun = true;
-
-                                if(
-                                    item.tahunDokumen > 0
-                                ){
-                                    if(
-                                        item.targetStatus === "BLUD"
-                                    ){
-                                        const tahunMulai =
-                                            tahunTmtPertama > 0
-                                                ? tahunTmtPertama
-                                                : tahunTmtAwal;
-
-                                        const tahunSelesai =
-                                            tahunAkhirBlud > 0
-                                                ? tahunAkhirBlud
-                                                : new Date().getFullYear();
-
-                                        cocokTahun =
-                                            item.tahunDokumen >=
-                                                tahunMulai &&
-                                            item.tahunDokumen <=
-                                                tahunSelesai;
-                                    }
-                                    else{
-                                        cocokTahun =
-                                            item.tahunDokumen >=
-                                            tahunTmtAwal;
-                                    }
-                                }
-
-                                return cocokTahun;
-                            }
+            .filter(
+                item => {
+                    /* =========================
+                       STATUS AKTIF
+                    ========================= */
+                    if(
+                        String(
+                            item.statusAktif || ""
                         )
+                        .toUpperCase()
+                        .trim() !== "AKTIF"
+                    ){
+                        return false;
+                    }
 
-                        /* =========================
-                        URUTKAN BERDASARKAN
-                        NAMA DOKUMEN
-                        ========================= */
-                        .sort(
-                            (a, b) =>
-                                String(
-                                    a.namaDokumen || ""
-                                ).localeCompare(
-                                    String(
-                                        b.namaDokumen || ""
-                                    ),
-                                    "id",
-                                    {
-                                        sensitivity: "base"
-                                    }
+                    /* =========================
+                       TARGET STATUS
+                    ========================= */
+                    const listStatus =
+                        String(
+                            item.targetStatus || ""
+                        )
+                        .toUpperCase()
+                        .split(/[;,]/)
+                        .map(
+                            status =>
+                                status.trim()
+                        )
+                        .filter(
+                            Boolean
+                        );
+
+                    const cocokStatus =
+                        listStatus.includes("ALL") ||
+                        listStatus.some(
+                            status =>
+                                statusPegawai.includes(
+                                    status
                                 )
                         );
+                    if(
+                        !cocokStatus
+                    ){
+                        return false;
+                    }
+
+                    /* =========================
+                       TARGET JENIS PEGAWAI
+                    ========================= */
+                    const targetJenis =
+                        String(
+                            item.targetJenis || ""
+                        )
+                        .toUpperCase()
+                        .trim();
+
+                    const jenisPegawai =
+                        String(
+                            pegawai.jenisPegawai || ""
+                        )
+                        .toUpperCase()
+                        .trim();
+
+                    const cocokJenis =
+                        targetJenis === "" ||
+                        targetJenis === "ALL" ||
+                        targetJenis === jenisPegawai;
+                    if(
+                        !cocokJenis
+                    ){
+                        return false;
+                    }
+
+                    /* =========================
+                       FILTER PENDIDIKAN
+                    ========================= */
+                    const filterPendidikan =
+                        String(
+                            item.filterPendidikan || "ALL"
+                        )
+                        .trim()
+                        .toUpperCase();
+
+                    const cocokPendidikan =
+                        filterPendidikan === "ALL" ||
+                        filterPendidikan === "" ||
+                        riwayatPendidikan.includes(
+                            filterPendidikan
+                        );
+                    if(
+                        !cocokPendidikan
+                    ){
+                        return false;
+                    }
+
+                    /* =========================
+                       FILTER PANGKAT / GOLONGAN
+                    ========================= */
+                    const listGolongan =
+                        String(
+                            item.pangkatGolongan || ""
+                        )
+                        .trim()
+                        .split(/[;,]/)
+                        .map(
+                            golongan =>
+                                golongan.trim()
+                        )
+                        .filter(
+                            Boolean
+                        );
+
+                    const cocokGolongan =
+                        listGolongan.length === 0 ||
+                        listGolongan.includes("ALL") ||
+                        listGolongan.some(
+                            golongan =>
+                                riwayatGolongan.includes(
+                                    golongan
+                                )
+                        );
+                    if(
+                        !cocokGolongan
+                    ){
+                        return false;
+                    }
+
+                    /* =========================
+                       FILTER JENJANG JABATAN
+
+                       Contoh:
+
+                       RIWAYAT PEGAWAI:
+                       Terampil;Mahir
+
+                       MASTER:
+                       Terampil
+
+                       → cocok
+
+                       MASTER:
+                       Penyelia
+
+                       → tidak cocok
+                    ========================= */
+                    const listJenjang =
+                        String(
+                            item.jenjangJabatan || ""
+                        )
+                        .toUpperCase()
+                        .trim()
+                        .split(/[;,]/)
+                        .map(
+                            jenjang =>
+                                jenjang.trim()
+                        )
+                        .filter(
+                            Boolean
+                        );
+
+                    const cocokJenjangJabatan =
+                        listJenjang.length === 0 ||
+                        listJenjang.includes("ALL") ||
+                        listJenjang.some(
+                            jenjang =>
+                                riwayatJenjangJabatan.includes(
+                                    jenjang
+                                )
+                        );
+                    if(
+                        !cocokJenjangJabatan
+                    ){
+                        return false;
+                    }
+
+                    /* =========================
+                       FILTER TAHUN
+                    ========================= */
+                    let cocokTahun = true;
+
+                    if(
+                        item.tahunDokumen > 0
+                    ){
+                        if(
+                            String(
+                                item.targetStatus || ""
+                            )
+                            .toUpperCase()
+                            .trim() === "BLUD"
+                        ){
+                            const tahunMulai =
+                                tahunTmtPertama > 0
+                                    ? tahunTmtPertama
+                                    : tahunTmtAwal;
+
+                            const tahunSelesai =
+                                tahunAkhirBlud > 0
+                                    ? tahunAkhirBlud
+                                    : new Date()
+                                        .getFullYear();
+
+                            cocokTahun =
+                                item.tahunDokumen >=
+                                    tahunMulai &&
+                                item.tahunDokumen <=
+                                    tahunSelesai;
+                        }
+
+                        else{
+                            cocokTahun =
+                                item.tahunDokumen >=
+                                tahunTmtAwal;
+                        }
+                    }
+                    if(
+                        !cocokTahun
+                    ){
+                        return false;
+                    }
+
+                    /* =========================
+                       LOLOS SEMUA FILTER
+                    ========================= */
+                    return true;
+                }
+            )
+
+            /* =========================
+               URUTKAN BERDASARKAN
+               NAMA DOKUMEN
+            ========================= */
+            .sort(
+                (a, b) =>
+                    String(
+                        a.namaDokumen || ""
+                    ).localeCompare(
+                        String(
+                            b.namaDokumen || ""
+                        ),
+                        "id",
+                        {
+                            sensitivity: "base"
+                        }
+                    )
+            );
     }
     catch(error){
         console.error(
