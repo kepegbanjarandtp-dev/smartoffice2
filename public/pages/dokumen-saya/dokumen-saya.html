@@ -608,13 +608,116 @@
     </div>
 
     <!-- =========================
-        RIWAYAT DOKUMEN
+         RIWAYAT DOKUMEN SAYA
     ========================== -->
     <div
         id="smartofficeDokumenSayaContent"
         class="smartoffice-dokumen-saya-content"
         style="display:none;"
     >
+        <!-- =========================
+            FILTER DOKUMEN
+        ========================== -->
+        <div
+            class="smartoffice-dokumensaya-filter"
+            id="smartofficeDokumenSayaFilter"
+        >
+            <!-- CARI -->
+            <div
+                class="smartoffice-dokumensaya-filter-search"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <circle
+                        cx="11"
+                        cy="11"
+                        r="7"
+                    ></circle>
+
+                    <line
+                        x1="16.65"
+                        y1="16.65"
+                        x2="21"
+                        y2="21"
+                    ></line>
+                </svg>
+
+                <input
+                    type="text"
+                    id="smartofficeDokumenSayaSearch"
+                    placeholder="Cari nama dokumen..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <!-- STATUS UPLOAD -->
+            <div
+                class="smartoffice-dokumensaya-filter-item"
+            >
+                <label
+                    for="smartofficeDokumenSayaStatusFilter"
+                >
+                    Status Upload
+                </label>
+
+                <select
+                    id="smartofficeDokumenSayaStatusFilter"
+                >
+                    <option value="">
+                        Semua Status
+                    </option>
+
+                    <option value="BELUM_UPLOAD">
+                        Belum Upload
+                    </option>
+
+                    <option value="MENUNGGU_VERIFIKASI">
+                        Menunggu Verifikasi
+                    </option>
+
+                    <option value="TERVERIFIKASI">
+                        Terverifikasi
+                    </option>
+                </select>
+            </div>
+
+            <!-- WAJIB UPLOAD -->
+            <div
+                class="smartoffice-dokumensaya-filter-item"
+            >
+                <label
+                    for="smartofficeDokumenSayaWajibFilter"
+                >
+                    Status Dokumen
+                </label>
+
+                <select
+                    id="smartofficeDokumenSayaWajibFilter"
+                >
+                    <option value="">
+                        Semua
+                    </option>
+
+                    <option value="YA">
+                        Wajib Upload
+                    </option>
+
+                    <option value="TIDAK">
+                        Tidak Wajib
+                    </option>
+                </select>
+            </div>
+        </div>
+
+        <!-- =========================
+            LIST DOKUMEN
+        ========================== -->
         <div
             id="smartofficeDokumenSayaList"
         ></div>
