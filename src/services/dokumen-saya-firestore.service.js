@@ -125,26 +125,78 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
             "IV/d"
         ];
 
-        const golonganPertama =
+        /* ======================================================
+           NORMALISASI GOLONGAN
+        ====================================================== */
+        function normalisasiGolongan(value){
+
+            return String(value || "")
+                .trim()
+                .replace(/\s+/g, "")
+                .replace(
+                    /([IV]+)\/?([A-Da-d])/,
+                    (_, romawi, huruf) =>
+                        `${romawi.toUpperCase()}/${huruf.toLowerCase()}`
+                );
+        }
+
+        /* ======================================================
+        GOLONGAN PERTAMA
+        ====================================================== */
+        const golonganPertamaRaw =
             String(
                 pegawai.golonganPertama || ""
             ).trim();
 
-        const golonganSekarang =
+        const golonganPertama =
+            normalisasiGolongan(
+                golonganPertamaRaw
+            );
+
+        /* ======================================================
+        PANGKAT / GOLONGAN SEKARANG
+        ====================================================== */
+        const pangkatGolonganRaw =
             String(
                 pegawai.pangkatGolongan || ""
             ).trim();
 
-        const indexAwal =
-            URUTAN_GOLONGAN.indexOf(
-                golonganPertama
+        const matchGolongan =
+            pangkatGolonganRaw.match(
+                /\b(IV|III|II|I)\s*\/?\s*([A-D])\b/i
             );
+
+        const golonganSekarang =
+            matchGolongan
+                ? normalisasiGolongan(
+                    `${matchGolongan[1]}/${matchGolongan[2]}`
+                )
+                : normalisasiGolongan(
+                    pangkatGolonganRaw
+                );
+
+        /* ======================================================
+        INDEX
+        ====================================================== */
+        const indexAwal =
+            URUTAN_GOLONGAN
+                .map(g => normalisasiGolongan(g))
+                .indexOf(
+                    golonganPertama
+                );
 
         const indexAkhir =
-            URUTAN_GOLONGAN.indexOf(
-                golonganSekarang
-            );
+            URUTAN_GOLONGAN
+                .map(g => normalisasiGolongan(g))
+                .indexOf(
+                    golonganSekarang
+                );
 
+        /* ======================================================
+        RIWAYAT GOLONGAN
+        GOLONGAN PERTAMA TIDAK DIHITUNG
+        KARENA SUDAH ADA DI SK CPNS
+        ====================================================== */
         let riwayatGolongan = [];
 
         if(
@@ -152,10 +204,6 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
             indexAkhir >= 0 &&
             indexAkhir > indexAwal
         ){
-            /*
-             * +1 karena golongan pertama
-             * sudah tercakup dalam SK CPNS
-             */
             riwayatGolongan =
                 URUTAN_GOLONGAN.slice(
                     indexAwal + 1,
@@ -163,9 +211,26 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                 );
         }
 
-        /* =========================
-           RIWAYAT JENJANG JABATAN
-        ========================= */
+        /* ======================================================
+        DEBUG
+        ====================================================== */
+        /*console.log(
+            "DOKUMEN DEBUG GOLONGAN",
+            {
+                nip,
+                pangkatGolonganRaw,
+                golonganPertamaRaw,
+                golonganPertama,
+                golonganSekarang,
+                indexAwal,
+                indexAkhir,
+                riwayatGolongan
+            }
+        );*/
+
+        /* ======================================================
+        RIWAYAT JENJANG JABATAN
+        ====================================================== */
         const riwayatJenjangJabatan =
             String(
                 pegawai.jenjangJabatan || ""
@@ -173,11 +238,24 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
             .toUpperCase()
             .split(/[;,]/)
             .map(
-                item => item.trim()
+                item =>
+                    item
+                        .trim()
+                        .replace(/\s+/g, " ")
             )
             .filter(
                 Boolean
             );
+
+        /*console.log(
+            "DOKUMEN DEBUG JENJANG",
+            {
+                nip,
+                jenjangJabatanRaw:
+                    pegawai.jenjangJabatan,
+                riwayatJenjangJabatan
+            }
+        );*/
 
         /* =========================
            RIWAYAT PENDIDIKAN
@@ -256,7 +334,6 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                     };
                 }
             )
-
             .filter(
                 item => {
                     /* =========================
@@ -352,18 +429,20 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                         return false;
                     }
 
-                    /* =========================
+                    /* ======================================================
                        FILTER PANGKAT / GOLONGAN
-                    ========================= */
+                    ====================================================== */
                     const listGolongan =
                         String(
                             item.pangkatGolongan || ""
                         )
-                        .trim()
+                        .toUpperCase()
                         .split(/[;,]/)
                         .map(
                             golongan =>
-                                golongan.trim()
+                                normalisasiGolongan(
+                                    golongan
+                                )
                         )
                         .filter(
                             Boolean
@@ -374,44 +453,50 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                         listGolongan.includes("ALL") ||
                         listGolongan.some(
                             golongan =>
-                                riwayatGolongan.includes(
-                                    golongan
-                                )
+                                riwayatGolongan
+                                    .map(
+                                        g =>
+                                            normalisasiGolongan(g)
+                                    )
+                                    .includes(
+                                        golongan
+                                    )
                         );
+
+                    /*console.log(
+                        "DOKUMEN DEBUG FILTER GOLONGAN",
+                        {
+                            namaDokumen:
+                                item.namaDokumen,
+                            masterGolongan:
+                                listGolongan,
+                            pegawaiGolongan:
+                                riwayatGolongan,
+                            cocok:
+                                cocokGolongan
+                        }
+                    );*/
+
                     if(
                         !cocokGolongan
                     ){
                         return false;
                     }
 
-                    /* =========================
+                    /* ======================================================
                        FILTER JENJANG JABATAN
-
-                       Contoh:
-
-                       RIWAYAT PEGAWAI:
-                       Terampil;Mahir
-
-                       MASTER:
-                       Terampil
-
-                       → cocok
-
-                       MASTER:
-                       Penyelia
-
-                       → tidak cocok
-                    ========================= */
+                    ====================================================== */
                     const listJenjang =
                         String(
                             item.jenjangJabatan || ""
                         )
                         .toUpperCase()
-                        .trim()
                         .split(/[;,]/)
                         .map(
                             jenjang =>
-                                jenjang.trim()
+                                jenjang
+                                    .trim()
+                                    .replace(/\s+/g, " ")
                         )
                         .filter(
                             Boolean
@@ -426,6 +511,21 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                                     jenjang
                                 )
                         );
+
+                    /*console.log(
+                        "DOKUMEN DEBUG FILTER JENJANG",
+                        {
+                            namaDokumen:
+                                item.namaDokumen,
+                            masterJenjang:
+                                listJenjang,
+                            pegawaiJenjang:
+                                riwayatJenjangJabatan,
+                            cocok:
+                                cocokJenjangJabatan
+                        }
+                    );*/
+
                     if(
                         !cocokJenjangJabatan
                     ){
@@ -464,13 +564,13 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                                 item.tahunDokumen <=
                                     tahunSelesai;
                         }
-
                         else{
                             cocokTahun =
                                 item.tahunDokumen >=
                                 tahunTmtAwal;
                         }
                     }
+
                     if(
                         !cocokTahun
                     ){
@@ -496,7 +596,9 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                         String(
                             b.namaDokumen || ""
                         ),
+
                         "id",
+
                         {
                             sensitivity: "base"
                         }

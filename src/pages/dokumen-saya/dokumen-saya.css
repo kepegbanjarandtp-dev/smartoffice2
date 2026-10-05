@@ -1344,3 +1344,211 @@
 }
 
 
+
+/* ======================================================
+   FILTER DOKUMEN SAYA
+   STYLE MENYERUPAI HALAMAN BUKU SURAT
+====================================================== */
+.smartoffice-dokumensaya-filter{
+    width: 100%;
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        minmax(180px, .7fr)
+        minmax(180px, .7fr);
+    gap: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    background: #ffffff;
+    border: 1px solid #e5ebf4;
+    border-radius: 14px;
+    box-shadow:
+        0 4px 14px rgba(30, 64, 175, .06);
+}
+
+/* ======================================================
+   SEARCH
+====================================================== */
+.smartoffice-dokumensaya-filter-search{
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.smartoffice-dokumensaya-filter-search::before{
+    content: "Cari Dokumen";
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.smartoffice-dokumensaya-filter-search svg{
+    position: absolute;
+    left: 12px;
+    bottom: 11.5px;
+    width: 15px;
+    height: 15px;
+    color: #8fa0b8;
+    pointer-events: none;
+}
+
+.smartoffice-dokumensaya-filter-search input{
+    width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+    padding:
+        0 12px 0 34px;
+    border:
+        1px solid #dce4ef;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 12px;
+    outline: none;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-dokumensaya-filter-search
+input::placeholder{
+    color: #9aa8bc;
+}
+
+.smartoffice-dokumensaya-filter-search
+input:focus{
+    border-color: #2563eb;
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, .07);
+}
+
+/* ======================================================
+   FILTER ITEM
+====================================================== */
+.smartoffice-dokumensaya-filter-item{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+.smartoffice-dokumensaya-filter-item label{
+    font-size: 12px;
+    line-height: 1;
+    font-weight: 600;
+    color: #64748b;
+    padding-left: 1px;
+}
+
+.smartoffice-dokumensaya-filter-item select{
+    width: 100%;
+    height: 38px;
+    box-sizing: border-box;
+    padding:
+        0 30px 0 11px;
+    border:
+        1px solid #dce4ef;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #334155;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-dokumensaya-filter-item select:focus{
+    border-color: #2563eb;
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, .07);
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media (max-width: 768px){
+
+    /* ==================================================
+       FILTER CONTAINER
+    ================================================== */
+    .smartoffice-dokumensaya-filter{
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+        padding: 11px;
+        margin-bottom: 10px;
+        border-radius: 12px;
+    }
+
+    /* ==================================================
+       SEARCH
+    ================================================== */
+    .smartoffice-dokumensaya-filter-search{
+        grid-column: 1 / -1;
+        gap: 6px;
+    }
+
+    .smartoffice-dokumensaya-filter-search::before{
+        margin-bottom: 0;
+        font-size: 10px;
+        line-height: 1.2;
+    }
+
+    .smartoffice-dokumensaya-filter-search svg{
+        left: 11px;
+        /* posisi tepat di tengah input */
+        top: auto;
+        bottom: 10px;
+        width: 14px;
+        height: 14px;
+        color: #8fa0b8;
+        pointer-events: none;
+        transform: none;
+    }
+
+    .smartoffice-dokumensaya-filter-search input{
+        width: 100%;
+        height: 34px;
+        padding:
+            0 11px 0 33px;
+        font-size: 10px;
+        border-radius: 8px;
+    }
+
+    .smartoffice-dokumensaya-filter-search
+    input::placeholder{
+        font-size: 11px;
+    }
+
+    /* ==================================================
+       FILTER ITEM
+    ================================================== */
+    .smartoffice-dokumensaya-filter-item{
+        gap: 6px;
+    }
+
+    .smartoffice-dokumensaya-filter-item label{
+        font-size: 10px;
+        line-height: 1.2;
+        padding-left: 1px;
+    }
+
+    .smartoffice-dokumensaya-filter-item select{
+        width: 100%;
+        height: 34px;
+        padding:
+            0 28px 0 10px;
+        font-size: 10px;
+        border-radius: 8px;
+    }
+}

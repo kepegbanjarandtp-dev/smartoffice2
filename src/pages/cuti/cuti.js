@@ -2113,29 +2113,37 @@ export async function smartofficeSubmitCutiForm(){
       'smartofficeCutiTanggalAwal'
     ).value;
 
-  /* VALIDASI TANGGAL SURAT */
+  /* =========================
+    VALIDASI TANGGAL SURAT
+    KECUALI CUTI SAKIT &
+    CUTI ALASAN PENTING
+  ========================= */
   if(
-    tanggalSurat &&
-    tanggalAwalCuti
+      jenisCuti !== "CUTI SAKIT" &&
+      jenisCuti !== "CUTI ALASAN PENTING" &&
+      tanggalSurat &&
+      tanggalAwalCuti
   ){
-    const suratDate =
-      new Date(
-        tanggalSurat + 'T00:00:00'
-      );
+      const suratDate =
+          new Date(
+              tanggalSurat + 'T00:00:00'
+          );
 
-    const awalCutiDate =
-      new Date(
-        tanggalAwalCuti + 'T00:00:00'
-      );
+      const awalCutiDate =
+          new Date(
+              tanggalAwalCuti + 'T00:00:00'
+          );
 
-    /* SURAT > AWAL CUTI */
-    if(suratDate > awalCutiDate){
-      smartofficeShowToast(
-        'Tanggal surat tidak boleh melebihi tanggal awal cuti',
-        'error'
-      );
-      return;
-    }
+      /* SURAT > AWAL CUTI */
+      if(
+          suratDate > awalCutiDate
+      ){
+          smartofficeShowToast(
+              'Tanggal surat tidak boleh melebihi tanggal awal cuti',
+              'error'
+          );
+          return;
+      }
   }
 
   /* =========================
@@ -2510,17 +2518,27 @@ export async function smartofficeSubmitCutiForm(){
               "success"
           );
 
-          /* PINDAH TAB */
-          setTimeout(
-              function(){
-                  smartofficeSwitchCutiTab(
-                      "riwayat"
-                  );
-              },
-              700
+          /* ==================================================
+            CLEAR CACHE DATA CUTI
+          ================================================== */
+          const nipKey =
+              String(formData.nip || "").trim();
+
+          /* CLEAR CACHE RIWAYAT */
+          smartofficeRiwayatCutiCache = null;
+
+          smartofficeCacheRemove(
+              "cuti_riwayat_" + nipKey
           );
 
-          /* RELOAD DATA BERJALAN DI BELAKANG */
+          /* CLEAR CACHE MINI STAT */
+          smartofficeCacheRemove(
+              "cuti_stats_" + nipKey
+          );
+
+          /* ==================================================
+            RELOAD DATA TERBARU
+          ================================================== */
           Promise.allSettled([
               smartofficeLoadRiwayatCuti(
                   formData.nip
@@ -2529,18 +2547,28 @@ export async function smartofficeSubmitCutiForm(){
               smartofficeLoadPegawai(
                   formData.nip
               )
-
           ]).then(function(){
               smartofficeFilterRiwayatCuti(
                   "SEMUA"
               );
-
           }).catch(function(error){
               console.error(
                   "Gagal refresh data setelah submit:",
                   error
               );
           });
+
+          /* ==================================================
+            PINDAH TAB
+          ================================================== */
+          setTimeout(
+              function(){
+                  smartofficeSwitchCutiTab(
+                      "riwayat"
+                  );
+              },
+              700
+          );
       }
       else{
           smartofficeShowToast(

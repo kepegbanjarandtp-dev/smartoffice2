@@ -82,6 +82,21 @@ let smartofficeDokumenSayaData =
     [];
 
 /* ======================================================
+   FILTER DOKUMEN SAYA
+====================================================== */
+let smartofficeDokumenSayaSearch =
+    "";
+
+let smartofficeDokumenSayaStatusFilter =
+    "";
+
+let smartofficeDokumenSayaWajibFilter =
+    "";
+
+let smartofficeDokumenSayaSearchTimer =
+    null;
+
+/* ======================================================
    EDIT DOKUMEN
 ====================================================== */
 let smartofficeEditDokumenId =
@@ -153,6 +168,18 @@ export async function smartofficeLoadPage(){
     smartofficeDokumenSayaData =
         [];
 
+    /* =========================
+    RESET FILTER DOKUMEN SAYA
+    ========================= */
+    smartofficeDokumenSayaSearch =
+        "";
+
+    smartofficeDokumenSayaStatusFilter =
+        "";
+
+    smartofficeDokumenSayaWajibFilter =
+        "";
+
     smartofficeEditDokumenId =
         null;
 
@@ -161,7 +188,8 @@ export async function smartofficeLoadPage(){
        Tidak bergantung API
     ========================= */
     smartofficeInitUploadDokumen();
-
+    smartofficeInitDokumenSayaFilter();
+    smartofficeResetDokumenSayaFilter();
     smartofficeSwitchDokumenTab(
         "upload"
     );
@@ -280,6 +308,63 @@ export async function smartofficeDestroyPage(){
     }
 
     /* =========================
+       REMOVE DOKUMEN SAYA FILTER
+    ========================= */
+    const searchInput =
+        document.getElementById(
+            "smartofficeDokumenSayaSearch"
+        );
+
+    const statusSelect =
+        document.getElementById(
+            "smartofficeDokumenSayaStatusFilter"
+        );
+
+    const wajibSelect =
+        document.getElementById(
+            "smartofficeDokumenSayaWajibFilter"
+        );
+
+    /* =========================
+    REMOVE SEARCH HANDLER
+    ========================= */
+    if(searchInput){
+        searchInput.oninput =
+            null;
+    }
+
+    /* =========================
+    REMOVE STATUS HANDLER
+    ========================= */
+    if(statusSelect){
+        statusSelect.onchange =
+            null;
+    }
+
+    /* =========================
+    REMOVE WAJIB HANDLER
+    ========================= */
+    if(wajibSelect){
+
+        wajibSelect.onchange =
+            null;
+    }
+
+    /* =========================
+    CLEAR SEARCH TIMER
+    ========================= */
+    if(
+        smartofficeDokumenSayaSearchTimer
+    ){
+        clearTimeout(
+            smartofficeDokumenSayaSearchTimer
+        );
+
+        smartofficeDokumenSayaSearchTimer =
+            null;
+    }
+
+    /* =========================
        RESET PAGE STATE
     ========================= */
     smartofficeDokumenLoaded =
@@ -287,6 +372,18 @@ export async function smartofficeDestroyPage(){
 
     smartofficeDokumenSayaData =
         [];
+
+    /* =========================
+       RESET FILTER
+    ========================= */
+    smartofficeDokumenSayaSearch =
+        "";
+
+    smartofficeDokumenSayaStatusFilter =
+        "";
+
+    smartofficeDokumenSayaWajibFilter =
+        "";
 
     smartofficeEditDokumenId =
         null;
@@ -611,6 +708,263 @@ async function smartofficeLoadDokumenSaya(forceRefresh = false){
 
 
 /* ======================================================
+   FILTER DATA DOKUMEN SAYA
+====================================================== */
+function smartofficeGetFilteredDokumenSaya(
+    data
+){
+    if(
+        !Array.isArray(data)
+    ){
+        return [];
+    }
+
+    const search =
+        String(
+            smartofficeDokumenSayaSearch || ""
+        )
+        .trim()
+        .toLowerCase();
+
+    const statusFilter =
+        String(
+            smartofficeDokumenSayaStatusFilter || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    const wajibFilter =
+        String(
+            smartofficeDokumenSayaWajibFilter || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    return data.filter(
+        function(item){
+
+            /* ==========================================
+               CARI DOKUMEN
+            ========================================== */
+            if(search){
+                const namaDokumen =
+                    String(
+                        item.namaDokumen || ""
+                    )
+                    .toLowerCase();
+
+                const kodeDokumen =
+                    String(
+                        item.kodeDokumen || ""
+                    )
+                    .toLowerCase();
+
+                const namaFile =
+                    String(
+                        item.fileName || ""
+                    )
+                    .toLowerCase();
+
+                const cocokSearch =
+                    namaDokumen.includes(search)
+                    ||
+                    kodeDokumen.includes(search)
+                    ||
+                    namaFile.includes(search);
+                if(!cocokSearch){
+                    return false;
+                }
+            }
+
+            /* ==========================================
+               STATUS UPLOAD
+            ========================================== */
+            if(statusFilter){
+                const status =
+                    String(
+                        item.statusVerifikasi || ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+                let statusNormal =
+                    status;
+
+                /*
+                   Jika status kosong berarti
+                   dokumen belum upload
+                */
+                if(!statusNormal){
+                    statusNormal =
+                        "BELUM_UPLOAD";
+                }
+
+                if(
+                    statusNormal !==
+                    statusFilter
+                ){
+                    return false;
+                }
+            }
+
+            /* ==========================================
+               WAJIB UPLOAD
+            ========================================== */
+            if(wajibFilter){
+                const wajib =
+                    String(
+                        item.wajibUpload || ""
+                    )
+                    .trim()
+                    .toUpperCase();
+                if(
+                    wajib !==
+                    wajibFilter
+                ){
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    );
+}
+
+
+/* ======================================================
+   RENDER ULANG DOKUMEN SESUAI FILTER
+====================================================== */
+function smartofficeApplyDokumenSayaFilter(){
+    const filteredData =
+        smartofficeGetFilteredDokumenSaya(
+            smartofficeDokumenSayaData
+        );
+
+    smartofficeRenderDokumenSaya(
+        filteredData
+    );
+}
+
+
+/* ======================================================
+   INIT FILTER DOKUMEN SAYA
+====================================================== */
+function smartofficeInitDokumenSayaFilter(){
+
+    const searchInput =
+        document.getElementById(
+            "smartofficeDokumenSayaSearch"
+        );
+
+    const statusSelect =
+        document.getElementById(
+            "smartofficeDokumenSayaStatusFilter"
+        );
+
+    const wajibSelect =
+        document.getElementById(
+            "smartofficeDokumenSayaWajibFilter"
+        );
+    if(
+        !searchInput ||
+        !statusSelect ||
+        !wajibSelect
+    ){
+        return;
+    }
+
+    /* ==================================================
+       SEARCH
+    ================================================== */
+    searchInput.oninput =
+        function(){
+            clearTimeout(
+                smartofficeDokumenSayaSearchTimer
+            );
+
+            smartofficeDokumenSayaSearchTimer =
+                setTimeout(
+                    function(){
+                        smartofficeDokumenSayaSearch =
+                            searchInput.value;
+
+                        smartofficeApplyDokumenSayaFilter();
+                    },
+                    250
+                );
+        };
+
+    /* ==================================================
+       STATUS
+    ================================================== */
+    statusSelect.onchange =
+        function(){
+            smartofficeDokumenSayaStatusFilter =
+                statusSelect.value;
+
+            smartofficeApplyDokumenSayaFilter();
+        };
+
+    /* ==================================================
+       WAJIB UPLOAD
+    ================================================== */
+    wajibSelect.onchange =
+        function(){
+            smartofficeDokumenSayaWajibFilter =
+                wajibSelect.value;
+
+            smartofficeApplyDokumenSayaFilter();
+        };
+}
+
+
+/* ======================================================
+   RESET FILTER DOKUMEN SAYA
+====================================================== */
+function smartofficeResetDokumenSayaFilter(){
+
+    smartofficeDokumenSayaSearch =
+        "";
+
+    smartofficeDokumenSayaStatusFilter =
+        "";
+
+    smartofficeDokumenSayaWajibFilter =
+        "";
+
+    const searchInput =
+        document.getElementById(
+            "smartofficeDokumenSayaSearch"
+        );
+
+    const statusSelect =
+        document.getElementById(
+            "smartofficeDokumenSayaStatusFilter"
+        );
+
+    const wajibSelect =
+        document.getElementById(
+            "smartofficeDokumenSayaWajibFilter"
+        );
+
+    if(searchInput){
+        searchInput.value =
+            "";
+    }
+
+    if(statusSelect){
+        statusSelect.value =
+            "";
+    }
+
+    if(wajibSelect){
+        wajibSelect.value =
+            "";
+    }
+}
+
+
+/* ======================================================
    RENDER DOKUMEN SAYA
    FINAL — PREMIUM COMPACT 2 COLUMN
 ====================================================== */
@@ -637,6 +991,14 @@ function smartofficeRenderDokumenSaya(
         !Array.isArray(data) ||
         data.length === 0
     ){
+
+        const adaDataAsli =
+            Array.isArray(
+                smartofficeDokumenSayaData
+            )
+            &&
+            smartofficeDokumenSayaData.length > 0;
+
         container.innerHTML =
         `
         <div
@@ -676,14 +1038,35 @@ function smartofficeRenderDokumenSaya(
                 </svg>
             </div>
 
-            <strong>
-                Belum ada dokumen
-            </strong>
+            ${
+                adaDataAsli
 
-            <span>
-                Belum terdapat dokumen kepegawaian
-                yang dapat ditampilkan.
-            </span>
+                ?
+
+                `
+                <strong>
+                    Dokumen tidak ditemukan
+                </strong>
+
+                <span>
+                    Tidak ada dokumen yang sesuai
+                    dengan filter yang dipilih.
+                </span>
+                `
+
+                :
+
+                `
+                <strong>
+                    Belum ada dokumen
+                </strong>
+
+                <span>
+                    Belum terdapat dokumen kepegawaian
+                    yang dapat ditampilkan.
+                </span>
+                `
+            }
         </div>
         `;
 

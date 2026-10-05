@@ -2,7 +2,6 @@
    SMARTSPD BLUD SERVICE
    WRITE / BUSINESS PROCESS → GAS via smartofficeApi()
 ====================================================== */
-
 import {
     smartofficeApi
 } from "../core/api.js";
