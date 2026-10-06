@@ -21,6 +21,10 @@ import {
 } from "../../services/arsip-pegawai.service.js";
 
 import {
+    smartofficeWatchVerifikasiDokumenFirestore
+} from "../../services/approval-firestore.service.js";
+
+import {
     smartofficeCacheRemove
 } from "../../core/cache.js";
 
@@ -2264,6 +2268,202 @@ export function smartofficeOpenBukaLockDokumenModal(
 
 
 /* ======================================================
+   WAIT BUKA LOCK DOKUMEN
+   FIRESTORE = SUMBER KONFIRMASI
+   GAS = TETAP WRITE
+====================================================== */
+function smartofficeWaitBukaLockDokumen(
+    idDokumen,
+    alasan,
+    nip,
+    role
+){
+    const targetId =
+        String(idDokumen || "").trim();
+
+    return new Promise(
+        async (resolve, reject) => {
+            if(!targetId){
+                reject(
+                    new Error(
+                        "ID dokumen tidak ditemukan."
+                    )
+                );
+                return;
+            }
+
+            let selesai = false;
+            let unsubscribe = null;
+            let timeoutTimer = null;
+
+            const finish = (result) => {
+                if(selesai){
+                    return;
+                }
+
+                selesai = true;
+
+                if(timeoutTimer){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer = null;
+                }
+
+                if(
+                    typeof unsubscribe ===
+                    "function"
+                ){
+                    unsubscribe();
+                    unsubscribe = null;
+                }
+
+                resolve(result);
+            };
+
+            /* ==========================================
+               WATCH FIRESTORE
+            ========================================== */
+            unsubscribe =
+                smartofficeWatchVerifikasiDokumenFirestore(
+                    targetId,
+                    firestoreResult => {
+                        if(selesai){
+                            return;
+                        }
+
+                        if(
+                            firestoreResult?.error
+                        ){
+                            console.warn(
+                                "WATCH FIRESTORE BUKA LOCK ERROR:",
+                                firestoreResult.message
+                            );
+
+                            return;
+                        }
+
+                        const lockDokumen =
+                            String(
+                                firestoreResult?.lockDokumen ||
+                                ""
+                            ).trim();
+
+                        console.log(
+                            "WATCH BUKA LOCK:",
+                            targetId,
+                            {
+                                statusVerifikasi:
+                                    firestoreResult?.statusVerifikasi ||
+                                    "",
+                                lockDokumen
+                            }
+                        );
+
+                        /* ==================================
+                           LOCK SUDAH DIBUKA
+                           isLock = TIDAK
+                        ================================== */
+                        if(
+                            lockDokumen ===
+                            "TIDAK"
+                        ){
+                            console.log(
+                                "BUKA LOCK SELESAI DARI FIRESTORE:",
+                                targetId
+                            );
+
+                            finish({
+                                success: true,
+                                source: "firestore"
+                            });
+                        }
+                    }
+                );
+
+            /* ==========================================
+               TIMEOUT KONFIRMASI FIRESTORE
+            ========================================== */
+            timeoutTimer =
+                setTimeout(
+                    () => {
+                        if(selesai){
+                            return;
+                        }
+
+                        selesai = true;
+
+                        if(
+                            typeof unsubscribe ===
+                            "function"
+                        ){
+                            unsubscribe();
+                            unsubscribe = null;
+                        }
+
+                        reject(
+                            new Error(
+                                "Buka lock belum terkonfirmasi. Silakan coba lagi."
+                            )
+                        );
+                    },
+                    40000
+                );
+
+            /* ==========================================
+               GAS TETAP WRITE
+            ========================================== */
+            smartofficeBukaLockDokumen(
+                targetId,
+                alasan,
+                nip,
+                role
+            )
+            .then(response => {
+                if(selesai){
+                    return;
+                }
+
+                if(
+                    response?.success === true
+                ){
+                    console.log(
+                        "BUKA LOCK SELESAI DARI GAS:",
+                        targetId
+                    );
+
+                    finish({
+                        success: true,
+                        source: "gas",
+                        response
+                    });
+
+                    return;
+                }
+
+                console.warn(
+                    "GAS BUKA LOCK BELUM MEMBERI SUCCESS:",
+                    targetId,
+                    response
+                );
+            })
+            .catch(error => {
+                if(selesai){
+                    return;
+                }
+
+                console.warn(
+                    "GAS BUKA LOCK ERROR, FIRESTORE MASIH DITUNGGU:",
+                    targetId,
+                    error
+                );
+            });
+        }
+    );
+}
+
+/* ======================================================
    SUBMIT BUKA LOCK DOKUMEN
 ====================================================== */
 export async function smartofficeSubmitBukaLockDokumen(
@@ -2328,13 +2528,12 @@ export async function smartofficeSubmitBukaLockDokumen(
     const nipPegawai =
         pegawaiSelect?.value || "";
 
-
     try{
         /* =========================
            API
         ========================= */
         const response =
-            await smartofficeBukaLockDokumen(
+            await smartofficeWaitBukaLockDokumen(
                 idDokumen,
                 alasan,
                 sessionData.nip,

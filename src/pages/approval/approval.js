@@ -53,7 +53,8 @@ import {
 
 import {
     smartofficeGetApprovalCutiFirestore,
-    smartofficeGetDokumenVerifikasiFirestore
+    smartofficeGetDokumenVerifikasiFirestore,
+    smartofficeWatchVerifikasiDokumenFirestore
 } from "../../services/approval-firestore.service.js";
 
 /* ======================================================
@@ -2855,6 +2856,406 @@ function smartofficeRemoveApprovalDokumenFromUI(
 
 
 /* ======================================================
+   TUNGGU VERIFIKASI
+   GAS SUCCESS ATAU FIRESTORE VERIFIED
+====================================================== */
+function smartofficeWaitVerifikasiDokumen(
+    idDokumen
+){
+    const targetId =
+        String(idDokumen || "").trim();
+
+    return new Promise(
+        async (resolve, reject) => {
+            if(!targetId){
+                reject(
+                    new Error(
+                        "ID dokumen tidak ditemukan."
+                    )
+                );
+
+                return;
+            }
+
+            let selesai = false;
+
+            let unsubscribe =
+                null;
+
+            let timeoutTimer =
+                null;
+
+            /* ==================================================
+               SELESAIKAN PROSES
+            ================================================== */
+            const finish = (
+                result
+            ) => {
+                if(selesai){
+                    return;
+                }
+
+                selesai = true;
+
+                if(timeoutTimer){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer = null;
+                }
+
+                if(
+                    typeof unsubscribe ===
+                    "function"
+                ){
+                    unsubscribe();
+                    unsubscribe = null;
+                }
+
+                resolve(result);
+            };
+
+            /* ==================================================
+               WATCH FIRESTORE
+               DIPASANG TERLEBIH DAHULU
+            ================================================== */
+            unsubscribe =
+                smartofficeWatchVerifikasiDokumenFirestore(
+                    targetId,
+                    firestoreResult => {
+                        if(selesai){
+                            return;
+                        }
+
+                        if(
+                            firestoreResult?.error
+                        ){
+                            console.warn(
+                                "WATCH FIRESTORE ERROR:",
+                                firestoreResult.message
+                            );
+
+                            return;
+                        }
+
+                        const status =
+                            String(
+                                firestoreResult?.statusVerifikasi ||
+                                ""
+                            ).trim();
+                        if(
+                            status ===
+                            "TERVERIFIKASI"
+                        ){
+                            console.log(
+                                "VERIFIKASI SELESAI DARI FIRESTORE:",
+                                targetId
+                            );
+
+                            finish({
+                                success: true,
+                                source:
+                                    "firestore"
+                            });
+                        }
+                    }
+                );
+
+            /* ==================================================
+               FALLBACK TIMEOUT
+               
+               BUKAN TIMEOUT GAS.
+               Ini batas keseluruhan proses.
+            ================================================== */
+            timeoutTimer =
+                setTimeout(
+                    () => {
+                        if(selesai){
+                            return;
+                        }
+
+                        selesai = true;
+
+                        if(
+                            typeof unsubscribe ===
+                            "function"
+                        ){
+                            unsubscribe();
+                            unsubscribe = null;
+                        }
+
+                        reject(
+                            new Error(
+                                "Verifikasi belum terkonfirmasi. Silakan coba lagi."
+                            )
+                        );
+                    },
+                    40000
+                );
+
+            /* ==================================================
+               GAS REQUEST
+            ================================================== */
+            smartofficeVerifikasiDokumenApi(
+                targetId
+            )
+            .then(
+                response => {
+                    if(selesai){
+                        return;
+                    }
+
+                    /* ==========================================
+                       GAS SUCCESS
+                    ========================================== */
+                    if(
+                        response?.success === true
+                    ){
+                        console.log(
+                            "VERIFIKASI SELESAI DARI GAS:",
+                            targetId
+                        );
+
+                        finish({
+                            success: true,
+                            source:
+                                "gas",
+                            response
+                        });
+
+                        return;
+                    }
+
+                    /* ==========================================
+                       GAS FALSE / ABORT / TIMEOUT
+                       
+                       JANGAN LANGSUNG ERROR.
+                       FIRESTORE MASIH DITUNGGU.
+                    ========================================== */
+                    console.warn(
+                        "GAS VERIFIKASI BELUM MEMBERI SUCCESS:",
+                        targetId,
+                        response
+                    );
+                }
+            )
+            .catch(
+                error => {
+                    if(selesai){
+                        return;
+                    }
+                    /*
+                     * PENTING:
+                     *
+                     * Error GAS TIDAK LANGSUNG
+                     * MENANG.
+                     *
+                     * Firestore tetap ditunggu.
+                     */
+                    console.warn(
+                        "GAS VERIFIKASI ERROR, FIRESTORE MASIH DITUNGGU:",
+                        targetId,
+                        error
+                    );
+                }
+            );
+        }
+    );
+}
+
+
+/* ======================================================
+   TUNGGU PENOLAKAN DOKUMEN
+   GAS SUCCESS ATAU FIRESTORE DITOLAK
+====================================================== */
+function smartofficeWaitTolakDokumen(
+    idDokumen,
+    alasan
+){
+    const targetId =
+        String(idDokumen || "").trim();
+
+    return new Promise(
+        async (resolve, reject) => {
+            if(!targetId){
+                reject(
+                    new Error(
+                        "ID dokumen tidak ditemukan."
+                    )
+                );
+
+                return;
+            }
+
+            let selesai = false;
+
+            let unsubscribe =
+                null;
+
+            let timeoutTimer =
+                null;
+
+            const finish = (
+                result
+            ) => {
+                if(selesai){
+                    return;
+                }
+
+                selesai = true;
+
+                if(timeoutTimer){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer = null;
+                }
+
+                if(
+                    typeof unsubscribe ===
+                    "function"
+                ){
+                    unsubscribe();
+                    unsubscribe = null;
+                }
+
+                resolve(result);
+            };
+
+            /* ==========================================
+               WATCH FIRESTORE
+            ========================================== */
+            unsubscribe =
+                smartofficeWatchVerifikasiDokumenFirestore(
+                    targetId,
+
+                    firestoreResult => {
+                        if(selesai){
+                            return;
+                        }
+
+                        if(
+                            firestoreResult?.error
+                        ){
+                            console.warn(
+                                "WATCH FIRESTORE TOLAK ERROR:",
+                                firestoreResult.message
+                            );
+
+                            return;
+                        }
+
+                        const status =
+                            String(
+                                firestoreResult?.statusVerifikasi ||
+                                ""
+                            ).trim();
+                        if(
+                            status ===
+                            "DITOLAK"
+                        ){
+                            console.log(
+                                "PENOLAKAN SELESAI DARI FIRESTORE:",
+                                targetId
+                            );
+
+                            finish({
+                                success: true,
+                                source:
+                                    "firestore"
+                            });
+                        }
+                    }
+                );
+
+            /* ==========================================
+               TIMEOUT
+            ========================================== */
+            timeoutTimer =
+                setTimeout(
+                    () => {
+                        if(selesai){
+                            return;
+                        }
+
+                        selesai = true;
+
+                        if(
+                            typeof unsubscribe ===
+                            "function"
+                        ){
+                            unsubscribe();
+                            unsubscribe = null;
+                        }
+
+                        reject(
+                            new Error(
+                                "Penolakan belum terkonfirmasi. Silakan coba lagi."
+                            )
+                        );
+                    },
+                    40000
+                );
+
+            /* ==========================================
+               KIRIM KE GAS
+            ========================================== */
+            smartofficeTolakDokumenApi(
+                targetId,
+                alasan
+            )
+            .then(
+                response => {
+                    if(selesai){
+                        return;
+                    }
+
+                    if(
+                        response?.success === true
+                    ){
+                        console.log(
+                            "PENOLAKAN SELESAI DARI GAS:",
+                            targetId
+                        );
+
+                        finish({
+                            success: true,
+                            source:
+                                "gas",
+                            response
+                        });
+
+                        return;
+                    }
+
+                    console.warn(
+                        "GAS TOLAK BELUM MEMBERI SUCCESS:",
+                        targetId,
+                        response
+                    );
+                }
+            )
+            .catch(
+                error => {
+                    if(selesai){
+                        return;
+                    }
+
+                    console.warn(
+                        "GAS TOLAK ERROR, FIRESTORE MASIH DITUNGGU:",
+                        targetId,
+                        error
+                    );
+                }
+            );
+        }
+    );
+}
+
+
+/* ======================================================
    SUBMIT VERIFIKASI DOKUMEN
 ====================================================== */
 export async function smartofficeSubmitVerifikasiDokumen(
@@ -2880,6 +3281,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
         document.getElementById(
             "smartofficeVerifikasiSubmitButton"
         );
+
     if(button){
         button.disabled =
             true;
@@ -2901,42 +3303,32 @@ export async function smartofficeSubmitVerifikasiDokumen(
 
     /* =========================
        TOAST RESULT
-       Ditampilkan setelah
-       global loading ditutup
     ========================= */
     let toastMessage = "";
     let toastType = "";
 
     try{
-        /* =========================
-           API
-        ========================= */
-        const response =
-            await smartofficeVerifikasiDokumenApi(
+        console.log(
+            "MULAI VERIFIKASI:",
+            idDokumen
+        );
+
+        /* ==================================================
+           TUNGGU SALAH SATU:
+           
+           1. GAS success:true
+           2. Firestore statusVerifikasi = TERVERIFIKASI
+        ================================================== */
+        const result =
+            await smartofficeWaitVerifikasiDokumen(
                 idDokumen
             );
 
-        /* =========================
-           REQUEST DIBATALKAN
-        ========================= */
-        if(
-            response?.aborted
-        ){
-            return;
-        }
-
-        /* =========================
-           API ERROR
-        ========================= */
-        if(
-            !response ||
-            !response.success
-        ){
-            throw new Error(
-                response?.message ||
-                "Gagal memverifikasi dokumen."
-            );
-        }
+        console.log(
+            "VERIFIKASI BERHASIL:",
+            idDokumen,
+            result
+        );
 
         /* =========================
            CLOSE MODAL
@@ -2944,7 +3336,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
         smartofficeCloseApprovalDokumenModal();
 
         /* =========================
-          HAPUS DARI UI
+           HAPUS DARI UI
         ========================= */
         smartofficeRemoveApprovalDokumenFromUI(
             idDokumen
@@ -2955,20 +3347,11 @@ export async function smartofficeSubmitVerifikasiDokumen(
         ========================= */
         toastMessage =
             "Dokumen berhasil diverifikasi";
+
         toastType =
             "success";
     }
     catch(error){
-        /* =========================
-           REQUEST DIBATALKAN
-        ========================= */
-        if(
-            error?.message ===
-            "Request dibatalkan."
-        ){
-            return;
-        }
-
         console.error(
             "SUBMIT VERIFIKASI DOKUMEN ERROR:",
             error
@@ -2978,12 +3361,14 @@ export async function smartofficeSubmitVerifikasiDokumen(
            ERROR TOAST
         ========================= */
         toastMessage =
-            error.message ||
+            error?.message ||
             "Gagal memverifikasi dokumen.";
+
         toastType =
             "error";
     }
     finally{
+
         /* =========================
            STOP GLOBAL LOADING
         ========================= */
@@ -3010,6 +3395,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
                 >
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
+
                 <span>
                     Verifikasi
                 </span>
@@ -3019,11 +3405,8 @@ export async function smartofficeSubmitVerifikasiDokumen(
 
     /* =========================
        TOAST
-       Overlay sudah ditutup
     ========================= */
-    if(
-        toastMessage
-    ){
+    if(toastMessage){
         smartofficeShowToast(
             toastMessage,
             toastType
@@ -3038,6 +3421,7 @@ export async function smartofficeSubmitVerifikasiDokumen(
 export async function smartofficeSubmitTolakDokumen(
     idDokumen
 ){
+
     /* =========================
        AMBIL ALASAN
     ========================= */
@@ -3091,43 +3475,27 @@ export async function smartofficeSubmitTolakDokumen(
 
     /* =========================
        TOAST RESULT
-       Ditampilkan SETELAH
-       global loading ditutup
     ========================= */
     let toastMessage = "";
     let toastType = "";
 
     try{
-        /* =========================
-           API
-        ========================= */
-        const response =
-            await smartofficeTolakDokumenApi(
+        console.log(
+            "MULAI TOLAK DOKUMEN:",
+            idDokumen
+        );
+
+        const result =
+            await smartofficeWaitTolakDokumen(
                 idDokumen,
                 alasan
             );
 
-        /* =========================
-           REQUEST DIBATALKAN
-        ========================= */
-        if(
-            response?.aborted
-        ){
-            return;
-        }
-
-        /* =========================
-           API ERROR
-        ========================= */
-        if(
-            !response ||
-            !response.success
-        ){
-            throw new Error(
-                response?.message ||
-                "Gagal menolak dokumen."
-            );
-        }
+        console.log(
+            "PENOLAKAN BERHASIL:",
+            idDokumen,
+            result
+        );
 
         /* =========================
            CLOSE MODAL
@@ -3135,7 +3503,7 @@ export async function smartofficeSubmitTolakDokumen(
         smartofficeCloseApprovalDokumenModal();
 
         /* =========================
-          HAPUS DARI UI
+           HAPUS DARI UI
         ========================= */
         smartofficeRemoveApprovalDokumenFromUI(
             idDokumen
@@ -3146,35 +3514,26 @@ export async function smartofficeSubmitTolakDokumen(
         ========================= */
         toastMessage =
             "Dokumen ditolak";
+
         toastType =
             "success";
     }
     catch(error){
-        /* =========================
-           REQUEST DIBATALKAN
-        ========================= */
-        if(
-            error?.message ===
-            "Request dibatalkan."
-        ){
-            return;
-        }
-
         console.error(
             "SUBMIT TOLAK DOKUMEN ERROR:",
             error
         );
 
-        /* =========================
-           ERROR TOAST
-        ========================= */
         toastMessage =
-            error.message ||
+            error?.message ||
             "Gagal menolak dokumen.";
+
         toastType =
             "error";
     }
+
     finally{
+
         /* =========================
            STOP GLOBAL LOADING
         ========================= */
@@ -3202,6 +3561,7 @@ export async function smartofficeSubmitTolakDokumen(
                     <path d="M18 6L6 18"/>
                     <path d="M6 6L18 18"/>
                 </svg>
+
                 <span>
                     Tolak Dokumen
                 </span>
@@ -3211,8 +3571,6 @@ export async function smartofficeSubmitTolakDokumen(
 
     /* =========================
        TOAST
-       SEKARANG overlay sudah
-       di-hide
     ========================= */
     if(
         toastMessage

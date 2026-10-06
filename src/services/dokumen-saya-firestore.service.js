@@ -4,7 +4,8 @@ import {
     doc,
     getDoc,
     query,
-    where
+    where,
+    onSnapshot
 } from "firebase/firestore";
 
 import {
@@ -894,4 +895,564 @@ export async function smartofficeGetDokumenPegawaiFirestore(nip){
             "Gagal mengambil dokumen pegawai dari Firestore."
         );
     }
+}
+
+
+/* ======================================================
+   WATCH SUBMIT DOKUMEN PEGAWAI
+   FIRESTORE = SUMBER KONFIRMASI
+   WRITE = TETAP GAS
+====================================================== */
+export function smartofficeWatchSubmitDokumenFirestore(
+    nip,
+    kodeDokumen
+){
+    const targetNip =
+        String(nip || "").trim();
+
+    const targetKode =
+        String(kodeDokumen || "").trim();
+
+    if(!targetNip){
+        console.warn(
+            "WATCH SUBMIT DOKUMEN: NIP kosong."
+        );
+
+        return {
+            ready:
+                Promise.reject(
+                    new Error(
+                        "NIP tidak ditemukan."
+                    )
+                ),
+
+            promise:
+                Promise.reject(
+                    new Error(
+                        "NIP tidak ditemukan."
+                    )
+                ),
+
+            unsubscribe:
+                function(){}
+        };
+    }
+
+    if(!targetKode){
+        console.warn(
+            "WATCH SUBMIT DOKUMEN: kode dokumen kosong."
+        );
+
+        return {
+            ready:
+                Promise.reject(
+                    new Error(
+                        "Kode dokumen tidak ditemukan."
+                    )
+                ),
+
+            promise:
+                Promise.reject(
+                    new Error(
+                        "Kode dokumen tidak ditemukan."
+                    )
+                ),
+
+            unsubscribe:
+                function(){}
+        };
+    }
+
+    const q =
+        query(
+            collection(
+                smartofficeFirestore,
+                "dokumenPegawai"
+            ),
+            where(
+                "nip",
+                "==",
+                targetNip
+            )
+        );
+
+    let readyResolve;
+    let readyReject;
+
+    const ready =
+        new Promise(
+            (resolve, reject) => {
+                readyResolve = resolve;
+                readyReject = reject;
+            }
+        );
+
+    let selesai = false;
+    let baselineIds = new Set();
+    let initialized = false;
+
+    let resultResolve;
+    let resultReject;
+
+    const promise =
+        new Promise(
+            (resolve, reject) => {
+                resultResolve = resolve;
+                resultReject = reject;
+            }
+        );
+
+    let unsubscribe =
+        function(){};
+
+    unsubscribe =
+        onSnapshot(
+            q,
+
+            snapshot => {
+
+                /* ======================================
+                   AMBIL DOKUMEN SESUAI KODE
+                ====================================== */
+                const targetDocs =
+                    snapshot.docs.filter(
+                        docSnapshot => {
+                            const data =
+                                docSnapshot.data();
+
+                            return String(
+                                data.kodeDokumen || ""
+                            ).trim() === targetKode;
+                        }
+                    );
+
+                /* ======================================
+                   SNAPSHOT PERTAMA
+                   HANYA JADI BASELINE
+                ====================================== */
+                if(!initialized){
+                    targetDocs.forEach(
+                        docSnapshot => {
+                            const data =
+                                docSnapshot.data();
+
+                            const id =
+                                String(
+                                    data.idDokumen ||
+                                    docSnapshot.id ||
+                                    ""
+                                ).trim();
+                            if(id){
+                                baselineIds.add(id);
+                            }
+                        }
+                    );
+
+                    initialized = true;
+
+                    console.log(
+                        "WATCH SUBMIT DOKUMEN SIAP:",
+                        {
+                            nip:
+                                targetNip,
+
+                            kodeDokumen:
+                                targetKode,
+
+                            baseline:
+                                Array.from(
+                                    baselineIds
+                                )
+                        }
+                    );
+
+                    readyResolve({
+                        success:
+                            true
+                    });
+
+                    return;
+                }
+
+                if(selesai){
+                    return;
+                }
+
+                /* ======================================
+                   CEK PERUBAHAN
+                ====================================== */
+                for(
+                    const change of
+                    snapshot.docChanges()
+                ){
+                    const data =
+                        change.doc.data();
+
+                    const changeKode =
+                        String(
+                            data.kodeDokumen || ""
+                        ).trim();
+                    if(
+                        changeKode !==
+                        targetKode
+                    ){
+                        continue;
+                    }
+
+                    const idDokumen =
+                        String(
+                            data.idDokumen ||
+                            change.doc.id ||
+                            ""
+                        ).trim();
+                    if(!idDokumen){
+                        continue;
+                    }
+
+                    /* ==================================
+                       DOKUMEN BARU
+                    ================================== */
+                    if(
+                        change.type ===
+                        "added" &&
+                        !baselineIds.has(
+                            idDokumen
+                        )
+                    ){
+                        selesai = true;
+
+                        console.log(
+                            "SUBMIT DOKUMEN SELESAI DARI FIRESTORE:",
+                            idDokumen
+                        );
+
+                        resultResolve({
+                            success:
+                                true,
+
+                            source:
+                                "firestore",
+
+                            idDokumen:
+                                idDokumen,
+
+                            data:
+                                data
+                        });
+                        unsubscribe();
+
+                        return;
+                    }
+
+                    /* ==================================
+                       DOKUMEN LAMA DIUPDATE
+                    ================================== */
+                    if(
+                        change.type ===
+                        "modified" &&
+                        baselineIds.has(
+                            idDokumen
+                        )
+                    ){
+                        selesai = true;
+
+                        console.log(
+                            "UPDATE DOKUMEN SELESAI DARI FIRESTORE:",
+                            idDokumen
+                        );
+
+                        resultResolve({
+                            success:
+                                true,
+
+                            source:
+                                "firestore",
+
+                            idDokumen:
+                                idDokumen,
+
+                            data:
+                                data
+                        });
+                        unsubscribe();
+
+                        return;
+                    }
+                }
+            },
+
+            error => {
+                if(selesai){
+                    return;
+                }
+
+                console.error(
+                    "WATCH SUBMIT DOKUMEN FIRESTORE ERROR:",
+                    error
+                );
+
+                readyReject(
+                    error
+                );
+
+                selesai = true;
+
+                resultReject(
+                    error
+                );
+            }
+        );
+
+    return {
+        ready,
+        promise,
+        unsubscribe
+    };
+}
+
+
+/* ======================================================
+   WATCH UPDATE DOKUMEN PEGAWAI
+   KHUSUS UBAH DOKUMEN
+====================================================== */
+export function smartofficeWatchEditDokumenFirestore(
+    idDokumen
+){
+
+    const targetId =
+        String(
+            idDokumen || ""
+        ).trim();
+
+    if(!targetId){
+        console.warn(
+            "WATCH EDIT DOKUMEN: ID dokumen kosong."
+        );
+
+        return {
+            ready:
+                Promise.reject(
+                    new Error(
+                        "ID dokumen tidak ditemukan."
+                    )
+                ),
+
+            promise:
+                Promise.reject(
+                    new Error(
+                        "ID dokumen tidak ditemukan."
+                    )
+                ),
+
+            unsubscribe:
+                function(){}
+        };
+    }
+
+    let readyResolve;
+    let readyReject;
+
+    const ready =
+        new Promise(
+            (resolve,reject) => {
+                readyResolve =
+                    resolve;
+
+                readyReject =
+                    reject;
+            }
+        );
+
+    let resultResolve;
+    let resultReject;
+
+    const promise =
+        new Promise(
+            (resolve,reject) => {
+
+                resultResolve =
+                    resolve;
+
+                resultReject =
+                    reject;
+            }
+        );
+
+    let selesai =
+        false;
+
+    let initialized =
+        false;
+
+    let unsubscribe =
+        function(){};
+
+    const dokumenRef =
+        doc(
+            smartofficeFirestore,
+            "dokumenPegawai",
+            targetId
+        );
+
+    unsubscribe =
+        onSnapshot(
+            dokumenRef,
+
+            snapshot => {
+
+                /* =========================
+                   DOKUMEN TIDAK ADA
+                ========================= */
+                if(
+                    !snapshot.exists()
+                ){
+                    if(!initialized){
+                        readyReject(
+                            new Error(
+                                "Dokumen tidak ditemukan di Firestore."
+                            )
+                        );
+
+                        initialized =
+                            true;
+
+                        selesai =
+                            true;
+
+                        return;
+                    }
+
+                    return;
+                }
+
+                const data =
+                    snapshot.data();
+
+                /* =========================
+                   SNAPSHOT AWAL
+                   JADIKAN BASELINE
+                ========================= */
+                if(!initialized){
+                    initialized =
+                        true;
+
+                    console.log(
+                        "WATCH EDIT DOKUMEN SIAP:",
+                        {
+                            idDokumen:
+                                targetId,
+
+                            statusVerifikasi:
+                                data.statusVerifikasi ||
+                                "",
+
+                            isLock:
+                                data.isLock ||
+                                "",
+
+                            nomorDokumen:
+                                data.nomorDokumen ||
+                                "",
+
+                            namaFile:
+                                data.namaFile ||
+                                ""
+                        }
+                    );
+
+                    readyResolve({
+                        success:
+                            true
+                    });
+
+                    return;
+                }
+
+                /* =========================
+                   SUDAH SELESAI
+                ========================= */
+                if(selesai){
+                    return;
+                }
+
+                /* =========================
+                   PERUBAHAN FIRESTORE
+                ========================= */
+                console.log(
+                    "WATCH EDIT DOKUMEN BERUBAH:",
+                    {
+                        idDokumen:
+                            targetId,
+
+                        statusVerifikasi:
+                            data.statusVerifikasi ||
+                            "",
+
+                        isLock:
+                            data.isLock ||
+                            "",
+
+                        nomorDokumen:
+                            data.nomorDokumen ||
+                            "",
+
+                        namaFile:
+                            data.namaFile ||
+                            ""
+                    }
+                );
+
+                selesai =
+                    true;
+
+                console.log(
+                    "UPDATE DOKUMEN SELESAI DARI FIRESTORE:",
+                    targetId
+                );
+
+                resultResolve({
+                    success:
+                        true,
+
+                    source:
+                        "firestore",
+
+                    idDokumen:
+                        targetId,
+
+                    data
+                });
+
+                unsubscribe();
+            },
+
+            error => {
+                if(selesai){
+                    return;
+                }
+
+                console.error(
+                    "WATCH EDIT DOKUMEN FIRESTORE ERROR:",
+                    targetId,
+                    error
+                );
+
+                selesai =
+                    true;
+
+                readyReject(
+                    error
+                );
+
+                resultReject(
+                    error
+                );
+            }
+        );
+
+    return {
+        ready,
+        promise,
+        unsubscribe
+    };
 }

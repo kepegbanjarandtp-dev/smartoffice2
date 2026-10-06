@@ -61,7 +61,9 @@ import {
 
 import {
     smartofficeGetMasterDokumenFirestore,
-    smartofficeGetDokumenPegawaiFirestore
+    smartofficeGetDokumenPegawaiFirestore,
+    smartofficeWatchSubmitDokumenFirestore,
+    smartofficeWatchEditDokumenFirestore
 } from "../../services/dokumen-saya-firestore.service.js";
 
 
@@ -1925,7 +1927,6 @@ async function smartofficeSubmitDokumen(){
     ========================= */
     const sessionData =
         smartofficeGetSession();
-
     if(
         !sessionData ||
         !sessionData.nip
@@ -1967,7 +1968,6 @@ async function smartofficeSubmitDokumen(){
 
     reader.onload =
         async function(e){
-
             if(
                 pageInstance !==
                 smartofficeDokumenPageInstance
@@ -1978,12 +1978,62 @@ async function smartofficeSubmitDokumen(){
             let success =
                 false;
 
-            try{
+            let watcher =
+                null;
 
-                /* =========================
-                   UPLOAD DOKUMEN
-                ========================= */
-                await smartofficeUploadDokumen({
+            let timeoutTimer =
+                null;
+
+            try{
+                /* ==================================================
+                   FIRESTORE WATCHER
+                   PASANG SEBELUM UPLOAD AGAR TIDAK KELEWAT
+                ================================================== */
+                watcher =
+                    smartofficeWatchSubmitDokumenFirestore(
+                        sessionData.nip,
+                        jenisDokumen
+                    );
+
+                /* ==================================================
+                   TUNGGU SNAPSHOT AWAL
+                   UNTUK MEMBENTUK BASELINE
+                ================================================== */
+                await watcher.ready;
+
+                if(
+                    pageInstance !==
+                    smartofficeDokumenPageInstance
+                ){
+                    return;
+                }
+
+                console.log(
+                    "WATCH SUBMIT DOKUMEN SIAP:",
+                    {
+                        nip:
+                            sessionData.nip,
+
+                        kodeDokumen:
+                            jenisDokumen
+                    }
+                );
+
+                /* ==================================================
+                   UPLOAD KE GAS
+                   RESPONSE GAS BUKAN TANDA SELESAI
+                ================================================== */
+                let uploadErrorReject;
+
+                const uploadErrorPromise =
+                    new Promise(
+                        function(_, reject){
+                            uploadErrorReject =
+                                reject;
+                        }
+                    );
+
+                smartofficeUploadDokumen({
                     nip:
                         sessionData.nip,
 
@@ -2004,13 +2054,84 @@ async function smartofficeSubmitDokumen(){
 
                     base64:
                         e.target.result
+                })
+                .catch(error => {
+                    console.warn(
+                        "UPLOAD GAS ERROR, FIRESTORE MASIH DITUNGGU:",
+                        error
+                    );
+
+                    uploadErrorReject(
+                        error
+                    );
                 });
+
+                /* ==================================================
+                   TIMEOUT KONFIRMASI FIRESTORE
+                ================================================== */
+                timeoutTimer =
+                    setTimeout(
+                        function(){
+                            if(
+                                watcher &&
+                                typeof watcher.unsubscribe ===
+                                "function"
+                            ){
+                                watcher.unsubscribe();
+                            }
+
+                            uploadErrorReject(
+                                new Error(
+                                    "Upload belum terkonfirmasi di Firestore. Silakan coba lagi."
+                                )
+                            );
+                        },
+                        40000
+                    );
+
+                /* ==================================================
+                   TUNGGU:
+                   - FIRESTORE BERUBAH → SUKSES
+                   - GAS ERROR → GAGAL
+                ================================================== */
+                const firestoreResult =
+                    await Promise.race([
+                        watcher.promise,
+                        uploadErrorPromise
+                    ]);
+
+                if(
+                    timeoutTimer
+                ){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer =
+                        null;
+                }
 
                 if(
                     pageInstance !==
                     smartofficeDokumenPageInstance
                 ){
                     return;
+                }
+
+                console.log(
+                    "SUBMIT DOKUMEN BERHASIL:",
+                    firestoreResult
+                );
+
+                /* =========================
+                   STOP WATCHER
+                ========================= */
+                if(
+                    watcher &&
+                    typeof watcher.unsubscribe ===
+                    "function"
+                ){
+                    watcher.unsubscribe();
                 }
 
                 smartofficeDokumenUploadReader =
@@ -2037,9 +2158,26 @@ async function smartofficeSubmitDokumen(){
 
                 success =
                     true;
-
             }
             catch(error){
+                if(
+                    timeoutTimer
+                ){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer =
+                        null;
+                }
+
+                if(
+                    watcher &&
+                    typeof watcher.unsubscribe ===
+                    "function"
+                ){
+                    watcher.unsubscribe();
+                }
 
                 smartofficeShowToast(
                     error.message ||
@@ -2051,10 +2189,8 @@ async function smartofficeSubmitDokumen(){
                     "Gagal upload dokumen:",
                     error
                 );
-
             }
             finally{
-
                 smartofficeDokumenUploadReader =
                     null;
 
@@ -2079,11 +2215,9 @@ async function smartofficeSubmitDokumen(){
                     pageInstance ===
                     smartofficeDokumenPageInstance
                 ){
-
                     smartofficeDokumenSuccessToastTimer =
                         setTimeout(
                             function(){
-
                                 if(
                                     pageInstance !==
                                     smartofficeDokumenPageInstance
@@ -2098,7 +2232,6 @@ async function smartofficeSubmitDokumen(){
 
                                 smartofficeDokumenSuccessToastTimer =
                                     null;
-
                             },
                             100
                         );
@@ -2111,7 +2244,6 @@ async function smartofficeSubmitDokumen(){
     ========================= */
     reader.onerror =
         function(){
-
             smartofficeDokumenUploadReader =
                 null;
 
@@ -2603,7 +2735,6 @@ async function smartofficeSubmitEditDokumen(){
        VALIDASI FILE
     ========================= */
     if(!file){
-
         smartofficeShowToast(
             "Pilih file baru",
             "error"
@@ -2621,6 +2752,7 @@ async function smartofficeSubmitEditDokumen(){
                 item.idDokumen ===
                 smartofficeEditDokumenId
         );
+
     if(!dokumen){
         smartofficeShowToast(
             "Dokumen tidak ditemukan",
@@ -2691,11 +2823,59 @@ async function smartofficeSubmitEditDokumen(){
                 "Memperbarui dokumen..."
             );
 
+            let watcher =
+                null;
+
+            let timeoutTimer =
+                null;
+
             try{
-                /* =========================
-                   UPDATE DOKUMEN
-                ========================= */
-                await smartofficeUploadDokumen({
+                /* ==================================================
+                   FIRESTORE WATCHER
+                   PASANG SEBELUM UPDATE GAS
+                ================================================== */
+                watcher =
+                    smartofficeWatchEditDokumenFirestore(
+                        smartofficeEditDokumenId
+                    );
+
+                /* ==================================================
+                   TUNGGU SNAPSHOT AWAL
+                   AGAR UPDATE TIDAK KELEWAT
+                ================================================== */
+                await watcher.ready;
+
+                if(
+                    pageInstance !==
+                    smartofficeDokumenPageInstance
+                ){
+
+                    return;
+                }
+
+                console.log(
+                    "WATCH EDIT DOKUMEN SIAP:",
+                    smartofficeEditDokumenId
+                );
+
+                /* ==================================================
+                   UPDATE KE GAS
+                   RESPONSE GAS BUKAN TANDA SELESAI
+                ================================================== */
+                let updateErrorReject;
+
+                const updateErrorPromise =
+                    new Promise(
+                        function(
+                            _,
+                            reject
+                        ){
+                            updateErrorReject =
+                                reject;
+                        }
+                    );
+
+                smartofficeUploadDokumen({
                     isEdit:
                         true,
 
@@ -2722,10 +2902,68 @@ async function smartofficeSubmitEditDokumen(){
 
                     base64:
                         e.target.result
-                });
+                })
+                .catch(
+                    error => {
+                        console.warn(
+                            "UPDATE GAS ERROR, FIRESTORE MASIH DITUNGGU:",
+                            error
+                        );
+
+                        updateErrorReject(
+                            error
+                        );
+                    }
+                );
+
+                /* ==================================================
+                   TIMEOUT KONFIRMASI FIRESTORE
+                ================================================== */
+                timeoutTimer =
+                    setTimeout(
+                        function(){
+                            if(
+                                watcher &&
+                                typeof watcher.unsubscribe ===
+                                "function"
+                            ){
+                                watcher.unsubscribe();
+                            }
+
+                            updateErrorReject(
+                                new Error(
+                                    "Perubahan dokumen belum terkonfirmasi di Firestore. Silakan coba lagi."
+                                )
+                            );
+                        },
+                        40000
+                    );
+
+                /* ==================================================
+                   TUNGGU:
+                   FIRESTORE BERUBAH
+                   ATAU GAS ERROR
+                ================================================== */
+                const firestoreResult =
+                    await Promise.race([
+                        watcher.promise,
+                        updateErrorPromise
+                    ]);
 
                 /* =========================
-                   CEK HALAMAN SETELAH API
+                   CLEAR TIMEOUT
+                ========================= */
+                if(timeoutTimer){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer =
+                        null;
+                }
+
+                /* =========================
+                   CEK HALAMAN
                 ========================= */
                 if(
                     pageInstance !==
@@ -2733,6 +2971,22 @@ async function smartofficeSubmitEditDokumen(){
                 ){
 
                     return;
+                }
+
+                console.log(
+                    "UPDATE DOKUMEN BERHASIL:",
+                    firestoreResult
+                );
+
+                /* =========================
+                   STOP WATCHER
+                ========================= */
+                if(
+                    watcher &&
+                    typeof watcher.unsubscribe ===
+                    "function"
+                ){
+                    watcher.unsubscribe();
                 }
 
                 /* =========================
@@ -2749,7 +3003,9 @@ async function smartofficeSubmitEditDokumen(){
                 /* =========================
                    RELOAD DATA
                 ========================= */
-                await smartofficeLoadDokumenSaya(true);
+                await smartofficeLoadDokumenSaya(
+                    true
+                );
 
                 /* =========================
                    CEK HALAMAN
@@ -2772,6 +3028,28 @@ async function smartofficeSubmitEditDokumen(){
                 );
             }
             catch(error){
+                /* =========================
+                   CLEAR TIMEOUT
+                ========================= */
+                if(timeoutTimer){
+                    clearTimeout(
+                        timeoutTimer
+                    );
+
+                    timeoutTimer =
+                        null;
+                }
+
+                /* =========================
+                   STOP WATCHER
+                ========================= */
+                if(
+                    watcher &&
+                    typeof watcher.unsubscribe ===
+                    "function"
+                ){
+                    watcher.unsubscribe();
+                }
 
                 /* =========================
                    JIKA HALAMAN SUDAH HANCUR
@@ -2796,7 +3074,6 @@ async function smartofficeSubmitEditDokumen(){
                 );
             }
             finally{
-
                 /* =========================
                    RESET READER
                 ========================= */
@@ -2825,7 +3102,6 @@ async function smartofficeSubmitEditDokumen(){
         function(){
             smartofficeDokumenUploadReader =
                 null;
-
             smartofficeHideGlobalLoading();
 
             if(submitBtn){

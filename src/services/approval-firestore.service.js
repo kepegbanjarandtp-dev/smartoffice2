@@ -6,7 +6,9 @@ import {
     collection,
     getDocs,
     query,
-    where
+    where,
+    doc,
+    onSnapshot
 } from "firebase/firestore";
 
 import {
@@ -233,6 +235,118 @@ export async function smartofficeGetDokumenVerifikasiFirestore(){
             error?.message ||
             "Gagal mengambil dokumen verifikasi dari Firestore."
         );
+    }
+}
+
+
+/* ======================================================
+   WATCH STATUS VERIFIKASI DOKUMEN
+====================================================== */
+export function smartofficeWatchVerifikasiDokumenFirestore(
+    idDokumen,
+    callback
+){
+
+    const targetId =
+        String(idDokumen || "").trim();
+
+    if(!targetId){
+        console.warn(
+            "WATCH VERIFIKASI: ID dokumen kosong."
+        );
+
+        return function(){};
+    }
+
+    if(typeof callback !== "function"){
+        console.warn(
+            "WATCH VERIFIKASI: callback tidak valid."
+        );
+
+        return function(){};
+    }
+
+    try{
+        const dokumenRef =
+            doc(
+                smartofficeFirestore,
+                "dokumenPegawai",
+                targetId
+            );
+
+        const unsubscribe =
+            onSnapshot(
+                dokumenRef,
+
+                snapshot => {
+                    if(!snapshot.exists()){
+                        console.warn(
+                            "WATCH VERIFIKASI: dokumen tidak ditemukan:",
+                            targetId
+                        );
+
+                        return;
+                    }
+
+                    const data =
+                        snapshot.data();
+
+                    const statusVerifikasi =
+                        String(
+                            data.statusVerifikasi || ""
+                        ).trim();
+
+                    const lockDokumen =
+                        String(
+                            data.isLock || ""
+                        ).trim();
+
+                    console.log(
+                        "WATCH VERIFIKASI:",
+                        targetId,
+                        {
+                            statusVerifikasi,
+                            lockDokumen
+                        }
+                    );
+
+                    callback({
+                        idDokumen:
+                            data.idDokumen ||
+                            targetId,
+                        statusVerifikasi,
+                        lockDokumen,
+                        data
+                    });
+                },
+
+                error => {
+                    console.error(
+                        "WATCH VERIFIKASI FIRESTORE ERROR:",
+                        targetId,
+                        error
+                    );
+
+                    callback({
+                        error: true,
+                        idDokumen: targetId,
+                        message:
+                            error?.message ||
+                            "Gagal memantau status dokumen."
+                    });
+                }
+            );
+
+        return unsubscribe;
+    }
+    catch(error){
+        console.error(
+            "WATCH VERIFIKASI INIT ERROR:",
+            targetId,
+            error
+        );
+
+        return function(){};
     }
 }
 
