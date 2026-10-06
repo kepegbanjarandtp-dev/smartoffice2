@@ -517,36 +517,33 @@
                   </select>
               </div>
 
-              <!-- STATUS KEPEGAWAIAN -->
+              <!-- SEARCH DOKUMEN ARSIP -->
               <div class="smartoffice-arsippegawai-filter-group">
-                  <label>
-                      Status Kepegawaian
+                  <label for="smartofficeArsipDokumenSearch">
+                      Cari Dokumen Arsip
                   </label>
 
-                  <select
-                      id="smartofficeArsipStatusSelect"
-                      class="smartoffice-input"
-                  >
-                      <option value="">
-                          Semua Status
-                      </option>
+                  <div class="smartoffice-arsippegawai-search-wrapper">
+                      <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          aria-hidden="true"
+                      >
+                          <circle cx="11" cy="11" r="7"></circle>
+                          <path d="m20 20-3.5-3.5"></path>
+                      </svg>
 
-                      <option value="BLUD">
-                          BLUD
-                      </option>
-
-                      <option value="PPPK">
-                          PPPK
-                      </option>
-
-                      <option value="PPPK PARUH WAKTU">
-                          PPPK PARUH WAKTU
-                      </option>
-
-                      <option value="PNS">
-                          PNS
-                      </option>
-                  </select>
+                      <input
+                          type="text"
+                          id="smartofficeArsipDokumenSearch"
+                          class="smartoffice-input"
+                          placeholder="Cari nama dokumen, nomor, atau file..."
+                          autocomplete="off"
+                          disabled
+                      >
+                  </div>
               </div>
               
               <!-- ACTION -->
