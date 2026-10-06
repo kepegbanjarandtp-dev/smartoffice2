@@ -47,17 +47,16 @@ import {
 /* ======================================================
    GLOBAL STATE
 ====================================================== */
-let smartofficeArsipPegawaiData =
-    [];
+let smartofficeArsipPegawaiData = [];
+let smartofficeArsipDokumenData = null;
+let smartofficeArsipDokumenSearch = "";
 
-let smartofficeArsipPageInstance =
-    0;
+let smartofficeArsipPageInstance = 0;
 
 const smartofficeArsipPegawaiHandlers =
     new Map();
 
-let smartofficeArsipModalTimer =
-    null;
+let smartofficeArsipModalTimer = null;
 
 
 /* ======================================================
@@ -174,7 +173,6 @@ export async function smartofficeDestroyPage(){
             );
         }
     );
-
     smartofficeArsipPegawaiHandlers.clear();
 
     /* =========================
@@ -182,6 +180,30 @@ export async function smartofficeDestroyPage(){
     ========================= */
     smartofficeArsipPegawaiData =
         [];
+
+    smartofficeArsipDokumenData =
+        null;
+
+    smartofficeArsipDokumenSearch =
+        "";
+
+    /* =========================
+       RESET SEARCH INPUT
+    ========================= */
+    const searchInput =
+        document.getElementById(
+            "smartofficeArsipDokumenSearch"
+        );
+    if(searchInput){
+        searchInput.value =
+            "";
+
+        searchInput.disabled =
+            true;
+
+        searchInput.oninput =
+            null;
+    }
 
     /* =========================
        RESET PROGRESS STATE
@@ -343,7 +365,10 @@ export async function smartofficeCariArsipPegawai(
                 nip,
                 forceRefresh
             );
-
+        
+        /* =========================
+           PAGE INSTANCE CHECK
+        ========================= */    
         if (
             pageInstance !==
             smartofficeArsipPageInstance
@@ -351,9 +376,38 @@ export async function smartofficeCariArsipPegawai(
             return;
         }
 
-        smartofficeRenderArsipPegawai(
-            data
-        );
+        /* =========================
+           SIMPAN DATA ARSIP
+        ========================= */
+        smartofficeArsipDokumenData = data;
+        smartofficeArsipDokumenSearch = "";
+
+        /* =========================
+           RESET SEARCH
+           SETELAH ARSIP DIMUAT
+        ========================= */
+        const searchInput =
+            document.getElementById(
+                "smartofficeArsipDokumenSearch"
+            );
+
+        if(searchInput){
+            searchInput.value = "";
+            searchInput.disabled = false;
+            searchInput.oninput = function(){
+                smartofficeArsipDokumenSearch =
+                    this.value || "";
+
+                smartofficeRenderArsipPegawai(
+                    smartofficeArsipDokumenData
+                );
+            };
+        }
+
+        /* =========================
+        RENDER ARSIP
+        ========================= */
+        smartofficeRenderArsipPegawai(data);
     }
     catch(error){
         console.error(
@@ -367,6 +421,63 @@ export async function smartofficeCariArsipPegawai(
             "error"
         );
     }
+}
+
+
+/* ======================================================
+   FILTER DOKUMEN ARSIP
+   SEARCH:
+   - namaDokumen
+   - fileName
+   - nomorDokumen
+====================================================== */
+function smartofficeFilterArsipDokumen(
+    dokumen,
+    search
+){
+    const keyword =
+        String(search || "")
+            .trim()
+            .toLowerCase();
+
+    /* =========================
+       SEARCH KOSONG
+       TAMPILKAN SEMUA
+    ========================= */
+    if(!keyword){
+        return dokumen;
+    }
+
+    /* =========================
+       CARI PADA 3 FIELD
+    ========================= */
+    return dokumen.filter(
+        function(item){
+            const namaDokumen =
+                String(
+                    item?.namaDokumen || ""
+                )
+                .toLowerCase();
+
+            const fileName =
+                String(
+                    item?.fileName || ""
+                )
+                .toLowerCase();
+
+            const nomorDokumen =
+                String(
+                    item?.nomorDokumen || ""
+                )
+                .toLowerCase();
+
+            return (
+                namaDokumen.includes(keyword) ||
+                fileName.includes(keyword) ||
+                nomorDokumen.includes(keyword)
+            );
+        }
+    );
 }
 
 
@@ -395,7 +506,6 @@ export function smartofficeRenderArsipPegawai(
         document.getElementById(
             "smartofficeArsipPegawaiList"
         );
-
     if(
         !infoContainer ||
         !listContainer
@@ -403,22 +513,32 @@ export function smartofficeRenderArsipPegawai(
         return;
     }
 
-    /* ==================================================
-       DOKUMEN
-    ================================================== */
-    const dokumen =
+    /* =========================
+       SEMUA DOKUMEN ARSIP
+    ========================= */
+    const dokumenSemua =
         Array.isArray(result?.dokumen)
             ? result.dokumen
             : [];
 
+    /* =========================
+       DOKUMEN HASIL SEARCH
+       HANYA UNTUK LIST
+    ========================= */
+    const dokumen =
+        smartofficeFilterArsipDokumen(
+            dokumenSemua,
+            smartofficeArsipDokumenSearch
+        );
+
+    /* =========================
+       PROGRESS TETAP DARI
+       SEMUA DOKUMEN
+    ========================= */
     const dokumenWajib =
-        dokumen.filter(
-            function(item){
-                return (
-                    item.wajibUpload ===
-                    "YA"
-                );
-            }
+        dokumenSemua.filter(
+            item =>
+                item.wajibUpload === "YA"
         );
 
     /* ==================================================
@@ -1232,51 +1352,76 @@ export function smartofficeRenderArsipPegawai(
     /* ==================================================
        EMPTY
     ================================================== */
-    if(
-        dokumen.length === 0
-    ){
-        listContainer.innerHTML =
-        `
-        <div
-            class="
-                smartoffice-arsippegawai-empty
-            "
-        >
-            <div
-                class="
-                    smartoffice-arsippegawai-empty-icon
-                "
-            >
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                >
-                    <path
-                        d="
-                            M3 7
-                            a2 2 0 0 1 2-2h5
-                            l2 2h7
-                            a2 2 0 0 1 2 2v8
-                            a2 2 0 0 1-2 2H5
-                            a2 2 0 0 1-2-2z
-                        "
-                    />
-                </svg>
+    if(dokumen.length === 0){
+
+        /* =========================
+        HASIL SEARCH KOSONG
+        ========================= */
+        if(
+            String(
+                smartofficeArsipDokumenSearch || ""
+            ).trim()
+        ){
+
+            listContainer.innerHTML = `
+                <div class="smartoffice-arsippegawai-empty">
+
+                    <div class="smartoffice-arsippegawai-empty-icon">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                        >
+                            <circle
+                                cx="11"
+                                cy="11"
+                                r="7"
+                            ></circle>
+
+                            <path
+                                d="m20 20-3.5-3.5"
+                            ></path>
+                        </svg>
+                    </div>
+
+                    <h3>
+                        Dokumen Tidak Ditemukan
+                    </h3>
+
+                    <p>
+                        Tidak ada dokumen arsip
+                        yang cocok dengan pencarian.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+        }
+
+        /* =========================
+           BELUM ADA ARSIP
+           SEARCH KOSONG
+        ========================= */
+        listContainer.innerHTML = `
+            <div class="smartoffice-arsippegawai-empty">
+                <div class="smartoffice-arsippegawai-empty-icon">
+                    <!--
+                        PERTAHANKAN ICON
+                        EXISTING DI SINI
+                    -->
+                </div>
+
+                <h3>
+                    Belum Ada Arsip
+                </h3>
+
+                <p>
+                    Belum ada dokumen arsip
+                    untuk pegawai ini.
+                </p>
             </div>
-
-            <h3>
-                Belum ada arsip
-            </h3>
-
-            <p>
-                Belum terdapat dokumen arsip
-                untuk pegawai ini.
-            </p>
-        </div>
         `;
 
         return;
@@ -2317,36 +2462,79 @@ export function smartofficeCloseArsipModal(){
 ====================================================== */
 export function smartofficeResetArsipPegawai(){
 
-    document.getElementById(
-        "smartofficeArsipPegawaiSelect"
-    ).value = "";
+    /* =========================
+       RESET SEARCH DOKUMEN
+    ========================= */
+    smartofficeArsipDokumenData =
+        null;
 
-    document.getElementById(
-        "smartofficeArsipStatusSelect"
-    ).value = "";
+    smartofficeArsipDokumenSearch =
+        "";
 
-    document.getElementById(
-        "smartofficeArsipPegawaiInfo"
-    ).innerHTML = "";
+    const searchInput =
+        document.getElementById(
+            "smartofficeArsipDokumenSearch"
+        );
+    if(searchInput){
+        searchInput.value =
+            "";
 
-    document.getElementById(
-        "smartofficeArsipPegawaiList"
-    ).innerHTML =
-    `
-    <div class="smartoffice-arsippegawai-empty">
-        <div class="smartoffice-arsippegawai-empty-icon">
-            🗂️
+        searchInput.disabled =
+            true;
+
+        searchInput.oninput =
+            null;
+    }
+
+    /* =========================
+       RESET PILIH PEGAWAI
+    ========================= */
+    const pegawaiSelect =
+        document.getElementById(
+            "smartofficeArsipPegawaiSelect"
+        );
+    if(pegawaiSelect){
+        pegawaiSelect.value =
+            "";
+    }
+
+    /* =========================
+       RESET INFO
+    ========================= */
+    const info =
+        document.getElementById(
+            "smartofficeArsipPegawaiInfo"
+        );
+    if(info){
+        info.innerHTML =
+            "";
+    }
+
+    /* =========================
+       RESET LIST
+    ========================= */
+    const list =
+        document.getElementById(
+            "smartofficeArsipPegawaiList"
+        );
+    if(list){
+        list.innerHTML =
+        `
+        <div class="smartoffice-arsippegawai-empty">
+            <div class="smartoffice-arsippegawai-empty-icon">
+                🗂️
+            </div>
+
+            <h3>
+                Belum ada arsip dipilih
+            </h3>
+
+            <p>
+                Pilih pegawai lalu klik Cari
+            </p>
         </div>
-
-        <h3>
-            Belum ada arsip dipilih
-        </h3>
-
-        <p>
-            Pilih pegawai lalu klik Cari
-        </p>
-    </div>
-    `;
+        `;
+    }
 }
 
 
@@ -2374,44 +2562,82 @@ export async function smartofficeRefreshArsip(){
         '<span class="smartoffice-mini-loader"></span>';
 
     /* =========================
-       RESET FILTER
+       RESET STATE SEARCH
     ========================= */
-    document.getElementById(
-        "smartofficeArsipPegawaiSelect"
-    ).value = "";
+    smartofficeArsipDokumenData =
+        null;
 
-    document.getElementById(
-        "smartofficeArsipStatusSelect"
-    ).value = "";
+    smartofficeArsipDokumenSearch =
+        "";
+
+    /* =========================
+       RESET PILIH PEGAWAI
+    ========================= */
+    const pegawaiSelect =
+        document.getElementById(
+            "smartofficeArsipPegawaiSelect"
+        );
+    if(pegawaiSelect){
+        pegawaiSelect.value =
+            "";
+    }
+
+    /* =========================
+       RESET SEARCH INPUT
+    ========================= */
+    const searchInput =
+        document.getElementById(
+            "smartofficeArsipDokumenSearch"
+        );
+    if(searchInput){
+        searchInput.value =
+            "";
+
+        searchInput.disabled =
+            true;
+
+        searchInput.oninput =
+            null;
+    }
 
     /* =========================
        RESET INFO
     ========================= */
-    document.getElementById(
-        "smartofficeArsipPegawaiInfo"
-    ).innerHTML = "";
+    const info =
+        document.getElementById(
+            "smartofficeArsipPegawaiInfo"
+        );
+    if(info){
+        info.innerHTML =
+            "";
+    }
 
     /* =========================
        EMPTY STATE
     ========================= */
-    document.getElementById(
-        "smartofficeArsipPegawaiList"
-    ).innerHTML =
-    `
-    <div class="smartoffice-arsippegawai-empty">
-        <div class="smartoffice-arsippegawai-empty-icon">
-            🗂️
+    const list =
+        document.getElementById(
+            "smartofficeArsipPegawaiList"
+        );
+
+    if(list){
+        list.innerHTML =
+        `
+        <div class="smartoffice-arsippegawai-empty">
+            <div class="smartoffice-arsippegawai-empty-icon">
+                🗂️
+            </div>
+
+            <h3>
+                Belum ada arsip dipilih
+            </h3>
+
+            <p>
+                Pilih pegawai lalu klik Cari
+            </p>
         </div>
-
-        <h3>
-            Belum ada arsip dipilih
-        </h3>
-
-        <p>
-            Pilih pegawai lalu klik Cari
-        </p>
-    </div>
-    `;
+        `;
+    }
 
     /* =========================
        CLEAR CACHE ARSIP
@@ -2430,10 +2656,14 @@ export async function smartofficeRefreshArsip(){
         smartofficeLoadProgressArsip(true)
     ]);
 
+    /* =========================
+       PAGE INSTANCE CHECK
+    ========================= */
     if(
         pageInstance !==
         smartofficeArsipPageInstance
     ){
+
         return;
     }
 
