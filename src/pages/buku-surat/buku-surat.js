@@ -4860,20 +4860,18 @@ export async function smartofficeSubmitSuratMasuk(){
         {
             id: "smartofficeSuratMasukPerihal",
             label: "Perihal"
-        },
-        {
-            id: "smartofficeSuratMasukCatatanDisposisi",
-            label: "Catatan Disposisi"
         }
     ];
 
     const errors = [];
+
     requiredFields.forEach(
         field => {
             const element =
                 document.getElementById(
                     field.id
                 );
+
             if(!element){
                 return;
             }
@@ -4899,16 +4897,45 @@ export async function smartofficeSubmitSuratMasuk(){
     );
 
     /* ==================================================
-       VALIDASI DISPOSISI
+       VALIDASI DISPOSISI & CATATAN DISPOSISI
     ================================================== */
+    const adaDisposisi =
+        Array.isArray(
+            smartofficeSuratMasukDisposisiSelected
+        ) &&
+        smartofficeSuratMasukDisposisiSelected.length > 0;
+
+    const catatanDisposisiElement =
+        document.getElementById(
+            "smartofficeSuratMasukCatatanDisposisi"
+        );
+
+    const catatanDisposisi =
+        String(
+            catatanDisposisiElement?.value || ""
+        ).trim();
+    /*
+       JIKA DISPOSISI DIISI,
+       CATATAN DISPOSISI WAJIB DIISI
+    */
     if(
-        !smartofficeSuratMasukDisposisiSelected ||
-        !smartofficeSuratMasukDisposisiSelected.length
+        adaDisposisi &&
+        !catatanDisposisi
     ){
         errors.push(
-            "Disposisi Ke"
+            "Catatan Disposisi"
+        );
+
+        catatanDisposisiElement?.classList.add(
+            "smartoffice-input-error"
         );
     }
+
+    /*
+       JIKA TIDAK ADA DISPOSISI,
+       CATATAN BOLEH KOSONG
+    */
+
     if(errors.length){
         alert(
             "Data berikut wajib diisi:\n\n" +
@@ -4948,7 +4975,7 @@ export async function smartofficeSubmitSuratMasuk(){
         const payload = {
 
             /* TAMBAH = null
-            EDIT = data.rowIndex */
+               EDIT = data.rowIndex */
             rowIndex:
                 smartofficeSuratMasukEditRowIndex ||
                 null,
@@ -4957,22 +4984,27 @@ export async function smartofficeSubmitSuratMasuk(){
                 document.getElementById(
                     "smartofficeSuratMasukTglTerima"
                 )?.value || "",
+
             nomorSurat:
                 document.getElementById(
                     "smartofficeSuratMasukNomorSurat"
                 )?.value || "",
+
             tglSurat:
                 document.getElementById(
                     "smartofficeSuratMasukTglSurat"
                 )?.value || "",
+
             pengirim:
                 document.getElementById(
                     "smartofficeSuratMasukPengirim"
                 )?.value || "",
+
             perihal:
                 document.getElementById(
                     "smartofficeSuratMasukPerihal"
                 )?.value || "",
+
             sifat:
                 document.getElementById(
                     "smartofficeSuratMasukSifat"
@@ -5002,7 +5034,6 @@ export async function smartofficeSubmitSuratMasuk(){
 
         const file =
             fileInput?.files?.[0];
-
         if(file){
             /* MAX 2 MB */
             if(
@@ -5020,6 +5051,7 @@ export async function smartofficeSubmitSuratMasuk(){
                 await smartofficeConvertFileToBase64(
                     file
                 );
+
             payload.base64 =
                 base64;
 
@@ -5082,7 +5114,6 @@ export async function smartofficeSubmitSuratMasuk(){
         await smartofficeLoadDataSuratMasuk(
             pageInstance
         );
-
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -5137,6 +5168,7 @@ export async function smartofficeSubmitSuratMasuk(){
 function resetSubmitMasukUI() {
 
     isSubmittingMasuk = false;
+
     document
         .getElementById("btnLoadingMasuk")
         ?.classList.add("hidden");

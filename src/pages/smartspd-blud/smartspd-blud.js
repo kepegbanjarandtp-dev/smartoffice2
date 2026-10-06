@@ -2208,7 +2208,6 @@ function smartofficeUpdateSubmitButton(){
         document.getElementById(
             "smartofficeSPDSubmitButton"
         );
-
     if(!button){
         return;
     }
@@ -2233,10 +2232,44 @@ function smartofficeUpdateSubmitButton(){
         "loading",
         smartofficeSubmitting
     );
+
+    const submitText =
+        button.querySelector(
+            ".smartoffice-spd-submit-text"
+        );
+    if(submitText){
+        submitText.textContent =
+            smartofficeSubmitting
+                ? "Mengajukan..."
+                : "Ajukan SPD";
+    }
 }
 
 /* ======================================================
-   14.2 INIT TOMBOL SUBMIT
+   14.2 COUNTER LOKASI
+====================================================== */
+function smartofficeUpdateLokasiCounter(){
+
+    const input =
+        document.getElementById(
+            "smartofficeSPDLokasi"
+        );
+
+    const counter =
+        document.getElementById(
+            "smartofficeSPDLokasiCounter"
+        );
+
+    if(!input || !counter){
+        return;
+    }
+
+    counter.textContent =
+        input.value.length;
+}
+
+/* ======================================================
+   14.3 INIT TOMBOL SUBMIT
 ====================================================== */
 function smartofficeInitSubmitButton(){
 
@@ -2280,10 +2313,29 @@ function smartofficeInitSubmitButton(){
             }
         );
     });
+
+    /* ==================================================
+       COUNTER LOKASI
+    ================================================== */
+    const lokasi =
+        document.getElementById(
+            "smartofficeSPDLokasi"
+        );
+
+    smartofficeSPDAddHandler(
+        lokasi,
+        "input",
+        function(){
+            smartofficeUpdateLokasiCounter();
+        }
+    );
+
+    // Set nilai awal
+    smartofficeUpdateLokasiCounter();
 }
 
 /* ======================================================
-   14.3 PROSES SUBMIT SPD
+   14.4 PROSES SUBMIT SPD
 ====================================================== */
 async function smartofficeHandleSubmitSPD(){
 
@@ -2341,7 +2393,7 @@ async function smartofficeHandleSubmitSPD(){
 }
 
 /* ======================================================
-   14.4 BUILD PAYLOAD SUBMIT SPD
+   14.5 BUILD PAYLOAD SUBMIT SPD
 ====================================================== */
 async function smartofficeBuildSubmitPayload(){
 

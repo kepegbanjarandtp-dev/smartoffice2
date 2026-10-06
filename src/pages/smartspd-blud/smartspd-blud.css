@@ -952,31 +952,21 @@ input[readonly]{
 
 /* Button */
 .smartoffice-spd-submit-button{
-
-    display:block;
-
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
     width:100%;
-
     max-width:320px;
-
     height:52px;
-
     margin:24px auto 0;
-
     border:none;
-
     border-radius:14px;
-
     background:#2563eb;
-
     color:#fff;
-
     font-size:15px;
-
     font-weight:700;
-
     transition:.25s;
-
 }
 
 /* Hover */
@@ -993,9 +983,10 @@ input[readonly]{
 
 /* Disabled */
 .smartoffice-spd-submit-button:disabled{
-    background:#cbd5e1;
-    color:#64748b;
-    cursor:not-allowed;
+    background:#2563eb;
+    color:#ffffff;
+    cursor:wait;
+    opacity:1;
     box-shadow:none;
     transform:none;
 }
@@ -1004,6 +995,32 @@ input[readonly]{
 .smartoffice-spd-submit-button.loading{
     pointer-events:none;
     opacity:.85;
+}
+
+/* Spinner */
+.smartoffice-spd-submit-spinner{
+    width:17px;
+    height:17px;
+    border:2px solid rgba(255,255,255,.35);
+    border-top-color:#ffffff;
+    border-radius:50%;
+    animation:
+        smartofficeSPDSpin
+        .7s linear infinite;
+    display:none;
+    flex-shrink:0;
+}
+
+/* Tampilkan spinner saat loading */
+.smartoffice-spd-submit-button.loading
+.smartoffice-spd-submit-spinner{
+    display:block;
+}
+
+@keyframes smartofficeSPDSpin{
+    to{
+        transform:rotate(360deg);
+    }
 }
 
 
