@@ -2191,3 +2191,130 @@
     }
 }
 
+
+/* ======================================================
+   SEARCH DOKUMEN ARSIP
+====================================================== */
+.smartoffice-arsippegawai-search-wrapper{
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.smartoffice-arsippegawai-search-wrapper input{
+    width: 100% !important;
+    box-sizing: border-box;
+    padding-top: 0 !important;
+    padding-right: 12px !important;
+    padding-bottom: 0 !important;
+    padding-left: 38px !important;
+}
+
+/* ======================================================
+   ICON SEARCH
+====================================================== */
+.smartoffice-arsippegawai-search-wrapper svg{
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    max-width: 16px !important;
+    min-height: 16px !important;
+    max-height: 16px !important;
+    transform: translateY(-50%) !important;
+    display: block !important;
+    margin: 0 !important;
+    color: #8a9ab3;
+    pointer-events: none;
+    z-index: 2;
+}
+
+
+/* ======================================================
+   MOBILE — FILTER ARSIP PEGAWAI
+====================================================== */
+@media (max-width: 768px){
+
+    .smartoffice-arsippegawai-filter-body{
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    /* =========================
+       FILTER GROUP
+    ========================= */
+    .smartoffice-arsippegawai-filter-group{
+        width: 100%;
+        min-width: 0;
+    }
+
+    .smartoffice-arsippegawai-filter-group label{
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        line-height: 1.3;
+    }
+
+    /* =========================
+       SEARCH WRAPPER
+    ========================= */
+    .smartoffice-arsippegawai-search-wrapper{
+        position: relative;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .smartoffice-arsippegawai-search-wrapper input{
+        width: 100% !important;
+        min-height: 40px;
+        box-sizing: border-box;
+        padding-top: 0 !important;
+        padding-right: 12px !important;
+        padding-bottom: 0 !important;
+        padding-left: 36px !important;
+        font-size: 12px;
+    }
+
+    /* =========================
+       ICON SEARCH
+    ========================= */
+    .smartoffice-arsippegawai-search-wrapper svg{
+        position: absolute !important;
+        left: 11px !important;
+        top: 50% !important;
+        width: 15px !important;
+        height: 15px !important;
+        min-width: 15px !important;
+        max-width: 15px !important;
+        min-height: 15px !important;
+        max-height: 15px !important;
+        transform: translateY(-50%) !important;
+        display: block !important;
+        margin: 0 !important;
+        color: #8a9ab3;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    /* =========================
+       ACTION BUTTON
+    ========================= */
+    .smartoffice-arsippegawai-filter-action{
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .smartoffice-arsippegawai-search-button,
+    .smartoffice-arsippegawai-reset-button{
+        width: 100%;
+        min-height: 40px;
+        box-sizing: border-box;
+        justify-content: center;
+    }
+}
+

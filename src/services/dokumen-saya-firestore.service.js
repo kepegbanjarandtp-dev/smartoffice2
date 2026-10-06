@@ -737,14 +737,83 @@ export async function smartofficeGetDokumenPegawaiFirestore(nip){
                 if(
                     master.multiUpload === "YA"
                 ){
-                    uploadedList.forEach(
-                        dokumen => {
-                            result.push({
-                                ...master,
-                                ...dokumen
-                            });
-                        }
-                    );
+                    /* =========================
+                       SUDAH ADA UPLOAD
+                       TAMPILKAN SEMUA
+                    ========================= */
+                    if(
+                        uploadedList.length > 0
+                    ){
+                        uploadedList.forEach(
+                            dokumen => {
+                                result.push({
+                                    ...master,
+                                    ...dokumen
+                                });
+                            }
+                        );
+                    }
+
+                    /* =========================
+                       BELUM ADA UPLOAD
+                       TETAP TAMPILKAN MASTER
+                    ========================= */
+                    else{
+                        result.push({
+                            idDokumen: "",
+
+                            kodeDokumen:
+                                master.kodeDokumen,
+
+                            namaDokumen:
+                                master.namaDokumen,
+
+                            grupDokumen:
+                                master.grupDokumen,
+
+                            wajibUpload:
+                                master.wajibUpload,
+
+                            uploaded:
+                                false,
+
+                            nomorDokumen:
+                                "",
+
+                            fileName:
+                                "",
+
+                            fileId:
+                                "",
+
+                            fileUrl:
+                                "",
+
+                            statusVerifikasi:
+                                "",
+
+                            isLock:
+                                "TIDAK",
+
+                            keterangan:
+                                "",
+
+                            catatanVerifikator:
+                                "",
+
+                            alasanBukaLock:
+                                "",
+
+                            openLockBy:
+                                "",
+
+                            openLockAt:
+                                "",
+
+                            multiUpload:
+                                master.multiUpload
+                        });
+                    }
 
                     return;
                 }
