@@ -675,82 +675,46 @@
     >
       <!-- FILTER -->
       <div class="smartoffice-spd-riwayat-filter">
+        <div class="smartoffice-spd-filter-search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input
+                type="search"
+                id="smartofficeSPDRiwayatSearch"
+                placeholder="Cari nama, kegiatan, atau lokasi..."
+                autocomplete="off"
+            >
+        </div>
 
-        <!-- SEMUA -->
-        <button
-          class="smartoffice-spd-riwayat-filter-item active"
-          data-status="SEMUA"
+        <select
+            id="smartofficeSPDRiwayatMonth"
+            class="smartoffice-spd-filter-select"
         >
-          <svg viewBox="0 0 24 24">
-            <path d="
-              M4 4h6v6H4z
-              M14 4h6v6h-6z
-              M4 14h6v6H4z
-              M14 14h6v6h-6z
-            "/>
-          </svg>
-          <span>Semua</span>
-        </button>
+            <option value="">Semua Bulan</option>
+        </select>
 
-        <!-- MENUNGGU -->
-        <button
-          class="smartoffice-spd-riwayat-filter-item"
-          data-status="MENUNGGU REVIEW"
+        <select
+            id="smartofficeSPDRiwayatYear"
+            class="smartoffice-spd-filter-select"
         >
-          <svg viewBox="0 0 24 24">
-            <path d="
-              M6 2v6h12V2
-              M6 22v-6h12v6
-              M6 8l12 8
-            "/>
-          </svg>
-          <span>Menunggu</span>
-        </button>
+            <option value="">Semua Tahun</option>
+        </select>
 
-        <!-- DISETUJUI -->
-        <button
-          class="smartoffice-spd-riwayat-filter-item"
-          data-status="DISETUJUI"
+        <select
+            id="smartofficeSPDRiwayatStatus"
+            class="smartoffice-spd-filter-select"
         >
-          <svg viewBox="0 0 24 24">
-            <path d="M20 6L9 17l-5-5"/>
-          </svg>
-          <span>Disetujui</span>
-        </button>
+            <option value="">Semua Status</option>
+        </select>
 
-        <!-- REVISI -->
         <button
-          class="smartoffice-spd-riwayat-filter-item"
-          data-status="PERLU REVISI"
+            type="button"
+            id="smartofficeSPDRiwayatReset"
+            class="smartoffice-spd-filter-reset"
         >
-          <svg viewBox="0 0 24 24">
-            <path d="
-              M12 20h9
-            "/>
-            <path d="
-              M16.5 3.5
-              a2.1 2.1 0 013 3
-              L7 19l-4 1
-              1-4Z
-            "/>
-          </svg>
-          <span>Revisi</span>
+            <i class="fa-solid fa-rotate-left"></i>
+            Reset
         </button>
-
-        <!-- DIBATALKAN -->
-        <button
-          class="smartoffice-spd-riwayat-filter-item"
-          data-status="DIBATALKAN"
-        >
-          <svg viewBox="0 0 24 24">
-            <path d="
-              M18 6L6 18
-              M6 6l12 12
-            "/>
-          </svg>
-          <span>Dibatalkan</span>
-        </button>
-      </div>
+    </div>
 
       <!-- LIST -->
       <div

@@ -142,11 +142,35 @@
     <div class="smartoffice-dashboard-summary-list">
 
         <!-- ==================================================
-             TOTAL PEGAWAI
+            TOTAL PEGAWAI
+            KLIK UNTUK MELIHAT DETAIL
         ================================================== -->
         <div
-            class="smartoffice-dashboard-summary-item"
+            class="smartoffice-dashboard-summary-item smartoffice-dashboard-summary-item-pegawai"
+            id="smartofficeDashboardSummaryPegawai"
+            role="button"
+            tabindex="0"
+            aria-expanded="false"
+            aria-label="Lihat rincian pegawai"
         >
+            <!-- INDIKATOR BISA DIKLIK -->
+            <span
+                class="smartoffice-dashboard-summary-pegawai-arrow"
+                aria-hidden="true"
+            >
+                <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                >
+                    <path d="m9 18 6-6-6-6"/>
+                </svg>
+            </span>
+
+            <!-- ICON -->
             <div class="smartoffice-dashboard-summary-icon">
                 <svg
                     viewBox="0 0 24 24"
@@ -178,6 +202,7 @@
 
             <div class="smartoffice-dashboard-summary-info">
                 <span>Total Pegawai</span>
+
                 <strong id="smartofficeDashboardStatPegawai">
                     —
                 </strong>
@@ -312,6 +337,38 @@
                 <span>Arsip Kepegawaian</span>
             </div>
         </div>
+    </div>
+
+    <!-- ==================================================
+        DETAIL TOTAL PEGAWAI
+    ================================================== -->
+    <div
+        id="smartofficeDashboardPegawaiDetail"
+        class="smartoffice-dashboard-pegawai-detail"
+        hidden
+    >
+        <div class="smartoffice-dashboard-pegawai-detail-header">
+
+            <div>
+                <strong>Pegawai Aktif</strong>
+                <span>Rincian berdasarkan status kepegawaian</span>
+            </div>
+
+            <button
+                type="button"
+                id="smartofficeDashboardPegawaiClose"
+                class="smartoffice-dashboard-pegawai-close"
+                aria-label="Tutup rincian pegawai"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <div
+            id="smartofficeDashboardPegawaiList"
+            class="smartoffice-dashboard-pegawai-list"
+        ></div>
     </div>
 
     <!-- ==================================================
