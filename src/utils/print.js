@@ -10,8 +10,8 @@ import {
 } from "./date.js";
 
 import {
-    smartofficeGetKapus
-} from "../services/management-cuti.service.js";
+    smartofficeGetKapusFromFirestore
+} from "../services/pegawai-firestore.service.js";
 
 
 /* ======================================================
@@ -118,7 +118,6 @@ export async function smartofficeExportRiwayatCutiPdf(){
 
     const data =
         window.smartofficeManagementRiwayatFilteredData || [];
-
     if(
         !data.length
     ){
@@ -137,7 +136,6 @@ export async function smartofficeExportRiwayatCutiPdf(){
         document.querySelector(
             ".smartoffice-management-print-button"
         );
-
     if(!btn){
         return;
     }
@@ -152,21 +150,29 @@ export async function smartofficeExportRiwayatCutiPdf(){
         '<span class="smartoffice-spinner-print"></span>Cetak';
 
     try{
-        /*
-         * ==================================================
-         * GET DATA KAPUS
-         * ==================================================
-         *
-         * BAGIAN INI NANTI KITA HUBUNGKAN KE SERVICE GAS
-         * REST API YANG SUDAH DIPAKAI PROJECT.
-         *
-         * JANGAN gunakan google.script.run lagi.
-         *
-         */
+
+        /* ==================================================
+           GET DATA KAPUS DARI FIRESTORE
+        ================================================== */
+        const kapusResult =
+            await smartofficeGetKapusFromFirestore();
+
+        if(
+            !kapusResult ||
+            !kapusResult.success
+        ){
+            throw new Error(
+                kapusResult?.message ||
+                "Data Kepala Puskesmas tidak ditemukan."
+            );
+        }
 
         const kapus =
-            await smartofficeGetKapus();
+            kapusResult.data || {};
 
+        /* ==================================================
+           GENERATE LAPORAN
+        ================================================== */
         const laporanHtml =
             smartofficeGenerateLaporanRiwayatCuti(
                 data,
@@ -174,14 +180,15 @@ export async function smartofficeExportRiwayatCutiPdf(){
                 ""
             );
 
+        /* ==================================================
+           OPEN PRINT WINDOW
+        ================================================== */
         const win =
             window.open(
                 "",
                 "_blank"
             );
-
         if(!win){
-
             btn.disabled =
                 false;
 
@@ -195,17 +202,15 @@ export async function smartofficeExportRiwayatCutiPdf(){
 
             return;
         }
-
         win.document.open();
-
         win.document.write(
             laporanHtml
         );
 
         win.document.close();
-
         win.onload =
             function(){
+
                 btn.disabled =
                     false;
 
@@ -214,8 +219,8 @@ export async function smartofficeExportRiwayatCutiPdf(){
             };
     }
     catch(error){
-
         console.error(
+            "PRINT RIWAYAT CUTI ERROR:",
             error
         );
 
@@ -226,6 +231,7 @@ export async function smartofficeExportRiwayatCutiPdf(){
             oldHtml;
 
         smartofficeShowToast(
+            error.message ||
             "Gagal menyiapkan laporan",
             "error"
         );
@@ -1014,6 +1020,10 @@ export function smartofficeGenerateTemplateLaporan(
                 word-break:break-word;
                 overflow-wrap:anywhere;
                 text-align:left;
+
+                /* GARIS KANAN DI DALAM KOLOM
+                TIDAK MENAMBAH LEBAR TABEL */
+                box-shadow:inset -1px 0 0 #dddddd;
             }
 
             </style>
@@ -1187,16 +1197,20 @@ export function smartofficeGenerateTemplateLaporan(
             AUTO PRINT
         ====================================== -->
         <${'script'}>
-            window.addEventListener(
-            'load',
+            let sudahPrint = false;
 
-            function(){
-                setTimeout(function(){
+            setTimeout(function(){
+
+                if(sudahPrint){
+                    return;
+                }
+
+                sudahPrint = true;
+
                 window.focus();
                 window.print();
-                },500);
-              }
-            );
+
+            },500);
         </${'script'}>
         </body>      
     </html>
@@ -1487,7 +1501,7 @@ export function smartofficeGenerateLaporanSuratMasuk(
     `;
 
     return smartofficeGenerateTemplateLaporan(
-        "REGISTER SURAT MASUK",
+        "BUKU AGENDA / REGISTER SURAT MASUK",
         periode,
         bodyHtml,
         data.length,
@@ -1553,7 +1567,7 @@ export function smartofficeGenerateLaporanSuratKeluar(
     `;
 
     return smartofficeGenerateTemplateLaporan(
-        "REGISTER SURAT KELUAR",
+        "BUKU AGENDA / REGISTER SURAT KELUAR",
         periode,
         bodyHtml,
         data.length,

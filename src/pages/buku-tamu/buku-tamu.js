@@ -10,8 +10,8 @@ import {
 } from "../../utils/print.js";
 
 import {
-    smartofficeGetKapus
-} from "../../services/management-cuti.service.js";
+    smartofficeGetKapusFromFirestore
+} from "../../services/pegawai-firestore.service.js";
 
 import {
     smartofficeGetBukuTamu
@@ -1421,7 +1421,6 @@ export async function smartofficePrintBukuTamu(){
         btn
             ? btn.innerHTML
             : "🖨 Print";
-
     if(btn){
         btn.disabled = true;
         btn.innerHTML = `
@@ -1435,27 +1434,23 @@ export async function smartofficePrintBukuTamu(){
     }
 
     try{
-
         /* =========================
-           GET KAPUS
+           GET KAPUS DARI FIRESTORE
         ========================= */
-        const response =
-            await smartofficeApi(
-                "smartofficeGetKapus"
-            );
-
+        const kapusResult =
+            await smartofficeGetKapusFromFirestore();
         if(
-            !response ||
-            !response.success
+            !kapusResult ||
+            !kapusResult.success
         ){
             throw new Error(
-                response?.message ||
+                kapusResult?.message ||
                 "Gagal mengambil data Kepala Puskesmas."
             );
         }
 
         const kapus =
-            response.data || "";
+            kapusResult.data || {};
 
         /* =========================
            GENERATE LAPORAN
@@ -1475,7 +1470,6 @@ export async function smartofficePrintBukuTamu(){
                 "",
                 "_blank"
             );
-
         if(!win){
             throw new Error(
                 "Popup diblokir browser."
@@ -1486,7 +1480,6 @@ export async function smartofficePrintBukuTamu(){
         win.document.write(
             laporanHtml
         );
-
         win.document.close();
 
         /* =========================

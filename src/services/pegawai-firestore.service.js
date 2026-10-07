@@ -118,3 +118,110 @@ export async function smartofficeGetAllPegawaiFromFirestore(){
         };
     }
 }
+
+
+/* ======================================================
+   GET KAPUS DARI FIRESTORE
+====================================================== */
+export async function smartofficeGetKapusFromFirestore(){
+
+    try{
+        const result =
+            await smartofficeGetAllPegawaiFromFirestore();
+        if(
+            !result ||
+            !result.success
+        ){
+            return {
+                success: false,
+                message:
+                    result?.message ||
+                    "Gagal mengambil data pegawai dari Firestore."
+            };
+        }
+
+        const pegawai =
+            Array.isArray(result.data)
+                ? result.data
+                : [];
+
+        /* =========================
+           CARI KAPUS AKTIF
+        ========================= */
+        const kapus =
+            pegawai.find(item => {
+
+                const role =
+                    String(
+                        item.role ||
+                        ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+                const status =
+                    String(
+                        item.status ||
+                        ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+                return (
+                    role === "KAPUS" &&
+                    status === "AKTIF"
+                );
+            });
+
+        /* =========================
+           TIDAK DITEMUKAN
+        ========================= */
+        if(!kapus){
+
+            return {
+                success: false,
+                message:
+                    "Data Kepala Puskesmas aktif tidak ditemukan di Firestore."
+            };
+        }
+
+        /* =========================
+           FORMAT SAMA DENGAN GAS
+        ========================= */
+        return {
+            success: true,
+            data: {
+                nama:
+                    String(
+                        kapus.nama ||
+                        ""
+                    ).trim(),
+
+                nip:
+                    String(
+                        kapus.nip ||
+                        ""
+                    ).trim(),
+
+                jabatan:
+                    String(
+                        kapus.jabatan ||
+                        ""
+                    ).trim()
+            }
+        };
+    }
+    catch(error){
+        console.error(
+            "Firestore Get Kapus Error:",
+            error
+        );
+
+        return {
+            success: false,
+            message:
+                error?.message ||
+                "Gagal mengambil data Kepala Puskesmas dari Firestore."
+        };
+    }
+}

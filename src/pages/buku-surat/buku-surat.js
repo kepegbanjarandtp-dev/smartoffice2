@@ -45,6 +45,10 @@ import {
     smartofficeGenerateLaporanSuratKeluar
 } from "../../utils/print.js";
 
+import {
+    smartofficeGetKapusFromFirestore
+} from "../../services/pegawai-firestore.service.js";
+
 
 
 /* ======================================================
@@ -1746,12 +1750,11 @@ async function smartofficePrintSuratMasuk(){
 
     try{
         /* =========================
-           GET KAPUS
+           GET KAPUS DARI FIRESTORE
         ========================= */
         const response =
-            await smartofficeApi(
-                "smartofficeGetKapus"
-            );
+            await smartofficeGetKapusFromFirestore();
+
         if(
             !response ||
             !response.success
@@ -8447,12 +8450,10 @@ async function smartofficePrintSuratKeluar(){
         smartofficeShowGlobalLoading();
 
         /* =========================
-           GET KAPUS
+           GET KAPUS DARI FIRESTORE
         ========================= */
         const response =
-            await smartofficeApi(
-                "smartofficeGetKapus"
-            );
+            await smartofficeGetKapusFromFirestore();
 
         if(
             !response ||
@@ -8465,7 +8466,7 @@ async function smartofficePrintSuratKeluar(){
         }
 
         const kapus =
-            response.data || "";
+            response.data || {};
 
         /* =========================
            GENERATE LAPORAN
