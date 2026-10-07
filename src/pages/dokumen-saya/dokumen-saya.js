@@ -196,6 +196,11 @@ export async function smartofficeLoadPage(){
         "upload"
     );
 
+    /* ==================================================
+       SWIPE TAB DOKUMEN SAYA
+    ================================================== */
+    smartofficeInitDokumenTabSwipe();
+
     /* =========================
        MOBILE NAVBAR
     ========================= */
@@ -1762,6 +1767,217 @@ function smartofficeSwitchDokumenTab(
             "active"
         );
     }
+}
+
+
+/* ======================================================
+   SWIPE TAB DOKUMEN SAYA
+====================================================== */
+function smartofficeInitDokumenTabSwipe(){
+
+    const uploadContent =
+        document.getElementById(
+            "smartofficeUploadDokumenContent"
+        );
+
+    const riwayatContent =
+        document.getElementById(
+            "smartofficeDokumenSayaContent"
+        );
+
+    if(
+        !uploadContent ||
+        !riwayatContent
+    ){
+        return;
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    const SWIPE_MIN_DISTANCE = 60;
+
+    function getActiveTab(){
+
+        const uploadButton =
+            document.getElementById(
+                "smartofficeTabUploadDokumen"
+            );
+
+        const riwayatButton =
+            document.getElementById(
+                "smartofficeTabDokumenSaya"
+            );
+
+        if(
+            uploadButton?.classList.contains(
+                "active"
+            )
+        ){
+            return "upload";
+        }
+
+        if(
+            riwayatButton?.classList.contains(
+                "active"
+            )
+        ){
+            return "riwayat";
+        }
+
+        return "upload";
+    }
+
+    function handleSwipe(){
+        const deltaX =
+            touchEndX - touchStartX;
+
+        const deltaY =
+            touchEndY - touchStartY;
+
+        /*
+         * Abaikan gesture vertikal.
+         * Jadi scroll halaman tetap normal.
+         */
+        if(
+            Math.abs(deltaY) >
+            Math.abs(deltaX)
+        ){
+            return;
+        }
+
+        /*
+         * Swipe terlalu pendek → abaikan
+         */
+        if(
+            Math.abs(deltaX) <
+            SWIPE_MIN_DISTANCE
+        ){
+            return;
+        }
+
+        const activeTab =
+            getActiveTab();
+
+        /*
+         * SWIPE KIRI
+         * Upload → Riwayat
+         */
+        if(deltaX < 0){
+            if(
+                activeTab === "upload"
+            ){
+                smartofficeSwitchDokumenTab(
+                    "riwayat"
+                );
+            }
+
+            return;
+        }
+
+        /*
+         * SWIPE KANAN
+         * Riwayat → Upload
+         */
+        if(deltaX > 0){
+
+            if(
+                activeTab === "riwayat"
+            ){
+                smartofficeSwitchDokumenTab(
+                    "upload"
+                );
+            }
+        }
+    }
+
+    function handleTouchStart(event){
+        if(
+            !event.touches ||
+            !event.touches.length
+        ){
+            return;
+        }
+
+        touchStartX =
+            event.touches[0].clientX;
+
+        touchStartY =
+            event.touches[0].clientY;
+
+        touchEndX =
+            touchStartX;
+
+        touchEndY =
+            touchStartY;
+    }
+
+    function handleTouchMove(event){
+        if(
+            !event.touches ||
+            !event.touches.length
+        ){
+            return;
+        }
+
+        touchEndX =
+            event.touches[0].clientX;
+
+        touchEndY =
+            event.touches[0].clientY;
+    }
+
+    function handleTouchEnd(){
+        handleSwipe();
+        touchStartX = 0;
+        touchStartY = 0;
+        touchEndX = 0;
+        touchEndY = 0;
+    }
+
+    /* ==================================================
+       UPLOAD
+    ================================================== */
+    uploadContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        {passive:true}
+    );
+
+    uploadContent.addEventListener(
+        "touchmove",
+        handleTouchMove,
+        {passive:true}
+    );
+
+    uploadContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        {passive:true}
+    );
+
+    /* ==================================================
+       RIWAYAT
+    ================================================== */
+    riwayatContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        {passive:true}
+    );
+
+    riwayatContent.addEventListener(
+        "touchmove",
+        handleTouchMove,
+        {passive:true}
+    );
+
+    riwayatContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        {passive:true}
+    );
 }
 
 

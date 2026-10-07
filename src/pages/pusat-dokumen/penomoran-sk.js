@@ -145,10 +145,15 @@ export async function smartofficeLoadPage(){
         "pusat-dokumen"
     );
 
-    /* =========================
-       INIT TAB
-    ========================= */
+    /* ==================================================
+       INIT TAB PUSAT DOKUMEN
+    ================================================== */
     smartofficeInitPusatDokumenTab();
+
+    /* ==================================================
+       INIT SWIPE TAB
+    ================================================== */
+    smartofficeInitPusatDokumenTabSwipe();
 
     /* =========================
        INIT FILTER SK
@@ -390,6 +395,196 @@ function smartofficeInitPusatDokumenTab(){
                 }
             );
         }
+    );
+}
+
+
+/* ======================================================
+   SWIPE TAB PUSAT DOKUMEN
+   Swipe kiri  → tab berikutnya
+   Swipe kanan → tab sebelumnya
+====================================================== */
+function smartofficeInitPusatDokumenTabSwipe(){
+
+    const tabButtons =
+        document.querySelectorAll(
+            ".smartoffice-tab-button"
+        );
+
+    if(
+        !tabButtons.length
+    ){
+        return;
+    }
+
+    const contentSK =
+        document.getElementById(
+            "smartofficePenomoranSKContent"
+        );
+
+    const contentSOP =
+        document.getElementById(
+            "smartofficePenomoranSOPContent"
+        );
+
+    if(
+        !contentSK ||
+        !contentSOP
+    ){
+        return;
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const MIN_SWIPE_DISTANCE = 60;
+
+    function handleTouchStart(event){
+        const touch =
+            event.changedTouches[0];
+
+        touchStartX =
+            touch.clientX;
+
+        touchStartY =
+            touch.clientY;
+    }
+
+    function handleTouchEnd(event){
+        const touch =
+            event.changedTouches[0];
+
+        const touchEndX =
+            touch.clientX;
+
+        const touchEndY =
+            touch.clientY;
+
+        const deltaX =
+            touchEndX - touchStartX;
+
+        const deltaY =
+            touchEndY - touchStartY;
+
+        /* =========================
+           ABAIKAN SWIPE VERTIKAL
+        ========================= */
+        if(
+            Math.abs(deltaY) >
+            Math.abs(deltaX)
+        ){
+            return;
+        }
+
+        /* =========================
+           SWIPE TERLALU PENDEK
+        ========================= */
+        if(
+            Math.abs(deltaX) <
+            MIN_SWIPE_DISTANCE
+        ){
+            return;
+        }
+
+        const activeButton =
+            document.querySelector(
+                ".smartoffice-tab-button.active"
+            );
+
+        if(
+            !activeButton
+        ){
+            return;
+        }
+
+        const activeTab =
+            activeButton.dataset.tab;
+
+        /* =========================
+           SWIPE KIRI
+        ========================= */
+        if(
+            deltaX < 0
+        ){
+
+            if(
+                activeTab ===
+                "penomoran-sk"
+            ){
+
+                const nextButton =
+                    document.querySelector(
+                        '.smartoffice-tab-button[data-tab="penomoran-sop"]'
+                    );
+
+                if(nextButton){
+                    nextButton.click();
+                }
+
+                return;
+            }
+
+            /* SUDAH TAB PALING KANAN */
+            return;
+        }
+
+        /* =========================
+           SWIPE KANAN
+        ========================= */
+        if(
+            deltaX > 0
+        ){
+
+            if(
+                activeTab ===
+                "penomoran-sop"
+            ){
+
+                const previousButton =
+                    document.querySelector(
+                        '.smartoffice-tab-button[data-tab="penomoran-sk"]'
+                    );
+
+                if(previousButton){
+                    previousButton.click();
+                }
+
+                return;
+            }
+
+            /* SUDAH TAB PALING KIRI */
+            return;
+        }
+    }
+
+    /* ==================================================
+       SWIPE CONTENT PENOMORAN SK
+    ================================================== */
+    contentSK.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    contentSK.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
+
+    /* ==================================================
+       SWIPE CONTENT PENOMORAN SOP
+    ================================================== */
+    contentSOP.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    contentSOP.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
     );
 }
 

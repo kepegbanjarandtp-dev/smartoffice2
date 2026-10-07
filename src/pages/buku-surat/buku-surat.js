@@ -168,6 +168,11 @@ export async function smartofficeLoadPage(){
     ================================================== */
     smartofficeInitBukuSuratTab();
 
+    /* =========================
+       INIT SWIPE TAB
+    ========================= */
+    smartofficeInitBukuSuratTabSwipe();
+
     /* ==================================================
        INIT KODE SURAT SEARCH
        HANYA INIT EVENT
@@ -849,6 +854,213 @@ function smartofficeInitBukuSuratTab(){
             smartofficeBukuSuratTabKodeHandler
         );
     }
+}
+
+
+
+/* ======================================================
+   SWIPE TAB BUKU SURAT
+   Swipe kiri  → tab berikutnya
+   Swipe kanan → tab sebelumnya
+====================================================== */
+function smartofficeInitBukuSuratTabSwipe(){
+
+    const tabSuratMasuk =
+        document.getElementById(
+            "smartofficeTabSuratMasuk"
+        );
+
+    const tabSuratKeluar =
+        document.getElementById(
+            "smartofficeTabSuratKeluar"
+        );
+
+    const tabKodeSurat =
+        document.getElementById(
+            "smartofficeTabKodeSurat"
+        );
+
+    const suratMasukContent =
+        document.getElementById(
+            "smartofficeSuratMasukContent"
+        );
+
+    const suratKeluarContent =
+        document.getElementById(
+            "smartofficeSuratKeluarContent"
+        );
+
+    const kodeSuratContent =
+        document.getElementById(
+            "smartofficeKodeSuratContent"
+        );
+
+    if(
+        !tabSuratMasuk ||
+        !tabSuratKeluar ||
+        !tabKodeSurat ||
+        !suratMasukContent ||
+        !suratKeluarContent ||
+        !kodeSuratContent
+    ){
+        return;
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const MIN_SWIPE_DISTANCE = 60;
+
+    function handleTouchStart(event){
+        const touch =
+            event.changedTouches[0];
+
+        touchStartX =
+            touch.clientX;
+
+        touchStartY =
+            touch.clientY;
+    }
+
+    function handleTouchEnd(event){
+        const touch =
+            event.changedTouches[0];
+
+        const touchEndX =
+            touch.clientX;
+
+        const touchEndY =
+            touch.clientY;
+
+        const deltaX =
+            touchEndX - touchStartX;
+
+        const deltaY =
+            touchEndY - touchStartY;
+
+        /* =========================
+           ABAIKAN SWIPE VERTIKAL
+        ========================= */
+        if(
+            Math.abs(deltaY) >
+            Math.abs(deltaX)
+        ){
+            return;
+        }
+
+        /* =========================
+           SWIPE TERLALU PENDEK
+        ========================= */
+        if(
+            Math.abs(deltaX) <
+            MIN_SWIPE_DISTANCE
+        ){
+            return;
+        }
+
+        /* =========================
+           SWIPE KIRI
+        ========================= */
+        if(deltaX < 0){
+
+            /* SURAT MASUK → SURAT KELUAR */
+            if(
+                tabSuratMasuk.classList.contains(
+                    "active"
+                )
+            ){
+                tabSuratKeluar.click();
+
+                return;
+            }
+
+            /* SURAT KELUAR → KODE SURAT */
+            if(
+                tabSuratKeluar.classList.contains(
+                    "active"
+                )
+            ){
+                tabKodeSurat.click();
+
+                return;
+            }
+
+            /* KODE SURAT
+               SUDAH PALING KANAN */
+            return;
+        }
+
+        /* =========================
+           SWIPE KANAN
+        ========================= */
+        if(deltaX > 0){
+
+            /* KODE SURAT → SURAT KELUAR */
+            if(
+                tabKodeSurat.classList.contains(
+                    "active"
+                )
+            ){
+                tabSuratKeluar.click();
+
+                return;
+            }
+
+            /* SURAT KELUAR → SURAT MASUK */
+            if(
+                tabSuratKeluar.classList.contains(
+                    "active"
+                )
+            ){
+                tabSuratMasuk.click();
+
+                return;
+            }
+
+            /* SURAT MASUK
+               SUDAH PALING KIRI */
+            return;
+        }
+    }
+
+    /* ==================================================
+       PASANG SWIPE KE SEMUA CONTENT
+    ================================================== */
+    suratMasukContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    suratMasukContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
+
+    suratKeluarContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    suratKeluarContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
+
+    kodeSuratContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    kodeSuratContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
 }
 
 

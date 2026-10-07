@@ -136,6 +136,11 @@ export async function smartofficeLoadPage(){
     );
 
     /* =========================
+       INIT SWIPE TAB
+    ========================= */
+    smartofficeInitManagementCutiTabSwipe();
+
+    /* =========================
        INIT EVENT
     ========================= */
     smartofficeInitManagementSearch();
@@ -349,6 +354,153 @@ export function smartofficeSwitchManagementCutiTab(
 
 window.smartofficeSwitchManagementCutiTab =
     smartofficeSwitchManagementCutiTab;
+
+
+/* ======================================================
+   SWIPE TAB MANAGEMENT CUTI
+   Swipe kiri  → Riwayat Management
+   Swipe kanan → Rekap Cuti
+====================================================== */
+function smartofficeInitManagementCutiTabSwipe(){
+
+    const rekapContent =
+        document.getElementById(
+            "smartofficeManagementRekapContent"
+        );
+
+    const riwayatContent =
+        document.getElementById(
+            "smartofficeManagementRiwayatContent"
+        );
+
+    const rekapButton =
+        document.getElementById(
+            "smartofficeTabRekapCuti"
+        );
+
+    const riwayatButton =
+        document.getElementById(
+            "smartofficeTabRiwayatManagement"
+        );
+
+    if(
+        !rekapContent ||
+        !riwayatContent ||
+        !rekapButton ||
+        !riwayatButton
+    ){
+        return;
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    const MIN_SWIPE_DISTANCE = 60;
+
+    function handleTouchStart(event){
+        const touch =
+            event.changedTouches[0];
+
+        touchStartX =
+            touch.clientX;
+
+        touchStartY =
+            touch.clientY;
+    }
+
+    function handleTouchEnd(event){
+        const touch =
+            event.changedTouches[0];
+
+        const touchEndX =
+            touch.clientX;
+
+        const touchEndY =
+            touch.clientY;
+
+        const deltaX =
+            touchEndX - touchStartX;
+
+        const deltaY =
+            touchEndY - touchStartY;
+
+        /* =========================
+           ABAIKAN SWIPE VERTIKAL
+        ========================= */
+        if(
+            Math.abs(deltaY) >
+            Math.abs(deltaX)
+        ){
+            return;
+        }
+
+        /* =========================
+           SWIPE TERLALU PENDEK
+        ========================= */
+        if(
+            Math.abs(deltaX) <
+            MIN_SWIPE_DISTANCE
+        ){
+            return;
+        }
+
+        /* =========================
+           REKAP → RIWAYAT
+           SWIPE KIRI
+        ========================= */
+        if(
+            deltaX < 0 &&
+            rekapButton.classList.contains(
+                "active"
+            )
+        ){
+            smartofficeSwitchManagementCutiTab(
+                "riwayat"
+            );
+
+            return;
+        }
+
+        /* =========================
+           RIWAYAT → REKAP
+           SWIPE KANAN
+        ========================= */
+        if(
+            deltaX > 0 &&
+            riwayatButton.classList.contains(
+                "active"
+            )
+        ){
+            smartofficeSwitchManagementCutiTab(
+                "rekap"
+            );
+        }
+    }
+
+    rekapContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    rekapContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
+
+    riwayatContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    riwayatContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
+}
 
 
 /* ================================================================================

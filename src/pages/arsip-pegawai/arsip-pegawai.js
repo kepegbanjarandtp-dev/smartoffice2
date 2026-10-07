@@ -89,6 +89,7 @@ export async function smartofficeLoadPage(){
     ========================= */
     const sessionData =
         smartofficeGetSession();
+
     if(
         !sessionData
     ){
@@ -135,6 +136,11 @@ export async function smartofficeLoadPage(){
     ========================= */
     window.smartofficeProgressLoaded =
         true;
+
+    /* =========================
+       SWIPE TAB ARSIP
+    ========================= */
+    smartofficeInitArsipTabSwipe();
 
     console.log(
         "SMARTOFFICE ARSIP PEGAWAI: READY"
@@ -1740,6 +1746,143 @@ export function smartofficeSwitchArsipTab(
             "active"
         );
     }
+}
+
+
+/* ======================================================
+   SWIPE TAB ARSIP
+   Swipe kiri  → Progress Arsip
+   Swipe kanan → Arsip Pegawai
+====================================================== */
+function smartofficeInitArsipTabSwipe(){
+
+    const arsipContent =
+        document.getElementById(
+            "smartofficeArsipPegawaiContent"
+        );
+
+    const progressContent =
+        document.getElementById(
+            "smartofficeProgressArsipContent"
+        );
+
+    const arsipButton =
+        document.getElementById(
+            "smartofficeTabArsipPegawai"
+        );
+
+    const progressButton =
+        document.getElementById(
+            "smartofficeTabProgressArsip"
+        );
+
+    if(
+        !arsipContent ||
+        !progressContent ||
+        !arsipButton ||
+        !progressButton
+    ){
+        return;
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    const MIN_SWIPE_DISTANCE = 60;
+
+    function handleTouchStart(event){
+        const touch = event.changedTouches[0];
+
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+    }
+
+    function handleTouchEnd(event){
+        const touch = event.changedTouches[0];
+
+        touchEndX = touch.clientX;
+        touchEndY = touch.clientY;
+
+        const deltaX =
+            touchEndX - touchStartX;
+
+        const deltaY =
+            touchEndY - touchStartY;
+
+        /* =========================
+           ABAIKAN SWIPE VERTIKAL
+        ========================= */
+        if(
+            Math.abs(deltaY) >
+            Math.abs(deltaX)
+        ){
+            return;
+        }
+
+        /* =========================
+           SWIPE TERLALU PENDEK
+        ========================= */
+        if(
+            Math.abs(deltaX) <
+            MIN_SWIPE_DISTANCE
+        ){
+            return;
+        }
+
+        /* =========================
+           ARSIP PEGAWAI → PROGRESS
+           SWIPE KIRI
+        ========================= */
+        if(
+            deltaX < 0 &&
+            arsipButton.classList.contains("active")
+        ){
+            smartofficeSwitchArsipTab(
+                "progress"
+            );
+
+            return;
+        }
+
+        /* =========================
+           PROGRESS → ARSIP PEGAWAI
+           SWIPE KANAN
+        ========================= */
+        if(
+            deltaX > 0 &&
+            progressButton.classList.contains("active")
+        ){
+            smartofficeSwitchArsipTab(
+                "arsip"
+            );
+        }
+    }
+
+    arsipContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    arsipContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
+
+    progressContent.addEventListener(
+        "touchstart",
+        handleTouchStart,
+        { passive:true }
+    );
+
+    progressContent.addEventListener(
+        "touchend",
+        handleTouchEnd,
+        { passive:true }
+    );
 }
 
 
