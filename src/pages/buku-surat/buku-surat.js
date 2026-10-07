@@ -1423,7 +1423,7 @@ function smartofficeInitBukuSuratRefreshButton(){
                             "smartofficeSuratKeluarFilterStatus"
                         );
 
-                    // RESET KE TANGGAL HARI INI
+                    /*RESET KE TANGGAL HARI INI
                     if(tanggal){
 
                         const sekarang = new Date();
@@ -1448,7 +1448,7 @@ function smartofficeInitBukuSuratRefreshButton(){
                     // CLEAR FILTER LAIN
                     if(bulan) bulan.value = "";
                     if(search) search.value = "";
-                    if(status) status.value = "";
+                    if(status) status.value = "";*/
 
                     await loadDataSuratKeluar(
                         pageInstance

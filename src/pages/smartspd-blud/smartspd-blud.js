@@ -43,14 +43,16 @@ import {
     smartofficeGetAllPegawaiFromFirestore
 } from "../../services/pegawai-firestore.service.js";
 
+import {
+    smartofficeGetAllSPDFromFirestore
+} from "../../services/smartspd-blud-firestore.service.js";
+
 /* ======================================================
    1.4 UTILS
 ====================================================== */
 import {
     smartofficeConvertFileToBase64
 } from "../../utils/file.js";
-
-import "./smartspd-blud.css";
 
 
 
@@ -122,7 +124,6 @@ export async function smartofficeLoadPage(){
 
     const sessionData =
         smartofficeGetSession();
-
     if(!sessionData){
         await smartofficeLogout();
         return;
@@ -159,15 +160,8 @@ export async function smartofficeLoadPage(){
         smartofficeLoadSPDPegawaiCache()
     ]);
 
-    /* =========================
-       HISTORY
-       READ FIRESTORE MIRROR
-
-       Collection/schema belum diberikan
-       pada source migrasi, jadi fungsi ini
-       tidak menggunakan GAS untuk read.
-    ========================= */
-    smartofficeRenderRiwayatSPDUnavailable();
+    await smartofficeLoadRiwayatSPD();
+    smartofficeInitRiwayatSPDFilter();
 }
 
 /* ======================================================
@@ -2727,41 +2721,447 @@ function smartofficeRenderRiwayatSPDList(data){
         document.getElementById(
             "smartofficeRiwayatSPDList"
         );
-
     if(!list){
         return;
     }
+
+    /* ==================================================
+       EMPTY
+    ================================================== */
+    if(!Array.isArray(data) || !data.length){
+        list.innerHTML = `
+            <div class="smartoffice-spd-riwayat-empty">
+                <div class="smartoffice-spd-riwayat-empty-icon">
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="22"
+                        height="22"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <path d="M14 2v6h6"/>
+                        <path d="M8 13h8"/>
+                        <path d="M8 17h5"/>
+                    </svg>
+                </div>
+
+                <strong>
+                    Belum ada data riwayat SPD
+                </strong>
+
+                <span>
+                    Data SPD yang sesuai dengan filter akan tampil di sini.
+                </span>
+            </div>
+        `;
+
+        return;
+    }
+
+    /* ==================================================
+       CARD
+    ================================================== */
     list.innerHTML =
         data.map(function(item){
+
+            /* ------------------------------------------
+               PENGIKUT
+            ------------------------------------------ */
+            const pengikut =
+                Array.isArray(item.pengikut)
+                    ? item.pengikut.filter(function(nama){
+                        return String(nama || "").trim();
+                    })
+                    : [];
+
+            /* ------------------------------------------
+               JUMLAH HARI
+            ------------------------------------------ */
+            const jumlahHari =
+                item.jumlahHari !== null &&
+                item.jumlahHari !== undefined &&
+                String(item.jumlahHari).trim() !== ""
+                    ? String(item.jumlahHari) + " Hari"
+                    : "-";
+
+            /* ------------------------------------------
+               STATUS SPD
+            ------------------------------------------ */
+            const statusSPD =
+                String(
+                    item.statusSPD || "-"
+                ).trim();
+
+            let statusClass =
+                "default";
+
+            if(statusSPD === "MENUNGGU REVIEW"){
+                statusClass = "waiting";
+            }
+            else if(statusSPD === "DISETUJUI"){
+                statusClass = "approved";
+            }
+            else if(statusSPD === "DITOLAK"){
+                statusClass = "rejected";
+            }
+            else if(statusSPD === "REVISI"){
+                statusClass = "revision";
+            }
+
+            /* ------------------------------------------
+               STATUS SPJ
+            ------------------------------------------ */
+            const statusSPJ =
+                String(
+                    item.statusSPJ || "BELUM ADA"
+                )
+                .trim()
+                .toUpperCase();
+
+            let statusSPJClass =
+                "default";
+
+            if(
+                statusSPJ === "BELUM ADA" ||
+                statusSPJ === "BELUM"
+            ){
+                statusSPJClass = "belum";
+            }
+            else if(
+                statusSPJ === "REVISI" ||
+                statusSPJ === "PERLU REVISI"
+            ){
+                statusSPJClass = "revisi";
+            }
+            else if(
+                statusSPJ === "SELESAI" ||
+                statusSPJ === "SUDAH SELESAI"
+            ){
+                statusSPJClass = "selesai";
+            }
+            else if(
+                statusSPJ === "DIPROSES" ||
+                statusSPJ === "PROSES"
+            ){
+                statusSPJClass = "proses";
+            }
+
+            /* ------------------------------------------
+               RENDER
+            ------------------------------------------ */
             return `
-                <div class="smartoffice-spd-riwayat-card">
+                <article
+                    class="smartoffice-spd-riwayat-card"
+                    data-id-spd="${smartofficeEscapeHtml(
+                        item.idSPD || ""
+                    )}"
+                >
+                    <!-- =================================
+                         HEADER
+                    ================================= -->
                     <div class="smartoffice-spd-riwayat-header">
-                        <div>
-                            <strong>${smartofficeEscapeHtml(item.idSPD || "-")}</strong>
-                            <div class="smartoffice-spd-riwayat-date">
-                                ${smartofficeEscapeHtml(item.tanggalBerangkat || "-")}
+                        <div class="smartoffice-spd-riwayat-header-left">
+
+                            <!-- SVG DOCUMENT ICON -->
+                            <div class="smartoffice-spd-riwayat-icon">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    width="19"
+                                    height="19"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                                    />
+
+                                    <path
+                                        d="M14 2v6h6"
+                                    />
+
+                                    <path
+                                        d="M8 13h8"
+                                    />
+
+                                    <path
+                                        d="M8 17h5"
+                                    />
+                                </svg>
+                            </div>
+
+                            <!-- TITLE -->
+                            <div class="smartoffice-spd-riwayat-heading">
+                                <strong>
+                                    ${smartofficeEscapeHtml(
+                                        item.idSPD || "-"
+                                    )}
+                                </strong>
+
+                                <span>
+                                    SPD PERJALANAN DINAS
+                                </span>
                             </div>
                         </div>
-                        <span class="smartoffice-spd-riwayat-status">
-                            ${smartofficeEscapeHtml(item.statusSPD || "-")}
+
+                        <!-- STATUS SPD -->
+                        <div
+                            class="
+                                smartoffice-spd-riwayat-status
+                                smartoffice-spd-riwayat-status-${statusClass}
+                            "
+                        >
+                            ${smartofficeEscapeHtml(
+                                statusSPD
+                            )}
+                        </div>
+                    </div>
+
+                    <!-- =================================
+                         PEGAWAI
+                    ================================= -->
+                    <div class="smartoffice-spd-riwayat-person">
+                        <strong>
+                            ${smartofficeEscapeHtml(
+                                item.nama || "-"
+                            )}
+                        </strong>
+
+                        <span>
+                            ${smartofficeEscapeHtml(
+                                item.nip || "-"
+                            )}
                         </span>
                     </div>
 
-                    <div class="smartoffice-spd-riwayat-body">
-                        <div class="smartoffice-spd-riwayat-main">
-                            <strong>${smartofficeEscapeHtml(item.kegiatan || "-")}</strong>
-                            <span>${smartofficeEscapeHtml(item.lokasi || "-")}</span>
+                    <!-- =================================
+                         KEGIATAN
+                    ================================= -->
+                    <div class="smartoffice-spd-riwayat-section">
+                        <span class="smartoffice-spd-riwayat-label">
+                            KEGIATAN
+                        </span>
+
+                        <strong>
+                            ${smartofficeEscapeHtml(
+                                item.kegiatan || "-"
+                            )}
+                        </strong>
+                    </div>
+
+                    <!-- =================================
+                         INFO UTAMA
+                    ================================= -->
+                    <div class="smartoffice-spd-riwayat-info-grid">
+                        <div class="smartoffice-spd-riwayat-info-box">
+                            <span>
+                                BERANGKAT
+                            </span>
+
+                            <strong>
+                                ${smartofficeEscapeHtml(
+                                    item.tanggalBerangkat || "-"
+                                )}
+                            </strong>
+                        </div>
+
+                        <div class="smartoffice-spd-riwayat-info-box">
+                            <span>
+                                PULANG
+                            </span>
+
+                            <strong>
+                                ${smartofficeEscapeHtml(
+                                    item.tanggalPulang || "-"
+                                )}
+                            </strong>
+                        </div>
+
+                        <div class="smartoffice-spd-riwayat-info-box">
+                            <span>
+                                PERJALANAN
+                            </span>
+
+                            <strong>
+                                ${smartofficeEscapeHtml(
+                                    item.tipePerjalanan || "-"
+                                )}
+                            </strong>
+                        </div>
+
+                        <div class="smartoffice-spd-riwayat-info-box">
+                            <span>
+                                JUMLAH HARI
+                            </span>
+
+                            <strong>
+                                ${smartofficeEscapeHtml(
+                                    jumlahHari
+                                )}
+                            </strong>
                         </div>
                     </div>
 
-                    <div class="smartoffice-spd-riwayat-footer">
-                        <span>${smartofficeEscapeHtml(item.nama || "-")}</span>
-                        ${item.linkPdf
-                            ? `<a class="smartoffice-spd-riwayat-detail" href="${smartofficeSafeUrl(item.linkPdf)}" target="_blank" rel="noopener">Lihat PDF</a>`
-                            : ""
-                        }
+                    <!-- =================================
+                         LOKASI
+                    ================================= -->
+                    <div class="smartoffice-spd-riwayat-location">
+                        <span>
+                            LOKASI
+                        </span>
+
+                        <strong>
+                            ${smartofficeEscapeHtml(
+                                item.lokasi || "-"
+                            )}
+                        </strong>
                     </div>
-                </div>
+
+                    <!-- =================================
+                         PENGIKUT
+                    ================================= -->
+                    ${
+                        pengikut.length
+                            ? `
+                                <div class="smartoffice-spd-riwayat-followers">
+                                    <div class="smartoffice-spd-riwayat-label">
+                                        PENGIKUT
+                                    </div>
+
+                                    <div class="smartoffice-spd-riwayat-followers-list">
+                                        ${
+                                            pengikut
+                                                .map(function(nama, index){
+                                                    return `
+                                                        <div
+                                                            class="smartoffice-spd-riwayat-follower"
+                                                        >
+                                                            <span
+                                                                class="smartoffice-spd-riwayat-follower-number"
+                                                            >
+                                                                ${index + 1}
+                                                            </span>
+
+                                                            <strong
+                                                                class="smartoffice-spd-riwayat-follower-name"
+                                                            >
+                                                                ${smartofficeEscapeHtml(
+                                                                    nama
+                                                                )}
+                                                            </strong>
+                                                        </div>
+                                                    `;
+                                                })
+                                                .join("")
+                                        }
+                                    </div>
+                                </div>
+                            `
+                            : ""
+                    }
+
+                    <!-- =================================
+                         STATUS SPJ
+                    ================================= -->
+                    <div class="smartoffice-spd-riwayat-spj">
+                        <div class="smartoffice-spd-riwayat-spj-label">
+                            <span>
+                                STATUS SPJ
+                            </span>
+
+                            <strong
+                                class="
+                                    smartoffice-spd-riwayat-spj-status
+                                    smartoffice-spd-riwayat-spj-status-${statusSPJClass}
+                                "
+                            >
+                                ${smartofficeEscapeHtml(
+                                    statusSPJ
+                                )}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <!-- =================================
+                         FOOTER
+                    ================================= -->
+                    <div class="smartoffice-spd-riwayat-footer">
+                        <button
+                            type="button"
+                            class="smartoffice-spd-riwayat-detail"
+                            data-action="detail"
+                            data-id-spd="${smartofficeEscapeHtml(
+                                item.idSPD || ""
+                            )}"
+                        >
+                            <span>
+                                Lihat SPD
+                            </span>
+
+                            <!-- SVG ARROW -->
+                            <svg
+                                viewBox="0 0 24 24"
+                                width="13"
+                                height="13"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M5 12h14"/>
+
+                                <path d="m13 6 6 6-6 6"/>
+                            </svg>
+                        </button>
+
+                        <!-- SVG MORE -->
+                        <button
+                            type="button"
+                            class="smartoffice-spd-riwayat-more"
+                            data-action="more"
+                            data-id-spd="${smartofficeEscapeHtml(
+                                item.idSPD || ""
+                            )}"
+                            aria-label="Menu SPD"
+                        >
+                            <svg
+                                viewBox="0 0 24 24"
+                                width="17"
+                                height="17"
+                                fill="currentColor"
+                                aria-hidden="true"
+                            >
+
+                                <circle
+                                    cx="12"
+                                    cy="5"
+                                    r="1.7"
+                                />
+
+                                <circle
+                                    cx="12"
+                                    cy="12"
+                                    r="1.7"
+                                />
+
+                                <circle
+                                    cx="12"
+                                    cy="19"
+                                    r="1.7"
+                                />
+                            </svg>
+                        </button>
+                    </div>
+                </article>
             `;
         })
         .join("");
@@ -2821,6 +3221,515 @@ function smartofficeUpdateSPDStats(){
     });
 }
 
+/* ======================================================
+   16.5 NORMALISASI DATA RIWAYAT SPD FIRESTORE
+====================================================== */
+function smartofficeNormalizeSPDData(item){
+
+    return {
+        idSPD:
+            item["ID SPD"] ||
+            item.id ||
+            "",
+
+        nama:
+            item["Nama"] ||
+            "",
+
+        nip:
+            item["NIP / NRP"] ||
+            "",
+
+        kegiatan:
+            item["Kegiatan"] ||
+            "",
+
+        lokasi:
+            item["Lokasi"] ||
+            "",
+
+        tanggalBerangkat:
+            item["Tanggal Berangkat"] ||
+            "",
+
+        tanggalPulang:
+            item["Tanggal Pulang"] ||
+            "",
+
+        jumlahHari:
+            item["Jumlah Hari"] ||
+            "",
+
+         tipePerjalanan:
+            item["Tipe Keberangkatan"] ||
+            item["JENIS_PERJALANAN_DINAS"] ||
+            "",
+
+        statusSPD:
+            item["STATUS_SPD"] ||
+            "",
+
+        statusSPJ:
+            item["STATUS_SPJ"] ||
+            "BELUM ADA",
+
+        jumlahUang:
+            item["JUMLAH UANG"] ||
+            "",
+
+        catatanRevisiSPJ:
+            item["CATATAN_REVISI_SPJ"] ||
+            "",
+
+        tglUpdateSPJ:
+            item["TGL_UPDATE_SPJ"] ||
+            "",
+
+        linkPdf:
+            item["LINK_PDF_SPD"] ||
+            "",
+
+        pdfGenerated:
+            item["PDF_GENERATED"] ||
+            "",
+
+        statusData:
+            item["STATUS_DATA"] ||
+            "",
+
+        pengikut: [
+            item["Nama Pengikut 1"] || "",
+            item["Nama Pengikut 2"] || "",
+            item["Nama Pengikut 3"] || "",
+            item["Nama Pengikut 4"] || ""
+        ],
+
+        nipPengikut: [
+            item["NIP/NRP Pengikut 1"] || "",
+            item["NIP/NRP Pengikut 2"] || "",
+            item["NIP/NRP Pengikut 3"] || "",
+            item["NIP/NRP Pengikut 4"] || ""
+        ],
+
+        raw: item
+    };
+}
+
+/* ======================================================
+   16.6 LOAD RIWAYAT SPD DARI FIRESTORE
+====================================================== */
+async function smartofficeLoadRiwayatSPD(){
+
+    try {
+        const data =
+            await smartofficeGetAllSPDFromFirestore();
+
+        const normalized =
+            Array.isArray(data)
+                ? data.map(
+                    smartofficeNormalizeSPDData
+                )
+                : [];
+
+        const userData =
+            smartofficeFilterSPDByUser(
+                normalized
+            );
+
+        smartofficeSPDRiwayat =
+            userData;
+
+        smartofficeRenderRiwayatSPDList(
+            smartofficeSPDRiwayat
+        );
+
+        smartofficeUpdateSPDStats();
+
+    } catch(error){
+        console.error(
+            "SMARTSPD LOAD RIWAYAT ERROR:",
+            error
+        );
+
+        smartofficeSPDRiwayat = [];
+
+        smartofficeRenderRiwayatSPDUnavailable();
+    }
+}
+
+/* ======================================================
+   16.7 FILTER SPD SESUAI USER
+   NIP UTAMA ATAU PENGIKUT
+====================================================== */
+function smartofficeFilterSPDByUser(data){
+
+    const sessionData =
+        smartofficeGetSession();
+    if(!sessionData){
+        return [];
+    }
+
+    const role =
+        String(sessionData.role || "")
+            .trim()
+            .toUpperCase();
+
+    const nipUser =
+        String(sessionData.nip || "")
+            .trim();
+
+    /* ================================================
+       ROLE KHUSUS → LIHAT SEMUA SPD
+    ================================================ */
+    if(
+        role === "ADMIN" ||
+        role === "PJ" ||
+        role === "SUPERADMIN"
+    ){
+        return data;
+    }
+
+    /* ================================================
+       PEGAWAI → NIP UTAMA ATAU PENGIKUT
+    ================================================ */
+    return data.filter(function(item){
+
+        const nipUtama =
+            String(item.nip || "")
+                .trim();
+        if(nipUtama === nipUser){
+            return true;
+        }
+
+        const pengikut =
+            Array.isArray(item.nipPengikut)
+                ? item.nipPengikut
+                : [];
+
+        return pengikut.some(function(nip){
+            return String(nip || "")
+                .trim() === nipUser;
+        });
+    });
+}
+
+/* ======================================================
+   16.8 INIT FILTER RIWAYAT SPD
+====================================================== */
+function smartofficeInitRiwayatSPDFilter(){
+
+    const search =
+        document.getElementById(
+            "smartofficeSPDRiwayatSearch"
+        );
+
+    const month =
+        document.getElementById(
+            "smartofficeSPDRiwayatMonth"
+        );
+
+    const year =
+        document.getElementById(
+            "smartofficeSPDRiwayatYear"
+        );
+
+    const status =
+        document.getElementById(
+            "smartofficeSPDRiwayatStatus"
+        );
+
+    const reset =
+        document.getElementById(
+            "smartofficeSPDRiwayatReset"
+        );
+    if(
+        !search ||
+        !month ||
+        !year ||
+        !status ||
+        !reset
+    ){
+        return;
+    }
+
+    /* ================================================
+       BULAN
+    ================================================ */
+    const months = [
+        "Januari",
+        "Februari",
+        "Maret",
+        "April",
+        "Mei",
+        "Juni",
+        "Juli",
+        "Agustus",
+        "September",
+        "Oktober",
+        "November",
+        "Desember"
+    ];
+
+    const monthSet =
+        new Set();
+
+    const yearSet =
+        new Set();
+
+    const statusSet =
+        new Set();
+
+    smartofficeSPDRiwayat.forEach(function(item){
+
+        const tanggal =
+            String(
+                item.tanggalBerangkat || ""
+            ).trim();
+        if(tanggal){
+            const parts =
+                tanggal.split("-");
+            if(parts.length === 3){
+                const y =
+                    Number(parts[0]);
+
+                const m =
+                    Number(parts[1]);
+                if(y){
+                    yearSet.add(y);
+                }
+
+                if(m >= 1 && m <= 12){
+                    monthSet.add(m);
+                }
+            }
+        }
+
+        const statusSPD =
+            String(
+                item.statusSPD || ""
+            ).trim();
+        if(statusSPD){
+            statusSet.add(statusSPD);
+        }
+    });
+
+    monthSet.forEach(function(monthNumber){
+        month.insertAdjacentHTML(
+            "beforeend",
+            `
+            <option value="${monthNumber}">
+                ${months[monthNumber - 1]}
+            </option>
+            `
+        );
+    });
+
+    Array.from(yearSet)
+        .sort(function(a,b){
+            return b - a;
+        })
+        .forEach(function(yearValue){
+            year.insertAdjacentHTML(
+                "beforeend",
+                `
+                <option value="${yearValue}">
+                    ${yearValue}
+                </option>
+                `
+            );
+        });
+
+    Array.from(statusSet)
+        .sort()
+        .forEach(function(statusValue){
+            status.insertAdjacentHTML(
+                "beforeend",
+                `
+                <option value="${smartofficeEscapeHtml(statusValue)}">
+                    ${smartofficeEscapeHtml(statusValue)}
+                </option>
+                `
+            );
+        });
+
+    /* ================================================
+       DEFAULT → BULAN BERJALAN
+    ================================================ */
+    const currentMonth =
+        new Date().getMonth() + 1;
+
+    const currentYear =
+        new Date().getFullYear();
+
+    if(
+        monthSet.has(currentMonth)
+    ){
+        month.value =
+            String(currentMonth);
+    }
+
+    if(
+        yearSet.has(currentYear)
+    ){
+        year.value =
+            String(currentYear);
+    }
+
+    /* ================================================
+       EVENTS
+    ================================================ */
+    search.addEventListener(
+        "input",
+        smartofficeApplyRiwayatSPDFilter
+    );
+
+    month.addEventListener(
+        "change",
+        smartofficeApplyRiwayatSPDFilter
+    );
+
+    year.addEventListener(
+        "change",
+        smartofficeApplyRiwayatSPDFilter
+    );
+
+    status.addEventListener(
+        "change",
+        smartofficeApplyRiwayatSPDFilter
+    );
+
+    reset.addEventListener(
+        "click",
+        function(){
+            search.value = "";
+            month.value = "";
+            year.value = "";
+            status.value = "";
+
+            smartofficeApplyRiwayatSPDFilter();
+        }
+    );
+
+    smartofficeApplyRiwayatSPDFilter();
+}
+
+/* ======================================================
+   16.9 APPLY FILTER RIWAYAT SPD
+====================================================== */
+function smartofficeApplyRiwayatSPDFilter(){
+
+    const search =
+        document.getElementById(
+            "smartofficeSPDRiwayatSearch"
+        );
+
+    const month =
+        document.getElementById(
+            "smartofficeSPDRiwayatMonth"
+        );
+
+    const year =
+        document.getElementById(
+            "smartofficeSPDRiwayatYear"
+        );
+
+    const status =
+        document.getElementById(
+            "smartofficeSPDRiwayatStatus"
+        );
+    if(
+        !search ||
+        !month ||
+        !year ||
+        !status
+    ){
+        return;
+    }
+
+    const keyword =
+        String(search.value || "")
+            .trim()
+            .toLowerCase();
+
+    const selectedMonth =
+        String(month.value || "");
+
+    const selectedYear =
+        String(year.value || "");
+
+    const selectedStatus =
+        String(status.value || "");
+
+    const filtered =
+        smartofficeSPDRiwayat.filter(
+            function(item){
+
+                /* SEARCH */
+                const searchable = [
+                    item.nama,
+                    item.kegiatan,
+                    item.lokasi,
+                    item.idSPD
+                ]
+                .join(" ")
+                .toLowerCase();
+
+                if(
+                    keyword &&
+                    !searchable.includes(keyword)
+                ){
+                    return false;
+                }
+
+                /* TANGGAL BERANGKAT */
+                const tanggal =
+                    String(
+                        item.tanggalBerangkat || ""
+                    );
+
+                const parts =
+                    tanggal.split("-");
+
+                if(parts.length === 3){
+                    const itemYear =
+                        parts[0];
+
+                    const itemMonth =
+                        String(
+                            Number(parts[1])
+                        );
+
+                    if(
+                        selectedYear &&
+                        itemYear !== selectedYear
+                    ){
+                        return false;
+                    }
+
+                    if(
+                        selectedMonth &&
+                        itemMonth !== selectedMonth
+                    ){
+                        return false;
+                    }
+                }
+
+                /* STATUS */
+                if(
+                    selectedStatus &&
+                    item.statusSPD !== selectedStatus
+                ){
+                    return false;
+                }
+
+                return true;
+            }
+        );
+
+    smartofficeRenderRiwayatSPDList(
+        filtered
+    );
+}
 
 
 /* ================================================================================================

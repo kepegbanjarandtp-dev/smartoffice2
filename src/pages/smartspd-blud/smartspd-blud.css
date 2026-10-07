@@ -1103,105 +1103,256 @@ input[readonly]{
 }
 
 
-/* ======================================================
-   RIWAYAT SPD
-====================================================== */
 
-/* ======================================================
-   FILTER STATUS
-====================================================== */
+/* =========================================================
+   SMARTSPD BLUD
+   RIWAYAT SPD
+========================================================= */
+
+
+/* =========================================================
+   FILTER
+========================================================= */
 
 .smartoffice-spd-riwayat-filter{
 
-    display:flex;
+    display:grid;
 
-    gap:12px;
+    grid-template-columns:
+        minmax(260px, 1fr)
+        165px
+        135px
+        155px
+        auto;
 
-    overflow-x:auto;
+    gap:8px;
 
-    padding-bottom:4px;
+    align-items:center;
 
-    scrollbar-width:none;
+    padding:9px;
+
+    margin-bottom:12px;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:12px;
+
+    background:#fff;
+
+    box-shadow:
+        0 2px 8px rgba(15,23,42,.035);
 
 }
 
-.smartoffice-spd-riwayat-filter::-webkit-scrollbar{
 
-    display:none;
+/* =========================================================
+   SEARCH
+========================================================= */
 
-}
+.smartoffice-spd-filter-search{
 
-/* Filter Item */
-
-.smartoffice-spd-riwayat-filter-item{
+    position:relative;
 
     display:flex;
 
     align-items:center;
 
-    gap:8px;
+    min-width:0;
 
-    padding:10px 16px;
+}
 
-    border:none;
 
-    border-radius:999px;
+.smartoffice-spd-filter-search i{
 
-    background:#f1f5f9;
+    position:absolute;
+
+    left:12px;
+
+    color:#94a3b8;
+
+    font-size:11px;
+
+    pointer-events:none;
+
+}
+
+
+.smartoffice-spd-filter-search input{
+
+    width:100%;
+
+    height:38px;
+
+    padding:
+        0
+        12px
+        0
+        32px;
+
+    border:
+        1px solid
+        #dbe3ec;
+
+    border-radius:8px;
+
+    background:#f8fafc;
+
+    color:#334155;
+
+    font-family:inherit;
+
+    font-size:11px;
+
+    outline:none;
+
+    box-sizing:border-box;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        box-shadow .2s ease;
+
+}
+
+
+.smartoffice-spd-filter-search input::placeholder{
+
+    color:#a8b2c0;
+
+}
+
+
+.smartoffice-spd-filter-search input:focus{
+
+    background:#fff;
+
+    border-color:#b7c3d1;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(148,163,184,.08);
+
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.smartoffice-spd-filter-select{
+
+    width:100%;
+
+    height:38px;
+
+    padding:
+        0
+        10px;
+
+    border:
+        1px solid
+        #dbe3ec;
+
+    border-radius:8px;
+
+    background:#f8fafc;
 
     color:#475569;
 
-    font-size:13px;
+    font-family:inherit;
 
-    font-weight:600;
+    font-size:11px;
 
-    white-space:nowrap;
+    outline:none;
 
     cursor:pointer;
 
-    transition:.25s;
+    box-sizing:border-box;
+
+    transition:
+        border-color .2s ease,
+        background .2s ease;
 
 }
 
-/* Icon */
 
-.smartoffice-spd-riwayat-filter-item svg{
+.smartoffice-spd-filter-select:focus{
 
-    width:16px;
+    background:#fff;
 
-    height:16px;
-
-    stroke:currentColor;
-
-    fill:none;
-
-    stroke-width:2;
+    border-color:#b7c3d1;
 
 }
 
-/* Hover */
 
-.smartoffice-spd-riwayat-filter-item:hover{
+/* =========================================================
+   RESET
+========================================================= */
 
-    background:#dbeafe;
+.smartoffice-spd-filter-reset{
 
-    color:#2563eb;
+    height:38px;
+
+    padding:
+        0
+        13px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    border:
+        1px solid
+        #dbe3ec;
+
+    border-radius:8px;
+
+    background:#f8fafc;
+
+    color:#64748b;
+
+    font-family:inherit;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
 
 }
 
-/* Active */
 
-.smartoffice-spd-riwayat-filter-item.active{
+.smartoffice-spd-filter-reset:hover{
 
-    background:#2563eb;
+    background:#f1f5f9;
 
-    color:#ffffff;
+    border-color:#cbd5e1;
+
+    color:#334155;
 
 }
 
-/* ======================================================
-   LIST RIWAYAT
-====================================================== */
+
+/* =========================================================
+   RIWAYAT SPD
+   CARD
+========================================================= */
+
+
+/* =========================================================
+   LIST
+========================================================= */
 
 #smartofficeRiwayatSPDList{
 
@@ -1209,119 +1360,570 @@ input[readonly]{
 
     flex-direction:column;
 
-    gap:16px;
-
-    margin-top:20px;
+    gap:10px;
 
 }
 
-/* ======================================================
-   CARD RIWAYAT SPD
-====================================================== */
+
+/* =========================================================
+   CARD
+========================================================= */
 
 .smartoffice-spd-riwayat-card{
 
-    background:#ffffff;
+    position:relative;
 
-    border-radius:18px;
+    width:100%;
 
-    padding:18px;
+    box-sizing:border-box;
 
-    border:1px solid #eef2f7;
+    padding:15px 16px;
 
-    box-shadow:0 4px 18px rgba(0,0,0,.05);
+    border:1px solid #e3e8ef;
 
-    cursor:pointer;
+    border-radius:15px;
 
-    transition:.25s;
+    background:#fff;
+
+    box-shadow:
+        0 2px 5px rgba(15,23,42,.025),
+        0 8px 22px rgba(15,23,42,.035);
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
 
 }
 
 .smartoffice-spd-riwayat-card:hover{
 
-    transform:translateY(-2px);
+    border-color:#d5dde7;
 
-    box-shadow:0 10px 24px rgba(0,0,0,.08);
+    box-shadow:
+        0 5px 10px rgba(15,23,42,.03),
+        0 14px 30px rgba(15,23,42,.055);
+
+    transform:translateY(-1px);
 
 }
 
-/* Header */
+
+/* =========================================================
+   HEADER
+========================================================= */
 
 .smartoffice-spd-riwayat-header{
 
     display:flex;
 
+    align-items:center;
+
     justify-content:space-between;
 
-    align-items:flex-start;
+    gap:14px;
 
-    gap:16px;
+    padding-bottom:11px;
 
-    margin-bottom:14px;
+    border-bottom:1px solid #edf1f5;
 
 }
 
-/* Nomor SPD */
+.smartoffice-spd-riwayat-header-left{
 
-.smartoffice-spd-riwayat-number{
+    min-width:0;
 
-    font-size:13px;
+    display:flex;
 
-    font-weight:700;
+    align-items:center;
+
+    gap:10px;
+
+}
+
+
+/* =========================================================
+   SVG DOCUMENT ICON
+========================================================= */
+
+.smartoffice-spd-riwayat-icon{
+
+    width:36px;
+
+    height:36px;
+
+    flex:0 0 36px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#eef4ff;
 
     color:#2563eb;
 
 }
 
-/* ======================================================
-   STATUS BADGE
-====================================================== */
+.smartoffice-spd-riwayat-icon svg{
+
+    display:block;
+
+}
+
+
+/* =========================================================
+   HEADER TEXT
+========================================================= */
+
+.smartoffice-spd-riwayat-heading{
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:2px;
+
+}
+
+.smartoffice-spd-riwayat-heading strong{
+
+    overflow:hidden;
+
+    color:#172033;
+
+    font-size:12px;
+
+    font-weight:750;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+.smartoffice-spd-riwayat-heading span{
+
+    color:#94a3b8;
+
+    font-size:9px;
+
+}
+
+
+/* =========================================================
+   STATUS SPD
+========================================================= */
 
 .smartoffice-spd-riwayat-status{
 
-    padding:5px 12px;
+    flex-shrink:0;
+
+    padding:5px 9px;
 
     border-radius:999px;
 
-    font-size:12px;
+    font-size:9px;
+
+    font-weight:700;
+
+    line-height:1.2;
+
+    text-align:center;
+
+    white-space:nowrap;
+
+}
+
+
+/* MENUNGGU */
+
+.smartoffice-spd-riwayat-status-waiting{
+
+    background:#fff7ed;
+
+    color:#c2410c;
+
+}
+
+
+/* DISETUJUI */
+
+.smartoffice-spd-riwayat-status-approved{
+
+    background:#ecfdf5;
+
+    color:#15803d;
+
+}
+
+
+/* DITOLAK */
+
+.smartoffice-spd-riwayat-status-rejected{
+
+    background:#fef2f2;
+
+    color:#dc2626;
+
+}
+
+
+/* REVISI */
+
+.smartoffice-spd-riwayat-status-revision{
+
+    background:#fffbeb;
+
+    color:#a16207;
+
+}
+
+
+/* DEFAULT */
+
+.smartoffice-spd-riwayat-status-default{
+
+    background:#f1f5f9;
+
+    color:#64748b;
+
+}
+
+
+/* =========================================================
+   PERSON
+========================================================= */
+
+.smartoffice-spd-riwayat-person{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:2px;
+
+    padding:10px 0 8px;
+
+}
+
+.smartoffice-spd-riwayat-person strong{
+
+    color:#172033;
+
+    font-size:13px;
 
     font-weight:700;
 
 }
 
-/* Menunggu */
+.smartoffice-spd-riwayat-person span{
 
-.smartoffice-spd-status-menunggu{
+    color:#64748b;
 
-    background:#fef3c7;
-
-    color:#92400e;
+    font-size:10px;
 
 }
 
-/* Disetujui */
 
-.smartoffice-spd-status-disetujui{
+/* =========================================================
+   KEGIATAN
+========================================================= */
 
-    background:#dcfce7;
+.smartoffice-spd-riwayat-section{
 
-    color:#166534;
+    display:flex;
 
-}
+    flex-direction:column;
 
-/* Revisi */
+    gap:3px;
 
-.smartoffice-spd-status-revisi{
-
-    background:#fee2e2;
-
-    color:#b91c1c;
+    padding-bottom:10px;
 
 }
 
-/* Dibatalkan */
+.smartoffice-spd-riwayat-label,
+.smartoffice-spd-riwayat-section > span,
+.smartoffice-spd-riwayat-location > span{
 
-.smartoffice-spd-status-batal{
+    color:#94a3b8;
+
+    font-size:8px;
+
+    font-weight:700;
+
+    letter-spacing:.07em;
+
+}
+
+.smartoffice-spd-riwayat-section strong{
+
+    color:#334155;
+
+    font-size:12px;
+
+    font-weight:600;
+
+}
+
+
+/* =========================================================
+   INFO GRID
+========================================================= */
+
+.smartoffice-spd-riwayat-info-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0,1fr));
+
+    gap:8px;
+
+    margin:2px 0 11px;
+
+}
+
+.smartoffice-spd-riwayat-info-box{
+
+    min-width:0;
+
+    padding:9px 11px;
+
+    border:1px solid #e7ecf2;
+
+    border-radius:10px;
+
+    background:#f8fafc;
+
+}
+
+.smartoffice-spd-riwayat-info-box span{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    color:#94a3b8;
+
+    font-size:8px;
+
+    font-weight:700;
+
+    letter-spacing:.06em;
+
+}
+
+.smartoffice-spd-riwayat-info-box strong{
+
+    display:block;
+
+    overflow:hidden;
+
+    color:#334155;
+
+    font-size:10px;
+
+    font-weight:700;
+
+    line-height:1.3;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+
+/* =========================================================
+   LOKASI
+========================================================= */
+
+.smartoffice-spd-riwayat-location{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:1px 0 10px;
+
+}
+
+.smartoffice-spd-riwayat-location strong{
+
+    min-width:0;
+
+    overflow:hidden;
+
+    color:#334155;
+
+    font-size:11px;
+
+    font-weight:600;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+
+/* =========================================================
+   PENGIKUT
+========================================================= */
+
+.smartoffice-spd-riwayat-followers{
+
+    padding:10px 0;
+
+    border-top:1px solid #edf1f5;
+
+}
+
+.smartoffice-spd-riwayat-followers-list{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:6px 20px;
+
+    margin-top:7px;
+
+}
+
+.smartoffice-spd-riwayat-follower{
+
+    min-width:0;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+}
+
+.smartoffice-spd-riwayat-follower-number{
+
+    width:20px;
+
+    height:20px;
+
+    flex:0 0 20px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:6px;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    font-size:8px;
+
+    font-weight:800;
+
+}
+
+.smartoffice-spd-riwayat-follower-name{
+
+    min-width:0;
+
+    overflow:hidden;
+
+    color:#334155;
+
+    font-size:10px;
+
+    font-weight:650;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+
+/* =========================================================
+   STATUS SPJ
+========================================================= */
+
+.smartoffice-spd-riwayat-spj{
+
+    margin-top:3px;
+
+    padding:8px 10px;
+
+    border-radius:9px;
+
+    background:#f8fafc;
+
+}
+
+.smartoffice-spd-riwayat-spj-label{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:9px;
+
+}
+
+.smartoffice-spd-riwayat-spj-label > span{
+
+    color:#94a3b8;
+
+    font-size:8px;
+
+    font-weight:700;
+
+    letter-spacing:.07em;
+
+}
+
+
+/* =========================================================
+   STATUS SPJ BADGE
+========================================================= */
+
+.smartoffice-spd-riwayat-spj-status{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    min-height:20px;
+
+    padding:3px 8px;
+
+    border-radius:6px;
+
+    font-size:8px;
+
+    font-weight:800;
+
+    letter-spacing:.02em;
+
+}
+
+
+/* BELUM ADA */
+
+.smartoffice-spd-riwayat-spj-status-belum{
 
     background:#e2e8f0;
 
@@ -1329,88 +1931,294 @@ input[readonly]{
 
 }
 
-/* ======================================================
-   BODY
-====================================================== */
 
-.smartoffice-spd-riwayat-body{
+/* REVISI */
 
-    display:flex;
+.smartoffice-spd-riwayat-spj-status-revisi{
 
-    flex-direction:column;
+    background:#ffedd5;
 
-    gap:8px;
+    color:#c2410c;
 
 }
 
-.smartoffice-spd-riwayat-title{
 
-    font-size:16px;
+/* SELESAI */
 
-    font-weight:700;
+.smartoffice-spd-riwayat-spj-status-selesai{
 
-    color:#1e293b;
+    background:#dcfce7;
 
-}
-
-.smartoffice-spd-riwayat-info{
-
-    font-size:14px;
-
-    color:#64748b;
+    color:#15803d;
 
 }
 
-/* ======================================================
+
+/* DIPROSES */
+
+.smartoffice-spd-riwayat-spj-status-proses{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+}
+
+
+/* DEFAULT */
+
+.smartoffice-spd-riwayat-spj-status-default{
+
+    background:#e2e8f0;
+
+    color:#475569;
+
+}
+
+
+/* =========================================================
    FOOTER
-====================================================== */
+========================================================= */
 
 .smartoffice-spd-riwayat-footer{
 
     display:flex;
 
-    justify-content:space-between;
-
     align-items:center;
 
-    margin-top:16px;
+    justify-content:space-between;
 
-    padding-top:14px;
+    gap:8px;
 
-    border-top:1px solid #eef2f7;
+    margin-top:10px;
 
-}
+    padding-top:10px;
 
-.smartoffice-spd-riwayat-date{
-
-    font-size:13px;
-
-    color:#94a3b8;
+    border-top:1px solid #edf1f5;
 
 }
+
+
+/* =========================================================
+   LIHAT SPD
+========================================================= */
 
 .smartoffice-spd-riwayat-detail{
 
-    font-size:13px;
+    min-height:32px;
+
+    padding:0 11px;
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    border:0;
+
+    border-radius:8px;
+
+    background:#eff6ff;
+
+    color:#2563eb;
+
+    font-family:inherit;
+
+    font-size:10px;
 
     font-weight:700;
+
+    cursor:pointer;
+
+}
+
+.smartoffice-spd-riwayat-detail:hover{
+
+    background:#dbeafe;
+
+}
+
+.smartoffice-spd-riwayat-detail svg{
+
+    display:block;
+
+}
+
+
+/* =========================================================
+   MORE BUTTON
+========================================================= */
+
+.smartoffice-spd-riwayat-more{
+
+    width:32px;
+
+    height:32px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:1px solid #dbe3ec;
+
+    border-radius:8px;
+
+    background:#fff;
+
+    color:#64748b;
+
+    cursor:pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        color .2s ease;
+
+}
+
+.smartoffice-spd-riwayat-more:hover{
+
+    background:#f8fafc;
+
+    border-color:#cbd5e1;
+
+    color:#1e293b;
+
+}
+
+.smartoffice-spd-riwayat-more svg{
+
+    display:block;
+
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.smartoffice-spd-riwayat-empty{
+
+    min-height:180px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    color:#94a3b8;
+
+    text-align:center;
+
+}
+
+.smartoffice-spd-riwayat-empty-icon{
+
+    width:44px;
+
+    height:44px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    margin-bottom:3px;
+
+    border-radius:12px;
+
+    background:#eff6ff;
 
     color:#2563eb;
 
 }
 
-/* ======================================================
-   EMPTY STATE
-====================================================== */
 
-.smartoffice-spd-riwayat-empty{
+/* =========================================================
+   TABLET
+========================================================= */
 
-    padding:50px 20px;
+@media (max-width:900px){
 
-    text-align:center;
+    .smartoffice-spd-riwayat-info-grid{
 
-    color:#94a3b8;
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
 
-    font-size:14px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width:768px){
+
+    .smartoffice-spd-riwayat-info-grid{
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+
+        gap:7px;
+
+    }
+
+    .smartoffice-spd-riwayat-followers-list{
+
+        grid-template-columns:1fr;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width:430px){
+
+    .smartoffice-spd-riwayat-header{
+
+        align-items:flex-start;
+
+    }
+
+    .smartoffice-spd-riwayat-status{
+
+        max-width:120px;
+
+        white-space:normal;
+
+    }
+
+    .smartoffice-spd-riwayat-spj-label{
+
+        gap:7px;
+
+    }
+
+    .smartoffice-spd-riwayat-location{
+
+        align-items:flex-start;
+
+        flex-direction:column;
+
+        gap:3px;
+
+    }
 
 }

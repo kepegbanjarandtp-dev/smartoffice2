@@ -116,6 +116,7 @@ export async function smartofficeGetDashboardStats(){
 
     const now =
         Date.now();
+
     if(
         smartofficeDashboardStatsCache &&
         now - smartofficeDashboardStatsCacheTime <
@@ -128,18 +129,61 @@ export async function smartofficeGetDashboardStats(){
         smartofficeDashboardGetToday();
 
     /* ==============================
-       TOTAL PEGAWAI AKTIF
+       TOTAL PEGAWAI
+       Semua dokumen pegawai dihitung
     ============================== */
+    const pegawaiCollection =
+        collection(
+            smartofficeFirestore,
+            "pegawai"
+        );
+
     const pegawaiQuery =
         query(
-            collection(
-                smartofficeFirestore,
-                "pegawai"
-            ),
+            pegawaiCollection
+        );
+
+    /* ==============================
+       RINCIAN STATUS KEPEGAWAIAN
+    ============================== */
+
+    const pnsQuery =
+        query(
+            pegawaiCollection,
             where(
-                "status",
+                "statusKepegawaian",
                 "==",
-                "AKTIF"
+                "PNS"
+            )
+        );
+
+    const pppkQuery =
+        query(
+            pegawaiCollection,
+            where(
+                "statusKepegawaian",
+                "==",
+                "PPPK"
+            )
+        );
+
+    const pppkParuhWaktuQuery =
+        query(
+            pegawaiCollection,
+            where(
+                "statusKepegawaian",
+                "==",
+                "PPPK PARUH WAKTU"
+            )
+        );
+
+    const bludQuery =
+        query(
+            pegawaiCollection,
+            where(
+                "statusKepegawaian",
+                "==",
+                "BLUD"
             )
         );
 
@@ -191,12 +235,32 @@ export async function smartofficeGetDashboardStats(){
     ============================== */
     const [
         pegawaiSnapshot,
+        pnsSnapshot,
+        pppkSnapshot,
+        pppkParuhWaktuSnapshot,
+        bludSnapshot,
         cutiSnapshot,
         arsipSnapshot
     ] = await Promise.all([
 
         getCountFromServer(
             pegawaiQuery
+        ),
+
+        getCountFromServer(
+            pnsQuery
+        ),
+
+        getCountFromServer(
+            pppkQuery
+        ),
+
+        getCountFromServer(
+            pppkParuhWaktuQuery
+        ),
+
+        getCountFromServer(
+            bludQuery
         ),
 
         getCountFromServer(
@@ -208,11 +272,29 @@ export async function smartofficeGetDashboardStats(){
         )
     ]);
 
+    /* ==============================
+       HASIL
+    ============================== */
     const result = {
+
         totalPegawai:
             pegawaiSnapshot.data().count,
+
+        pegawaiPNS:
+            pnsSnapshot.data().count,
+
+        pegawaiPPPK:
+            pppkSnapshot.data().count,
+
+        pegawaiPPPKParuhWaktu:
+            pppkParuhWaktuSnapshot.data().count,
+
+        pegawaiBLUD:
+            bludSnapshot.data().count,
+
         sedangCuti:
             cutiSnapshot.data().count,
+
         totalArsip:
             arsipSnapshot.data().count
     };
@@ -222,6 +304,7 @@ export async function smartofficeGetDashboardStats(){
     ============================== */
     smartofficeDashboardStatsCache =
         result;
+
     smartofficeDashboardStatsCacheTime =
         now;
 

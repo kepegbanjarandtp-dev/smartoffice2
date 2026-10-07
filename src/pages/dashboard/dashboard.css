@@ -1863,7 +1863,7 @@ smartofficeDashboardHeaderFade{
         width:29px;
         height:29px;
         border-radius:9px;
-        font-size:9px;
+        font-size:10px;
     }
 
     .smartoffice-dashboard-cuti-content{
@@ -1871,16 +1871,242 @@ smartofficeDashboardHeaderFade{
     }
 
     .smartoffice-dashboard-cuti-content strong{
-        font-size:9px;
+        font-size:10px;
     }
 
     .smartoffice-dashboard-cuti-content span{
-        font-size:8px;
+        font-size:9px;
     }
 
     .smartoffice-dashboard-cuti-empty{
         padding:12px 4px;
         font-size:9px;
+    }
+}
+
+
+/* ======================================================
+   TOTAL PEGAWAI — CLICKABLE
+====================================================== */
+.smartoffice-dashboard-summary-item-pegawai{
+    position:relative;
+    cursor:pointer;
+}
+
+.smartoffice-dashboard-summary-pegawai-arrow{
+    position:absolute;
+    top:12px;
+    right:12px;
+    width:22px;
+    height:22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:7px;
+    background:#eaf3ff;
+    color:#2563eb;
+    border:1px solid #dbeafe;
+    transition:
+        background .2s ease,
+        color .2s ease,
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-dashboard-summary-pegawai-arrow svg{
+    width:12px;
+    height:12px;
+    flex-shrink:0;
+    stroke:currentColor;
+}
+
+.smartoffice-dashboard-summary-item-pegawai:hover
+.smartoffice-dashboard-summary-pegawai-arrow{
+    background:#dbeafe;
+    color:#1d4ed8;
+    box-shadow:
+        0 3px 8px rgba(37,99,235,.12);
+    transform:translateX(1px);
+}
+
+.smartoffice-dashboard-summary-item-pegawai:active
+.smartoffice-dashboard-summary-pegawai-arrow{
+    background:#bfdbfe;
+    color:#1d4ed8;
+}
+
+.smartoffice-dashboard-summary-item-pegawai[aria-expanded="true"]
+.smartoffice-dashboard-summary-pegawai-arrow{
+    background:#dbeafe;
+    color:#2563eb;
+    transform:rotate(90deg);
+}
+
+
+/* ======================================================
+   DETAIL TOTAL PEGAWAI
+====================================================== */
+.smartoffice-dashboard-pegawai-detail{
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid #edf1f7;
+}
+
+.smartoffice-dashboard-pegawai-detail-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:8px;
+}
+
+.smartoffice-dashboard-pegawai-detail-header > div{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.smartoffice-dashboard-pegawai-detail-header strong{
+    color:#172554;
+    font-size:13px;
+    line-height:1.25;
+    font-weight:700;
+}
+
+.smartoffice-dashboard-pegawai-detail-header span{
+    color:#94a3b8;
+    font-size:12px;
+    line-height:1.25;
+    font-weight:500;
+}
+
+
+/* ======================================================
+   CLOSE
+====================================================== */
+.smartoffice-dashboard-pegawai-close{
+    width:24px;
+    height:24px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    margin:0;
+    border:0;
+    border-radius:9px;
+    background:#f1f5f9;
+    color:#64748b;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size:18px;
+    line-height:1;
+    cursor:pointer;
+    padding-bottom:2px;
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+.smartoffice-dashboard-pegawai-close:hover{
+    background:#e2e8f0;
+    color:#172554;
+}
+
+
+/* ======================================================
+   LIST
+====================================================== */
+.smartoffice-dashboard-pegawai-list{
+    display:flex;
+    flex-direction:column;
+}
+
+.smartoffice-dashboard-pegawai-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    min-height:36px;
+    padding:8px 4px;
+    border-bottom:1px solid #edf1f7;
+}
+
+.smartoffice-dashboard-pegawai-row:last-child{
+    border-bottom:0;
+}
+
+.smartoffice-dashboard-pegawai-row span{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.25;
+    font-weight:500;
+}
+
+.smartoffice-dashboard-pegawai-row strong{
+    min-width:32px;
+    text-align:right;
+    color:#172554;
+    font-size:13px;
+    line-height:1.25;
+    font-weight:800;
+}
+
+.smartoffice-dashboard-pegawai-empty{
+    padding:12px 4px;
+    color:#94a3b8;
+    font-size:12px;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+@media(max-width:768px){
+
+    .smartoffice-dashboard-summary-pegawai-arrow{
+        top:6px;
+        right:6px;
+        width:20px;
+        height:20px;
+        border-radius:7px;
+        background:#e5f0ff;
+        color:#2563eb;
+        border:1px solid #d5e5ff;
+    }
+
+    .smartoffice-dashboard-summary-pegawai-arrow svg{
+        width:11px;
+        height:11px;
+    }
+
+    .smartoffice-dashboard-pegawai-close{
+        width:20px;
+        height:20px;
+        border-radius:8px;
+        font-size:14px;
+        padding-bottom:1px;
+    }
+
+    .smartoffice-dashboard-pegawai-detail-header strong{
+        font-size:11px;
+    }
+
+    .smartoffice-dashboard-pegawai-detail-header span{
+        font-size:9px;
+    }
+
+    .smartoffice-dashboard-pegawai-row{
+        min-height:32px;
+        padding:7px 4px;
+    }
+
+    .smartoffice-dashboard-pegawai-row span{
+        font-size:10px;
+    }
+
+    .smartoffice-dashboard-pegawai-row strong{
+        font-size:10px;
     }
 }
 

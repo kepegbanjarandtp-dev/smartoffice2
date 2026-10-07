@@ -267,6 +267,13 @@ export async function smartofficeLoadPage(){
     smartofficeInitDashboardMenu();
 
     /* =========================
+       INIT TOTAL PEGAWAI
+    ========================= */
+    smartofficeInitDashboardPegawai(
+        pageInstance
+    );
+
+    /* =========================
        INIT SEDANG CUTI
        HANYA PASANG LISTENER
        BELUM ADA FIRESTORE READ
@@ -1270,6 +1277,270 @@ async function smartofficeLoadDashboardStats(){
             }
         });
     }
+}
+
+
+/* ============================================================================================
+   6. DASHBOARD TOTAL PEGAWAI
+============================================================================================ */
+/* ======================================================
+   INIT DASHBOARD — TOTAL PEGAWAI
+====================================================== */
+function smartofficeInitDashboardPegawai(
+    pageInstance
+){
+
+    const pegawaiCard =
+        document.getElementById(
+            "smartofficeDashboardSummaryPegawai"
+        );
+
+    const pegawaiClose =
+        document.getElementById(
+            "smartofficeDashboardPegawaiClose"
+        );
+    if(!pegawaiCard){
+        return;
+    }
+
+    /* ==================================================
+       REMOVE OLD LISTENERS
+    ================================================== */
+    const oldHandler =
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardSummaryPegawai"
+        ];
+    if(oldHandler){
+        pegawaiCard.removeEventListener(
+            "click",
+            oldHandler
+        );
+    }
+
+    const oldCloseHandler =
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardPegawaiClose"
+        ];
+    if(
+        oldCloseHandler &&
+        pegawaiClose
+    ){
+        pegawaiClose.removeEventListener(
+            "click",
+            oldCloseHandler
+        );
+    }
+
+    /* ==================================================
+       ELEMENT DETAIL
+    ================================================== */
+    const detail =
+        document.getElementById(
+            "smartofficeDashboardPegawaiDetail"
+        );
+
+    const list =
+        document.getElementById(
+            "smartofficeDashboardPegawaiList"
+        );
+    if(!detail || !list){
+        return;
+    }
+
+    /* ==================================================
+       CLICK TOTAL PEGAWAI
+    ================================================== */
+    const toggleHandler =
+        async function(){
+            if(
+                smartofficeDashboardDestroyed ||
+                pageInstance !==
+                    smartofficeDashboardPageInstance
+            ){
+                return;
+            }
+
+            /* ==========================================
+               CLOSE
+            ========================================== */
+            if(!detail.hidden){
+                detail.hidden = true;
+                pegawaiCard.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+
+                return;
+            }
+
+            /* ==========================================
+               OPEN
+            ========================================== */
+            detail.hidden = false;
+            pegawaiCard.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+
+            /* ==========================================
+               AMBIL STATISTIK YANG SUDAH DI-CACHE
+            ========================================== */
+            try{
+                const stats =
+                    await smartofficeGetDashboardStats();
+                if(
+                    smartofficeDashboardDestroyed ||
+                    pageInstance !==
+                        smartofficeDashboardPageInstance
+                ){
+                    return;
+                }
+
+                smartofficeRenderDashboardPegawaiList(
+                    stats
+                );
+            }
+            catch(error){
+                console.error(
+                    "Dashboard pegawai detail error:",
+                    error
+                );
+
+                list.innerHTML = "";
+
+                const errorElement =
+                    document.createElement("div");
+
+                errorElement.className =
+                    "smartoffice-dashboard-pegawai-empty";
+
+                errorElement.textContent =
+                    "Gagal memuat rincian pegawai.";
+
+                list.appendChild(
+                    errorElement
+                );
+            }
+        };
+
+    pegawaiCard.addEventListener(
+        "click",
+        toggleHandler
+    );
+
+    smartofficeDashboardMenuHandlers[
+        "smartofficeDashboardSummaryPegawai"
+    ] =
+        toggleHandler;
+
+    /* ==================================================
+       CLOSE BUTTON
+    ================================================== */
+    if(pegawaiClose){
+        const closeHandler =
+            function(event){
+                event.stopPropagation();
+                detail.hidden = true;
+                pegawaiCard.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
+            };
+
+        pegawaiClose.addEventListener(
+            "click",
+            closeHandler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardPegawaiClose"
+        ] =
+            closeHandler;
+    }
+
+    /* ==================================================
+       KEYBOARD
+    ================================================== */
+    pegawaiCard.addEventListener(
+        "keydown",
+        function(event){
+            if(
+                event.key === "Enter" ||
+                event.key === " "
+            ){
+                event.preventDefault();
+                toggleHandler();
+            }
+        }
+    );
+}
+
+/* ======================================================
+   RENDER DETAIL TOTAL PEGAWAI
+====================================================== */
+function smartofficeRenderDashboardPegawaiList(
+    stats
+){
+    const list =
+        document.getElementById(
+            "smartofficeDashboardPegawaiList"
+        );
+    if(!list){
+        return;
+    }
+
+    list.innerHTML = "";
+
+    const data = [
+        {
+            label: "PNS",
+            value: Number(
+                stats?.pegawaiPNS || 0
+            )
+        },
+        {
+            label: "PPPK",
+            value: Number(
+                stats?.pegawaiPPPK || 0
+            )
+        },
+        {
+            label: "PPPK Paruh Waktu",
+            value: Number(
+                stats?.pegawaiPPPKParuhWaktu || 0
+            )
+        },
+        {
+            label: "BLUD",
+            value: Number(
+                stats?.pegawaiBLUD || 0
+            )
+        }
+    ];
+
+    data.forEach(function(item){
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "smartoffice-dashboard-pegawai-row";
+
+        const label =
+            document.createElement("span");
+
+        label.textContent =
+            item.label;
+
+        const value =
+            document.createElement("strong");
+
+        value.textContent =
+            item.value;
+
+        row.appendChild(label);
+        row.appendChild(value);
+        list.appendChild(row);
+    });
 }
 
 
