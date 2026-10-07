@@ -21,7 +21,11 @@
   font-size:14px;
   font-weight:600;
   cursor:pointer;
-  transition:0.2s ease;
+  transition:
+    background .2s ease,
+    color .2s ease,
+    transform .2s ease,
+    box-shadow .2s ease;
 }
 
 .smartoffice-tab-button svg{
@@ -43,6 +47,7 @@
 .smartoffice-tab-button:hover{
   transform:translateY(-1px);
 }
+
 
 /* ======================================================
    TAB BADGE
@@ -75,25 +80,67 @@
   .smartoffice-tab-wrapper{
     gap:10px;
     margin-bottom:18px;
+
+    /* horizontal swipe */
+    overflow-x:auto;
+    overflow-y:hidden;
+
+    /* swipe lebih nyaman */
+    -webkit-overflow-scrolling:touch;
+    scroll-behavior:smooth;
+    scroll-snap-type:x proximity;
+
+    /* hilangkan scrollbar */
+    scrollbar-width:none;
+
+    /* supaya tidak ada efek scroll vertikal */
+    touch-action:pan-x;
+
+    /* ruang sedikit di ujung */
+    padding-bottom:2px;
+  }
+
+  .smartoffice-tab-wrapper::-webkit-scrollbar{
+    display:none;
   }
 
   .smartoffice-tab-button{
-    padding:12px;
+    /*
+     * Jangan lagi membagi lebar container.
+     * Setiap tab punya lebar sesuai kebutuhan.
+     */
+    flex:0 0 auto;
+
+    /*
+     * Supaya tab tetap nyaman disentuh
+     * dan tidak terlalu kecil.
+     */
+    min-width:max-content;
+
+    padding:12px 16px;
     border-radius:14px;
     font-size:11px;
     gap:8px;
+
+    scroll-snap-align:start;
+
+    /*
+     * Mencegah teks/icon terpotong
+     */
+    white-space:nowrap;
   }
 
   .smartoffice-tab-button svg{
     width:15px;
     height:15px;
+    flex-shrink:0;
   }
 
-  .smartoffice-tab-badge{    
+  .smartoffice-tab-badge{
     width:18px;
     min-width:18px;
-    height:18px; 
-    font-size:9px; 
+    height:18px;
+    font-size:9px;
   }
-}
 
+}
