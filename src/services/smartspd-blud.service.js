@@ -1,7 +1,7 @@
 /* ======================================================
    SMARTSPD BLUD SERVICE
    WRITE / BUSINESS PROCESS → GAS via smartofficeApi()
-====================================================== */
+===================================================== */
 import {
     smartofficeApi
 } from "../core/api.js";
@@ -15,6 +15,19 @@ export async function smartofficeSubmitSPD(
 ){
     return await smartofficeApi(
         "smartofficeSubmitSPD",
+        data
+    );
+}
+
+
+/* ======================================================
+   UPDATE / EDIT SPD
+====================================================== */
+export async function smartofficeUpdateSPD(
+    data
+){
+    return await smartofficeApi(
+        "smartofficeUpdateSPD",
         data
     );
 }

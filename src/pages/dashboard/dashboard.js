@@ -43,7 +43,8 @@ import {
 
 import {
     smartofficeGetTotalPendingApprovalFirestore,
-    smartofficeGetDokumenVerifikasiFirestore
+    smartofficeGetDokumenVerifikasiFirestore,
+    smartofficeGetTotalApprovalSPDFirestore
 } from "../../services/approval-firestore.service.js";
 
 /* ======================================================
@@ -333,6 +334,12 @@ export async function smartofficeDestroyPage(){
         ====================== */
         "smartofficeDashboardSummaryCuti",
         "smartofficeDashboardCutiClose",
+
+        /* ======================
+           TOTAL PEGAWAI
+        ====================== */
+        "smartofficeDashboardSummaryPegawai",
+        "smartofficeDashboardPegawaiClose",
     ];
 
     elementIds.forEach(
@@ -357,6 +364,29 @@ export async function smartofficeDestroyPage(){
             }
         }
     );
+
+    /* =========================
+       REMOVE TOTAL PEGAWAI
+       KEYBOARD LISTENER
+    ========================= */
+    const pegawaiCard =
+        document.getElementById(
+            "smartofficeDashboardSummaryPegawai"
+        );
+
+    const pegawaiKeydownHandler =
+        handlers[
+            "smartofficeDashboardSummaryPegawaiKeydown"
+        ];
+    if(
+        pegawaiCard &&
+        pegawaiKeydownHandler
+    ){
+        pegawaiCard.removeEventListener(
+            "keydown",
+            pegawaiKeydownHandler
+        );
+    }
 
     /* =========================
        RESET HANDLERS
@@ -599,7 +629,6 @@ async function smartofficeLoadApprovalBadge(
     sessionData,
     pageInstance
 ){
-
     /* =========================
        USER
        TIDAK PERLU REQUEST
@@ -613,56 +642,111 @@ async function smartofficeLoadApprovalBadge(
     try{
         let total = 0;
 
-        /* =========================
+        /* ==================================================
            PJ
-           CUTI + DOKUMEN
-        ========================= */
-        if(sessionData.role === "PJ"){
-
-            total =
+           CUTI + DOKUMEN + SPD
+        ================================================== */
+        if(
+            sessionData.role === "PJ"
+        ){
+            /* =========================
+               APPROVAL CUTI + DOKUMEN
+            ========================= */
+            const totalCutiDokumen =
                 await smartofficeGetTotalPendingApprovalAll(
                     sessionData.nip,
                     sessionData.role
                 );
-
             if(
                 pageInstance !==
-                smartofficeDashboardPageInstance ||
+                    smartofficeDashboardPageInstance ||
+
                 smartofficeDashboardDestroyed
             ){
                 return;
-            }          
-        }
+            }
 
-        /* =========================
-           ADMIN/SUPERADMIN
-           DOKUMEN SAJA
-        ========================= */
-        else if(
-            sessionData.role === "ADMIN" ||
-            sessionData.role === "SUPERADMIN"
-        ){
-            const dokumen =
-                await smartofficeGetDokumenVerifikasiFirestore()
-
+            /* =========================
+               APPROVAL SPD
+            ========================= */
+            const totalSPD =
+                await smartofficeGetTotalApprovalSPDFirestore();
             if(
                 pageInstance !==
-                smartofficeDashboardPageInstance ||
+                    smartofficeDashboardPageInstance ||
+
                 smartofficeDashboardDestroyed
             ){
                 return;
             }
 
             total =
+                Number(
+                    totalCutiDokumen
+                ) +
+
+                Number(
+                    totalSPD
+                );
+        }
+
+        /* ==================================================
+           ADMIN / SUPERADMIN
+           DOKUMEN + SPD
+        ================================================== */
+        else if(
+            sessionData.role === "ADMIN" ||
+            sessionData.role === "SUPERADMIN"
+        ){
+            /* =========================
+               DOKUMEN
+            ========================= */
+            const dokumen =
+                await smartofficeGetDokumenVerifikasiFirestore();
+            if(
+                pageInstance !==
+                    smartofficeDashboardPageInstance ||
+
+                smartofficeDashboardDestroyed
+            ){
+                return;
+            }
+
+            const totalDokumen =
                 Array.isArray(dokumen)
                     ? dokumen.length
                     : 0;
+
+            /* =========================
+               SPD
+            ========================= */
+            const totalSPD =
+                await smartofficeGetTotalApprovalSPDFirestore();
+            if(
+                pageInstance !==
+                    smartofficeDashboardPageInstance ||
+
+                smartofficeDashboardDestroyed
+            ){
+                return;
+            }
+
+            total =
+                Number(
+                    totalDokumen
+                ) +
+
+                Number(
+                    totalSPD
+                );
         }
 
-        /* =========================
+        /* ==================================================
            KAPUS
            CUTI SAJA
-        ========================= */
+
+           TETAP DIPERTAHANKAN
+        ================================================== */
         else if(
             sessionData.role === "KAPUS"
         ){
@@ -673,24 +757,29 @@ async function smartofficeLoadApprovalBadge(
                 );
             if(
                 pageInstance !==
-                smartofficeDashboardPageInstance ||
+                    smartofficeDashboardPageInstance ||
+
                 smartofficeDashboardDestroyed
             ){
                 return;
             }
         }
 
-        /* =========================
-           UPDATE BADGE
-        ========================= */
+        /* ==================================================
+           VALIDASI LIFECYCLE
+        ================================================== */
         if(
             pageInstance !==
-            smartofficeDashboardPageInstance ||
+                smartofficeDashboardPageInstance ||
+
             smartofficeDashboardDestroyed
         ){
             return;
         }
 
+        /* ==================================================
+           UPDATE BADGE
+        ================================================== */
         smartofficeUpdateApprovalBadge(
             total
         );
@@ -1289,7 +1378,6 @@ async function smartofficeLoadDashboardStats(){
 function smartofficeInitDashboardPegawai(
     pageInstance
 ){
-
     const pegawaiCard =
         document.getElementById(
             "smartofficeDashboardSummaryPegawai"
@@ -1331,6 +1419,17 @@ function smartofficeInitDashboardPegawai(
         );
     }
 
+    const oldKeydownHandler =
+        smartofficeDashboardMenuHandlers[
+            "smartofficeDashboardSummaryPegawaiKeydown"
+        ];
+    if(oldKeydownHandler){
+        pegawaiCard.removeEventListener(
+            "keydown",
+            oldKeydownHandler
+        );
+    }
+
     /* ==================================================
        ELEMENT DETAIL
     ================================================== */
@@ -1364,7 +1463,8 @@ function smartofficeInitDashboardPegawai(
                CLOSE
             ========================================== */
             if(!detail.hidden){
-                detail.hidden = true;
+                detail.hidden =
+                    true;
                 pegawaiCard.setAttribute(
                     "aria-expanded",
                     "false"
@@ -1376,7 +1476,9 @@ function smartofficeInitDashboardPegawai(
             /* ==========================================
                OPEN
             ========================================== */
-            detail.hidden = false;
+            detail.hidden =
+                false;
+
             pegawaiCard.setAttribute(
                 "aria-expanded",
                 "true"
@@ -1400,16 +1502,20 @@ function smartofficeInitDashboardPegawai(
                     stats
                 );
             }
+
             catch(error){
                 console.error(
                     "Dashboard pegawai detail error:",
                     error
                 );
 
-                list.innerHTML = "";
+                list.innerHTML =
+                    "";
 
                 const errorElement =
-                    document.createElement("div");
+                    document.createElement(
+                        "div"
+                    );
 
                 errorElement.className =
                     "smartoffice-dashboard-pegawai-empty";
@@ -1440,7 +1546,8 @@ function smartofficeInitDashboardPegawai(
         const closeHandler =
             function(event){
                 event.stopPropagation();
-                detail.hidden = true;
+                detail.hidden =
+                    true;
                 pegawaiCard.setAttribute(
                     "aria-expanded",
                     "false"
@@ -1461,8 +1568,7 @@ function smartofficeInitDashboardPegawai(
     /* ==================================================
        KEYBOARD
     ================================================== */
-    pegawaiCard.addEventListener(
-        "keydown",
+    const keydownHandler =
         function(event){
             if(
                 event.key === "Enter" ||
@@ -1471,8 +1577,17 @@ function smartofficeInitDashboardPegawai(
                 event.preventDefault();
                 toggleHandler();
             }
-        }
+        };
+
+    pegawaiCard.addEventListener(
+        "keydown",
+        keydownHandler
     );
+
+    smartofficeDashboardMenuHandlers[
+        "smartofficeDashboardSummaryPegawaiKeydown"
+    ] =
+        keydownHandler;
 }
 
 /* ======================================================

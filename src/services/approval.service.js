@@ -140,3 +140,53 @@ export async function smartofficeTolakDokumenApi(
     }
     return result;
 }
+
+
+/* ======================================================
+   PROCESS APPROVAL SPD
+====================================================== */
+export async function smartofficeProcessApprovalSPD(
+    idSPD,
+    aksi,
+    reviewer,
+    reviewerNip,
+    jenisPerjalananDinas,
+    catatan
+){
+
+    const approvalAction =
+        String(aksi || "")
+            .trim()
+            .toUpperCase();
+    if(
+        approvalAction !== "APPROVE" &&
+        approvalAction !== "REVISI" &&
+        approvalAction !== "BATALKAN"
+    ){
+        throw new Error(
+            "Aksi approval SPD tidak valid."
+        );
+    }
+
+    const result =
+        await smartofficeApi(
+            "smartofficeProsesSPD",
+            {
+                idSPD,
+                aksi: approvalAction,
+                reviewer,
+                reviewerNip,
+                jenisPerjalananDinas,
+                catatan
+            }
+        );
+
+    if(!result.success){
+        throw new Error(
+            result.message ||
+            "Gagal memproses approval SPD."
+        );
+    }
+
+    return result;
+}

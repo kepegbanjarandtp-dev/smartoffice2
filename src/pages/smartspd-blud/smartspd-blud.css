@@ -2222,3 +2222,504 @@ input[readonly]{
     }
 
 }
+
+
+/* ==========================================================
+   SMARTSPD ACTION MENU
+========================================================== */
+
+.smartoffice-spd-action-menu{
+    position:fixed;
+    z-index:9999;
+    width:210px;
+    max-width:calc(100vw - 20px);
+    padding:6px;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    box-shadow:0 12px 32px rgba(15,23,42,.14);
+    animation:smartofficeSPDActionMenuIn .14s ease-out;
+}
+
+.smartoffice-spd-action-menu-item{
+    width:100%;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 11px;
+    border:0;
+    border-radius:8px;
+    background:transparent;
+    color:#334155;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:600;
+    text-align:left;
+    cursor:pointer;
+    transition:
+        background .15s ease,
+        color .15s ease;
+}
+
+.smartoffice-spd-action-menu-item:hover{
+    background:#f1f5f9;
+    color:#0f172a;
+}
+
+.smartoffice-spd-action-menu-item:active{
+    transform:scale(.98);
+}
+
+.smartoffice-spd-action-menu-item.danger{
+    color:#dc2626;
+}
+
+.smartoffice-spd-action-menu-item.danger:hover{
+    background:#fef2f2;
+    color:#b91c1c;
+}
+
+.smartoffice-spd-action-menu-icon{
+    width:20px;
+    height:20px;
+    flex:0 0 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.smartoffice-spd-action-menu-icon svg{
+    display:block;
+}
+
+@keyframes smartofficeSPDActionMenuIn{
+
+    from{
+        opacity:0;
+        transform:translateY(-4px) scale(.98);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+
+}
+
+
+/* ==========================================================
+   SMARTSPD DETAIL MODAL
+========================================================== */
+
+.smartoffice-spd-detail-modal{
+    position:fixed;
+    inset:0;
+    z-index:10000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.smartoffice-spd-detail-backdrop{
+    position:absolute;
+    inset:0;
+    background:rgba(15,23,42,.55);
+    backdrop-filter:blur(3px);
+}
+
+.smartoffice-spd-detail-dialog{
+    position:relative;
+    z-index:1;
+    width:min(900px, 100%);
+    max-height:calc(100vh - 40px);
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    box-shadow:0 24px 70px rgba(15,23,42,.22);
+    animation:smartofficeSPDDetailIn .18s ease-out;
+}
+
+.smartoffice-spd-detail-header{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:20px;
+    padding:20px 22px 16px;
+    border-bottom:1px solid #eef2f7;
+}
+
+.smartoffice-spd-detail-eyebrow{
+    display:block;
+    margin-bottom:4px;
+    color:#64748b;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.08em;
+}
+
+.smartoffice-spd-detail-header h2{
+    margin:0;
+    color:#0f172a;
+    font-size:20px;
+    line-height:1.25;
+}
+
+.smartoffice-spd-detail-header p{
+    margin:4px 0 0;
+    color:#64748b;
+    font-size:12px;
+}
+
+.smartoffice-spd-detail-close{
+    width:34px;
+    height:34px;
+    flex:0 0 34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:0;
+    border-radius:9px;
+    background:#f1f5f9;
+    color:#64748b;
+    cursor:pointer;
+}
+
+.smartoffice-spd-detail-close:hover{
+    background:#e2e8f0;
+    color:#0f172a;
+}
+
+.smartoffice-spd-detail-status-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    padding:12px 22px;
+    border-bottom:1px solid #eef2f7;
+}
+
+.smartoffice-spd-detail-status,
+.smartoffice-spd-detail-lock{
+    display:inline-flex;
+    align-items:center;
+    min-height:26px;
+    padding:4px 9px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+    letter-spacing:.02em;
+}
+
+.smartoffice-spd-detail-status-waiting{
+    background:#fff7ed;
+    color:#c2410c;
+}
+
+.smartoffice-spd-detail-status-approved{
+    background:#ecfdf5;
+    color:#047857;
+}
+
+.smartoffice-spd-detail-status-rejected{
+    background:#fef2f2;
+    color:#b91c1c;
+}
+
+.smartoffice-spd-detail-status-revision{
+    background:#fffbeb;
+    color:#b45309;
+}
+
+.smartoffice-spd-detail-status-default{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.smartoffice-spd-detail-lock-locked{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.smartoffice-spd-detail-lock-open{
+    background:#ecfdf5;
+    color:#047857;
+}
+
+.smartoffice-spd-detail-body{
+    overflow-y:auto;
+    padding:18px 22px 24px;
+}
+
+.smartoffice-spd-detail-section{
+    padding:18px 0;
+    border-bottom:1px solid #eef2f7;
+}
+
+.smartoffice-spd-detail-section:first-child{
+    padding-top:0;
+}
+
+.smartoffice-spd-detail-section:last-child{
+    border-bottom:0;
+}
+
+.smartoffice-spd-detail-section-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:13px;
+}
+
+.smartoffice-spd-detail-section-title > span{
+    color:#0f172a;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.03em;
+}
+
+.smartoffice-spd-detail-section-title small{
+    color:#64748b;
+    font-size:11px;
+}
+
+.smartoffice-spd-detail-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+}
+
+.smartoffice-spd-detail-field{
+    min-width:0;
+    padding:11px 12px;
+    background:#f8fafc;
+    border:1px solid #eef2f7;
+    border-radius:10px;
+}
+
+.smartoffice-spd-detail-field > span{
+    display:block;
+    margin-bottom:4px;
+    color:#64748b;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:.03em;
+}
+
+.smartoffice-spd-detail-field > strong{
+    display:block;
+    color:#1e293b;
+    font-size:12px;
+    line-height:1.45;
+    word-break:break-word;
+}
+
+.smartoffice-spd-detail-link{
+    display:inline-block;
+    color:#2563eb;
+    font-size:12px;
+    font-weight:700;
+    text-decoration:none;
+    word-break:break-all;
+}
+
+.smartoffice-spd-detail-link:hover{
+    text-decoration:underline;
+}
+
+.smartoffice-spd-detail-schedule-list{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.smartoffice-spd-detail-schedule{
+    padding:12px;
+    background:#f8fafc;
+    border:1px solid #e8edf3;
+    border-radius:12px;
+}
+
+.smartoffice-spd-detail-schedule-title{
+    margin-bottom:9px;
+    color:#334155;
+    font-size:11px;
+    font-weight:800;
+}
+
+.smartoffice-spd-detail-schedule-grid{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+    gap:8px;
+}
+
+.smartoffice-spd-detail-schedule-grid
+.smartoffice-spd-detail-field{
+    background:#fff;
+}
+
+.smartoffice-spd-detail-followers{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+}
+
+.smartoffice-spd-detail-follower{
+    display:flex;
+    gap:10px;
+    padding:12px;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    background:#fff;
+}
+
+.smartoffice-spd-detail-follower-number{
+    width:27px;
+    height:27px;
+    flex:0 0 27px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:8px;
+    background:#e0f2fe;
+    color:#0369a1;
+    font-size:11px;
+    font-weight:800;
+}
+
+.smartoffice-spd-detail-follower-info{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+}
+
+.smartoffice-spd-detail-follower-info strong{
+    color:#1e293b;
+    font-size:12px;
+    line-height:1.4;
+}
+
+.smartoffice-spd-detail-follower-info span{
+    color:#64748b;
+    font-size:10px;
+    line-height:1.35;
+}
+
+.smartoffice-spd-detail-note{
+    margin-top:10px;
+    padding:12px;
+    border-radius:10px;
+    background:#f8fafc;
+    border:1px solid #eef2f7;
+}
+
+.smartoffice-spd-detail-note > span{
+    display:block;
+    margin-bottom:5px;
+    color:#64748b;
+    font-size:10px;
+    font-weight:700;
+    text-transform:uppercase;
+}
+
+.smartoffice-spd-detail-note p{
+    margin:0;
+    color:#334155;
+    font-size:12px;
+    line-height:1.55;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.smartoffice-spd-detail-spj-status{
+    display:inline-flex;
+    padding:4px 8px;
+    border-radius:999px;
+    font-size:10px;
+    font-weight:800;
+}
+
+.smartoffice-spd-detail-spj-status-belum{
+    background:#f1f5f9;
+    color:#64748b;
+}
+
+.smartoffice-spd-detail-spj-status-proses{
+    background:#eff6ff;
+    color:#2563eb;
+}
+
+.smartoffice-spd-detail-spj-status-revisi{
+    background:#fff7ed;
+    color:#c2410c;
+}
+
+.smartoffice-spd-detail-spj-status-selesai{
+    background:#ecfdf5;
+    color:#047857;
+}
+
+.smartoffice-spd-detail-empty{
+    padding:16px;
+    border:1px dashed #cbd5e1;
+    border-radius:10px;
+    color:#64748b;
+    font-size:12px;
+    text-align:center;
+}
+
+@keyframes smartofficeSPDDetailIn{
+
+    from{
+        opacity:0;
+        transform:translateY(8px) scale(.985);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0) scale(1);
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .smartoffice-spd-detail-modal{
+        padding:0;
+        align-items:flex-end;
+    }
+
+    .smartoffice-spd-detail-dialog{
+        width:100%;
+        max-height:94vh;
+        border-radius:18px 18px 0 0;
+    }
+
+    .smartoffice-spd-detail-header{
+        padding:17px 16px 14px;
+    }
+
+    .smartoffice-spd-detail-body{
+        padding:16px;
+    }
+
+    .smartoffice-spd-detail-grid{
+        grid-template-columns:1fr;
+    }
+
+    .smartoffice-spd-detail-schedule-grid{
+        grid-template-columns:repeat(2, minmax(0, 1fr));
+    }
+
+    .smartoffice-spd-detail-followers{
+        grid-template-columns:1fr;
+    }
+
+}

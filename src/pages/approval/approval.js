@@ -48,13 +48,15 @@ import {
     smartofficeProcessApprovalCuti,
     smartofficeGetDokumenVerifikasi,
     smartofficeVerifikasiDokumenApi,
-    smartofficeTolakDokumenApi
+    smartofficeTolakDokumenApi,
+    smartofficeProcessApprovalSPD
 } from "../../services/approval.service.js";
 
 import {
     smartofficeGetApprovalCutiFirestore,
     smartofficeGetDokumenVerifikasiFirestore,
-    smartofficeWatchVerifikasiDokumenFirestore
+    smartofficeWatchVerifikasiDokumenFirestore,
+    smartofficeGetApprovalSPDFirestore
 } from "../../services/approval-firestore.service.js";
 
 /* ======================================================
@@ -139,7 +141,6 @@ export async function smartofficeLoadPage(){
         document.getElementById(
             "smartofficeApprovalDetailModal"
         );
-
     if(modal){
         modal.style.display =
             "flex";
@@ -349,7 +350,8 @@ export async function smartofficeLoadPage(){
     ========================= */
     await Promise.all([
         smartofficeLoadApprovalCuti(),
-        smartofficeLoadApprovalDokumen()
+        smartofficeLoadApprovalDokumen(),
+        smartofficeLoadApprovalSPD()
     ]);
 }
 
@@ -741,6 +743,451 @@ export async function smartofficeLoadApprovalCuti(){
          </div>
       `;
    }
+}
+
+
+/* ======================================================
+   SMART OFFICE LOAD APPROVAL SPD
+====================================================== */
+export async function smartofficeLoadApprovalSPD(){
+
+    const pageInstance =
+        smartofficeApprovalPageInstance;
+
+    const container =
+        document.getElementById(
+            "smartofficeApprovalSpdContent"
+        );
+    if(!container){
+        console.warn(
+            "Container Approval SPD tidak ditemukan."
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       LOADING
+    ================================================== */
+    container.innerHTML = `
+        <div class="smartoffice-loading">
+
+            <div class="
+                smartoffice-loading-spinner
+            "></div>
+
+            <div class="
+                smartoffice-loading-text
+            ">
+                Memuat approval SPD...
+            </div>
+        </div>
+    `;
+
+    try{
+        const data =
+            await smartofficeGetApprovalSPDFirestore();
+
+        if(
+            pageInstance !==
+            smartofficeApprovalPageInstance
+        ){
+
+            return;
+        }
+
+        console.log(
+            "APPROVAL SPD:",
+            data
+        );
+
+        /* ==================================================
+           BADGE TAB SPD
+        ================================================== */
+        const badge =
+            document.getElementById(
+                "smartofficeApprovalSpdBadge"
+            );
+
+        const total =
+            Array.isArray(data)
+                ? data.length
+                : 0;
+        if(badge){
+            badge.textContent =
+                total;
+
+            badge.classList.toggle(
+                "show",
+                total > 0
+            );
+        }
+
+        /* ==================================================
+           EMPTY
+        ================================================== */
+        if(
+            !Array.isArray(data) ||
+            data.length === 0
+        ){
+            container.innerHTML = `
+                <div class="
+                    smartoffice-empty-state
+                ">
+                    <div class="
+                        smartoffice-empty-icon
+                    ">
+                        📭
+                    </div>
+
+                    <h3>
+                        Tidak ada approval SPD
+                    </h3>
+
+                    <p>
+                        Belum ada SPD yang perlu
+                        diproses.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
+        /* ==================================================
+           RENDER
+        ================================================== */
+        let html = "";
+
+        const avatarColors = [
+            "linear-gradient(135deg,#2563eb,#1d4ed8)",
+            "linear-gradient(135deg,#7c3aed,#6d28d9)",
+            "linear-gradient(135deg,#059669,#047857)",
+            "linear-gradient(135deg,#ea580c,#c2410c)",
+            "linear-gradient(135deg,#db2777,#be185d)",
+            "linear-gradient(135deg,#0891b2,#0e7490)",
+            "linear-gradient(135deg,#dc2626,#b91c1c)"
+        ];
+
+        data.forEach(
+            function(item,index){
+                const avatarColor =
+                    avatarColors[
+                        index %
+                        avatarColors.length
+                    ];
+
+                const status =
+                    String(
+                        item.statusSPD || ""
+                    ).trim();
+
+                const statusLabel =
+                    status === "PERLU REVISI"
+                        ? "Perlu Revisi"
+                        : "Menunggu Review";
+
+                const tanggalBerangkat =
+                    item.tanggalBerangkat ||
+                    "-";
+
+                const tanggalPulang =
+                    item.tanggalPulang ||
+                    "-";
+
+                const jenisPerjalanan =
+                    item.jenisPerjalananDinas ||
+                    "-";
+
+                html += `
+                    <div
+                        class="
+                            smartoffice-approval-card
+                        "
+                        data-id-spd="
+                            ${item.idSPD}
+                        "
+                    >
+                        <!-- HEADER -->
+                        <div class="
+                            smartoffice-approval-card-header
+                        ">
+                            <div class="
+                                smartoffice-approval-card-user
+                            ">
+                                <div
+                                    class="
+                                        smartoffice-approval-avatar
+                                    "
+                                    style="
+                                        background:${avatarColor};
+                                    "
+                                >
+                                    ${
+                                        item.nama
+                                            ? item.nama.charAt(0)
+                                            : "S"
+                                    }
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-card-info
+                                ">
+                                    <div class="
+                                        smartoffice-approval-card-title
+                                    ">
+                                        ${item.nama || "-"}
+                                    </div>
+
+
+                                    <div class="
+                                        smartoffice-approval-card-subtitle
+                                    ">
+                                        ${item.jabatan || "-"}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="
+                                smartoffice-approval-status
+                            ">
+                                ${statusLabel}
+                            </div>
+                        </div>
+
+                        <!-- BODY -->
+                        <div class="
+                            smartoffice-approval-card-body
+                        ">
+                            <div class="
+                                smartoffice-approval-item
+                            ">
+                                <div class="
+                                    smartoffice-approval-label
+                                ">
+                                    ID SPD
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-value
+                                ">
+                                    ${item.idSPD || "-"}
+                                </div>
+                            </div>
+
+                            <div class="
+                                smartoffice-approval-item
+                            ">
+                                <div class="
+                                    smartoffice-approval-label
+                                ">
+                                    Kegiatan
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-value
+                                ">
+                                    ${item.kegiatan || "-"}
+                                </div>
+                            </div>
+
+                            <div class="
+                                smartoffice-approval-item
+                            ">
+                                <div class="
+                                    smartoffice-approval-label
+                                ">
+                                    Lokasi
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-value
+                                ">
+                                    ${item.lokasi || "-"}
+                                </div>
+                            </div>
+
+                            <div class="
+                                smartoffice-approval-item
+                            ">
+                                <div class="
+                                    smartoffice-approval-label
+                                ">
+                                    Tanggal Perjalanan
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-value
+                                ">
+                                    ${tanggalBerangkat}
+                                    -
+                                    ${tanggalPulang}
+                                </div>
+                            </div>
+
+                            <div class="
+                                smartoffice-approval-item
+                            ">
+                                <div class="
+                                    smartoffice-approval-label
+                                ">
+                                    Jumlah Hari
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-value
+                                ">
+                                    ${item.jumlahHari || 0}
+                                    Hari
+                                </div>
+                            </div>
+
+                            <div class="
+                                smartoffice-approval-item
+                            ">
+                                <div class="
+                                    smartoffice-approval-label
+                                ">
+                                    Tipe Keberangkatan
+                                </div>
+
+                                <div class="
+                                    smartoffice-approval-value
+                                ">
+                                    ${item.tipeKeberangkatan || "-"}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="
+                            smartoffice-approval-card-footer
+                        ">
+                            <button
+                                type="button"
+                                class="
+                                    smartoffice-approval-detail-button
+                                "
+                                data-index="${index}"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="
+                                        M1 12s4-8 11-8
+                                        11 8 11 8
+                                        -4 8-11 8
+                                        -11-8-11-8
+                                    "/>
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="3"
+                                    />
+                                </svg>
+
+                                <span>
+                                    Detail & Approval
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        );
+
+        container.innerHTML =
+            html;
+
+        /* ==================================================
+           DETAIL BUTTON
+        ================================================== */
+        const buttons =
+            container.querySelectorAll(
+                ".smartoffice-approval-detail-button"
+            );
+
+        buttons.forEach(
+            function(button){
+
+                const handler =
+                    async function(event){
+
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        if(
+                            smartofficeApprovalDestroyed
+                        ){
+                            return;
+                        }
+
+                        const index =
+                            Number(
+                                button.dataset.index
+                            );
+
+                        const item =
+                            data[index];
+
+                        if(!item){
+                            smartofficeShowToast(
+                                "Data SPD tidak ditemukan.",
+                                "error"
+                            );
+
+                            return;
+                        }
+
+                        smartofficeOpenApprovalSPD(
+                            item
+                        );
+                    };
+
+                button.addEventListener(
+                    "click",
+                    handler
+                );
+
+                smartofficeApprovalHandlers.set(
+                    button,
+                    handler
+                );
+
+            }
+        );
+    }
+    catch(error){
+        console.error(
+            "Load Approval SPD Error:",
+            error
+        );
+
+        container.innerHTML = `
+            <div class="
+                smartoffice-empty-state
+            ">
+                <h3>
+                    Gagal memuat approval SPD
+                </h3>
+                <p>
+                    ${
+                        error.message ||
+                        "Terjadi kesalahan."
+                    }
+                </p>
+            </div>
+        `;
+    }
 }
 
 
@@ -1402,6 +1849,1120 @@ export function smartofficeCloseApprovalDetail(){
       },250);
 }
 
+
+/* ======================================================
+   OPEN DETAIL APPROVAL SPD
+====================================================== */
+
+function smartofficeOpenApprovalSPD(item){
+
+    if(!item){
+        return;
+    }
+
+    const existing =
+        document.getElementById(
+            "smartofficeApprovalSPDModal"
+        );
+
+    if(existing){
+        existing.remove();
+    }
+
+    const modal =
+        document.createElement("div");
+
+    modal.id =
+        "smartofficeApprovalSPDModal";
+
+    modal.className =
+        "smartoffice-approval-spd-modal-overlay";
+
+
+    const raw =
+        item.raw || {};
+
+    const status =
+        String(
+            item.statusSPD || ""
+        ).trim();
+
+
+    /* ==================================================
+       PENGIKUT
+    ================================================== */
+
+    const pengikut = [
+        {
+            nama:
+                raw["Nama Pengikut 1"] || "",
+            nip:
+                raw["NIP/NRP Pengikut 1"] || "",
+            tglLahir:
+                raw["Tgl Lahir 1"] || "",
+            noWa:
+                raw["No_WA Pengikut 1"] || ""
+        },
+        {
+            nama:
+                raw["Nama Pengikut 2"] || "",
+            nip:
+                raw["NIP/NRP Pengikut 2"] || "",
+            tglLahir:
+                raw["Tgl Lahir 2"] || "",
+            noWa:
+                raw["No_WA Pengikut 2"] || ""
+        },
+        {
+            nama:
+                raw["Nama Pengikut 3"] || "",
+            nip:
+                raw["NIP/NRP Pengikut 3"] || "",
+            tglLahir:
+                raw["Tgl Lahir 3"] || "",
+            noWa:
+                raw["No_WA Pengikut 3"] || ""
+        },
+        {
+            nama:
+                raw["Nama Pengikut 4"] || "",
+            nip:
+                raw["NIP/NRP Pengikut 4"] || "",
+            tglLahir:
+                raw["Tgl Lahir 4"] || "",
+            noWa:
+                raw["No_WA Pengikut 4"] || ""
+        }
+    ].filter(function(person){
+
+        return (
+            person.nama ||
+            person.nip ||
+            person.tglLahir ||
+            person.noWa
+        );
+
+    });
+
+
+    /* ==================================================
+       RENDER PENGIKUT
+    ================================================== */
+
+    let pengikutHTML = "";
+
+    if(pengikut.length){
+
+        pengikutHTML =
+            pengikut.map(
+                function(person,index){
+
+                    return `
+                        <div
+                            class="
+                                smartoffice-approval-spd-pengikut-card
+                            "
+                        >
+
+                            <div
+                                class="
+                                    smartoffice-approval-spd-pengikut-number
+                                "
+                            >
+                                ${index + 1}
+                            </div>
+
+                            <div
+                                class="
+                                    smartoffice-approval-spd-pengikut-info
+                                "
+                            >
+
+                                <strong>
+                                    ${person.nama || "-"}
+                                </strong>
+
+                                <span>
+                                    NIP / NRP:
+                                    ${person.nip || "-"}
+                                </span>
+
+                                <span>
+                                    Tgl Lahir:
+                                    ${person.tglLahir || "-"}
+                                </span>
+
+                                <span>
+                                    No. WA:
+                                    ${person.noWa || "-"}
+                                </span>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            ).join("");
+
+    }
+    else{
+
+        pengikutHTML = `
+            <div
+                class="
+                    smartoffice-approval-spd-empty
+                "
+            >
+                Tidak ada pengikut.
+            </div>
+        `;
+
+    }
+
+
+    /* ==================================================
+       DETAIL JADWAL
+    ================================================== */
+
+    const jadwal = [
+        {
+            hari: "Hari 1",
+            berangkat:
+                raw["Berangkat Hari 1"] || "",
+            pulang:
+                raw["Pulang Hari 1"] || "",
+            lokasi:
+                raw["Lokasi Hari 1"] || "",
+            tiba:
+                raw["Tiba Hari 1"] || ""
+        },
+        {
+            hari: "Hari 2",
+            berangkat:
+                raw["Berangkat Hari 2"] || "",
+            pulang:
+                raw["Pulang Hari 2"] || "",
+            lokasi:
+                raw["Lokasi Hari 2"] || "",
+            tiba:
+                raw["Tiba Hari 2"] || ""
+        },
+        {
+            hari: "Hari 3",
+            berangkat:
+                raw["Berangkat Hari 3"] || "",
+            pulang:
+                raw["Pulang Hari 3"] || "",
+            lokasi:
+                raw["Lokasi Hari 3"] || "",
+            tiba:
+                raw["Tiba Hari 3"] || ""
+        }
+    ].filter(function(schedule){
+
+        return (
+            schedule.berangkat ||
+            schedule.pulang ||
+            schedule.lokasi ||
+            schedule.tiba
+        );
+
+    });
+
+
+    let jadwalHTML = "";
+
+    if(jadwal.length){
+
+        jadwalHTML =
+            jadwal.map(
+                function(schedule){
+
+                    return `
+                        <div
+                            class="
+                                smartoffice-approval-spd-jadwal-card
+                            "
+                        >
+
+                            <div
+                                class="
+                                    smartoffice-approval-spd-jadwal-title
+                                "
+                            >
+                                ${schedule.hari}
+                            </div>
+
+                            <div
+                                class="
+                                    smartoffice-approval-spd-jadwal-grid
+                                "
+                            >
+
+                                <div>
+                                    <label>
+                                        Berangkat
+                                    </label>
+
+                                    <span>
+                                        ${schedule.berangkat || "-"}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <label>
+                                        Pulang
+                                    </label>
+
+                                    <span>
+                                        ${schedule.pulang || "-"}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <label>
+                                        Lokasi
+                                    </label>
+
+                                    <span>
+                                        ${schedule.lokasi || "-"}
+                                    </span>
+                                </div>
+
+                                <div>
+                                    <label>
+                                        Tiba
+                                    </label>
+
+                                    <span>
+                                        ${schedule.tiba || "-"}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `;
+
+                }
+            ).join("");
+
+    }
+    else{
+
+        jadwalHTML = `
+            <div
+                class="
+                    smartoffice-approval-spd-empty
+                "
+            >
+                Detail jadwal perjalanan tidak tersedia.
+            </div>
+        `;
+
+    }
+
+
+    /* ==================================================
+       MODAL HTML
+    ================================================== */
+
+    modal.innerHTML = `
+
+        <div
+            class="
+                smartoffice-approval-spd-modal
+            "
+        >
+
+            <!-- HEADER -->
+            <div
+                class="
+                    smartoffice-approval-spd-modal-header
+                "
+            >
+
+                <div>
+
+                    <h3>
+                        Detail Approval SPD
+                    </h3>
+
+                    <p>
+                        ${item.idSPD || "-"}
+                    </p>
+
+                </div>
+
+                <button
+                    type="button"
+                    id="smartofficeApprovalSPDClose"
+                    class="
+                        smartoffice-approval-spd-modal-close
+                    "
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div
+                class="
+                    smartoffice-approval-spd-modal-body
+                "
+            >
+
+                <!-- PROFILE -->
+                <div
+                    class="
+                        smartoffice-approval-spd-profile
+                    "
+                >
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-avatar
+                        "
+                    >
+                        ${
+                            item.nama
+                                ? item.nama.charAt(0)
+                                : "S"
+                        }
+                    </div>
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-profile-info
+                        "
+                    >
+
+                        <h4>
+                            ${item.nama || "-"}
+                        </h4>
+
+                        <p>
+                            ${item.jabatan || "-"}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- INFORMASI SPD -->
+                <div
+                    class="
+                        smartoffice-approval-spd-section-title
+                    "
+                >
+                    Informasi SPD
+                </div>
+
+
+                <div
+                    class="
+                        smartoffice-approval-spd-detail-grid
+                    "
+                >
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            NIP / NRP
+                        </label>
+
+                        <span>
+                            ${item.nip || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Pangkat & Golongan
+                        </label>
+
+                        <span>
+                            ${
+                                item.pangkatGolongan ||
+                                "-"
+                            }
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Email
+                        </label>
+
+                        <span>
+                            ${raw["Email"] || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            No. WhatsApp
+                        </label>
+
+                        <span>
+                            ${raw["No_WA"] || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Alat Angkut
+                        </label>
+
+                        <span>
+                            ${raw["Alat Angkut"] || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Kegiatan
+                        </label>
+
+                        <span>
+                            ${item.kegiatan || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Lokasi
+                        </label>
+
+                        <span>
+                            ${item.lokasi || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Tanggal SPD Dibuat
+                        </label>
+
+                        <span>
+                            ${item.tanggalSPD || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Tanggal Berangkat
+                        </label>
+
+                        <span>
+                            ${item.tanggalBerangkat || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Tanggal Pulang
+                        </label>
+
+                        <span>
+                            ${item.tanggalPulang || "-"}
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Jumlah Hari
+                        </label>
+
+                        <span>
+                            ${item.jumlahHari || 0} Hari
+                        </span>
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-detail-item
+                        "
+                    >
+                        <label>
+                            Tipe Keberangkatan
+                        </label>
+
+                        <span>
+                            ${
+                                item.tipeKeberangkatan ||
+                                "-"
+                            }
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <!-- JADWAL -->
+                <div
+                    class="
+                        smartoffice-approval-spd-section-title
+                    "
+                >
+                    Detail Jadwal Perjalanan
+                </div>
+
+
+                <div
+                    class="
+                        smartoffice-approval-spd-jadwal-list
+                    "
+                >
+                    ${jadwalHTML}
+                </div>
+
+
+                <!-- PENGIKUT -->
+                <div
+                    class="
+                        smartoffice-approval-spd-section-title
+                    "
+                >
+                    Pengikut
+                </div>
+
+
+                <div
+                    class="
+                        smartoffice-approval-spd-pengikut-list
+                    "
+                >
+                    ${pengikutHTML}
+                </div>
+
+
+                <!-- PENETAPAN -->
+                <div
+                    class="
+                        smartoffice-approval-spd-section-title
+                    "
+                >
+                    Penetapan Perjalanan Dinas
+                </div>
+
+
+                <div
+                    class="
+                        smartoffice-approval-spd-detail-item
+                        smartoffice-approval-spd-full-width
+                    "
+                >
+
+                    <label>
+                        Jenis Perjalanan Dinas
+                    </label>
+
+                    <select
+                        id="smartofficeApprovalSPDJenis"
+                        class="
+                            smartoffice-approval-spd-form-input
+                        "
+                    >
+
+                        <option value="">
+                            Pilih Jenis Perjalanan Dinas
+                        </option>
+
+                        <option
+                            value="Perjalanan Dinas Dalam Kota"
+                            ${
+                                item.jenisPerjalananDinas ===
+                                "Perjalanan Dinas Dalam Kota"
+                                    ? "selected"
+                                    : ""
+                            }
+                        >
+                            Perjalanan Dinas Dalam Kota
+                        </option>
+
+                        <option
+                            value="Perjalanan Dinas Biasa"
+                            ${
+                                item.jenisPerjalananDinas ===
+                                "Perjalanan Dinas Biasa"
+                                    ? "selected"
+                                    : ""
+                            }
+                        >
+                            Perjalanan Dinas Biasa
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- CATATAN -->
+                <div
+                    id="smartofficeApprovalSPDCatatanWrapper"
+                    class="
+                        smartoffice-approval-spd-detail-item
+                        smartoffice-approval-spd-full-width
+                    "
+                    style="display:none;"
+                >
+
+                    <label>
+                        Catatan
+                    </label>
+
+                    <textarea
+                        id="smartofficeApprovalSPDCatatan"
+                        class="
+                            smartoffice-approval-spd-catatan
+                        "
+                        placeholder=""
+                    ></textarea>
+
+                </div>
+
+
+                <!-- ACTION -->
+                <div
+                    class="
+                        smartoffice-approval-spd-action
+                    "
+                >
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-action-title
+                        "
+                    >
+                        Aksi Approval SPD
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-action-buttons
+                        "
+                    >
+
+                        <button
+                            type="button"
+                            id="smartofficeApprovalSPDApprove"
+                            class="
+                                smartoffice-approval-spd-action-button
+                            "
+                        >
+                            ✓ Approve
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="smartofficeApprovalSPDRevisi"
+                            class="
+                                smartoffice-approval-spd-action-button
+                            "
+                        >
+                            ↻ Perlu Revisi
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="smartofficeApprovalSPDBatalkan"
+                            class="
+                                smartoffice-approval-spd-action-button
+                            "
+                        >
+                            ✕ Tolak
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        class="
+                            smartoffice-approval-spd-action-footer
+                        "
+                    >
+
+                        <button
+                            type="button"
+                            id="smartofficeApprovalSPDCancel"
+                            class="
+                                smartoffice-approval-spd-cancel
+                            "
+                        >
+                            Batal
+                        </button>
+
+
+                        <button
+                            type="button"
+                            id="smartofficeApprovalSPDSubmit"
+                            class="
+                                smartoffice-approval-spd-submit
+                            "
+                        >
+                            Proses
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    document.body.appendChild(
+        modal
+    );
+
+
+    /* ==================================================
+       STATE
+    ================================================== */
+
+    let selectedAction = "";
+
+
+    /* ==================================================
+       ELEMENT
+    ================================================== */
+
+    const jenisSelect =
+        document.getElementById(
+            "smartofficeApprovalSPDJenis"
+        );
+
+    const catatanWrapper =
+        document.getElementById(
+            "smartofficeApprovalSPDCatatanWrapper"
+        );
+
+    const catatanInput =
+        document.getElementById(
+            "smartofficeApprovalSPDCatatan"
+        );
+
+    const approveButton =
+        document.getElementById(
+            "smartofficeApprovalSPDApprove"
+        );
+
+    const revisiButton =
+        document.getElementById(
+            "smartofficeApprovalSPDRevisi"
+        );
+
+    const tolakButton =
+        document.getElementById(
+            "smartofficeApprovalSPDBatalkan"
+        );
+
+    const closeButton =
+        document.getElementById(
+            "smartofficeApprovalSPDClose"
+        );
+
+    const cancelButton =
+        document.getElementById(
+            "smartofficeApprovalSPDCancel"
+        );
+
+    const submitButton =
+        document.getElementById(
+            "smartofficeApprovalSPDSubmit"
+        );
+
+
+    /* ==================================================
+       SET ACTION
+    ================================================== */
+
+    function setAction(action){
+
+        selectedAction =
+            action;
+
+
+        approveButton?.classList.remove(
+            "smartoffice-approval-spd-action-active",
+            "smartoffice-approval-spd-action-danger"
+        );
+
+        revisiButton?.classList.remove(
+            "smartoffice-approval-spd-action-active",
+            "smartoffice-approval-spd-action-danger"
+        );
+
+        tolakButton?.classList.remove(
+            "smartoffice-approval-spd-action-active",
+            "smartoffice-approval-spd-action-danger"
+        );
+
+
+        if(action === "APPROVE"){
+
+            approveButton?.classList.add(
+                "smartoffice-approval-spd-action-active"
+            );
+
+            catatanWrapper.style.display =
+                "none";
+
+            catatanInput.value =
+                "";
+
+            catatanInput.placeholder =
+                "";
+
+        }
+
+
+        else if(action === "REVISI"){
+
+            revisiButton?.classList.add(
+                "smartoffice-approval-spd-action-danger"
+            );
+
+            catatanWrapper.style.display =
+                "block";
+
+            catatanInput.placeholder =
+                "Tulis catatan revisi...";
+
+        }
+
+
+        else if(action === "BATALKAN"){
+
+            tolakButton?.classList.add(
+                "smartoffice-approval-spd-action-danger"
+            );
+
+            catatanWrapper.style.display =
+                "block";
+
+            catatanInput.placeholder =
+                "Tulis alasan penolakan...";
+
+        }
+
+    }
+
+
+    /* ==================================================
+       ACTION BUTTON
+    ================================================== */
+
+    approveButton?.addEventListener(
+        "click",
+        function(){
+
+            setAction("APPROVE");
+
+        }
+    );
+
+
+    revisiButton?.addEventListener(
+        "click",
+        function(){
+
+            setAction("REVISI");
+
+        }
+    );
+
+
+    tolakButton?.addEventListener(
+        "click",
+        function(){
+
+            setAction("BATALKAN");
+
+        }
+    );
+
+
+    /* ==================================================
+       CLOSE
+    ================================================== */
+
+    function closeModal(){
+
+        modal.remove();
+
+    }
+
+
+    closeButton?.addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    cancelButton?.addEventListener(
+        "click",
+        closeModal
+    );
+
+
+    /* ==================================================
+       SUBMIT
+    ================================================== */
+
+    submitButton?.addEventListener(
+        "click",
+        async function(){
+
+            if(!selectedAction){
+
+                smartofficeShowToast(
+                    "Pilih aksi approval terlebih dahulu.",
+                    "warning"
+                );
+
+                return;
+            }
+
+
+            if(!jenisSelect?.value){
+
+                smartofficeShowToast(
+                    "Pilih Jenis Perjalanan Dinas terlebih dahulu.",
+                    "warning"
+                );
+
+                jenisSelect?.focus();
+
+                return;
+            }
+
+
+            const catatan =
+                catatanInput?.value.trim() || "";
+
+
+            if(
+                (
+                    selectedAction === "REVISI" ||
+                    selectedAction === "BATALKAN"
+                ) &&
+                !catatan
+            ){
+
+                smartofficeShowToast(
+                    selectedAction === "REVISI"
+                        ? "Catatan revisi wajib diisi."
+                        : "Alasan penolakan wajib diisi.",
+                    "warning"
+                );
+
+                catatanInput?.focus();
+
+                return;
+            }
+
+
+            await smartofficeSubmitApprovalSPD(
+                item,
+                selectedAction,
+                jenisSelect.value,
+                catatan,
+                submitButton,
+                closeModal
+            );
+
+        }
+    );
+
+
+    /* ==================================================
+       CLICK OUTSIDE
+    ================================================== */
+
+    modal.addEventListener(
+        "click",
+        function(event){
+
+            if(
+                event.target === modal
+            ){
+
+                closeModal();
+
+            }
+
+        }
+    );
+
+}
+
+
 /* ======================================================
    DESTROY APPROVAL PAGE
 ====================================================== */
@@ -1869,8 +3430,198 @@ async function smartofficeRefreshApproval(){
 export async function smartofficeRefreshAllApprovalData(){
     await Promise.all([
         smartofficeLoadApprovalCuti(),
+        smartofficeLoadApprovalSPD(),
         smartofficeLoadApprovalDokumen()
     ]);
+}
+
+
+/* ======================================================
+   SUBMIT APPROVAL SPD
+====================================================== */
+async function smartofficeSubmitApprovalSPD(
+    item,
+    action,
+    jenisPerjalananDinas,
+    catatan,
+    submitButton,
+    closeModal
+){
+    if(
+        !item ||
+        !item.idSPD
+    ){
+        smartofficeShowToast(
+            "Data SPD tidak ditemukan.",
+            "error"
+        );
+
+        return;
+    }
+
+    if(!action){
+        smartofficeShowToast(
+            "Silakan pilih aksi approval.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       JENIS PERJALANAN DINAS
+       WAJIB UNTUK SEMUA AKSI
+    ================================================== */
+    if(!jenisPerjalananDinas){
+        smartofficeShowToast(
+            "Jenis Perjalanan Dinas wajib dipilih.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       CATATAN REVISI
+    ================================================== */
+    if(
+        action === "REVISI" &&
+        !catatan
+    ){
+        smartofficeShowToast(
+            "Catatan revisi wajib diisi.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       TOLAK
+       FRONTEND TETAP KIRIM BATALKAN
+       BACKEND AKAN MENYIMPAN DITOLAK
+    ================================================== */
+    if(
+        action === "BATALKAN" &&
+        !catatan
+    ){
+        smartofficeShowToast(
+            "Alasan penolakan wajib diisi.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       SESSION
+    ================================================== */
+    const sessionData =
+        smartofficeGetSession();
+
+    if(!sessionData){
+        smartofficeShowToast(
+            "Session pengguna tidak ditemukan.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       DISABLE BUTTON
+    ================================================== */
+    if(submitButton){
+        submitButton.disabled =
+            true;
+        submitButton.innerHTML =
+            "Memproses...";
+    }
+
+    try{
+
+        /* ==============================================
+           PROSES APPROVAL
+        ============================================== */
+        const response =
+            await smartofficeProcessApprovalSPD(
+                item.idSPD,
+                action,
+                sessionData.nama ||
+                sessionData.name ||
+                "",
+                sessionData.nip ||
+                "",
+                jenisPerjalananDinas,
+                catatan
+            );
+
+        if(
+            !response ||
+            !response.success
+        ){
+            throw new Error(
+                response?.message ||
+                "Approval SPD gagal diproses."
+            );
+        }
+
+        /* ==============================================
+           TOAST
+        ============================================== */
+        smartofficeShowToast(
+            response.message ||
+            (
+                action === "APPROVE"
+                    ? "SPD berhasil disetujui."
+                    :
+                action === "REVISI"
+                    ? "SPD dikembalikan untuk revisi."
+                    :
+                "SPD berhasil ditolak."
+            ),
+            "success"
+        );
+
+        /* ==============================================
+           CLOSE MODAL
+        ============================================== */
+        if(
+            typeof closeModal ===
+            "function"
+        ){
+            closeModal();
+        }
+
+        /* ==============================================
+           REFRESH APPROVAL SPD
+        ============================================== */
+        await Promise.all([
+            smartofficeLoadApprovalSPD(),
+            smartofficeLoadApprovalCuti(),
+            smartofficeLoadApprovalDokumen()
+        ]);
+    }
+    catch(error){
+        console.error(
+            "SUBMIT APPROVAL SPD ERROR:",
+            error
+        );
+
+        smartofficeShowToast(
+            error.message ||
+            "Gagal memproses approval SPD.",
+            "error"
+        );
+    }
+    finally{
+        if(submitButton){
+            submitButton.disabled =
+                false;
+            submitButton.innerHTML =
+                "Proses";
+        }
+    }
 }
 
 

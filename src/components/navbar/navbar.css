@@ -144,7 +144,7 @@
     color:#2563EB;
 }
 
-.smartoffice-mobile-navbar-item.active span{
+.smartoffice-mobile-navbar-item.active > span{
     display:flex;
     align-items:center;
     justify-content:center;

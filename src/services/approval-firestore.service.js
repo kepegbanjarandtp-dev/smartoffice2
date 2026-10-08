@@ -1,7 +1,6 @@
 /* ======================================================
    APPROVAL CUTI - FIRESTORE SERVICE
 ====================================================== */
-
 import {
     collection,
     getDocs,
@@ -27,7 +26,6 @@ export async function smartofficeGetApprovalCutiFirestore(nip){
                 .replace(/'/g, "")
                 .replace(/\.0$/, "")
                 .trim();
-
         if(!loginNip){
             return [];
         }
@@ -246,7 +244,6 @@ export function smartofficeWatchVerifikasiDokumenFirestore(
     idDokumen,
     callback
 ){
-
     const targetId =
         String(idDokumen || "").trim();
 
@@ -359,7 +356,6 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
     nip,
     role
 ){
-
     try{
         const loginNip =
             String(nip || "")
@@ -474,6 +470,268 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
         throw new Error(
             error?.message ||
             "Gagal menghitung total pending approval."
+        );
+    }
+}
+
+
+/* ======================================================
+   GET APPROVAL SPD — FIRESTORE
+
+   ROLE:
+   - PJ
+   - ADMIN
+   - SUPERADMIN
+
+   STATUS:
+   - MENUNGGU REVIEW
+   - PERLU REVISI
+====================================================== */
+export async function smartofficeGetApprovalSPDFirestore(){
+
+    try{
+        /* ==================================================
+           AMBIL SEMUA DATA SPD
+        ================================================== */
+        const snapshot =
+            await getDocs(
+                collection(
+                    smartofficeFirestore,
+                    "smartspdBLUD"
+                )
+            );
+
+        /* ==================================================
+           FILTER STATUS APPROVAL SPD
+        ================================================== */
+        const result =
+            snapshot.docs
+                .map(
+                    docSnapshot => {
+                        const data =
+                            docSnapshot.data();
+
+                        return {
+                            idSPD:
+                                data["ID SPD"] ||
+                                data.idSPD ||
+                                docSnapshot.id,
+
+                            nama:
+                                data["Nama"] ||
+                                "",
+
+                            nip:
+                                data["NIP / NRP"] ||
+                                "",
+
+                            pangkatGolongan:
+                                data["Pangkat & Golongan"] ||
+                                "",
+
+                            jabatan:
+                                data["Jabatan"] ||
+                                "",
+
+                            kegiatan:
+                                data["Kegiatan"] ||
+                                "",
+
+                            lokasi:
+                                data["Lokasi"] ||
+                                "",
+
+                            tanggalSPD:
+                                data["Tanggal SPD Dibuat"] ||
+                                "",
+
+                            tanggalBerangkat:
+                                data["Tanggal Berangkat"] ||
+                                "",
+
+                            tanggalPulang:
+                                data["Tanggal Pulang"] ||
+                                "",
+
+                            jumlahHari:
+                                data["Jumlah Hari"] ||
+                                "",
+
+                            tipeKeberangkatan:
+                                data["Tipe Keberangkatan"] ||
+                                "",
+
+                            jenisPerjalananDinas:
+                                data["JENIS_PERJALANAN_DINAS"] ||
+                                "",
+
+                            statusSPD:
+                                String(
+                                    data["STATUS_SPD"] ||
+                                    ""
+                                ).trim(),
+
+                            reviewer:
+                                data["REVIEWER"] ||
+                                "",
+
+                            reviewerNip:
+                                data["REVIEWER_NIP"] ||
+                                "",
+
+                            tglReview:
+                                data["TGL_REVIEW_SPD"] ||
+                                "",
+
+                            tglApprove:
+                                data["TGL_APPROVE_SPD"] ||
+                                "",
+
+                            tglRevisi:
+                                data["TGL_REVISI_SPD"] ||
+                                "",
+
+                            catatanRevisi:
+                                data["CATATAN_REVISI_SPD"] ||
+                                "",
+
+                            totalRevisi:
+                                data["TOTAL_REVISI_SPD"] ||
+                                "0",
+
+                            linkPdf:
+                                data["LINK_PDF_SPD"] ||
+                                "",
+
+                            statusData:
+                                data["STATUS_DATA"] ||
+                                "",
+
+                            pdfGenerated:
+                                data["PDF_GENERATED"] ||
+                                "",
+
+                            lastUpdate:
+                                data["LAST_UPDATE"] ||
+                                "",
+
+                            pengikut: [
+                                data["Nama Pengikut 1"] ||
+                                "",
+
+                                data["Nama Pengikut 2"] ||
+                                "",
+
+                                data["Nama Pengikut 3"] ||
+                                "",
+
+                                data["Nama Pengikut 4"] ||
+                                ""
+                            ],
+
+                            raw:
+                                data
+                        };
+                    }
+                )
+                .filter(
+                    item => {
+                        return (
+                            item.statusSPD ===
+                                "MENUNGGU REVIEW" ||
+
+                            item.statusSPD ===
+                                "PERLU REVISI"
+                        );
+                    }
+                );
+
+        /* ==================================================
+           URUTKAN TERBARU
+        ================================================== */
+        result.sort(
+            function(a, b){
+                const dateA =
+                    String(
+                        a.tanggalSPD || ""
+                    );
+
+                const dateB =
+                    String(
+                        b.tanggalSPD || ""
+                    );
+
+                return dateB.localeCompare(
+                    dateA
+                );
+            }
+        );
+
+        return result;
+    }
+    catch(error){
+        console.error(
+            "Firestore Get Approval SPD Error:",
+            error
+        );
+
+        throw new Error(
+            error?.message ||
+            "Gagal mengambil approval SPD dari Firestore."
+        );
+    }
+}
+
+
+/* ======================================================
+   GET TOTAL APPROVAL SPD — FIRESTORE
+====================================================== */
+export async function smartofficeGetTotalApprovalSPDFirestore(){
+
+    try{
+        const snapshot =
+            await getDocs(
+                collection(
+                    smartofficeFirestore,
+                    "smartspdBLUD"
+                )
+            );
+
+        let total = 0;
+
+        snapshot.docs.forEach(
+            docSnapshot => {
+                const data =
+                    docSnapshot.data();
+
+                const statusSPD =
+                    String(
+                        data["STATUS_SPD"] ||
+                        ""
+                    ).trim();
+                if(
+                    statusSPD ===
+                        "MENUNGGU REVIEW" ||
+
+                    statusSPD ===
+                        "PERLU REVISI"
+                ){
+                    total++;
+                }
+            }
+        );
+
+        return total;
+    }
+    catch(error){
+        console.error(
+            "Firestore Total Approval SPD Error:",
+            error
+        );
+
+        throw new Error(
+            error?.message ||
+            "Gagal menghitung approval SPD."
         );
     }
 }

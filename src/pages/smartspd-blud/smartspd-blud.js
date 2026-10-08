@@ -92,6 +92,17 @@ let smartofficeSPDHandlers = new Map();
 ====================================================== */
 let smartofficeSPDPageInstance = 0;
 
+/* ======================================================
+   2.7 ACTION MENU
+====================================================== */
+let smartofficeSPDActionMenuElement = null;
+
+/* ======================================================
+   2.8 MODE EDIT
+====================================================== */
+let smartofficeSPDEditMode = false;
+let smartofficeSPDEditId = "";
+let smartofficeSPDEditItem = null;
 
 
 /* ================================================================================================
@@ -162,6 +173,8 @@ export async function smartofficeLoadPage(){
 
     await smartofficeLoadRiwayatSPD();
     smartofficeInitRiwayatSPDFilter();
+    smartofficeInitSPDActionMenu();
+    smartofficeInitSPDActionMenuGlobalEvents();
 }
 
 /* ======================================================
@@ -2144,7 +2157,6 @@ function smartofficeInitFileUpload(){
         document.getElementById(
             "smartofficeSPDLampiranName"
         );
-
     if(!input){
         return;
     }
@@ -2153,7 +2165,6 @@ function smartofficeInitFileUpload(){
         input,
         "change",
         function(){
-
             const file =
                 input.files?.[0] || null;
 
@@ -2166,10 +2177,10 @@ function smartofficeInitFileUpload(){
                         : "Belum ada file dipilih";
             }
 
-            if(file && file.size > 5 * 1024 * 1024){
+            if(file && file.size > 2 * 1024 * 1024){
 
                 smartofficeShowToast(
-                    "Ukuran lampiran maksimal 5 MB.",
+                    "Ukuran lampiran maksimal 2 MB.",
                     "error"
                 );
 
@@ -2219,8 +2230,10 @@ function smartofficeUpdateSubmitButton(){
             document.getElementById("smartofficeSPDTipeKeberangkatan")?.value.trim() &&
             document.getElementById("smartofficeSPDConfirm")?.checked
         );
+
     button.disabled =
-        !valid || smartofficeSubmitting;
+        !valid ||
+        smartofficeSubmitting;
 
     button.classList.toggle(
         "loading",
@@ -2232,10 +2245,19 @@ function smartofficeUpdateSubmitButton(){
             ".smartoffice-spd-submit-text"
         );
     if(submitText){
-        submitText.textContent =
-            smartofficeSubmitting
-                ? "Mengajukan..."
-                : "Ajukan SPD";
+        if(smartofficeSubmitting){
+            submitText.textContent =
+                smartofficeSPDEditMode
+                    ? "Menyimpan..."
+                    : "Mengajukan...";
+
+        }
+        else{
+            submitText.textContent =
+                smartofficeSPDEditMode
+                    ? "Simpan Perubahan"
+                    : "Ajukan SPD";
+        }
     }
 }
 
@@ -2350,7 +2372,9 @@ async function smartofficeHandleSubmitSPD(){
         );
 
         const response =
-            await smartofficeSubmitSPD(data);
+            smartofficeSPDEditMode
+                ? await smartofficeUpdateSPD(data)
+                : await smartofficeSubmitSPD(data);
 
         if(!response || !response.success){
             throw new Error(
@@ -2387,7 +2411,7 @@ async function smartofficeHandleSubmitSPD(){
 }
 
 /* ======================================================
-   14.5 BUILD PAYLOAD SUBMIT SPD
+   14.5 BUILD PAYLOAD SUBMIT / UPDATE SPD
 ====================================================== */
 async function smartofficeBuildSubmitPayload(){
 
@@ -2395,6 +2419,9 @@ async function smartofficeBuildSubmitPayload(){
     let lampiranMimeType = "";
     let lampiranFileName = "";
 
+    /* ==================================================
+       LAMPIRAN
+    ================================================== */
     if(smartofficeSPDFile){
         lampiranBase64 =
             await smartofficeConvertFileToBase64(
@@ -2410,7 +2437,24 @@ async function smartofficeBuildSubmitPayload(){
             "lampiran";
     }
 
+    /* ==================================================
+       PAYLOAD UTAMA
+    ================================================== */
     const payload = {
+
+        /* ==================================================
+           ID SPD
+           KOSONG SAAT SUBMIT BARU
+           TERISI SAAT EDIT
+        ================================================== */
+        idSPD:
+            smartofficeSPDEditMode
+                ? smartofficeSPDEditId
+                : "",
+
+        /* ==================================================
+           DATA PEGAWAI
+        ================================================== */
         nama:
             document.getElementById(
                 "smartofficeSPDNama"
@@ -2441,6 +2485,9 @@ async function smartofficeBuildSubmitPayload(){
                 "smartofficeSPDNoWA"
             )?.value.trim() || "",
 
+        /* ==================================================
+           DETAIL PERJALANAN
+        ================================================== */
         alatAngkut:
             document.getElementById(
                 "smartofficeSPDAlatAngkut"
@@ -2456,6 +2503,9 @@ async function smartofficeBuildSubmitPayload(){
                 "smartofficeSPDLokasi"
             )?.value.trim() || "",
 
+        /* ==================================================
+           TANGGAL SPD
+        ================================================== */
         tanggalSPD:
             document.getElementById(
                 "smartofficeSPDTanggalSPD"
@@ -2471,19 +2521,44 @@ async function smartofficeBuildSubmitPayload(){
                 "smartofficeSPDTanggalPulang"
             )?.value || "",
 
+        /* ==================================================
+           TIPE KEBERANGKATAN
+        ================================================== */
         tipeKeberangkatan:
             document.getElementById(
                 "smartofficeSPDTipeKeberangkatan"
             )?.value || "",
 
-        lampiranBase64,
-        lampiranMimeType,
-        lampiranFileName
+        /* ==================================================
+           JENIS PERJALANAN DINAS
+           BISA DIUBAH SAAT EDIT
+        ================================================== */
+        jenisPerjalananDinas:
+            smartofficeSPDEditMode &&
+            smartofficeSPDEditItem
+                ? String(
+                    smartofficeSPDEditItem.raw?.[
+                        "JENIS_PERJALANAN_DINAS"
+                    ] || ""
+                ).trim()
+                : "",
+
+        /* ==================================================
+           LAMPIRAN
+        ================================================== */
+        lampiranBase64:
+            lampiranBase64,
+
+        lampiranMimeType:
+            lampiranMimeType,
+
+        lampiranFileName:
+            lampiranFileName
     };
 
     /* ==================================================
-       DETAIL JADWAL
-       Q–Z / HARI 1–3
+       DETAIL JADWAL PERJALANAN
+       HARI 1 - 3
     ================================================== */
     for(let hari = 1; hari <= 3; hari++){
 
@@ -2501,8 +2576,11 @@ async function smartofficeBuildSubmitPayload(){
                 `smartofficeSPD_PulangHari${hari}`
             )?.value || "";
 
+        /* ==================================================
+           HARI 2 DAN HARI 3
+           ADA LOKASI + TIBA
+        ================================================== */
         if(hari >= 2){
-
             payload[
                 `lokasiHari${hari}`
             ] =
@@ -2519,6 +2597,7 @@ async function smartofficeBuildSubmitPayload(){
         }
     }
 
+
     /* ==================================================
        DATA PENGIKUT
     ================================================== */
@@ -2527,10 +2606,12 @@ async function smartofficeBuildSubmitPayload(){
             ".smartoffice-spd-pengikut-item"
         )
         .forEach(function(card,index){
-
             const nomor =
                 index + 1;
 
+            /* ==================================================
+               NAMA PENGIKUT
+            ================================================== */
             payload[
                 `pengikut${nomor}Nama`
             ] =
@@ -2538,6 +2619,9 @@ async function smartofficeBuildSubmitPayload(){
                     ".smartoffice-spd-pengikut-nama"
                 )?.value.trim() || "";
 
+            /* ==================================================
+               NIP / NRP PENGIKUT
+            ================================================== */
             payload[
                 `pengikut${nomor}Nip`
             ] =
@@ -2545,6 +2629,9 @@ async function smartofficeBuildSubmitPayload(){
                     ".smartoffice-spd-pengikut-nip"
                 )?.value.trim() || "";
 
+            /* ==================================================
+               TANGGAL LAHIR PENGIKUT
+            ================================================== */
             payload[
                 `pengikut${nomor}Lahir`
             ] =
@@ -2552,6 +2639,9 @@ async function smartofficeBuildSubmitPayload(){
                     ".smartoffice-spd-pengikut-tgllahir"
                 )?.value.trim() || "";
 
+            /* ==================================================
+               NO WA PENGIKUT
+            ================================================== */
             payload[
                 `pengikut${nomor}NoWa`
             ] =
@@ -2559,6 +2649,14 @@ async function smartofficeBuildSubmitPayload(){
                     ".smartoffice-spd-pengikut-no-wa"
                 )?.value.trim() || "";
         });
+
+    /* ==================================================
+       DEBUG
+    ================================================== */
+    console.log(
+        "SMARTSPD BUILD PAYLOAD:",
+        payload
+    );
 
     return payload;
 }
@@ -3811,3 +3909,2235 @@ function smartofficeSafeUrl(value){
 }
 
 
+/* ================================================================================================
+   19. ACTION MENU
+================================================================================================ */
+/* ==========================================================
+   SMARTSPD BLUD
+   ACTION MENU RIWAYAT SPD
+========================================================== */
+function smartofficeInitSPDActionMenu(){
+
+    const list =
+        document.getElementById(
+            "smartofficeRiwayatSPDList"
+        );
+    if(!list){
+        return;
+    }
+
+    /*
+     * Hapus listener lama jika fungsi dipanggil ulang.
+     */
+    if(list._smartofficeSPDActionMenuHandler){
+        list.removeEventListener(
+            "click",
+            list._smartofficeSPDActionMenuHandler
+        );
+    }
+
+    const handler =
+        function(event){
+            const button =
+                event.target.closest(
+                    '.smartoffice-spd-riwayat-more[data-action="more"]'
+                );
+            if(!button){
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const idSPD =
+                String(
+                    button.dataset.idSpd || ""
+                ).trim();
+            if(!idSPD){
+                return;
+            }
+
+            const item =
+                smartofficeSPDRiwayat.find(
+                    function(data){
+                        return String(
+                            data.idSPD || ""
+                        ).trim() === idSPD;
+                    }
+                );
+            if(!item){
+                console.warn(
+                    "SMARTSPD ACTION MENU: data tidak ditemukan",
+                    idSPD
+                );
+
+                return;
+            }
+
+            smartofficeOpenSPDActionMenu(
+                button,
+                item
+            );
+        };
+
+    list.addEventListener(
+        "click",
+        handler
+    );
+
+    list._smartofficeSPDActionMenuHandler =
+        handler;
+}
+
+
+/* ==========================================================
+   OPEN ACTION MENU
+========================================================== */
+function smartofficeOpenSPDActionMenu(
+    button,
+    item
+){
+    smartofficeCloseSPDActionMenu();
+
+    const sessionData =
+        smartofficeGetSession();
+    if(!sessionData){
+        return;
+    }
+
+    const role =
+        String(
+            sessionData.role || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    const nipUser =
+        String(
+            sessionData.nip || ""
+        )
+        .trim();
+
+    const statusSPD =
+        String(
+            item.statusSPD || ""
+        )
+        .trim()
+        .toUpperCase();
+
+    const statusSPJ =
+        String(
+            item.statusSPJ || "BELUM ADA"
+        )
+        .trim()
+        .toUpperCase();
+
+    /* ======================================================
+       LOCK SPD
+    ====================================================== */
+    const lockSPD =
+        String(
+            item.raw &&
+            item.raw["LOCK_SPD"]
+                ? item.raw["LOCK_SPD"]
+                : ""
+        )
+        .trim()
+        .toUpperCase();
+
+    /* ======================================================
+       ROLE
+    ====================================================== */
+    const isAdmin =
+        role === "ADMIN" ||
+        role === "PJ" ||
+        role === "SUPERADMIN";
+
+    const isSuperAdmin =
+        role === "SUPERADMIN";
+
+    /* ======================================================
+       LOCK STATE
+    ====================================================== */
+    const isLocked =
+        lockSPD === "TERKUNCI";
+
+    const isOpen =
+        lockSPD === "TERBUKA";
+
+    /* ======================================================
+       STATUS
+    ====================================================== */
+    const isApproved =
+        statusSPD === "DISETUJUI";
+
+    /* ======================================================
+       NIP PETUGAS UTAMA
+    ====================================================== */
+    const nipPemilik =
+        String(
+            item.raw &&
+            item.raw["NIP / NRP"]
+                ? item.raw["NIP / NRP"]
+                : ""
+        )
+        .trim();
+
+    /* ======================================================
+       CEK PETUGAS UTAMA
+       
+       HANYA NIP UTAMA YANG BOLEH EDIT.
+       NIP PENGIKUT TIDAK BOLEH EDIT.
+    ====================================================== */
+    const isPemilikSPD =
+        Boolean(
+            nipUser &&
+            nipPemilik &&
+            nipUser === nipPemilik
+        );
+
+    /* ======================================================
+       MENU ITEMS
+    ====================================================== */
+    const menuItems = [];
+
+    /* ======================================================
+       DETAIL SPD
+       SEMUA ROLE
+    ====================================================== */
+    menuItems.push({
+        action: "detail",
+        icon: `
+            <svg
+                viewBox="0 0 24 24"
+                width="17"
+                height="17"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+            >
+                <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/>
+                <circle cx="12" cy="12" r="3"/>
+            </svg>
+        `,
+        label: "Detail SPD"
+    });
+
+    /* ======================================================
+       EDIT SPD
+       
+       HANYA:
+       1. USER BIASA
+       2. PETUGAS UTAMA / PEMILIK SPD
+       3. LOCK = TERBUKA
+       
+       ADMIN / PJ / SUPERADMIN TIDAK BOLEH EDIT
+       MELALUI FORM SPD.
+    ====================================================== */
+    if(
+        !isAdmin &&
+        isPemilikSPD &&
+        isOpen
+    ){
+        menuItems.push({
+            action: "edit",
+            icon: `
+                <svg
+                    viewBox="0 0 24 24"
+                    width="17"
+                    height="17"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                </svg>
+            `,
+            label: "Edit SPD"
+        });
+    }
+
+    /* ======================================================
+       BUKA LOCK
+       
+       HANYA ADMIN / PJ / SUPERADMIN
+       
+       Jika LOCK TERKUNCI:
+       admin membuka lock agar PETUGAS UTAMA dapat
+       melakukan edit melalui Form SPD.
+    ====================================================== */
+    if(
+        isAdmin &&
+        isLocked
+    ){
+        menuItems.push({
+            action: "unlock",
+            icon: `
+                <svg
+                    viewBox="0 0 24 24"
+                    width="17"
+                    height="17"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <rect
+                        x="3"
+                        y="11"
+                        width="18"
+                        height="10"
+                        rx="2"
+                    />
+                    <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+                </svg>
+            `,
+            label: "Buka Lock"
+        });
+    }
+
+    /* ======================================================
+       VERIFIKASI SPJ
+       
+       HANYA ADMIN / PJ / SUPERADMIN
+       
+       TIDAK TERGANTUNG LOCK SPD.
+       SPJ berdiri sendiri.
+    ====================================================== */
+    if(isAdmin){
+        menuItems.push({
+            action: "spj",
+            icon: `
+                <svg
+                    viewBox="0 0 24 24"
+                    width="17"
+                    height="17"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M6 2h9l4 4v16H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z"/>
+                    <path d="M14 2v5h5"/>
+                    <path d="M8 13h8"/>
+                    <path d="M8 17h6"/>
+                </svg>
+            `,
+            label: "Verifikasi SPJ"
+        });
+    }
+
+    /* ======================================================
+       HAPUS SPD
+       
+       ATURAN LAMA DIPERTAHANKAN:
+       
+       USER:
+       boleh hapus jika belum DISETUJUI.
+       
+       ADMIN:
+       boleh hapus permanen.
+       
+       SUPERADMIN:
+       boleh hapus permanen.
+       
+       PJ:
+       tidak otomatis mendapat hak hapus permanen.
+    ====================================================== */
+    const canDelete =
+        (
+            !isAdmin &&
+            !isApproved
+        )
+        ||
+        role === "ADMIN"
+        ||
+        isSuperAdmin;
+
+    if(canDelete){
+        menuItems.push({
+            action: "delete",
+            danger: true,
+            icon: `
+                <svg
+                    viewBox="0 0 24 24"
+                    width="17"
+                    height="17"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M3 6h18"/>
+                    <path d="M8 6V4h8v2"/>
+                    <path d="M19 6l-1 15H6L5 6"/>
+                    <path d="M10 11v6"/>
+                    <path d="M14 11v6"/>
+                </svg>
+            `,
+            label: "Hapus SPD"
+        });
+    }
+
+    /* ======================================================
+       BUILD MENU
+    ====================================================== */
+    const menu =
+        document.createElement("div");
+
+    menu.className =
+        "smartoffice-spd-action-menu";
+
+    menu.dataset.idSpd =
+        String(
+            item.idSPD || ""
+        );
+
+    menu.innerHTML =
+        menuItems
+            .map(function(menuItem){
+                return `
+                    <button
+                        type="button"
+                        class="
+                            smartoffice-spd-action-menu-item
+                            ${menuItem.danger ? "danger" : ""}
+                        "
+                        data-action="${menuItem.action}"
+                    >
+                        <span
+                            class="smartoffice-spd-action-menu-icon"
+                        >
+                            ${menuItem.icon}
+                        </span>
+
+                        <span>
+                            ${smartofficeEscapeHtml(
+                                menuItem.label
+                            )}
+                        </span>
+                    </button>
+                `;
+            })
+            .join("");
+
+    /* ======================================================
+       MASUKKAN KE BODY
+    ====================================================== */
+    document.body.appendChild(menu);
+    smartofficeSPDActionMenuElement =
+        menu;
+
+    /* ======================================================
+       POSITION
+    ====================================================== */
+    const buttonRect =
+        button.getBoundingClientRect();
+
+    const menuRect =
+        menu.getBoundingClientRect();
+
+    const margin = 8;
+
+    let top =
+        buttonRect.bottom +
+        margin;
+
+    let left =
+        buttonRect.right -
+        menuRect.width;
+
+    /* Jangan keluar kanan */
+    if(
+        left +
+        menuRect.width >
+        window.innerWidth -
+        margin
+    ){
+        left =
+            window.innerWidth -
+            menuRect.width -
+            margin;
+    }
+
+    /* Jangan keluar kiri */
+    if(left < margin){
+        left =
+            margin;
+    }
+
+    /* Jika tidak cukup ruang di bawah,
+       buka ke atas */
+    if(
+        top +
+        menuRect.height >
+        window.innerHeight -
+        margin
+    ){
+        top =
+            buttonRect.top -
+            menuRect.height -
+            margin;
+    }
+
+    if(top < margin){
+        top =
+            margin;
+    }
+
+    menu.style.top =
+        `${top}px`;
+
+    menu.style.left =
+        `${left}px`;
+
+    /* ======================================================
+       MENU CLICK
+    ====================================================== */
+    menu.addEventListener(
+        "click",
+        function(event){
+            const actionButton =
+                event.target.closest(
+                    "[data-action]"
+                );
+            if(!actionButton){
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            const action =
+                actionButton.dataset.action;
+
+            smartofficeCloseSPDActionMenu();
+            smartofficeHandleSPDAction(
+                action,
+                item
+            );
+        }
+    );
+}
+
+
+/* ==========================================================
+   CLOSE ACTION MENU
+========================================================== */
+function smartofficeCloseSPDActionMenu(){
+
+    if(
+        smartofficeSPDActionMenuElement &&
+        smartofficeSPDActionMenuElement.parentNode
+    ){
+        smartofficeSPDActionMenuElement.remove();
+    }
+
+    smartofficeSPDActionMenuElement =
+        null;
+}
+
+
+/* ==========================================================
+   GLOBAL ACTION MENU EVENTS
+========================================================== */
+function smartofficeInitSPDActionMenuGlobalEvents(){
+
+    /*
+     * Klik di luar menu.
+     */
+    if(
+        window._smartofficeSPDActionOutsideHandler
+    ){
+        document.removeEventListener(
+            "click",
+            window._smartofficeSPDActionOutsideHandler
+        );
+    }
+
+    window._smartofficeSPDActionOutsideHandler =
+        function(event){
+            if(
+                !smartofficeSPDActionMenuElement
+            ){
+                return;
+            }
+
+            if(
+                event.target.closest(
+                    ".smartoffice-spd-action-menu"
+                )
+            ){
+                return;
+            }
+
+            if(
+                event.target.closest(
+                    '.smartoffice-spd-riwayat-more[data-action="more"]'
+                )
+            ){
+                return;
+            }
+
+            smartofficeCloseSPDActionMenu();
+        };
+
+    document.addEventListener(
+        "click",
+        window._smartofficeSPDActionOutsideHandler
+    );
+
+    /*
+     * ESC
+     */
+    if(
+        window._smartofficeSPDActionEscapeHandler
+    ){
+        document.removeEventListener(
+            "keydown",
+            window._smartofficeSPDActionEscapeHandler
+        );
+    }
+
+    window._smartofficeSPDActionEscapeHandler =
+        function(event){
+            if(
+                event.key === "Escape"
+            ){
+                smartofficeCloseSPDActionMenu();
+            }
+        };
+
+    document.addEventListener(
+        "keydown",
+        window._smartofficeSPDActionEscapeHandler
+    );
+}
+
+
+/* ==========================================================
+   HANDLE ACTION
+========================================================== */
+function smartofficeHandleSPDAction(
+    action,
+    item
+){
+    const idSPD =
+        String(
+            item.idSPD || ""
+        ).trim();
+    if(!idSPD){
+        return;
+    }
+
+    switch(action){
+        case "detail":
+            smartofficeOpenSPDDetail(
+                item
+            );
+            break;
+
+        case "edit":
+            smartofficeEditSPD(
+                item
+            );
+            break;
+
+        case "unlock":
+            smartofficeUnlockSPD(
+                item
+            );
+            break;
+
+        case "spj":
+            smartofficeVerifySPJ(
+                item
+            );
+            break;
+
+        case "delete":
+            smartofficeDeleteSPD(
+                item
+            );
+            break;
+
+        default:
+            console.warn(
+                "SMARTSPD ACTION tidak dikenal:",
+                action
+            );
+    }
+}
+
+
+/* ==========================================================
+   DETAIL SPD LENGKAP
+   SPD → REVIEW → PDF → SPJ → PEMBAYARAN
+========================================================== */
+function smartofficeOpenSPDDetail(item){
+
+    if(!item){
+        return;
+    }
+
+    const raw =
+        item.raw &&
+        typeof item.raw === "object"
+            ? item.raw
+            : {};
+
+    const get =
+        function(key, fallback = "-"){
+            const value =
+                raw[key];
+            if(
+                value === null ||
+                value === undefined ||
+                String(value).trim() === ""
+            ){
+                return fallback;
+            }
+
+            return String(value).trim();
+        };
+
+    /*
+     * ======================================================
+     * DATA UTAMA
+     * ======================================================
+     */
+    const idSPD =
+        item.idSPD ||
+        get("ID SPD");
+
+    const nama =
+        item.nama ||
+        get("Nama");
+
+    const nip =
+        item.nip ||
+        get("NIP / NRP");
+
+    const pangkat =
+        get("Pangkat & Golongan");
+
+    const jabatan =
+        get("Jabatan");
+
+    const email =
+        get("Email");
+
+    const noWA =
+        get("No_WA");
+
+    const alatAngkut =
+        get("Alat Angkut");
+
+    const kegiatan =
+        item.kegiatan ||
+        get("Kegiatan");
+
+    const lokasi =
+        item.lokasi ||
+        get("Lokasi");
+
+    const tanggalSPD =
+        get("Tanggal SPD Dibuat");
+
+    const tanggalBerangkat =
+        item.tanggalBerangkat ||
+        get("Tanggal Berangkat");
+
+    const tanggalPulang =
+        item.tanggalPulang ||
+        get("Tanggal Pulang");
+
+    const jumlahHari =
+        item.jumlahHari ||
+        get("Jumlah Hari");
+
+    const tipePerjalanan =
+        item.tipePerjalanan ||
+        get("Tipe Keberangkatan");
+
+    /*
+     * ======================================================
+     * STATUS SPD
+     * ======================================================
+     */
+    const statusSPD =
+        String(
+            item.statusSPD ||
+            get("STATUS_SPD", "-")
+        )
+        .trim();
+
+    const reviewer =
+        get("REVIEWER");
+
+    const reviewerNIP =
+        get("REVIEWER_NIP");
+
+    const tglReview =
+        get("TGL_REVIEW_SPD");
+
+    const tglApprove =
+        get("TGL_APPROVE_SPD");
+
+    const tglRevisi =
+        get("TGL_REVISI_SPD");
+
+    const catatanRevisi =
+        get("CATATAN_REVISI_SPD");
+
+    const totalRevisi =
+        get("TOTAL_REVISI_SPD", "0");
+
+    /*
+     * ======================================================
+     * DOKUMEN
+     * ======================================================
+     */
+    const lampiranAjuan =
+        get("LAMPIRAN_AJUAN_URL", "");
+
+    const linkPDF =
+        item.linkPdf ||
+        get("LINK_PDF_SPD", "");
+
+    const pdfGenerated =
+        get("PDF_GENERATED", "FALSE");
+
+    const statusData =
+        get("STATUS_DATA");
+
+    const lastUpdate =
+        get("LAST_UPDATE");
+
+    const lockSPD =
+        get("LOCK_SPD", "TERBUKA");
+
+    /*
+     * ======================================================
+     * SPJ
+     * ======================================================
+     */
+    const jumlahUang =
+        get("JUMLAH UANG");
+
+    const statusSPJ =
+        String(
+            item.statusSPJ ||
+            get("STATUS_SPJ", "BELUM ADA")
+        )
+        .trim();
+
+    const catatanRevisiSPJ =
+        get("CATATAN_REVISI_SPJ");
+
+    const tglUpdateSPJ =
+        get("TGL_UPDATE_SPJ");
+
+    const reminderSPJ =
+        get("REMINDER_SPJ");
+
+    /*
+     * ======================================================
+     * PEMBAYARAN
+     * ======================================================
+     */
+    const tglTransfer =
+        get("TGL_TRANSFER");
+
+    const buktiTransfer =
+        get("BUKTI_TRANSFER_URL", "");
+
+    /*
+     * ======================================================
+     * PENGIKUT
+     * ======================================================
+     */
+    const followers = [];
+
+    for(let i = 1; i <= 4; i++){
+        const namaPengikut =
+            get(
+                "Nama Pengikut " + i,
+                ""
+            );
+
+        const nipPengikut =
+            get(
+                "NIP/NRP Pengikut " + i,
+                ""
+            );
+
+        const tglLahir =
+            get(
+                "Tgl Lahir " + i,
+                ""
+            );
+
+        const noWAPengikut =
+            get(
+                "No_WA Pengikut " + i,
+                ""
+            );
+        if(
+            namaPengikut ||
+            nipPengikut ||
+            tglLahir ||
+            noWAPengikut
+        ){
+            followers.push({
+                nomor: i,
+
+                nama:
+                    namaPengikut || "-",
+
+                nip:
+                    nipPengikut || "-",
+
+                tanggalLahir:
+                    tglLahir || "-",
+
+                noWA:
+                    noWAPengikut || "-"
+            });
+        }
+    }
+
+    /*
+     * ======================================================
+     * JADWAL PERJALANAN
+     * ======================================================
+     */
+    const schedules = [];
+
+    for(let i = 1; i <= 3; i++){
+        const berangkat =
+            get(
+                "Berangkat Hari " + i,
+                ""
+            );
+
+        const pulang =
+            get(
+                "Pulang Hari " + i,
+                ""
+            );
+
+        const lokasiHari =
+            i === 1
+                ? get("Lokasi", "")
+                : get(
+                    "Lokasi Hari " + i,
+                    ""
+                );
+
+        const tiba =
+            i === 1
+                ? ""
+                : get(
+                    "Tiba Hari " + i,
+                    ""
+                );
+        if(
+            berangkat ||
+            pulang ||
+            lokasiHari ||
+            tiba
+        ){
+            schedules.push({
+                hari: i,
+
+                berangkat:
+                    berangkat || "-",
+
+                pulang:
+                    pulang || "-",
+
+                lokasi:
+                    lokasiHari || "-",
+
+                tiba:
+                    tiba || "-"
+            });
+        }
+    }
+
+    /*
+     * ======================================================
+     * HELPER HTML
+     * ======================================================
+     */
+    const escape =
+        function(value){
+            return smartofficeEscapeHtml(
+                String(
+                    value === null ||
+                    value === undefined
+                        ? ""
+                        : value
+                )
+            );
+        };
+
+    const valueHtml =
+        function(label, value){
+            return `
+                <div class="smartoffice-spd-detail-field">
+                    <span>
+                        ${escape(label)}
+                    </span>
+
+                    <strong>
+                        ${escape(value || "-")}
+                    </strong>
+                </div>
+            `;
+        };
+
+    const linkHtml =
+        function(
+            label,
+            url,
+            text
+        ){
+            if(!url){
+
+                return valueHtml(
+                    label,
+                    "-"
+                );
+            }
+
+            return `
+                <div class="smartoffice-spd-detail-field">
+                    <span>
+                        ${escape(label)}
+                    </span>
+
+                    <a
+                        href="${escape(url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="smartoffice-spd-detail-link"
+                    >
+                        ${escape(text)}
+                    </a>
+                </div>
+            `;
+        };
+
+    /*
+     * ======================================================
+     * STATUS BADGE
+     * ======================================================
+     */
+    let statusSPDClass =
+        "default";
+
+    if(statusSPD === "MENUNGGU REVIEW"){
+        statusSPDClass = "waiting";
+    }
+    else if(statusSPD === "DISETUJUI"){
+        statusSPDClass = "approved";
+    }
+    else if(statusSPD === "DITOLAK"){
+        statusSPDClass = "rejected";
+    }
+    else if(statusSPD === "REVISI"){
+        statusSPDClass = "revision";
+    }
+
+    let statusSPJClass =
+        "belum";
+
+    if(statusSPJ === "DIPROSES"){
+        statusSPJClass = "proses";
+    }
+    else if(
+        statusSPJ === "REVISI" ||
+        statusSPJ === "PERLU REVISI"
+    ){
+        statusSPJClass = "revisi";
+    }
+    else if(
+        statusSPJ === "SELESAI" ||
+        statusSPJ === "SUDAH SELESAI"
+    ){
+        statusSPJClass = "selesai";
+    }
+
+    const lockClass =
+        String(lockSPD).toUpperCase() === "TERKUNCI"
+            ? "locked"
+            : "open";
+
+    /*
+     * ======================================================
+     * JADWAL HTML
+     * ======================================================
+     */
+    const scheduleHtml =
+        schedules.length
+            ? schedules
+                .map(function(schedule){
+                    return `
+                        <div class="smartoffice-spd-detail-schedule">
+                            <div class="smartoffice-spd-detail-schedule-title">
+                                HARI ${schedule.hari}
+                            </div>
+
+                            <div class="smartoffice-spd-detail-schedule-grid">
+                                ${valueHtml(
+                                    "Berangkat",
+                                    schedule.berangkat
+                                )}
+
+                                ${valueHtml(
+                                    "Pulang",
+                                    schedule.pulang
+                                )}
+
+                                ${valueHtml(
+                                    "Lokasi",
+                                    schedule.lokasi
+                                )}
+
+                                ${
+                                    schedule.hari > 1
+                                        ? valueHtml(
+                                            "Tiba",
+                                            schedule.tiba
+                                        )
+                                        : ""
+                                }
+                            </div>
+                        </div>
+                    `;
+                })
+                .join("")
+            : `
+                <div class="smartoffice-spd-detail-empty">
+                    Jadwal perjalanan belum tersedia.
+                </div>
+            `;
+
+    /*
+     * ======================================================
+     * PENGIKUT HTML
+     * ======================================================
+     */
+    const followersHtml =
+        followers.length
+            ? followers
+                .map(function(follower){
+
+                    return `
+                        <div class="smartoffice-spd-detail-follower">
+                            <div class="smartoffice-spd-detail-follower-number">
+                                ${follower.nomor}
+                            </div>
+
+                            <div class="smartoffice-spd-detail-follower-info">
+                                <strong>
+                                    ${escape(
+                                        follower.nama
+                                    )}
+                                </strong>
+
+                                <span>
+                                    NIP/NRP:
+                                    ${escape(
+                                        follower.nip
+                                    )}
+                                </span>
+
+                                <span>
+                                    Tgl Lahir:
+                                    ${escape(
+                                        follower.tanggalLahir
+                                    )}
+                                </span>
+
+                                <span>
+                                    No. WA:
+                                    ${escape(
+                                        follower.noWA
+                                    )}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                })
+                .join("")
+            : `
+                <div class="smartoffice-spd-detail-empty">
+                    Tidak ada pengikut.
+                </div>
+            `;
+
+    /*
+     * ======================================================
+     * MODAL
+     * ======================================================
+     */
+    const existing =
+        document.getElementById(
+            "smartofficeSPDDetailModal"
+        );
+    if(existing){
+        existing.remove();
+    }
+
+    const modal =
+        document.createElement("div");
+
+    modal.id =
+        "smartofficeSPDDetailModal";
+
+    modal.className =
+        "smartoffice-spd-detail-modal";
+
+    modal.innerHTML = `
+
+        <div
+            class="smartoffice-spd-detail-backdrop"
+            data-detail-close="true"
+        ></div>
+
+        <div
+            class="smartoffice-spd-detail-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="smartofficeSPDDetailTitle"
+        >
+            <div class="smartoffice-spd-detail-header">
+                <div>
+                    <span class="smartoffice-spd-detail-eyebrow">
+                        DETAIL SPD
+                    </span>
+
+                    <h2 id="smartofficeSPDDetailTitle">
+                        ${escape(idSPD)}
+                    </h2>
+
+                    <p>
+                        SPD Perjalanan Dinas
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    class="smartoffice-spd-detail-close"
+                    data-detail-close="true"
+                    aria-label="Tutup"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        width="19"
+                        height="19"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path d="M18 6 6 18"/>
+                        <path d="M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="smartoffice-spd-detail-status-row">
+                <span
+                    class="
+                        smartoffice-spd-detail-status
+                        smartoffice-spd-detail-status-${statusSPDClass}
+                    "
+                >
+                    ${escape(statusSPD)}
+                </span>
+
+                <span
+                    class="
+                        smartoffice-spd-detail-lock
+                        smartoffice-spd-detail-lock-${lockClass}
+                    "
+                >
+                    LOCK:
+                    ${escape(lockSPD)}
+                </span>
+            </div>
+
+            <div class="smartoffice-spd-detail-body">
+
+                <!-- ==========================================
+                     IDENTITAS
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            IDENTITAS PEGAWAI
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${valueHtml("Nama", nama)}
+                        ${valueHtml("NIP / NRP", nip)}
+                        ${valueHtml("Pangkat & Golongan", pangkat)}
+                        ${valueHtml("Jabatan", jabatan)}
+                        ${valueHtml("Email", email)}
+                        ${valueHtml("No. WA", noWA)}
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     PERJALANAN
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            DETAIL PERJALANAN
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${valueHtml(
+                            "Alat Angkut",
+                            alatAngkut
+                        )}
+
+                        ${valueHtml(
+                            "Kegiatan",
+                            kegiatan
+                        )}
+
+                        ${valueHtml(
+                            "Lokasi",
+                            lokasi
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal SPD Dibuat",
+                            tanggalSPD
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal Berangkat",
+                            tanggalBerangkat
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal Pulang",
+                            tanggalPulang
+                        )}
+
+                        ${valueHtml(
+                            "Jumlah Hari",
+                            jumlahHari
+                        )}
+
+                        ${valueHtml(
+                            "Tipe Perjalanan",
+                            tipePerjalanan
+                        )}
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     JADWAL
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            JADWAL PERJALANAN
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-schedule-list">
+                        ${scheduleHtml}
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     PENGIKUT
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            PENGIKUT
+                        </span>
+
+                        <small>
+                            ${followers.length} orang
+                        </small>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-followers">
+                        ${followersHtml}
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     REVIEW
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            REVIEW SPD
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${valueHtml(
+                            "Reviewer",
+                            reviewer
+                        )}
+
+                        ${valueHtml(
+                            "NIP Reviewer",
+                            reviewerNIP
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal Review",
+                            tglReview
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal Approve",
+                            tglApprove
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal Revisi",
+                            tglRevisi
+                        )}
+
+                        ${valueHtml(
+                            "Total Revisi",
+                            totalRevisi
+                        )}
+                    </div>
+
+                    <div class="smartoffice-spd-detail-note">
+                        <span>
+                            Catatan Revisi
+                        </span>
+
+                        <p>
+                            ${escape(
+                                catatanRevisi || "-"
+                            )}
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     DOKUMEN
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            DOKUMEN SPD
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${linkHtml(
+                            "Lampiran Ajuan",
+                            lampiranAjuan,
+                            "Lihat Lampiran"
+                        )}
+
+                        ${linkHtml(
+                            "PDF SPD",
+                            linkPDF,
+                            "Buka PDF SPD"
+                        )}
+
+                        ${valueHtml(
+                            "PDF Generated",
+                            pdfGenerated
+                        )}
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     SPJ
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            SPJ
+                        </span>
+
+                        <strong
+                            class="
+                                smartoffice-spd-detail-spj-status
+                                smartoffice-spd-detail-spj-status-${statusSPJClass}
+                            "
+                        >
+                            ${escape(statusSPJ)}
+                        </strong>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${valueHtml(
+                            "Jumlah Uang",
+                            jumlahUang
+                        )}
+
+                        ${valueHtml(
+                            "Tanggal Update SPJ",
+                            tglUpdateSPJ
+                        )}
+
+                        ${valueHtml(
+                            "Reminder SPJ",
+                            reminderSPJ
+                        )}
+                    </div>
+
+                    <div class="smartoffice-spd-detail-note">
+                        <span>
+                            Catatan Revisi SPJ
+                        </span>
+
+                        <p>
+                            ${escape(
+                                catatanRevisiSPJ || "-"
+                            )}
+                        </p>
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     PEMBAYARAN
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            PEMBAYARAN
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${valueHtml(
+                            "Tanggal Transfer",
+                            tglTransfer
+                        )}
+
+                        ${linkHtml(
+                            "Bukti Transfer",
+                            buktiTransfer,
+                            "Lihat Bukti Bayar"
+                        )}
+                    </div>
+                </section>
+
+                <!-- ==========================================
+                     SISTEM
+                =========================================== -->
+                <section class="smartoffice-spd-detail-section">
+                    <div class="smartoffice-spd-detail-section-title">
+                        <span>
+                            INFORMASI SISTEM
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-spd-detail-grid">
+                        ${valueHtml(
+                            "Status Data",
+                            statusData
+                        )}
+
+                        ${valueHtml(
+                            "Lock SPD",
+                            lockSPD
+                        )}
+
+                        ${valueHtml(
+                            "Last Update",
+                            lastUpdate
+                        )}
+                    </div>
+                </section>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    /*
+     * ======================================================
+     * CLOSE
+     * ======================================================
+     */
+    const closeModal =
+        function(){
+            if(
+                modal &&
+                modal.parentNode
+            ){
+                modal.remove();
+            }
+
+            document.removeEventListener(
+                "keydown",
+                escapeHandler
+            );
+        };
+
+    const escapeHandler =
+        function(event){
+            if(
+                event.key === "Escape"
+            ){
+                closeModal();
+            }
+        };
+
+    modal.addEventListener(
+        "click",
+        function(event){
+            if(
+                event.target.closest(
+                    "[data-detail-close='true']"
+                )
+            ){
+                closeModal();
+            }
+        }
+    );
+
+    document.addEventListener(
+        "keydown",
+        escapeHandler
+    );
+}
+
+
+/* ======================================================
+   EDIT SPD
+====================================================== */
+function smartofficeEditSPD(item){
+
+    if(!item){
+        smartofficeShowToast(
+            "Data SPD tidak ditemukan.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       SIMPAN STATE EDIT
+    ================================================== */
+    smartofficeSPDEditMode = true;
+    smartofficeSPDEditId =
+        String(
+            item.idSPD ||
+            item.raw?.["ID SPD"] ||
+            ""
+        ).trim();
+
+    smartofficeSPDEditItem = item;
+
+    if(!smartofficeSPDEditId){
+        smartofficeShowToast(
+            "ID SPD tidak ditemukan.",
+            "error"
+        );
+
+        return;
+    }
+
+    /* ==================================================
+       PINDAH KE FORM
+    ================================================== */
+    smartofficeSwitchSPDTab("form");
+
+    /* ==================================================
+       HELPER SET VALUE
+    ================================================== */
+    const setValue = function(
+        id,
+        value
+    ){
+        const element =
+            document.getElementById(id);
+        if(!element){
+            return;
+        }
+
+        element.value =
+            value === null ||
+            value === undefined
+                ? ""
+                : String(value);
+    };
+
+    /* ==================================================
+       RAW DATA
+    ================================================== */
+    const raw =
+        item.raw &&
+        typeof item.raw === "object"
+            ? item.raw
+            : {};
+
+    /* ==================================================
+       DATA UTAMA PEGAWAI
+    ================================================== */
+    setValue(
+        "smartofficeSPDNama",
+        raw["Nama"] ||
+        item.nama ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDNip",
+        raw["NIP / NRP"] ||
+        item.nip ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDPangkat",
+        raw["Pangkat & Golongan"] ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDJabatan",
+        raw["Jabatan"] ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDEmail",
+        raw["Email"] ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDNoWA",
+        raw["No_WA"] ||
+        ""
+    );
+
+    /* ==================================================
+       DATA PERJALANAN
+    ================================================== */
+    setValue(
+        "smartofficeSPDAlatAngkut",
+        raw["Alat Angkut"] ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDKegiatan",
+        raw["Kegiatan"] ||
+        item.kegiatan ||
+        ""
+    );
+
+    setValue(
+        "smartofficeSPDLokasi",
+        raw["Lokasi"] ||
+        item.lokasi ||
+        ""
+    );
+
+    /* ==================================================
+       NORMALISASI TANGGAL INPUT
+       OUTPUT → YYYY-MM-DD
+    ================================================== */
+    const normalizeDateInput =
+        function(value){
+            if(!value){
+                return "";
+            }
+
+            const text =
+                String(value).trim();
+
+            /* ------------------------------------------
+               SUDAH YYYY-MM-DD
+            ------------------------------------------ */
+            if(
+                /^\d{4}-\d{2}-\d{2}$/.test(
+                    text
+                )
+            ){
+                return text;
+            }
+
+            /* ------------------------------------------
+               DD/MM/YYYY
+            ------------------------------------------ */
+            let match =
+                text.match(
+                    /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+                );
+            if(match){
+                return (
+                    match[3] +
+                    "-" +
+                    String(
+                        match[2]
+                    ).padStart(2,"0") +
+                    "-" +
+                    String(
+                        match[1]
+                    ).padStart(2,"0")
+                );
+            }
+
+            /* ------------------------------------------
+               M/D/YYYY
+            ------------------------------------------ */
+            match =
+                text.match(
+                    /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+                );
+            if(match){
+                return (
+                    match[3] +
+                    "-" +
+                    String(
+                        match[1]
+                    ).padStart(2,"0") +
+                    "-" +
+                    String(
+                        match[2]
+                    ).padStart(2,"0")
+                );
+            }
+
+            /* ------------------------------------------
+               DATE OBJECT / ISO / FORMAT LAIN
+            ------------------------------------------ */
+            const date =
+                new Date(value);
+            if(
+                !isNaN(
+                    date.getTime()
+                )
+            ){
+                return (
+                    date.getFullYear() +
+                    "-" +
+                    String(
+                        date.getMonth() + 1
+                    ).padStart(2,"0") +
+                    "-" +
+                    String(
+                        date.getDate()
+                    ).padStart(2,"0")
+                );
+            }
+
+            return "";
+        };
+
+    /* ==================================================
+       TANGGAL SPD
+    ================================================== */
+    setValue(
+        "smartofficeSPDTanggalSPD",
+        normalizeDateInput(
+            raw["Tanggal SPD Dibuat"]
+        )
+    );
+
+    setValue(
+        "smartofficeSPDTanggalBerangkat",
+        normalizeDateInput(
+            raw["Tanggal Berangkat"]
+        )
+    );
+
+    setValue(
+        "smartofficeSPDTanggalPulang",
+        normalizeDateInput(
+            raw["Tanggal Pulang"]
+        )
+    );
+
+    /* ==================================================
+       HITUNG JUMLAH HARI
+    ================================================== */
+    smartofficeHitungJumlahHariSPD();
+
+    /* ==================================================
+       TIPE KEBERANGKATAN
+       PULANG_PERGI / MENGINAP
+    ================================================== */
+    const tipe =
+        String(
+            raw["Tipe Keberangkatan"] ||
+            item.tipeKeberangkatan ||
+            ""
+        ).trim();
+
+    const hiddenTipe =
+        document.getElementById(
+            "smartofficeSPDTipeKeberangkatan"
+        );
+
+    if(hiddenTipe){
+        hiddenTipe.value = tipe;
+    }
+
+    /* ==================================================
+       AKTIFKAN TOMBOL TIPE
+    ================================================== */
+    document
+        .querySelectorAll(
+            "#smartofficeSPDTipeContainer [data-value]"
+        )
+        .forEach(function(button){
+
+            const active =
+                String(
+                    button.dataset.value ||
+                    ""
+                ) === tipe;
+
+            button.classList.toggle(
+                "active",
+                active
+            );
+
+            button.setAttribute(
+                "aria-pressed",
+                active
+                    ? "true"
+                    : "false"
+            );
+        });
+
+    /* ==================================================
+       UPDATE LOCK TIPE
+    ================================================== */
+    smartofficeUpdateTripTypeLock();
+
+    /* ==================================================
+       RENDER ULANG TIMELINE
+       BERDASARKAN TANGGAL + TIPE
+    ================================================== */
+    smartofficeRenderSPDTimeline();
+
+    /* ==================================================
+       KEMBALIKAN DETAIL JADWAL DARI DATA LAMA
+       
+       PENTING:
+       Nilai jadwal sekarang adalah TEKS TANGGAL,
+       bukan HH:mm.
+    ================================================== */
+    for(
+        let hari = 1;
+        hari <= 3;
+        hari++
+    ){
+
+        const berangkat =
+            document.getElementById(
+                `smartofficeSPD_BerangkatHari${hari}`
+            );
+
+        const pulang =
+            document.getElementById(
+                `smartofficeSPD_PulangHari${hari}`
+            );
+
+        const lokasi =
+            document.getElementById(
+                `smartofficeSPD_LokasiHari${hari}`
+            );
+
+        const tiba =
+            document.getElementById(
+                `smartofficeSPD_TibaHari${hari}`
+            );
+
+        /* ------------------------------------------
+           BERANGKAT
+        ------------------------------------------ */
+        if(berangkat){
+
+            berangkat.value =
+                String(
+                    raw[
+                        `Berangkat Hari ${hari}`
+                    ] || ""
+                );
+        }
+
+        /* ------------------------------------------
+           PULANG
+        ------------------------------------------ */
+        if(pulang){
+
+            pulang.value =
+                String(
+                    raw[
+                        `Pulang Hari ${hari}`
+                    ] || ""
+                );
+        }
+
+        /* ------------------------------------------
+           LOKASI
+        ------------------------------------------ */
+        if(lokasi){
+
+            lokasi.value =
+                String(
+                    raw[
+                        `Lokasi Hari ${hari}`
+                    ] || ""
+                );
+        }
+
+        /* ------------------------------------------
+           TIBA
+        ------------------------------------------ */
+        if(tiba){
+
+            tiba.value =
+                String(
+                    raw[
+                        `Tiba Hari ${hari}`
+                    ] || ""
+                );
+        }
+    }
+
+    /* ==================================================
+       PENGIKUT
+    ================================================== */
+    const companionContainer =
+        document.getElementById(
+            "smartofficeSPDPengikutContainer"
+        );
+
+    if(companionContainer){
+        companionContainer.innerHTML = "";
+        smartofficeSPDJumlahPengikut = 0;
+
+        for(
+            let nomor = 1;
+            nomor <= 4;
+            nomor++
+        ){
+            const nama =
+                String(
+                    raw[
+                        `Nama Pengikut ${nomor}`
+                    ] || ""
+                ).trim();
+
+            const nip =
+                String(
+                    raw[
+                        `NIP/NRP Pengikut ${nomor}`
+                    ] || ""
+                ).trim();
+
+            const lahir =
+                String(
+                    raw[
+                        `Tgl Lahir ${nomor}`
+                    ] || ""
+                ).trim();
+
+            const noWa =
+                String(
+                    raw[
+                        `No_WA Pengikut ${nomor}`
+                    ] || ""
+                ).trim();
+
+            /* ------------------------------------------
+               JANGAN BUAT KARTU KOSONG
+            ------------------------------------------ */
+            if(
+                !nama &&
+                !nip &&
+                !lahir &&
+                !noWa
+            ){
+                continue;
+            }
+
+            /* ------------------------------------------
+               GUNAKAN FUNGSI EXISTING
+            ------------------------------------------ */
+            smartofficeTambahPengikut();
+
+            const cards =
+                document.querySelectorAll(
+                    ".smartoffice-spd-pengikut-item"
+                );
+
+            const card =
+                cards[
+                    cards.length - 1
+                ];
+            if(!card){
+                continue;
+            }
+
+            const namaInput =
+                card.querySelector(
+                    ".smartoffice-spd-pengikut-nama"
+                );
+
+            const nipInput =
+                card.querySelector(
+                    ".smartoffice-spd-pengikut-nip"
+                );
+
+            const lahirInput =
+                card.querySelector(
+                    ".smartoffice-spd-pengikut-tgllahir"
+                );
+
+            const waInput =
+                card.querySelector(
+                    ".smartoffice-spd-pengikut-no-wa"
+                );
+
+            if(namaInput){
+                namaInput.value =
+                    nama;
+            }
+
+            if(nipInput){
+                nipInput.value =
+                    nip;
+            }
+
+            if(lahirInput){
+
+                lahirInput.value =
+                    smartofficeFormatTanggalLahirPengikut(
+                        lahir
+                    );
+            }
+
+            if(waInput){
+                waInput.value =
+                    noWa;
+            }
+        }
+    }
+
+    /* ==================================================
+       FILE LAMPIRAN
+       
+       FILE LAMA TIDAK DIMASUKKAN
+       KE INPUT FILE BROWSER
+    ================================================== */
+    smartofficeSPDFile = null;
+
+    const fileInput =
+        document.getElementById(
+            "smartofficeSPDLampiran"
+        );
+    if(fileInput){
+        fileInput.value = "";
+    }
+
+    const fileName =
+        document.getElementById(
+            "smartofficeSPDLampiranName"
+        );
+
+    if(fileName){
+        const oldLampiran =
+            raw["LAMPIRAN_AJUAN_URL"] ||
+            "";
+
+        fileName.textContent =
+            oldLampiran
+                ? "Lampiran sebelumnya tersedia"
+                : "Belum ada file dipilih";
+    }
+
+    /* ==================================================
+       BUKA DETAIL JADWAL
+    ================================================== */
+    smartofficeOpenSPDJadwal();
+
+    /* ==================================================
+       UPDATE UI
+    ================================================== */
+    smartofficeUpdateLokasiCounter();
+    smartofficeUpdateButtonTambahPengikut();
+    smartofficeUpdateProgress();
+    smartofficeUpdateSubmitButton();
+
+    /* ==================================================
+       TEKS TOMBOL
+    ================================================== */
+    const submitButton =
+        document.getElementById(
+            "smartofficeSPDSubmitButton"
+        );
+
+    const submitText =
+        submitButton?.querySelector(
+            ".smartoffice-spd-submit-text"
+        );
+    if(
+        submitText &&
+        !smartofficeSubmitting
+    ){
+        submitText.textContent =
+            "Simpan Perubahan";
+    }
+
+    /* ==================================================
+       SCROLL KE FORM
+    ================================================== */
+    const formContent =
+        document.getElementById(
+            "smartofficeFormSPDContent"
+        );
+    if(formContent){
+        formContent.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+
+    /* ==================================================
+       NOTIFIKASI
+    ================================================== */
+    smartofficeShowToast(
+        "Mode edit SPD aktif.",
+        "info"
+    );
+}

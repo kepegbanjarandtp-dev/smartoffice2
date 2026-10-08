@@ -302,5 +302,846 @@
 
 
 
+/* ======================================================
+   APPROVAL SPD MODAL
+====================================================== */
+
+.smartoffice-approval-spd-modal-overlay{
+
+    position:fixed !important;
+
+    inset:0 !important;
+
+    width:100vw;
+    height:100vh;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    box-sizing:border-box;
+
+    background:
+        rgba(15,23,42,.48);
+
+    backdrop-filter:
+        blur(5px);
+
+    -webkit-backdrop-filter:
+        blur(5px);
+
+    z-index:2147483647 !important;
+
+    overflow-y:auto;
+}
+
+
+/* ======================================================
+   MODAL
+====================================================== */
+
+.smartoffice-approval-spd-modal{
+
+    width:100%;
+
+    max-width:960px;
+
+    max-height:
+        calc(100vh - 40px);
+
+    display:flex;
+
+    flex-direction:column;
+
+    box-sizing:border-box;
+
+    background:#ffffff;
+
+    border-radius:24px;
+
+    overflow:hidden;
+
+    box-shadow:
+        0 24px 70px
+        rgba(15,23,42,.22),
+        0 8px 24px
+        rgba(15,23,42,.10);
+}
+
+
+/* ======================================================
+   HEADER
+====================================================== */
+
+.smartoffice-approval-spd-modal-header{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:16px;
+
+    padding:18px 22px;
+
+    border-bottom:
+        1px solid #e2e8f0;
+
+    flex-shrink:0;
+}
+
+
+.smartoffice-approval-spd-modal-header h3{
+
+    margin:0;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+
+.smartoffice-approval-spd-modal-header p{
+
+    margin:4px 0 0;
+
+    font-size:12px;
+
+    color:#64748b;
+}
+
+
+/* ======================================================
+   CLOSE
+====================================================== */
+
+.smartoffice-approval-spd-modal-close{
+
+    width:40px;
+
+    height:40px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#f1f5f9;
+
+    color:#334155;
+
+    font-size:24px;
+
+    line-height:1;
+
+    cursor:pointer;
+}
+
+
+.smartoffice-approval-spd-modal-close:hover{
+
+    background:#e2e8f0;
+}
+
+
+/* ======================================================
+   BODY
+====================================================== */
+
+.smartoffice-approval-spd-modal-body{
+
+    padding:20px;
+
+    overflow-y:auto;
+
+    min-height:0;
+}
+
+
+/* ======================================================
+   PROFILE
+====================================================== */
+
+.smartoffice-approval-spd-profile{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    margin-bottom:22px;
+}
+
+
+.smartoffice-approval-spd-avatar{
+
+    width:48px;
+
+    height:48px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color:#ffffff;
+
+    font-size:18px;
+
+    font-weight:700;
+}
+
+
+.smartoffice-approval-spd-profile-info h4{
+
+    margin:0;
+
+    font-size:17px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+
+.smartoffice-approval-spd-profile-info p{
+
+    margin:3px 0 0;
+
+    font-size:12px;
+
+    color:#64748b;
+}
+
+
+/* ======================================================
+   SECTION TITLE
+====================================================== */
+
+.smartoffice-approval-spd-section-title{
+
+    margin:20px 0 10px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+
+/* ======================================================
+   DETAIL GRID
+====================================================== */
+
+.smartoffice-approval-spd-detail-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:12px;
+}
+
+
+/* ======================================================
+   DETAIL ITEM
+====================================================== */
+
+.smartoffice-approval-spd-detail-item{
+
+    padding:14px;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+
+    box-sizing:border-box;
+}
+
+
+.smartoffice-approval-spd-full-width{
+
+    width:100%;
+
+    margin-bottom:12px;
+}
+
+
+.smartoffice-approval-spd-detail-item label{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    font-size:11px;
+
+    font-weight:500;
+
+    color:#64748b;
+}
+
+
+.smartoffice-approval-spd-detail-item span{
+
+    display:block;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    color:#0f172a;
+
+    word-break:break-word;
+}
+
+
+/* ======================================================
+   JADWAL
+====================================================== */
+
+.smartoffice-approval-spd-jadwal-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:10px;
+}
+
+
+.smartoffice-approval-spd-jadwal-card{
+
+    padding:14px;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+
+.smartoffice-approval-spd-jadwal-title{
+
+    margin-bottom:12px;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+
+.smartoffice-approval-spd-jadwal-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(0,1fr));
+
+    gap:10px;
+}
+
+
+.smartoffice-approval-spd-jadwal-grid div{
+
+    min-width:0;
+}
+
+
+.smartoffice-approval-spd-jadwal-grid label{
+
+    display:block;
+
+    margin-bottom:4px;
+
+    font-size:10px;
+
+    color:#64748b;
+}
+
+
+.smartoffice-approval-spd-jadwal-grid span{
+
+    display:block;
+
+    font-size:12px;
+
+    font-weight:600;
+
+    color:#0f172a;
+
+    word-break:break-word;
+}
+
+
+/* ======================================================
+   PENGIKUT
+====================================================== */
+
+.smartoffice-approval-spd-pengikut-list{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:10px;
+}
+
+
+.smartoffice-approval-spd-pengikut-card{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:12px;
+
+    padding:14px;
+
+    border-radius:16px;
+
+    background:#f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+
+.smartoffice-approval-spd-pengikut-number{
+
+    width:30px;
+
+    height:30px;
+
+    flex-shrink:0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+
+.smartoffice-approval-spd-pengikut-info{
+
+    min-width:0;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:3px;
+}
+
+
+.smartoffice-approval-spd-pengikut-info strong{
+
+    font-size:13px;
+
+    color:#0f172a;
+
+    word-break:break-word;
+}
+
+
+.smartoffice-approval-spd-pengikut-info span{
+
+    font-size:11px;
+
+    color:#64748b;
+
+    word-break:break-word;
+}
+
+
+.smartoffice-approval-spd-empty{
+
+    padding:16px;
+
+    text-align:center;
+
+    border-radius:14px;
+
+    background:#f8fafc;
+
+    border:
+        1px dashed #cbd5e1;
+
+    color:#64748b;
+
+    font-size:12px;
+}
+
+
+/* ======================================================
+   FORM INPUT
+====================================================== */
+
+.smartoffice-approval-spd-form-input{
+
+    width:100%;
+
+    min-height:44px;
+
+    padding:10px 12px;
+
+    box-sizing:border-box;
+
+    border:
+        1px solid #cbd5e1;
+
+    border-radius:12px;
+
+    background:#ffffff;
+
+    color:#0f172a;
+
+    font-size:13px;
+
+    outline:none;
+}
+
+
+.smartoffice-approval-spd-form-input:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,.10);
+}
+
+
+/* ======================================================
+   CATATAN REVISI
+====================================================== */
+
+.smartoffice-approval-spd-catatan{
+
+    width:100%;
+
+    min-height:100px;
+
+    padding:12px;
+
+    box-sizing:border-box;
+
+    resize:vertical;
+
+    border:
+        1px solid #cbd5e1;
+
+    border-radius:12px;
+
+    font-family:inherit;
+
+    font-size:13px;
+
+    color:#0f172a;
+
+    outline:none;
+}
+
+
+.smartoffice-approval-spd-catatan:focus{
+
+    border-color:#2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37,99,235,.10);
+}
+
+
+/* ======================================================
+   ACTION
+====================================================== */
+
+.smartoffice-approval-spd-action{
+
+    margin-top:20px;
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:#f8fafc;
+
+    border:
+        1px solid #e2e8f0;
+}
+
+
+.smartoffice-approval-spd-action-title{
+
+    margin-bottom:12px;
+
+    font-size:14px;
+
+    font-weight:700;
+
+    color:#0f172a;
+}
+
+
+/* ======================================================
+   ACTION BUTTONS
+====================================================== */
+
+.smartoffice-approval-spd-action-buttons{
+
+    display:flex;
+
+    justify-content:center;
+
+    gap:10px;
+}
+
+
+.smartoffice-approval-spd-action-button{
+
+    width:220px;
+
+    min-height:44px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#e2e8f0;
+
+    color:#334155;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+
+.smartoffice-approval-spd-action-button:hover{
+
+    background:#cbd5e1;
+}
+
+
+.smartoffice-approval-spd-action-active{
+
+    background:#2563eb !important;
+
+    color:#ffffff !important;
+}
+
+
+.smartoffice-approval-spd-action-danger{
+
+    background:#ef4444 !important;
+
+    color:#ffffff !important;
+}
+
+
+/* ======================================================
+   ACTION FOOTER
+====================================================== */
+
+.smartoffice-approval-spd-action-footer{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:16px;
+}
+
+
+.smartoffice-approval-spd-cancel,
+.smartoffice-approval-spd-submit{
+
+    width:130px;
+
+    min-height:44px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    cursor:pointer;
+}
+
+
+.smartoffice-approval-spd-cancel{
+
+    background:#e2e8f0;
+
+    color:#334155;
+}
+
+
+.smartoffice-approval-spd-submit{
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color:#ffffff;
+
+    box-shadow:
+        0 6px 16px
+        rgba(37,99,235,.22);
+}
+
+
+.smartoffice-approval-spd-submit:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+@media(max-width:700px){
+
+    .smartoffice-approval-spd-modal-overlay{
+
+        padding:10px;
+
+        align-items:flex-end;
+    }
+
+
+    .smartoffice-approval-spd-modal{
+
+        max-height:
+            calc(100vh - 20px);
+
+        border-radius:
+            22px 22px 0 0;
+    }
+
+
+    .smartoffice-approval-spd-modal-header{
+
+        padding:16px;
+    }
+
+
+    .smartoffice-approval-spd-modal-body{
+
+        padding:16px;
+    }
+
+
+    .smartoffice-approval-spd-detail-grid{
+
+        grid-template-columns:1fr;
+    }
+
+
+    .smartoffice-approval-spd-jadwal-grid{
+
+        grid-template-columns:
+            repeat(2,minmax(0,1fr));
+    }
+
+
+    .smartoffice-approval-spd-pengikut-list{
+
+        grid-template-columns:1fr;
+    }
+
+
+    .smartoffice-approval-spd-action-buttons{
+
+        flex-direction:column;
+    }
+
+
+    .smartoffice-approval-spd-action-button{
+
+        width:100%;
+    }
+
+
+    .smartoffice-approval-spd-action-footer{
+
+        justify-content:center;
+    }
+
+
+    .smartoffice-approval-spd-cancel,
+    .smartoffice-approval-spd-submit{
+
+        width:145px;
+    }
+
+}
+
+
+
 
 
