@@ -1,0 +1,265 @@
+<div class="smartoffice-wrapper">
+
+    <!-- HEADER -->
+    <div class="smartoffice-header">
+        <div class="smartoffice-header-info">
+
+            <button
+                class="smartoffice-back-button"
+                data-action="back-dashboard"
+                title="Kembali ke Dashboard"
+                type="button"
+            >
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 18-6-6 6-6"/>
+                </svg>
+            </button>
+
+            <div class="smartoffice-header-icon">
+                <svg viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="17" rx="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                    <path d="m8 15 2 2 5-5"/>
+                </svg>
+            </div>
+
+            <div class="smartoffice-header-title">
+                <h2>Pengelolaan SPD BLUD</h2>
+                <p>Rekapitulasi dan penyelesaian administrasi perjalanan dinas</p>
+            </div>
+        </div>
+
+        <button
+            id="smartofficePengelolaanSPDRefreshButton"
+            class="smartoffice-refresh-button"
+            data-action="refresh"
+            title="Refresh Data"
+            type="button"
+        >
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.75"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 12a9 9 0 1 1-3-6.7"/>
+                <polyline points="21 3 21 9 15 9"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- TAB NAVIGATION -->
+    <div class="smartoffice-tab-wrapper">
+
+        <button
+            id="smartofficeTabOverviewPengelolaanSPD"
+            class="smartoffice-tab-button active"
+            data-tab="overview"
+            type="button"
+        >
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            <span>Overview SPD</span>
+        </button>
+
+        <button
+            id="smartofficeTabRekapPengelolaanSPD"
+            class="smartoffice-tab-button"
+            data-tab="rekap"
+            type="button"
+        >
+            <svg viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M8 8h8M8 12h8M8 16h5"/>
+            </svg>
+            <span>Rekap SPD</span>
+        </button>
+
+    </div>
+
+    <!-- =========================================
+         TAB 1 — OVERVIEW SPD
+    ========================================== -->
+    <div
+        id="smartofficePengelolaanSPDOverviewContent"
+        class="smartoffice-cuti-content"
+    >
+        <div class="smartoffice-spd-form-card">
+
+            <div class="smartoffice-spd-card-title">
+                <span>Overview Pengelolaan SPD</span>
+            </div>
+
+            <!-- Tempat ringkasan statistik -->
+            <div id="smartofficePengelolaanSPDStats">
+                <div class="smartoffice-approval-skeleton-card"></div>
+                <div class="smartoffice-approval-skeleton-card"></div>
+                <div class="smartoffice-approval-skeleton-card"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================================
+         TAB 2 — REKAP SPD
+    ========================================== -->
+    <div
+        id="smartofficePengelolaanSPDRekapContent"
+        class="smartoffice-cuti-content"
+        style="display:none;"
+    >
+
+        <!-- FILTER REKAP SPD -->
+        <div class="smartoffice-spd-riwayat-filter">
+
+            <!-- SEARCH -->
+            <div class="smartoffice-spd-filter-group smartoffice-spd-filter-search-group">
+                <label for="smartofficePengelolaanSPDSearch">
+                    Cari SPD
+                </label>
+
+                <div class="smartoffice-spd-filter-search">
+                    <svg viewBox="0 0 24 24" width="17" height="17"
+                         fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7"/>
+                        <path d="m20 20-4-4"/>
+                    </svg>
+
+                    <input
+                        type="search"
+                        id="smartofficePengelolaanSPDSearch"
+                        placeholder="Nama, kegiatan, lokasi..."
+                        autocomplete="off"
+                    >
+                </div>
+            </div>
+
+            <!-- BULAN -->
+            <div class="smartoffice-spd-filter-group">
+                <label for="smartofficePengelolaanSPDMonth">Bulan</label>
+
+                <div class="smartoffice-spd-filter-select-wrap">
+                    <svg viewBox="0 0 24 24" width="16" height="16"
+                         fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="16" rx="2"/>
+                        <path d="M16 3v4M8 3v4M3 11h18"/>
+                    </svg>
+
+                    <select
+                        id="smartofficePengelolaanSPDMonth"
+                        class="smartoffice-spd-filter-select"
+                    >
+                        <option value="">Semua Bulan</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TAHUN -->
+            <div class="smartoffice-spd-filter-group">
+                <label for="smartofficePengelolaanSPDYear">Tahun</label>
+
+                <div class="smartoffice-spd-filter-select-wrap">
+                    <svg viewBox="0 0 24 24" width="16" height="16"
+                         fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="16" rx="2"/>
+                        <path d="M16 3v4M8 3v4M3 11h18"/>
+                        <path d="M8 15h2M14 15h2"/>
+                    </svg>
+
+                    <select
+                        id="smartofficePengelolaanSPDYear"
+                        class="smartoffice-spd-filter-select"
+                    >
+                        <option value="">Semua Tahun</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- STATUS SPD -->
+            <div class="smartoffice-spd-filter-group">
+                <label for="smartofficePengelolaanSPDStatus">
+                    Status SPD
+                </label>
+
+                <div class="smartoffice-spd-filter-select-wrap">
+                    <svg viewBox="0 0 24 24" width="16" height="16"
+                         fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+
+                    <select
+                        id="smartofficePengelolaanSPDStatus"
+                        class="smartoffice-spd-filter-select"
+                    >
+                        <option value="">Semua Status</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- STATUS SPJ -->
+            <div class="smartoffice-spd-filter-group">
+                <label for="smartofficePengelolaanSPDSPJ">
+                    Status SPJ
+                </label>
+
+                <div class="smartoffice-spd-filter-select-wrap">
+                    <select
+                        id="smartofficePengelolaanSPDSPJ"
+                        class="smartoffice-spd-filter-select"
+                    >
+                        <option value="">Semua Status SPJ</option>
+                        <option value="BELUM ADA">Belum Diverifikasi</option>
+                        <option value="REVISI">Revisi</option>
+                        <option value="SELESAI">Selesai</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- RESET -->
+            <div class="smartoffice-spd-filter-group smartoffice-spd-filter-reset-group">
+                <label>&nbsp;</label>
+
+                <button
+                    type="button"
+                    id="smartofficePengelolaanSPDReset"
+                    class="smartoffice-spd-filter-reset"
+                >
+                    <svg viewBox="0 0 24 24" width="16" height="16"
+                         fill="none" stroke="currentColor"
+                         stroke-width="1.8" stroke-linecap="round"
+                         stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 12a9 9 0 1 0 3-6.7L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                    <span>Reset Filter</span>
+                </button>
+            </div>
+
+        </div>
+
+        <!-- CARD LIST SPD -->
+        <div id="smartofficePengelolaanSPDList">
+            <div class="smartoffice-approval-skeleton-card"></div>
+            <div class="smartoffice-approval-skeleton-card"></div>
+            <div class="smartoffice-approval-skeleton-card"></div>
+        </div>
+
+    </div>
+
+</div>
