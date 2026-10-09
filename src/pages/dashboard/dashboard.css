@@ -607,6 +607,13 @@ smartofficeDashboardHeaderFade{
     color:#16A34A;
 }
 
+/* PENGELOLAAN SPD BLUD */
+#smartofficePengelolaanSPDMenuCard
+.smartoffice-dashboard-menu-icon{
+    background:#EDEBFF;
+    color:#6D5AE6;
+}
+
 
 /* ======================================================
    DASHBOARD MENU TEXT

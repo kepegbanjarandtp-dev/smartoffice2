@@ -323,6 +323,8 @@ export async function smartofficeDestroyPage(){
         "smartofficeCutiMenuCard",
         "smartofficeApprovalMenuCard",
         "smartofficeManagementCutiMenuCard",
+        "smartofficeSPDBLUDMenuCard",
+        "smartofficePengelolaanSPDMenuCard",
         "smartofficeBukuTamuMenuCard",
         "smartofficeDokumenSayaMenuCard",
         "smartofficeArsipPegawaiMenuCard",
@@ -993,6 +995,28 @@ function smartofficeInitDashboardMenu(){
             "smartofficeSPDBLUDMenuCard"
         ] =
             handler;
+    }
+
+    /* =========================
+       PENGELOLAAN SPD BLUD
+    ========================= */
+    const pengelolaanSPDMenu =
+        document.getElementById(
+            "smartofficePengelolaanSPDMenuCard"
+        );
+
+    if (pengelolaanSPDMenu) {
+        const handler = async function () {
+            if (smartofficeDashboardDestroyed) return;
+
+            await smartofficeNavigate("pengelolaan-spd");
+        };
+
+        pengelolaanSPDMenu.addEventListener("click", handler);
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficePengelolaanSPDMenuCard"
+        ] = handler;
     }
 
     /* =========================

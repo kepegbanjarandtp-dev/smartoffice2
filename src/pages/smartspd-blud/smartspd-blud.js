@@ -35,7 +35,9 @@ import {
    1.3 SERVICE
 ====================================================== */
 import {
-    smartofficeSubmitSPD
+    smartofficeSubmitSPD,
+    smartofficeUnlockSPD as smartofficeUnlockSPDService,
+    smartofficeVerifySPJ as smartofficeVerifySPJService
 } from "../../services/smartspd-blud.service.js";
 
 import {
@@ -2877,7 +2879,10 @@ export function smartofficeFilterRiwayatSPD(
 /* ======================================================
    16.2 RENDER DAFTAR RIWAYAT SPD
 ====================================================== */
-function smartofficeRenderRiwayatSPDList(data){
+export function smartofficeRenderRiwayatSPDList(
+    data,
+    targetListId = "smartofficeRiwayatSPDList"
+){
 
     const list =
         document.getElementById(
@@ -4553,6 +4558,187 @@ function smartofficeInitSPDActionMenuGlobalEvents(){
         "keydown",
         window._smartofficeSPDActionEscapeHandler
     );
+}
+
+
+/* ======================================================
+   BUKA LOCK SPD
+   ROLE: ADMIN / PJ / SUPERADMIN
+====================================================== */
+async function smartofficeUnlockSPD(item){
+
+    const sessionData = smartofficeGetSession();
+
+    if(!sessionData){
+        smartofficeShowToast(
+            "Sesi pengguna tidak ditemukan.",
+            "error"
+        );
+        return;
+    }
+
+    const role = String(sessionData.role || "")
+        .trim()
+        .toUpperCase();
+
+    if(!["ADMIN", "PJ", "SUPERADMIN"].includes(role)){
+        smartofficeShowToast(
+            "Anda tidak memiliki hak membuka lock SPD.",
+            "error"
+        );
+        return;
+    }
+
+    const idSPD = String(item?.idSPD || "").trim();
+
+    if(!idSPD) return;
+
+    if(!window.confirm(
+        "Buka lock SPD " + idSPD + "?\n\n" +
+        "Petugas utama akan dapat mengedit SPD kembali."
+    )){
+        return;
+    }
+
+    try {
+        const result = await smartofficeUnlockSPDService({
+            idSPD,
+            role,
+            reviewer: sessionData.nama || "",
+            reviewerNip: sessionData.nip || ""
+        });
+
+        if(!result || result.success !== true){
+            throw new Error(
+                result?.message || "Gagal membuka lock SPD."
+            );
+        }
+
+        smartofficeShowToast(
+            result.message || "Lock SPD berhasil dibuka.",
+            "success"
+        );
+
+        await smartofficeRefreshSPD();
+
+    } catch(error) {
+        console.error("BUKA LOCK SPD:", error);
+
+        smartofficeShowToast(
+            error.message || "Gagal membuka lock SPD.",
+            "error"
+        );
+    }
+}
+
+
+/* ======================================================
+   VERIFIKASI SPJ
+   STATUS: REVISI / SELESAI
+   ROLE: ADMIN / PJ / SUPERADMIN
+====================================================== */
+async function smartofficeVerifySPJ(item){
+
+    const sessionData = smartofficeGetSession();
+
+    if(!sessionData){
+        smartofficeShowToast(
+            "Sesi pengguna tidak ditemukan.",
+            "error"
+        );
+        return;
+    }
+
+    const role = String(sessionData.role || "")
+        .trim()
+        .toUpperCase();
+
+    if(!["ADMIN", "PJ", "SUPERADMIN"].includes(role)){
+        smartofficeShowToast(
+            "Anda tidak memiliki hak verifikasi SPJ.",
+            "error"
+        );
+        return;
+    }
+
+    const idSPD = String(item?.idSPD || "").trim();
+
+    if(!idSPD) return;
+
+    const pilihan = window.prompt(
+        "VERIFIKASI SPJ " + idSPD + "\n\n" +
+        "Ketik REVISI atau SELESAI:"
+    );
+
+    if(pilihan === null) return;
+
+    const status = pilihan.trim().toUpperCase();
+
+    if(!["REVISI", "SELESAI"].includes(status)){
+        smartofficeShowToast(
+            "Pilihan harus REVISI atau SELESAI.",
+            "error"
+        );
+        return;
+    }
+
+    let catatan = "";
+
+    if(status === "REVISI"){
+        catatan = window.prompt(
+            "Masukkan alasan revisi SPJ:"
+        );
+
+        if(catatan === null) return;
+
+        catatan = catatan.trim();
+
+        if(!catatan){
+            smartofficeShowToast(
+                "Alasan revisi SPJ wajib diisi.",
+                "error"
+            );
+            return;
+        }
+    }
+
+    if(status === "SELESAI" && !window.confirm(
+        "Tandai SPJ " + idSPD + " sebagai SELESAI?"
+    )){
+        return;
+    }
+
+    try {
+        const result = await smartofficeVerifySPJService({
+            idSPD,
+            status,
+            catatan,
+            role,
+            reviewer: sessionData.nama || "",
+            reviewerNip: sessionData.nip || ""
+        });
+
+        if(!result || result.success !== true){
+            throw new Error(
+                result?.message || "Verifikasi SPJ gagal."
+            );
+        }
+
+        smartofficeShowToast(
+            result.message || "Status SPJ berhasil diperbarui.",
+            "success"
+        );
+
+        await smartofficeRefreshSPD();
+
+    } catch(error) {
+        console.error("VERIFIKASI SPJ:", error);
+
+        smartofficeShowToast(
+            error.message || "Verifikasi SPJ gagal.",
+            "error"
+        );
+    }
 }
 
 

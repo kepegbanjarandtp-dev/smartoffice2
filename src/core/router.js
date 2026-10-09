@@ -60,15 +60,18 @@ const smartofficeModules = {
 
     "arsip-pegawai": () =>
         import("../pages/arsip-pegawai/arsip-pegawai.js"),
-    
-    "buku-surat": () => 
-        import("../pages/buku-surat/buku-surat.js"), 
+
+    "buku-surat": () =>
+        import("../pages/buku-surat/buku-surat.js"),
 
     "pusat-dokumen": () =>
         import("../pages/pusat-dokumen/penomoran-sk.js"),
 
     "smartspd-blud": () =>
-        import("../pages/smartspd-blud/smartspd-blud.js")
+        import("../pages/smartspd-blud/smartspd-blud.js"),
+
+    "pengelolaan-spd": () =>
+        import("../pages/pengelolaan-spd/pengelolaan-spd.js")
 
 };
 
