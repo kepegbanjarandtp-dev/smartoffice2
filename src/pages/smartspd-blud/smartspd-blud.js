@@ -162,6 +162,7 @@ export async function smartofficeLoadPage(){
     smartofficeInitOutsideAutocomplete();
     smartofficeUpdateSubmitButton();
 
+    
     /* =========================
        LOAD PEGAWAI
        READ → FIRESTORE
@@ -171,45 +172,102 @@ export async function smartofficeLoadPage(){
         smartofficeLoadSPDPegawaiCache()
     ]);
 
+    /* HALAMAN MUNGKIN SUDAH DITINGGALKAN */
+    if(pageInstance !== smartofficeSPDPageInstance){
+        return;
+    }
+
     await smartofficeLoadRiwayatSPD();
+
+    /* PERIKSA LAGI SETELAH LOAD RIWAYAT */
+    if(pageInstance !== smartofficeSPDPageInstance){
+        return;
+    }
+
     smartofficeInitRiwayatSPDFilter();
     smartofficeInitSPDActionMenu();
     smartofficeInitSPDActionMenuGlobalEvents();
 }
+
 
 /* ======================================================
    3.2 DESTROY SMARTSPD BLUD PAGE
 ====================================================== */
 export async function smartofficeDestroyPage(){
 
-    smartofficeSPDHandlers.forEach(
-        function(handler){
-            if(handler.type === "__observer__"){
-                try{
-                    handler.callback.disconnect();
-                }
-                catch(error){}
-                return;
-            }
+    /* =========================
+       INVALIDATE ASYNC REQUEST
+    ========================= */
+    smartofficeSPDPageInstance++;
 
-            if(handler.element){
-                handler.element.removeEventListener(
-                    handler.type,
-                    handler.callback
+    /* =========================
+       REMOVE REGISTERED HANDLERS
+    ========================= */
+    smartofficeSPDHandlers.forEach(function(handler){
+
+        if(handler.type === "__observer__"){
+            try{
+                handler.callback.disconnect();
+            }
+            catch(error){
+                console.warn(
+                    "SMARTSPD OBSERVER CLEANUP:",
+                    error
                 );
             }
+            return;
         }
-    );
+
+        if(handler.element){
+            handler.element.removeEventListener(
+                handler.type,
+                handler.callback
+            );
+        }
+    });
 
     smartofficeSPDHandlers.clear();
+
+    /* =========================
+       REMOVE GLOBAL ACTION MENU EVENTS
+    ========================= */
+    if(window._smartofficeSPDActionOutsideHandler){
+        document.removeEventListener(
+            "click",
+            window._smartofficeSPDActionOutsideHandler
+        );
+
+        window._smartofficeSPDActionOutsideHandler = null;
+    }
+
+    if(window._smartofficeSPDActionEscapeHandler){
+        document.removeEventListener(
+            "keydown",
+            window._smartofficeSPDActionEscapeHandler
+        );
+
+        window._smartofficeSPDActionEscapeHandler = null;
+    }
+
+    /* =========================
+       CLOSE ACTION MENU
+    ========================= */
+    smartofficeCloseSPDActionMenu();
+
+    /* =========================
+       RESET PAGE STATE
+    ========================= */
     smartofficeSPDPegawai = {};
     smartofficeSPDPegawaiCache = [];
     smartofficeSPDRiwayat = [];
     smartofficeSPDJumlahPengikut = 0;
     smartofficeSPDFile = null;
     smartofficeSubmitting = false;
-}
 
+    smartofficeSPDEditMode = false;
+    smartofficeSPDEditId = "";
+    smartofficeSPDEditItem = null;
+}
 
 
 /* ================================================================================================
@@ -574,48 +632,54 @@ export async function smartofficeRefreshSPD(){
     );
 }
 
+
 /* ======================================================
    7.2 SWITCH TAB SPD
+   FORM SPD / RIWAYAT SPD / OVERVIEW SPD
 ====================================================== */
 export function smartofficeSwitchSPDTab(tab){
 
-    const tabForm =
-        document.getElementById(
-            "smartofficeTabFormSPD"
-        );
+    const tabConfig = {
+        form: {
+            button: "smartofficeTabFormSPD",
+            content: "smartofficeFormSPDContent"
+        },
+        riwayat: {
+            button: "smartofficeTabRiwayatSPD",
+            content: "smartofficeRiwayatSPDContent"
+        },
+        rekap: {
+            button: "smartofficeTabRekapSPD",
+            content: "smartofficeRekapSPDContent"
+        }
+    };
 
-    const tabRiwayat =
-        document.getElementById(
-            "smartofficeTabRiwayatSPD"
-        );
-
-    const formContent =
-        document.getElementById(
-            "smartofficeFormSPDContent"
-        );
-
-    const historyContent =
-        document.getElementById(
-            "smartofficeRiwayatSPDContent"
-        );
-
-    if(!tabForm || !tabRiwayat || !formContent || !historyContent){
+    // VALIDASI TAB
+    if(!tabConfig[tab]){
         return;
     }
 
-    const isForm =
-        tab === "form";
+    // PINDAH TAB
+    Object.entries(tabConfig).forEach(function([key, config]){
 
-    tabForm.classList.toggle("active", isForm);
-    tabRiwayat.classList.toggle("active", !isForm);
+        const button = document.getElementById(config.button);
+        const content = document.getElementById(config.content);
 
-    formContent.style.display =
-        isForm ? "block" : "none";
+        if(button){
+            button.classList.toggle("active", key === tab);
 
-    historyContent.style.display =
-        isForm ? "none" : "block";
+            button.setAttribute(
+                "aria-selected",
+                key === tab ? "true" : "false"
+            );
+        }
+
+        if(content){
+            content.style.display =
+                key === tab ? "block" : "none";
+        }
+    });
 }
-
 
 
 /* ================================================================================================
@@ -3283,44 +3347,10 @@ function smartofficeRenderRiwayatSPDUnavailable(){
             Riwayat SPD akan dimuat dari Firestore setelah collection mirror SmartSPD BLUD terhubung.
         </div>
     `;
-
-    smartofficeUpdateSPDStats();
 }
 
 /* ======================================================
-   16.4 UPDATE MINI STAT SPD
-====================================================== */
-function smartofficeUpdateSPDStats(){
-    const total =
-        smartofficeSPDRiwayat.length;
-
-    const menunggu =
-        smartofficeSPDRiwayat.filter(
-            item => item.statusSPD === "MENUNGGU REVIEW"
-        ).length;
-
-    const disetujui =
-        smartofficeSPDRiwayat.filter(
-            item => item.statusSPD === "DISETUJUI"
-        ).length;
-
-    const elements = [
-        ["smartofficeStatTotalSPD", total],
-        ["smartofficeStatSPDMenunggu", menunggu],
-        ["smartofficeStatSPDDisetujui", disetujui]
-    ];
-    elements.forEach(function(item){
-        const element =
-            document.getElementById(item[0]);
-        if(element){
-            element.textContent =
-                String(item[1]);
-        }
-    });
-}
-
-/* ======================================================
-   16.5 NORMALISASI DATA RIWAYAT SPD FIRESTORE
+   16.4 NORMALISASI DATA RIWAYAT SPD FIRESTORE
 ====================================================== */
 function smartofficeNormalizeSPDData(item){
 
@@ -3414,7 +3444,7 @@ function smartofficeNormalizeSPDData(item){
 }
 
 /* ======================================================
-   16.6 LOAD RIWAYAT SPD DARI FIRESTORE
+   16.5 LOAD RIWAYAT SPD DARI FIRESTORE
 ====================================================== */
 async function smartofficeLoadRiwayatSPD(){
 
@@ -3441,8 +3471,6 @@ async function smartofficeLoadRiwayatSPD(){
             smartofficeSPDRiwayat
         );
 
-        smartofficeUpdateSPDStats();
-
     } catch(error){
         console.error(
             "SMARTSPD LOAD RIWAYAT ERROR:",
@@ -3456,7 +3484,7 @@ async function smartofficeLoadRiwayatSPD(){
 }
 
 /* ======================================================
-   16.7 FILTER SPD SESUAI USER
+   16.6 FILTER SPD SESUAI USER
    NIP UTAMA ATAU PENGIKUT
 ====================================================== */
 function smartofficeFilterSPDByUser(data){
@@ -3512,7 +3540,7 @@ function smartofficeFilterSPDByUser(data){
 }
 
 /* ======================================================
-   16.8 INIT FILTER RIWAYAT SPD
+   16.7 INIT FILTER RIWAYAT SPD
 ====================================================== */
 function smartofficeInitRiwayatSPDFilter(){
 
@@ -3712,7 +3740,7 @@ function smartofficeInitRiwayatSPDFilter(){
 }
 
 /* ======================================================
-   16.9 APPLY FILTER RIWAYAT SPD
+   16.8 APPLY FILTER RIWAYAT SPD
 ====================================================== */
 function smartofficeApplyRiwayatSPDFilter(){
 

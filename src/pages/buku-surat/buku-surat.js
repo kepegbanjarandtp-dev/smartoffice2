@@ -104,7 +104,7 @@ let smartofficeSuratKeluarPrintHandler = null;
 ===================================================== */
 let smartofficeBukuSuratTabKodeHandler = null;
 let smartofficeKodeSuratSearchHandler = null;
-
+let smartofficeBukuSuratSwipeCleanup = null;
 
 /* ======================================================
    BUKU SURAT LIFECYCLE
@@ -259,6 +259,19 @@ export async function smartofficeDestroyPage(){
         );
 
         smartofficeBukuSuratDisposisiTimer =
+            null;
+    }
+
+    /* ==================================================
+       CLEAR SWIPE TAB
+    ================================================== */
+    if(
+        typeof smartofficeBukuSuratSwipeCleanup ===
+        "function"
+    ){
+        smartofficeBukuSuratSwipeCleanup();
+
+        smartofficeBukuSuratSwipeCleanup =
             null;
     }
 
@@ -865,6 +878,18 @@ function smartofficeInitBukuSuratTab(){
 ====================================================== */
 function smartofficeInitBukuSuratTabSwipe(){
 
+    /* ==================================================
+       JIKA SUDAH TERPASANG
+       LEPAS DULU
+    ================================================== */
+    if(
+        typeof smartofficeBukuSuratSwipeCleanup ===
+        "function"
+    ){
+        smartofficeBukuSuratSwipeCleanup();
+        smartofficeBukuSuratSwipeCleanup = null;
+    }
+
     const tabSuratMasuk =
         document.getElementById(
             "smartofficeTabSuratMasuk"
@@ -894,7 +919,6 @@ function smartofficeInitBukuSuratTabSwipe(){
         document.getElementById(
             "smartofficeKodeSuratContent"
         );
-
     if(
         !tabSuratMasuk ||
         !tabSuratKeluar ||
@@ -913,7 +937,10 @@ function smartofficeInitBukuSuratTabSwipe(){
 
     function handleTouchStart(event){
         const touch =
-            event.changedTouches[0];
+            event.changedTouches?.[0];
+        if(!touch){
+            return;
+        }
 
         touchStartX =
             touch.clientX;
@@ -924,7 +951,11 @@ function smartofficeInitBukuSuratTabSwipe(){
 
     function handleTouchEnd(event){
         const touch =
-            event.changedTouches[0];
+            event.changedTouches?.[0];
+
+        if(!touch){
+            return;
+        }
 
         const touchEndX =
             touch.clientX;
@@ -958,9 +989,9 @@ function smartofficeInitBukuSuratTabSwipe(){
             return;
         }
 
-        /* =========================
+        /* ==================================================
            SWIPE KIRI
-        ========================= */
+        ================================================== */
         if(deltaX < 0){
 
             /* SURAT MASUK → SURAT KELUAR */
@@ -970,7 +1001,6 @@ function smartofficeInitBukuSuratTabSwipe(){
                 )
             ){
                 tabSuratKeluar.click();
-
                 return;
             }
 
@@ -981,18 +1011,15 @@ function smartofficeInitBukuSuratTabSwipe(){
                 )
             ){
                 tabKodeSurat.click();
-
                 return;
             }
 
-            /* KODE SURAT
-               SUDAH PALING KANAN */
             return;
         }
 
-        /* =========================
+        /* ==================================================
            SWIPE KANAN
-        ========================= */
+        ================================================== */
         if(deltaX > 0){
 
             /* KODE SURAT → SURAT KELUAR */
@@ -1002,7 +1029,6 @@ function smartofficeInitBukuSuratTabSwipe(){
                 )
             ){
                 tabSuratKeluar.click();
-
                 return;
             }
 
@@ -1013,18 +1039,15 @@ function smartofficeInitBukuSuratTabSwipe(){
                 )
             ){
                 tabSuratMasuk.click();
-
                 return;
             }
 
-            /* SURAT MASUK
-               SUDAH PALING KIRI */
             return;
         }
     }
 
     /* ==================================================
-       PASANG SWIPE KE SEMUA CONTENT
+       PASANG LISTENER
     ================================================== */
     suratMasukContent.addEventListener(
         "touchstart",
@@ -1061,6 +1084,42 @@ function smartofficeInitBukuSuratTabSwipe(){
         handleTouchEnd,
         { passive:true }
     );
+
+    /* ==================================================
+       SIMPAN CLEANUP FUNCTION
+    ================================================== */
+    smartofficeBukuSuratSwipeCleanup =
+        function(){
+            suratMasukContent.removeEventListener(
+                "touchstart",
+                handleTouchStart
+            );
+
+            suratMasukContent.removeEventListener(
+                "touchend",
+                handleTouchEnd
+            );
+
+            suratKeluarContent.removeEventListener(
+                "touchstart",
+                handleTouchStart
+            );
+
+            suratKeluarContent.removeEventListener(
+                "touchend",
+                handleTouchEnd
+            );
+
+            kodeSuratContent.removeEventListener(
+                "touchstart",
+                handleTouchStart
+            );
+
+            kodeSuratContent.removeEventListener(
+                "touchend",
+                handleTouchEnd
+            );
+        };
 }
 
 
