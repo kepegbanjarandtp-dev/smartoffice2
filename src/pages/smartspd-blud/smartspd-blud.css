@@ -3,17 +3,11 @@
 ====================================================== */
 
 /* ======================================================
-   WRAPPER HALAMAN
+   HEADER 
 ====================================================== */
-.smartoffice-spd-wrapper{
-    width:100%;
-    max-width:1380px;
-    margin:0 auto;
-    padding:28px;
-    padding-bottom:120px;
-    display:flex;
-    flex-direction:column;
-    gap:24px;
+.smartoffice-smartspdblud-header-icon{
+    background:#EAF3FF;
+    color:#3B82F6;
 }
 
 /* ======================================================

@@ -25,17 +25,16 @@ import "./pages/dokumen-saya/dokumen-saya.css";
 import "./pages/arsip-pegawai/arsip-pegawai.css";
 import "./pages/pusat-dokumen/penomoran-sk.css";
 import "./pages/smartspd-blud/smartspd-blud.css";
+import "./pages/pengelolaan-spd/pengelolaan-spd.css";
 
 import "./components/button/button.css";
 import "./components/layout/layout.css";
 import "./components/tabs/tabs.css";
 
 document.addEventListener(
-
     "DOMContentLoaded",
 
     async ()=>{
-
         console.log(
             "SmartOffice V2 Started"
         );

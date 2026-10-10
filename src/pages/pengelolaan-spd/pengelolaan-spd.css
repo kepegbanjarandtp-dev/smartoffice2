@@ -1,0 +1,511 @@
+/* ======================================================
+   SMART OFFICE — PENGELOLAAN SPD
+   CSS TAB OVERVIEW
+====================================================== */
+
+/* ======================================================
+   1. CONTAINER OVERVIEW
+====================================================== */
+.smartoffice-pengelolaan-spd-overview {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* ======================================================
+   2. GRID STATISTIK
+====================================================== */
+.smartoffice-pengelolaan-spd-stat-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    width: 100%;
+}
+
+
+/* ======================================================
+   3. KARTU STATISTIK
+====================================================== */
+.smartoffice-pengelolaan-spd-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    min-width: 0;
+    padding: 20px;
+
+    background: var(--card-background, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 18px;
+
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+@media (hover: hover) {
+    .smartoffice-pengelolaan-spd-stat:hover {
+        transform: translateY(-2px);
+        border-color: #cbd5e1;
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+    }
+}
+
+
+/* ======================================================
+   4. LABEL DAN IKON STATISTIK
+====================================================== */
+.smartoffice-pengelolaan-spd-stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.smartoffice-pengelolaan-spd-stat-icon {
+    display: grid;
+    place-items: center;
+
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+
+    color: var(--primary-color, #2563eb);
+    background: var(--surface-secondary, #eff6ff);
+    border-radius: 13px;
+}
+
+.smartoffice-pengelolaan-spd-stat-icon svg {
+    width: 21px;
+    height: 21px;
+    stroke: currentColor;
+}
+
+
+/* ======================================================
+   5. ANGKA STATISTIK
+====================================================== */
+.smartoffice-pengelolaan-spd-stat > strong {
+    display: block;
+
+    color: var(--text-primary, #0f172a);
+    font-size: clamp(27px, 2.5vw, 34px);
+    font-weight: 750;
+    line-height: 1.15;
+    letter-spacing: -0.8px;
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ======================================================
+   6. KETERANGAN STATISTIK
+====================================================== */
+.smartoffice-pengelolaan-spd-stat > small {
+    display: block;
+
+    color: var(--text-secondary, #64748b);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+}
+
+
+/* ======================================================
+   7. KARTU PEMANTAUAN SPD
+====================================================== */
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-card {
+    min-width: 0;
+    overflow: hidden;
+
+    background: var(--card-background, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 18px;
+
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.035);
+}
+
+
+/* ======================================================
+   8. HEADER PEMANTAUAN SPD
+====================================================== */
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+
+    padding: 20px 22px;
+
+    background: var(--card-background, #ffffff);
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-header strong {
+    color: var(--text-primary, #0f172a);
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-header span {
+    color: var(--text-secondary, #64748b);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* ======================================================
+   9. BODY PEMANTAUAN SPD
+====================================================== */
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 22px;
+
+    padding: 22px;
+}
+
+
+/* ======================================================
+   10. DAFTAR STATUS SPJ
+====================================================== */
+.smartoffice-pengelolaan-spd-status-list {
+    display: grid;
+    gap: 20px;
+    min-width: 0;
+}
+
+.smartoffice-pengelolaan-spd-status-row > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 9px;
+
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.smartoffice-pengelolaan-spd-status-row > div:first-child span {
+    color: var(--text-secondary, #64748b);
+    overflow-wrap: anywhere;
+}
+
+.smartoffice-pengelolaan-spd-status-row > div:first-child strong {
+    color: var(--text-primary, #0f172a);
+    font-size: 13px;
+    font-weight: 700;
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ======================================================
+   11. PROGRESS BAR
+====================================================== */
+.smartoffice-pengelolaan-spd-progress {
+    width: 100%;
+    height: 8px;
+
+    overflow: hidden;
+
+    background: var(--surface-secondary, #e2e8f0);
+    border-radius: 99px;
+}
+
+.smartoffice-pengelolaan-spd-progress > span {
+    display: block;
+
+    width: 0;
+    height: 100%;
+
+    background: var(--primary-color, #2563eb);
+    border-radius: inherit;
+
+    transition: width 0.35s ease;
+}
+
+
+/* ======================================================
+   12. RINGKASAN STATUS SPD
+====================================================== */
+.smartoffice-pengelolaan-spd-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+
+    margin-top: 2px;
+    padding-top: 20px;
+
+    border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+.smartoffice-pengelolaan-spd-summary > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    min-width: 0;
+    padding: 14px;
+
+    background: var(--surface-secondary, #f8fafc);
+    border: 1px solid var(--border-color, #edf0f4);
+    border-radius: 13px;
+}
+
+.smartoffice-pengelolaan-spd-summary span {
+    color: var(--text-secondary, #64748b);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.smartoffice-pengelolaan-spd-summary strong {
+    color: var(--text-primary, #0f172a);
+    font-size: 23px;
+    font-weight: 750;
+    line-height: 1.2;
+
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ======================================================
+   13. FOOTER PEMANTAUAN SPD
+====================================================== */
+.smartoffice-pengelolaan-spd-overview
+.smartoffice-spd-riwayat-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    padding: 16px 22px;
+
+    background: var(--card-background, #ffffff);
+    border-top: 1px solid var(--border-color, #e5e7eb);
+}
+
+
+/* ======================================================
+   14. TOMBOL LIHAT REKAP SPD
+====================================================== */
+.smartoffice-pengelolaan-spd-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    min-height: 40px;
+    padding: 8px 0;
+
+    color: var(--primary-color, #2563eb);
+    background: transparent;
+    border: 0;
+
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: color 0.2s ease;
+}
+
+.smartoffice-pengelolaan-spd-link span {
+    font-size: 18px;
+    line-height: 1;
+
+    transition: transform 0.2s ease;
+}
+
+.smartoffice-pengelolaan-spd-link:hover {
+    color: var(--primary-hover, #1d4ed8);
+}
+
+.smartoffice-pengelolaan-spd-link:hover span {
+    transform: translateX(3px);
+}
+
+.smartoffice-pengelolaan-spd-link:focus-visible {
+    outline: 2px solid var(--primary-color, #2563eb);
+    outline-offset: 4px;
+    border-radius: 4px;
+}
+
+
+/* ======================================================
+   15. RESPONSIVE TABLET
+====================================================== */
+@media (max-width: 900px) {
+
+    .smartoffice-pengelolaan-spd-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat {
+        padding: 17px;
+    }
+
+    .smartoffice-pengelolaan-spd-overview
+    .smartoffice-spd-riwayat-body {
+        padding: 20px;
+    }
+
+}
+
+
+/* ======================================================
+   16. RESPONSIVE MOBILE
+====================================================== */
+@media (max-width: 600px) {
+
+    .smartoffice-pengelolaan-spd-overview {
+        gap: 15px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat {
+        gap: 10px;
+        padding: 14px;
+        border-radius: 15px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat-top {
+        align-items: flex-start;
+        gap: 7px;
+        font-size: 12px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat-icon {
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
+        border-radius: 10px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat > strong {
+        font-size: 26px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat > small {
+        font-size: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-overview
+    .smartoffice-spd-riwayat-card {
+        border-radius: 15px;
+    }
+
+    .smartoffice-pengelolaan-spd-overview
+    .smartoffice-spd-riwayat-header {
+        padding: 17px;
+    }
+
+    .smartoffice-pengelolaan-spd-overview
+    .smartoffice-spd-riwayat-header strong {
+        font-size: 15px;
+    }
+
+    .smartoffice-pengelolaan-spd-overview
+    .smartoffice-spd-riwayat-body {
+        gap: 20px;
+        padding: 18px 17px;
+    }
+
+    .smartoffice-pengelolaan-spd-status-list {
+        gap: 18px;
+    }
+
+    .smartoffice-pengelolaan-spd-summary {
+        grid-template-columns: 1fr;
+        gap: 9px;
+
+        margin-top: 0;
+        padding-top: 17px;
+    }
+
+    .smartoffice-pengelolaan-spd-summary > div {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+
+        padding: 12px 13px;
+    }
+
+    .smartoffice-pengelolaan-spd-summary strong {
+        font-size: 20px;
+    }
+
+    .smartoffice-pengelolaan-spd-overview
+    .smartoffice-spd-riwayat-footer {
+        padding: 12px 17px;
+    }
+
+    .smartoffice-pengelolaan-spd-link {
+        min-height: 38px;
+        font-size: 12px;
+    }
+
+}
+
+
+/* ======================================================
+   17. MOBILE KECIL
+====================================================== */
+@media (max-width: 360px) {
+
+    .smartoffice-pengelolaan-spd-stat-grid {
+        gap: 8px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat {
+        padding: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat-top {
+        font-size: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-stat > strong {
+        font-size: 23px;
+    }
+
+}
