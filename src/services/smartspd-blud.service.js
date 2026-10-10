@@ -61,3 +61,20 @@ export async function smartofficeVerifySPJ(data){
         data
     );
 }
+
+
+/* ======================================================
+   SIMPAN PEMBAYARAN SPD
+   INPUT:
+   - ID SPD
+   - Jumlah uang per orang
+   - Jumlah petugas dibayarkan
+   - Tanggal transfer
+   - Bukti transfer
+====================================================== */
+export async function smartofficeSimpanPembayaranSPD(data){
+    return await smartofficeApi(
+        "smartofficeSimpanPembayaranSPD",
+        data
+    );
+}
