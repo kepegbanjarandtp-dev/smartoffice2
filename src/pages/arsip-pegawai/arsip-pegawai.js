@@ -2705,17 +2705,26 @@ export async function smartofficeSubmitBukaLockDokumen(
             "success"
         );
 
+        
         /* =========================
-           INVALIDATE CACHE DETAIL
+           REFRESH SETELAH BUKA LOCK
+           CARD LIST + STATISTIK + PROGRESS
+           FILTER PEGAWAI TETAP
         ========================= */
+
+        // Hapus cache arsip pegawai yang sedang dipilih
         smartofficeCacheRemove(
-            `arsip_detail_pegawai_${sessionData.nip}`
+            `arsip_detail_pegawai_${nipPegawai}`
         );
 
-        /* =========================
-           LOAD ULANG ARSIP
-        ========================= */
-        await smartofficeCariArsipPegawai();
+        // Refresh statistik dan progress
+        // sekaligus muat ulang Card List arsip
+        await Promise.all([
+            smartofficeLoadArsipStat(true),
+            smartofficeLoadProgressArsip(true),
+            smartofficeCariArsipPegawai(true)
+        ]);
+
     }
     catch(error){
         console.error(

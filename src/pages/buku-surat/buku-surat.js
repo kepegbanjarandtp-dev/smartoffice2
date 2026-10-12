@@ -34,7 +34,8 @@ import {
 import {
     smartofficeGetMasterSuratFirestore,
     smartofficeGetSuratMasukFirestore,
-    smartofficeGetSuratKeluarFirestore
+    smartofficeGetSuratKeluarFirestore,
+    smartofficeWatchSubmitSuratKeluarFirestore
 } from "../../services/buku-surat-firestore.service.js";
 
 // --- UTILS ---
@@ -9393,9 +9394,156 @@ function smartofficeCloseBukaLockSuratKeluarModal(){
 }
 
 
+
+/* ======================================================
+   TUNGGU BUKA LOCK SURAT KELUAR
+   GAS SUCCESS ATAU FIRESTORE BERUBAH
+====================================================== */
+function smartofficeWaitBukaLockSuratKeluar(
+    nomor,
+    rowIndex,
+    nip,
+    role
+){
+    const targetNomor =
+        String(nomor || "").trim();
+
+    return new Promise((resolve, reject) => {
+
+        if(!targetNomor){
+            reject(new Error(
+                "Nomor dokumen Surat Keluar tidak ditemukan."
+            ));
+            return;
+        }
+
+        let selesai = false;
+        let watcher = null;
+        let timeoutTimer = null;
+
+        const cleanup = () => {
+            if(timeoutTimer){
+                clearTimeout(timeoutTimer);
+                timeoutTimer = null;
+            }
+
+            if(
+                watcher &&
+                typeof watcher.unsubscribe === "function"
+            ){
+                watcher.unsubscribe();
+                watcher = null;
+            }
+        };
+
+        const finish = result => {
+            if(selesai) return;
+
+            selesai = true;
+            cleanup();
+            resolve(result);
+        };
+
+        /* PASANG WATCHER FIRESTORE SURAT KELUAR */
+        try{
+            watcher =
+                smartofficeWatchSubmitSuratKeluarFirestore(
+                    targetNomor,
+                    "DRAFT"
+                );
+
+            if(!watcher || !watcher.promise){
+                throw new Error(
+                    "Watcher Firestore Surat Keluar gagal dibuat."
+                );
+            }
+        }catch(error){
+            console.error(
+                "Gagal memasang watcher Surat Keluar:",
+                error
+            );
+
+            reject(error);
+            return;
+        }
+
+        /* CEGAH UNHANDLED REJECTION */
+        watcher.promise.catch(() => {});
+
+        /* TIMEOUT KESELURUHAN 40 DETIK */
+        timeoutTimer = setTimeout(() => {
+            if(selesai) return;
+
+            selesai = true;
+            cleanup();
+
+            reject(new Error(
+                "Buka Lock belum terkonfirmasi setelah 40 detik. Silakan muat ulang data."
+            ));
+        }, 40000);
+
+        /* FIRESTORE BERUBAH = BERHASIL */
+        watcher.promise
+            .then(firestoreResult => {
+                finish({
+                    success: true,
+                    source: "firestore",
+                    result: firestoreResult
+                });
+            })
+            .catch(error => {
+                console.warn(
+                    "WATCH BUKA LOCK SURAT KELUAR ERROR, GAS TETAP DICOBA:",
+                    error
+                );
+            });
+
+        /* TUNGGU WATCHER SIAP, LALU JALANKAN GAS */
+        Promise.resolve()
+            .then(() => watcher.ready)
+            .catch(error => {
+                console.warn(
+                    "WATCHER BELUM SIAP, GAS TETAP DICOBA:",
+                    error
+                );
+            })
+            .then(() => {
+                if(selesai) return undefined;
+
+                return smartofficeBukaLockSuratKeluar(
+                    rowIndex,
+                    nip,
+                    role
+                );
+            })
+            .then(response => {
+                if(selesai || response === undefined){
+                    return;
+                }
+
+                /* GAS SUCCESS = BERHASIL */
+                finish({
+                    success: true,
+                    source: "gas",
+                    response
+                });
+            })
+            .catch(error => {
+                if(selesai) return;
+
+                /* GAS GAGAL: FIRESTORE TETAP DITUNGGU */
+                console.warn(
+                    "GAS BUKA LOCK ERROR, FIRESTORE MASIH DITUNGGU:",
+                    error
+                );
+            });
+    });
+}
+
+
 /* ======================================================
    KONFIRMASI BUKA LOCK SURAT KELUAR
-   LIFECYCLE SAFE
+   GAS / FIRESTORE YANG SELESAI DULUAN
 ====================================================== */
 async function smartofficeConfirmBukaLockSuratKeluar(){
 
@@ -9403,17 +9551,14 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
         document.getElementById(
             "smartofficeSuratKeluarLockModal"
         );
-    if(!modal){
-        return;
-    }
+
+    if(!modal) return;
 
     const pageInstance =
         smartofficeBukuSuratPageInstance;
 
     const rowIndex =
-        Number(
-            modal.dataset.rowIndex
-        );
+        Number(modal.dataset.rowIndex);
 
     const filterTanggal =
         modal.dataset.filterTanggal || "";
@@ -9433,15 +9578,52 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
     const role =
         modal.dataset.role || "";
 
+    const targetSurat =
+        suratKeluarAllData.find(
+            item =>
+                String(item?.rowIndex ?? "") ===
+                String(rowIndex)
+        );
+
+    const targetNomor =
+        String(targetSurat?.nomor || "").trim();
+
+    if(!targetNomor){
+        smartofficeShowToast(
+            "Nomor dokumen Surat Keluar tidak ditemukan. Muat ulang data lalu coba lagi.",
+            "error"
+        );
+        return;
+    }
+
+    let bukaLockBerhasil = false;
+
     smartofficeShowGlobalLoading(
         "Membuka lock Surat Keluar..."
     );
 
     try{
-        await smartofficeBukaLockSuratKeluar(
-            rowIndex,
-            nip,
-            role
+
+        console.log(
+            "MULAI BUKA LOCK SURAT KELUAR:",
+            targetNomor
+        );
+
+        /* TUNGGU SUMBER YANG BERHASIL LEBIH DAHULU */
+        const result =
+            await smartofficeWaitBukaLockSuratKeluar(
+                targetNomor,
+                rowIndex,
+                nip,
+                role
+            );
+
+        bukaLockBerhasil = true;
+
+        console.log(
+            "BUKA LOCK SURAT KELUAR BERHASIL:",
+            targetNomor,
+            result
         );
 
         if(
@@ -9451,67 +9633,69 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
             return;
         }
 
+        /* TUTUP MODAL DAN TOAST LANGSUNG */
         smartofficeCloseBukaLockSuratKeluarModal();
-
-        await loadDataSuratKeluar(
-            pageInstance
-        );
-
-        if(
-            pageInstance !==
-            smartofficeBukuSuratPageInstance
-        ){
-            return;
-        }
-
-        const tanggal =
-            document.getElementById(
-                "smartofficeSuratKeluarFilterTanggal"
-            );
-
-        const search =
-            document.getElementById(
-                "smartofficeSuratKeluarFilterSearch"
-            );
-
-        const bulan =
-            document.getElementById(
-                "smartofficeSuratKeluarFilterBulan"
-            );
-
-        const status =
-            document.getElementById(
-                "smartofficeSuratKeluarFilterStatus"
-            );
-
-        if(tanggal){
-            tanggal.value =
-                filterTanggal;
-        }
-
-        if(search){
-            search.value =
-                filterSearch;
-        }
-
-        if(bulan){
-            bulan.value =
-                filterBulan;
-        }
-
-        if(status){
-            status.value =
-                filterStatus;
-        }
-
-        applyFilterSuratKeluar();
 
         smartofficeShowToast(
             "Surat Keluar berhasil dibuka menjadi DRAFT.",
             "success"
         );
-    }
-    catch(error){
+
+        /* REFRESH DATA SETELAH TOAST */
+        try{
+
+            await loadDataSuratKeluar(pageInstance);
+
+            if(
+                pageInstance !==
+                smartofficeBukuSuratPageInstance
+            ){
+                return;
+            }
+
+            /* PULIHKAN FILTER */
+            const tanggal =
+                document.getElementById(
+                    "smartofficeSuratKeluarFilterTanggal"
+                );
+
+            const search =
+                document.getElementById(
+                    "smartofficeSuratKeluarFilterSearch"
+                );
+
+            const bulan =
+                document.getElementById(
+                    "smartofficeSuratKeluarFilterBulan"
+                );
+
+            const status =
+                document.getElementById(
+                    "smartofficeSuratKeluarFilterStatus"
+                );
+
+            if(tanggal) tanggal.value = filterTanggal;
+            if(search) search.value = filterSearch;
+            if(bulan) bulan.value = filterBulan;
+            if(status) status.value = filterStatus;
+
+            applyFilterSuratKeluar();
+
+        }catch(refreshError){
+
+            console.error(
+                "Refresh Surat Keluar gagal setelah buka lock berhasil:",
+                refreshError
+            );
+
+            smartofficeShowToast(
+                "Lock berhasil dibuka, tetapi daftar gagal diperbarui. Silakan tekan Refresh.",
+                "warning"
+            );
+        }
+
+    }catch(error){
+
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -9525,40 +9709,170 @@ async function smartofficeConfirmBukaLockSuratKeluar(){
         );
 
         smartofficeShowToast(
-            error.message ||
+            error?.message ||
             "Gagal membuka lock Surat Keluar.",
             "error"
         );
-    }
-    finally{
 
+    }finally{
         smartofficeHideGlobalLoading();
     }
+}
+
+
+/* ==========================================================
+   WAIT SUBMIT SURAT KELUAR
+   GAS SUKSES ATAU FIRESTORE BERUBAH: YANG DULUAN MENANG
+========================================================== */
+function smartofficeWaitSubmitSuratKeluar(nomor, payload){
+
+    const targetNomor = String(nomor || "").trim();
+
+    return new Promise((resolve, reject) => {
+
+        if(!targetNomor){
+            reject(new Error(
+                "Nomor dokumen Surat Keluar tidak ditemukan."
+            ));
+            return;
+        }
+
+        let selesai = false;
+        let watcher = null;
+        let timeoutTimer = null;
+
+        const cleanup = () => {
+            if(timeoutTimer){
+                clearTimeout(timeoutTimer);
+                timeoutTimer = null;
+            }
+
+            if(watcher && typeof watcher.unsubscribe === "function"){
+                watcher.unsubscribe();
+            }
+        };
+
+        const finish = result => {
+            if(selesai) return;
+
+            selesai = true;
+            cleanup();
+            resolve(result);
+        };
+
+        const runGAS = () => {
+            if(selesai) return;
+
+            Promise.resolve()
+                .then(() => smartofficeSaveSuratKeluar(payload))
+                .then(response => {
+                    finish({
+                        success: true,
+                        source: "gas",
+                        response
+                    });
+                })
+                .catch(error => {
+                    if(selesai) return;
+
+                    console.warn(
+                        "GAS SUBMIT SURAT KELUAR GAGAL, FIRESTORE TETAP DITUNGGU:",
+                        error
+                    );
+                });
+        };
+
+        /* WATCHER FIRESTORE */
+        try{
+            watcher =
+                smartofficeWatchSubmitSuratKeluarFirestore(
+                    targetNomor
+                );
+
+            console.log(
+                "[WATCH SUBMIT SURAT KELUAR] WATCHER DIPASANG:",
+                targetNomor
+            );
+
+            watcher.promise
+                .then(firestoreResult => {
+                    console.log(
+                        "[WATCH SUBMIT SURAT KELUAR] FIRESTORE BERUBAH:",
+                        targetNomor,
+                        firestoreResult
+                    );
+                    finish({
+                        success: true,
+                        source: "firestore",
+                        result: firestoreResult
+                    });
+                })
+                .catch(error => {
+                    if(selesai) return;
+
+                    console.warn(
+                        "[WATCH SUBMIT SURAT KELUAR] WATCHER ERROR:",
+                        targetNomor,
+                        error
+                    );
+                });
+
+        }catch(error){
+            console.warn(
+                "GAGAL MEMASANG WATCHER SURAT KELUAR:",
+                error
+            );
+        }
+
+        /* BATAS TUNGGU 40 DETIK */
+        timeoutTimer = setTimeout(() => {
+            if(selesai) return;
+
+            selesai = true;
+            cleanup();
+
+            reject(new Error(
+                "Update Surat Keluar belum terkonfirmasi setelah 40 detik. Silakan muat ulang data."
+            ));
+        }, 40000);
+
+        /*
+         * Tunggu baseline watcher jika siap.
+         * Jika watcher.ready gagal, GAS TETAP DIJALANKAN.
+         */
+        if(watcher && watcher.ready){
+            Promise.resolve(watcher.ready)
+                .then(runGAS)
+                .catch(error => {
+                    if(selesai) return;
+
+                    console.warn(
+                        "WATCHER READY GAGAL, GAS TETAP DIJALANKAN:",
+                        error
+                    );
+
+                    runGAS();
+                });
+        }else{
+            runGAS();
+        }
+    });
 }
 
 
 /* ======================================================
    SUBMIT SURAT KELUAR
 ====================================================== */
-async function smartofficeSubmitSuratKeluar(
-    event
-){
+async function smartofficeSubmitSuratKeluar(event){
+
     event.preventDefault();
 
     const pageInstance =
         smartofficeBukuSuratPageInstance;
 
-    /* ==================================================
-       CEGAH DOUBLE SUBMIT
-    ================================================== */
-    if(isSubmitting){
-        return;
-    }
+    if(isSubmitting) return;
     isSubmitting = true;
 
-    /* ==================================================
-       AMBIL ELEMENT
-    ================================================== */
     const rowIndex =
         document.getElementById(
             "smartofficeSuratKeluarRowIndex"
@@ -9603,38 +9917,10 @@ async function smartofficeSubmitSuratKeluar(
         document.getElementById(
             "smartofficeSuratKeluarFile"
         );
-    
-    /* ==================================================
-       FILE
-    ================================================== */
+
     const file =
         fileInput?.files?.[0] || null;
 
-    if(file){
-        if(
-            file.size >
-            2 * 1024 * 1024
-        ){
-            isSubmitting = false;
-            smartofficeShowToast(
-                "Ukuran file maksimal 2 MB.",
-                "error"
-            );
-
-            return;
-        }
-    }
-
-    if(
-        pageInstance !==
-        smartofficeBukuSuratPageInstance
-    ){
-        return;
-    }
-
-    /* ==================================================
-       BUTTON
-    ================================================== */
     const submitButton =
         document.getElementById(
             "smartofficeSuratKeluarFormSubmit"
@@ -9645,12 +9931,28 @@ async function smartofficeSubmitSuratKeluar(
             "smartofficeSuratKeluarFormCancel"
         );
 
+    if(file && file.size > 2 * 1024 * 1024){
+        isSubmitting = false;
+
+        smartofficeShowToast(
+            "Ukuran file maksimal 2 MB.",
+            "error"
+        );
+        return;
+    }
+
+    if(
+        pageInstance !==
+        smartofficeBukuSuratPageInstance
+    ){
+        isSubmitting = false;
+        return;
+    }
+
     if(submitButton){
-        submitButton.disabled =
-            true;
-        if(
-            !submitButton.dataset.originalText
-        ){
+        submitButton.disabled = true;
+
+        if(!submitButton.dataset.originalText){
             submitButton.dataset.originalText =
                 submitButton.innerHTML;
         }
@@ -9665,9 +9967,6 @@ async function smartofficeSubmitSuratKeluar(
         cancelButton.disabled = true;
     }
 
-    /* ==================================================
-       PAYLOAD
-    ================================================== */
     const payload = {
         rowIndex,
         kode,
@@ -9680,48 +9979,30 @@ async function smartofficeSubmitSuratKeluar(
     };
 
     try{
-        /* ==================================================
-           FILE → BASE64
-        ================================================== */
+
+        /* FILE → BASE64 */
         if(file){
-            const base64 =
-                await new Promise(
-                    (resolve,reject) => {
+            const base64 = await new Promise(
+                (resolve, reject) => {
+                    const reader = new FileReader();
 
-                        const reader =
-                            new FileReader();
-                        reader.onload =
-                            function(){
-                                if(
-                                    pageInstance !==
-                                    smartofficeBukuSuratPageInstance
-                                ){
-                                    reject(
-                                        new Error(
-                                            "Halaman sudah tidak aktif."
-                                        )
-                                    );
-
-                                    return;
-                                }
-
-                                const result =
-                                    reader.result;
-
-                                resolve(
-                                    String(result)
-                                        .split(",")[1]
-                                );
-                            };
-
-                        reader.onerror =
-                            reject;
-
-                        reader.readAsDataURL(
-                            file
+                    reader.onload = () => {
+                        resolve(
+                            String(reader.result).split(",")[1]
                         );
-                    }
-                );
+                    };
+
+                    reader.onerror = () => {
+                        reject(
+                            new Error(
+                                "Gagal membaca file yang dipilih."
+                            )
+                        );
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+            );
 
             if(
                 pageInstance !==
@@ -9730,20 +10011,31 @@ async function smartofficeSubmitSuratKeluar(
                 return;
             }
 
-            payload.base64 =
-                base64;
-
-            payload.fileName =
-                file.name;
-
-            payload.fileType =
-                file.type;
+            payload.base64 = base64;
+            payload.fileName = file.name;
+            payload.fileType = file.type;
         }
 
-        /* ==================================================
-           SAVE
-        ================================================== */
-        await smartofficeSaveSuratKeluar(
+        /* CARI DOKUMEN EDIT EXISTING */
+        const targetSurat =
+            suratKeluarAllData.find(
+                item =>
+                    String(item?.rowIndex ?? "") ===
+                    String(rowIndex)
+            );
+
+        const targetNomor =
+            String(targetSurat?.nomor || "").trim();
+
+        if(!targetNomor){
+            throw new Error(
+                "Nomor dokumen Surat Keluar tidak ditemukan. Muat ulang data lalu coba lagi."
+            );
+        }
+
+        /* TUNGGU GAS SUCCESS ATAU FIRESTORE BERUBAH */
+        await smartofficeWaitSubmitSuratKeluar(
+            targetNomor,
             payload
         );
 
@@ -9754,31 +10046,39 @@ async function smartofficeSubmitSuratKeluar(
             return;
         }
 
-        /* ==================================================
-           TUTUP MODAL
-        ================================================== */
+        /* TUTUP FORM DAN TAMPILKAN SUKSES SEGERA */
         smartofficeCloseFormSuratKeluar();
-
-        /* ==================================================
-           RELOAD
-        ================================================== */
-        await loadDataSuratKeluar(
-            pageInstance
-        );
-
-        if(
-            pageInstance !==
-            smartofficeBukuSuratPageInstance
-        ){
-            return;
-        }
 
         smartofficeShowToast(
             "Surat Keluar berhasil disimpan.",
             "success"
         );
-    }
-    catch(error){
+
+        /* REFRESH DATA TANPA MEMBATALKAN STATUS SUKSES */
+        try{
+            await loadDataSuratKeluar(pageInstance);
+
+            if(
+                pageInstance !==
+                smartofficeBukuSuratPageInstance
+            ){
+                return;
+            }
+
+        }catch(refreshError){
+            console.error(
+                "Refresh data Surat Keluar gagal setelah penyimpanan berhasil:",
+                refreshError
+            );
+
+            smartofficeShowToast(
+                "Surat berhasil disimpan, tetapi daftar gagal diperbarui. Silakan tekan Refresh.",
+                "warning"
+            );
+        }
+
+    }catch(error){
+
         if(
             pageInstance !==
             smartofficeBukuSuratPageInstance
@@ -9792,29 +10092,26 @@ async function smartofficeSubmitSuratKeluar(
         );
 
         smartofficeShowToast(
-            error.message ||
+            error?.message ||
             "Gagal menyimpan Surat Keluar.",
             "error"
         );
-    }
-    finally{
+
+    }finally{
+
         isSubmitting = false;
 
         if(submitButton){
-            submitButton.disabled =
-                false;
+            submitButton.disabled = false;
 
-            if(
-                submitButton.dataset.originalText
-            ){
+            if(submitButton.dataset.originalText){
                 submitButton.innerHTML =
                     submitButton.dataset.originalText;
             }
         }
 
         if(cancelButton){
-            cancelButton.disabled =
-                false;
+            cancelButton.disabled = false;
         }
     }
 }

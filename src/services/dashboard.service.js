@@ -6,10 +6,6 @@ import {
 } from "../core/api.js";
 
 import {
-    smartofficeGetTotalPendingApprovalFirestore
-} from "./approval-firestore.service.js";
-
-import {
     collection,
     getCountFromServer,
     getDocs,
@@ -58,26 +54,9 @@ export async function smartofficeGetTotalPendingApproval(
 
 
 /* ======================================================
-   GET TOTAL PENDING SEMUA APPROVAL
-   CUTI + DOKUMEN
-====================================================== */
-export async function smartofficeGetTotalPendingApprovalAll(
-    nip,
-    role
-){
-
-    return await smartofficeGetTotalPendingApprovalFirestore(
-        nip,
-        role
-    );
-}
-
-
-/* ======================================================
    DASHBOARD STATISTIK
    FIRESTORE COUNT ONLY
 ====================================================== */
-
 let smartofficeDashboardStatsCache = null;
 let smartofficeDashboardStatsCacheTime = 0;
 
@@ -328,20 +307,16 @@ export function smartofficeClearDashboardStatsCache(){
    DASHBOARD
    SEMUA DATA CUTI YANG SEDANG BERLANGSUNG
 ====================================================== */
-
 export async function smartofficeGetSedangCutiFirestore(){
 
     const today =
         smartofficeDashboardGetToday();
 
-
     /* ==================================================
        QUERY CUTI AKTIF HARI INI
     ================================================== */
-
     const cutiQuery =
         query(
-
             collection(
                 smartofficeFirestore,
                 "cuti"
@@ -370,33 +345,26 @@ export async function smartofficeGetSedangCutiFirestore(){
                 ">=",
                 today
             )
-
         );
-
 
     /* ==================================================
        AMBIL SEMUA CUTI YANG SEDANG BERLANGSUNG
     ================================================== */
-
     const snapshot =
         await getDocs(
             cutiQuery
         );
 
-
     /* ==================================================
        FORMAT DATA
     ================================================== */
-
     const result =
         snapshot.docs.map(
             docSnapshot => {
-
                 const data =
                     docSnapshot.data();
 
                 return {
-
                     idCuti:
                         data.idCuti ||
                         docSnapshot.id,
@@ -420,17 +388,13 @@ export async function smartofficeGetSedangCutiFirestore(){
                     jenisCuti:
                         data.jenisCuti ||
                         ""
-
                 };
-
             }
         );
-
 
     /* ==================================================
        URUTKAN BERDASARKAN TANGGAL AWAL CUTI
     ================================================== */
-
     result.sort(
         (a,b) =>
             String(
@@ -443,7 +407,5 @@ export async function smartofficeGetSedangCutiFirestore(){
             )
     );
 
-
     return result;
-
 }

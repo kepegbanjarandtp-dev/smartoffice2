@@ -35,17 +35,13 @@ import {
    IMPORT — SERVICE
 ====================================================== */
 import {
-    smartofficeGetTotalPendingApproval,
-    smartofficeGetTotalPendingApprovalAll,
     smartofficeGetDashboardStats,
     smartofficeGetSedangCutiFirestore
 } from "../../services/dashboard.service.js";
 
 import {
-    smartofficeGetTotalPendingApprovalFirestore,
-    smartofficeGetDokumenVerifikasiFirestore,
-    smartofficeGetTotalApprovalSPDFirestore
-} from "../../services/approval-firestore.service.js";
+    smartofficeGetTotalPendingApprovalFirestore
+} from "../../services/dashboard-firestore.service.js";
 
 /* ======================================================
    IMPORT — ASSET
@@ -631,160 +627,25 @@ async function smartofficeLoadApprovalBadge(
     sessionData,
     pageInstance
 ){
-    /* =========================
-       USER
-       TIDAK PERLU REQUEST
-    ========================= */
-    if(
-        sessionData.role === "USER"
-    ){
+    if(sessionData.role === "USER"){
         return;
     }
 
     try{
-        let total = 0;
+        const total =
+            await smartofficeGetTotalPendingApprovalFirestore(
+                sessionData.nip,
+                sessionData.role
+            );
 
-        /* ==================================================
-           PJ
-           CUTI + DOKUMEN + SPD
-        ================================================== */
         if(
-            sessionData.role === "PJ"
-        ){
-            /* =========================
-               APPROVAL CUTI + DOKUMEN
-            ========================= */
-            const totalCutiDokumen =
-                await smartofficeGetTotalPendingApprovalAll(
-                    sessionData.nip,
-                    sessionData.role
-                );
-            if(
-                pageInstance !==
-                    smartofficeDashboardPageInstance ||
-
-                smartofficeDashboardDestroyed
-            ){
-                return;
-            }
-
-            /* =========================
-               APPROVAL SPD
-            ========================= */
-            const totalSPD =
-                await smartofficeGetTotalApprovalSPDFirestore();
-            if(
-                pageInstance !==
-                    smartofficeDashboardPageInstance ||
-
-                smartofficeDashboardDestroyed
-            ){
-                return;
-            }
-
-            total =
-                Number(
-                    totalCutiDokumen
-                ) +
-
-                Number(
-                    totalSPD
-                );
-        }
-
-        /* ==================================================
-           ADMIN / SUPERADMIN
-           DOKUMEN + SPD
-        ================================================== */
-        else if(
-            sessionData.role === "ADMIN" ||
-            sessionData.role === "SUPERADMIN"
-        ){
-            /* =========================
-               DOKUMEN
-            ========================= */
-            const dokumen =
-                await smartofficeGetDokumenVerifikasiFirestore();
-            if(
-                pageInstance !==
-                    smartofficeDashboardPageInstance ||
-
-                smartofficeDashboardDestroyed
-            ){
-                return;
-            }
-
-            const totalDokumen =
-                Array.isArray(dokumen)
-                    ? dokumen.length
-                    : 0;
-
-            /* =========================
-               SPD
-            ========================= */
-            const totalSPD =
-                await smartofficeGetTotalApprovalSPDFirestore();
-            if(
-                pageInstance !==
-                    smartofficeDashboardPageInstance ||
-
-                smartofficeDashboardDestroyed
-            ){
-                return;
-            }
-
-            total =
-                Number(
-                    totalDokumen
-                ) +
-
-                Number(
-                    totalSPD
-                );
-        }
-
-        /* ==================================================
-           KAPUS
-           CUTI SAJA
-
-           TETAP DIPERTAHANKAN
-        ================================================== */
-        else if(
-            sessionData.role === "KAPUS"
-        ){
-            total =
-                await smartofficeGetTotalPendingApprovalFirestore(
-                    sessionData.nip,
-                    sessionData.role
-                );
-            if(
-                pageInstance !==
-                    smartofficeDashboardPageInstance ||
-
-                smartofficeDashboardDestroyed
-            ){
-                return;
-            }
-        }
-
-        /* ==================================================
-           VALIDASI LIFECYCLE
-        ================================================== */
-        if(
-            pageInstance !==
-                smartofficeDashboardPageInstance ||
-
+            pageInstance !== smartofficeDashboardPageInstance ||
             smartofficeDashboardDestroyed
         ){
             return;
         }
 
-        /* ==================================================
-           UPDATE BADGE
-        ================================================== */
-        smartofficeUpdateApprovalBadge(
-            total
-        );
+        smartofficeUpdateApprovalBadge(total);
     }
     catch(error){
         console.error(
@@ -793,7 +654,6 @@ async function smartofficeLoadApprovalBadge(
         );
     }
 }
-
 
 /* ======================================================
    3.2 UPDATE APPROVAL BADGE

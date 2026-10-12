@@ -24,6 +24,17 @@ const SMARTOFFICE_NOTIFICATION_LIMIT = 20;
 
 
 /* ======================================================
+   BATAS WAKTU NOTIFIKASI
+   HANYA 3 HARI TERAKHIR (72 JAM)
+====================================================== */
+function smartofficeGetNotificationTimeLimit(){
+    return new Date(
+        Date.now() - (3 * 24 * 60 * 60 * 1000)
+    );
+}
+
+
+/* ======================================================
    NORMALISASI FIRESTORE TIMESTAMP
 ====================================================== */
 function smartofficeNormalizeNotification(notification) {
@@ -119,17 +130,28 @@ export async function smartofficeGetNotificationsFromFirestore(
                 smartofficeFirestore,
                 "notifications"
             );
-
+        
         /* ==============================================
-           QUERY USER
+        QUERY USER
+        HANYA NOTIFIKASI 3 HARI TERAKHIR
         ============================================== */
+        const batasWaktu =
+            smartofficeGetNotificationTimeLimit();
+
         const notificationQuery =
             query(
                 notificationRef,
+
                 where(
                     "recipientNip",
                     "==",
                     nip
+                ),
+
+                where(
+                    "time",
+                    ">=",
+                    batasWaktu
                 ),
 
                 orderBy(
@@ -245,18 +267,28 @@ export function smartofficeListenNotificationsFromFirestore(
                 smartofficeFirestore,
                 "notifications"
             );
-
+        
         /* ==============================================
-           QUERY
+        QUERY REALTIME
+        HANYA NOTIFIKASI 3 HARI TERAKHIR
         ============================================== */
+        const batasWaktu =
+            smartofficeGetNotificationTimeLimit();
+
         const notificationQuery =
             query(
-
                 notificationRef,
+
                 where(
                     "recipientNip",
                     "==",
                     nip
+                ),
+
+                where(
+                    "time",
+                    ">=",
+                    batasWaktu
                 ),
 
                 orderBy(

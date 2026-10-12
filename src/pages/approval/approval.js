@@ -56,7 +56,8 @@ import {
     smartofficeGetApprovalCutiFirestore,
     smartofficeGetDokumenVerifikasiFirestore,
     smartofficeWatchVerifikasiDokumenFirestore,
-    smartofficeGetApprovalSPDFirestore
+    smartofficeGetApprovalSPDFirestore,
+    smartofficeWatchApprovalCutiFirestore
 } from "../../services/approval-firestore.service.js";
 
 /* ======================================================
@@ -79,7 +80,10 @@ import {
 /* ======================================================
    APPROVAL STATE
 ====================================================== */
-const smartofficeApprovalState = { idCuti:'' };
+const smartofficeApprovalState = {
+    idCuti: '',
+    status: ''
+};
 let smartofficeApprovalAction = "";
 let smartofficeSubmittingApproval = false;
 
@@ -1269,6 +1273,9 @@ function smartofficeOpenApprovalDetail(
   smartofficeApprovalState.idCuti =
     item.idCuti;
 
+  smartofficeApprovalState.status =
+    String(item.status || "").trim();
+
   /* =========================
      MODAL
   ========================= */
@@ -1773,6 +1780,7 @@ export function smartofficeCloseApprovalDetail(){
 
   smartofficeApprovalState.idCuti =
     "";
+  smartofficeApprovalState.status = "";
 
   /* RESET FORM */
   const textarea =
@@ -3093,193 +3101,359 @@ window.smartofficeCloseApprovalDetail =
     smartofficeCloseApprovalDetail;
 
 
+
+/* ======================================================
+   TUNGGU APPROVAL CUTI
+   GAS SUCCESS ATAU FIRESTORE VERIFIED
+====================================================== */
+function smartofficeWaitApprovalCuti(
+    idCuti,
+    action,
+    nip,
+    catatan
+){
+    const targetId =
+        String(idCuti || "").trim();
+
+    const currentStatus =
+        String(
+            smartofficeApprovalState.status || ""
+        ).trim();
+
+    const approvalAction =
+        String(action || "").trim();
+
+    /*
+     * TENTUKAN STATUS AKHIR SESUAI TAHAP
+     */
+    let expectedStatus = "";
+
+    if(approvalAction === "REJECT"){
+        expectedStatus = "DITOLAK";
+    }
+    else if(
+        approvalAction === "APPROVE" &&
+        currentStatus === "MENUNGGU_APPROVAL_1"
+    ){
+        expectedStatus = "MENUNGGU_APPROVAL_2";
+    }
+    else if(
+        approvalAction === "APPROVE" &&
+        currentStatus === "MENUNGGU_APPROVAL_2"
+    ){
+        expectedStatus = "DISETUJUI";
+    }
+
+    if(!targetId){
+        return Promise.reject(
+            new Error("ID cuti tidak ditemukan.")
+        );
+    }
+
+    if(!expectedStatus){
+        return Promise.reject(
+            new Error(
+                "Status approval tidak valid. Silakan muat ulang daftar approval."
+            )
+        );
+    }
+
+    return new Promise(
+        (resolve, reject) => {
+
+            let selesai = false;
+            let unsubscribe = null;
+            let timeoutTimer = null;
+
+            const finish = (result) => {
+                if(selesai) return;
+
+                selesai = true;
+
+                if(timeoutTimer){
+                    clearTimeout(timeoutTimer);
+                    timeoutTimer = null;
+                }
+
+                if(typeof unsubscribe === "function"){
+                    unsubscribe();
+                    unsubscribe = null;
+                }
+
+                resolve(result);
+            };
+
+            const fail = (error) => {
+                if(selesai) return;
+
+                selesai = true;
+
+                if(timeoutTimer){
+                    clearTimeout(timeoutTimer);
+                    timeoutTimer = null;
+                }
+
+                if(typeof unsubscribe === "function"){
+                    unsubscribe();
+                    unsubscribe = null;
+                }
+
+                reject(error);
+            };
+
+            /*
+             * WATCH FIRESTORE TERLEBIH DAHULU
+             */
+            unsubscribe =
+                smartofficeWatchApprovalCutiFirestore(
+                    targetId,
+                    firestoreResult => {
+
+                        if(selesai) return;
+
+                        if(firestoreResult?.error){
+                            console.warn(
+                                "WATCH APPROVAL CUTI ERROR:",
+                                firestoreResult.message
+                            );
+                            return;
+                        }
+
+                        const status =
+                            String(
+                                firestoreResult?.status || ""
+                            ).trim();
+
+                        console.log(
+                            "WATCH APPROVAL CUTI:",
+                            targetId,
+                            {
+                                currentStatus,
+                                expectedStatus,
+                                status
+                            }
+                        );
+
+                        if(status === expectedStatus){
+                            finish({
+                                success: true,
+                                source: "firestore",
+                                status,
+                                response: null
+                            });
+                        }
+                    }
+                );
+
+            /*
+             * BATAS WAKTU KESELURUHAN
+             */
+            timeoutTimer = setTimeout(
+                () => {
+                    fail(
+                        new Error(
+                            "Approval belum terkonfirmasi. Silakan periksa status cuti sebelum mencoba kembali."
+                        )
+                    );
+                },
+                40000
+            );
+
+            /*
+             * KIRIM PROSES KE GAS SETELAH WATCHER AKTIF
+             */
+            smartofficeProcessApprovalCuti(
+                targetId,
+                approvalAction,
+                nip,
+                catatan
+            )
+            .then(response => {
+                if(selesai) return;
+
+                if(response?.success === true){
+                    finish({
+                        success: true,
+                        source: "gas",
+                        status: expectedStatus,
+                        response
+                    });
+                    return;
+                }
+
+                /*
+                 * Jika GAS belum memberi sukses,
+                 * Firestore tetap ditunggu.
+                 */
+                console.warn(
+                    "GAS APPROVAL CUTI BELUM SUCCESS:",
+                    targetId,
+                    response
+                );
+            })
+            .catch(error => {
+                if(selesai) return;
+
+                /*
+                 * Jangan langsung gagal.
+                 * Bisa saja GAS berhasil menulis,
+                 * tetapi responsnya terputus.
+                 */
+                console.warn(
+                    "GAS APPROVAL CUTI ERROR, FIRESTORE MASIH DITUNGGU:",
+                    targetId,
+                    error
+                );
+            });
+        }
+    );
+}
+
+
 /* ======================================================
    SUBMIT APPROVAL ACTION
 ====================================================== */
 async function smartofficeSubmitApprovalAction(){
 
-  /* PREVENT DOUBLE CLICK */
-  if(
-    smartofficeSubmittingApproval
-  ){
-    return;
-  }
+    /* PREVENT DOUBLE CLICK */
+    if(smartofficeSubmittingApproval){
+        return;
+    }
 
-  /* =========================
-     SESSION
-  ========================= */
-  const sessionData =
-    smartofficeGetSession();
+    const sessionData =
+        smartofficeGetSession();
 
-  /* =========================
-     ACTION
-  ========================= */
-  const action =
-    smartofficeApprovalAction;
-  if(
-      action !== "APPROVE" &&
-      action !== "REJECT"
-  ){
-      smartofficeShowToast(
-          "Silakan pilih Approve atau Reject terlebih dahulu.",
-          "error"
-      );
-      return;
-  }
+    const action =
+        smartofficeApprovalAction;
+    if(
+        action !== "APPROVE" &&
+        action !== "REJECT"
+    ){
+        smartofficeShowToast(
+            "Silakan pilih Approve atau Reject terlebih dahulu.",
+            "error"
+        );
+        return;
+    }
 
-  console.log(
-      "SMARTOFFICE APPROVAL ACTION SEBELUM SUBMIT:",
-      action
-  );
+    const textarea =
+        document.getElementById(
+            "smartofficeApprovalCatatan"
+        );
 
-  /* =========================
-     CATATAN
-  ========================= */
-  const textarea =
-    document.getElementById(
-      "smartofficeApprovalCatatan"
-    );
+    const catatan =
+        textarea
+            ? textarea.value.trim()
+            : "";
 
-  const catatan =
-    textarea
-      ? textarea.value.trim()
-      : "";
+    if(action === "REJECT" && !catatan){
+        smartofficeShowToast(
+            "Catatan reject wajib diisi",
+            "error"
+        );
+        return;
+    }
 
-  /* =========================
-     VALIDASI REJECT
-  ========================= */
-  if(
-    action === "REJECT"
-    &&
-    !catatan
-  ){
-    smartofficeShowToast(
-      "Catatan reject wajib diisi",
-      "error"
-    );
+    const submitButton =
+        document.getElementById(
+            "smartofficeApprovalSubmitButton"
+        );
 
-    return;
-  }
-
-  /* =========================
-     BUTTON
-  ========================= */
-  const submitButton =
-    document.getElementById(
-      "smartofficeApprovalSubmitButton"
-    );
-
-  /* =========================
-     LOCK
-  ========================= */
-  smartofficeSubmittingApproval =
-    true;
-
-  /* =========================
-     DISABLE BUTTON
-  ========================= */
-  if(
-    submitButton
-  ){
-    submitButton.disabled =
-      true;
-  }
-
-  /* =========================
-     BUTTON TEXT
-  ========================= */
-  if(
-    submitButton
-  ){
-    submitButton.innerHTML =
-      action === "REJECT"
-        ? "Menolak..."
-        : "Menyetujui...";
-  }
-
-  /* =========================
-     GLOBAL LOADING
-  ========================= */
-  smartofficeShowGlobalLoading(
-    action === "REJECT"
-      ? "Memproses penolakan..."
-      : "Memproses persetujuan..."
-  );
-
-  try{
-
-    /* =========================
-       PROCESS APPROVAL
-    ========================= */
-    const response =
-      await smartofficeProcessApprovalCuti(
-        smartofficeApprovalState.idCuti,
-        action,
-        sessionData.nip,
-        catatan
-      );
-
-    /* =========================
-       SUCCESS
-    ========================= */
-    smartofficeShowToast(
-      response.message,
-      "success"
-    );
-
-    /* =========================
-      SIMPAN ID CUTI
-    ========================= */
     const idCuti =
         smartofficeApprovalState.idCuti;
 
-    /* =========================
-       CLOSE MODAL
-    ========================= */
-    smartofficeCloseApprovalDetail();
+    smartofficeSubmittingApproval = true;
 
-    /* =========================
-      UPDATE UI LANGSUNG
-      TANPA GET ULANG
-    ========================= */
-    smartofficeRemoveApprovalCutiFromUI(
-        idCuti
-    );
-  }catch(error){
-    smartofficeShowToast(
-      error.message ||
-      "Terjadi kesalahan.",
-      "error"
-    );
-
-  }finally{
-
-    /* =========================
-       HIDE GLOBAL LOADING
-    ========================= */
-    smartofficeHideGlobalLoading();
-
-    /* =========================
-       RESET STATE
-    ========================= */
-    smartofficeSubmittingApproval =
-      false;
-
-    /* =========================
-       ENABLE BUTTON
-    ========================= */
-    if(
-      submitButton
-    ){
-      submitButton.disabled =
-        false;
-
-      submitButton.innerHTML =
-        action === "REJECT"
-          ? "Tolak"
-          : "Setujui";
+    if(submitButton){
+        submitButton.disabled = true;
+        submitButton.innerHTML =
+            action === "REJECT"
+                ? "Menolak..."
+                : "Menyetujui...";
     }
-  }
+
+    smartofficeShowGlobalLoading(
+        action === "REJECT"
+            ? "Memproses penolakan..."
+            : "Memproses persetujuan..."
+    );
+
+    try{
+        /*
+         * WATCH FIRESTORE + PROSES GAS
+         */
+        const result =
+            await smartofficeWaitApprovalCuti(
+                idCuti,
+                action,
+                sessionData.nip,
+                catatan
+            );
+        if(!result?.success){
+            throw new Error(
+                "Approval belum berhasil dikonfirmasi."
+            );
+        }
+
+        /*
+         * PESAN BERDASARKAN TAHAP APPROVAL
+         */
+        let successMessage = "";
+
+        if(action === "REJECT"){
+            successMessage =
+                "Pengajuan cuti berhasil ditolak.";
+        }
+        else if(
+            smartofficeApprovalState.status ===
+            "MENUNGGU_APPROVAL_1"
+        ){
+            successMessage =
+                "Approval 1 berhasil. Pengajuan diteruskan ke Approval 2.";
+        }
+        else{
+            successMessage =
+                "Approval 2 berhasil. Pengajuan cuti telah disetujui.";
+        }
+
+        smartofficeShowToast(
+            successMessage,
+            "success"
+        );
+
+        /*
+         * TUTUP MODAL
+         */
+        smartofficeCloseApprovalDetail();
+
+        /*
+         * HAPUS DARI DAFTAR PENDING PENGGUNA SAAT INI
+         *
+         * Jika Approval 1 yang memproses, pengajuan
+         * tetap masuk antrean Approval 2 melalui Firestore.
+         */
+        smartofficeRemoveApprovalCutiFromUI(
+            idCuti
+        );
+
+    }catch(error){
+        smartofficeShowToast(
+            error.message ||
+            "Terjadi kesalahan saat memproses approval.",
+            "error"
+        );
+
+    }finally{
+        smartofficeHideGlobalLoading();
+        smartofficeSubmittingApproval = false;
+        if(submitButton){
+            submitButton.disabled = false;
+            submitButton.innerHTML =
+                action === "REJECT"
+                    ? "Tolak"
+                    : "Setujui";
+        }
+    }
 }
 
 

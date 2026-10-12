@@ -13,6 +13,62 @@ import {
 } from "../core/firebase-firestore.js";
 
 
+
+/* ======================================================
+   CACHE MASTER DOKUMEN
+   TTL: 5 MENIT
+====================================================== */
+const SMARTOFFICE_MASTER_DOKUMEN_CACHE_MS = 5 * 60 * 1000;
+
+let smartofficeMasterDokumenCache = null;
+let smartofficeMasterDokumenCacheTime = 0;
+let smartofficeMasterDokumenRequest = null;
+
+async function smartofficeGetMasterDokumenSnapshotCached() {
+
+    const now = Date.now();
+
+    // Gunakan cache jika masih berlaku
+    if (
+        smartofficeMasterDokumenCache &&
+        now - smartofficeMasterDokumenCacheTime <
+            SMARTOFFICE_MASTER_DOKUMEN_CACHE_MS
+    ) {
+        return smartofficeMasterDokumenCache;
+    }
+
+    // Cegah beberapa pemanggilan membaca koleksi bersamaan
+    if (smartofficeMasterDokumenRequest) {
+        return smartofficeMasterDokumenRequest;
+    }
+
+    smartofficeMasterDokumenRequest = getDocs(
+        collection(
+            smartofficeFirestore,
+            "masterDokumen"
+        )
+    )
+        .then(snapshot => {
+            smartofficeMasterDokumenCache = snapshot;
+            smartofficeMasterDokumenCacheTime = Date.now();
+
+            return snapshot;
+        })
+        .catch(error => {
+            // Izinkan percobaan ulang jika pembacaan gagal
+            smartofficeMasterDokumenCache = null;
+            smartofficeMasterDokumenCacheTime = 0;
+
+            throw error;
+        })
+        .finally(() => {
+            smartofficeMasterDokumenRequest = null;
+        });
+
+    return smartofficeMasterDokumenRequest;
+}
+
+
 /* ======================================================
    GET MASTER DOKUMEN PEGAWAI
 ====================================================== */
@@ -278,12 +334,7 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
            GET MASTER DOKUMEN
         ========================= */
         const snapshot =
-            await getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "masterDokumen"
-                )
-            );
+            await smartofficeGetMasterDokumenSnapshotCached();
 
         /* =========================
            FILTER MASTER DOKUMEN
@@ -962,7 +1013,7 @@ export function smartofficeWatchSubmitDokumenFirestore(
                 function(){}
         };
     }
-
+    
     const q =
         query(
             collection(
@@ -973,8 +1024,14 @@ export function smartofficeWatchSubmitDokumenFirestore(
                 "nip",
                 "==",
                 targetNip
+            ),
+            where(
+                "kodeDokumen",
+                "==",
+                targetKode
             )
         );
+
 
     let readyResolve;
     let readyReject;

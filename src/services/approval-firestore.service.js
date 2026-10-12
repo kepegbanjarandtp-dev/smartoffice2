@@ -4,138 +4,115 @@
 import {
     collection,
     getDocs,
+    getCountFromServer,
     query,
     where,
     doc,
     onSnapshot
 } from "firebase/firestore";
 
+
 import {
     smartofficeFirestore
 } from "../core/firebase-firestore.js";
 
 
+
 /* ======================================================
    GET APPROVAL CUTI
+   OPTIMASI: FILTER LANGSUNG DI FIRESTORE
 ====================================================== */
 export async function smartofficeGetApprovalCutiFirestore(nip){
 
     try{
-        const loginNip =
-            String(nip || "")
-                .replace(/'/g, "")
-                .replace(/\.0$/, "")
-                .trim();
+        const loginNip = String(nip || "")
+            .replace(/'/g, "")
+            .replace(/\.0$/, "")
+            .trim();
+
         if(!loginNip){
             return [];
         }
 
-        /* ==================================================
-           AMBIL DATA CUTI
-        ================================================== */
-        const snapshot =
-            await getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "cuti"
-                )
-            );
+        const cutiCollection = collection(
+            smartofficeFirestore,
+            "cuti"
+        );
 
-        /* ==================================================
-           FILTER SESUAI HAK APPROVAL
-        ================================================== */
-        const result =
-            snapshot.docs
-                .map(docSnapshot => {
-                    const data =
-                        docSnapshot.data();
+        /* APPROVAL TAHAP 1 */
+        const approval1Query = query(
+            cutiCollection,
+            where("recordStatus", "==", "ACTIVE"),
+            where("status", "==", "MENUNGGU_APPROVAL_1"),
+            where("approval1Nip", "==", loginNip)
+        );
 
-                    return {
-                        idCuti:
-                            data.idCuti ||
-                            docSnapshot.id,
+        /* APPROVAL TAHAP 2 */
+        const approval2Query = query(
+            cutiCollection,
+            where("recordStatus", "==", "ACTIVE"),
+            where("status", "==", "MENUNGGU_APPROVAL_2"),
+            where("approval2Nip", "==", loginNip)
+        );
 
-                        tanggalSurat:
-                            data.tanggalSuratPermohonan || "-",
+        const [
+            approval1Snapshot,
+            approval2Snapshot
+        ] = await Promise.all([
+            getDocs(approval1Query),
+            getDocs(approval2Query)
+        ]);
 
-                        nama:
-                            data.nama || "",
+        const result = [];
 
-                        nip:
-                            data.nipNrp || "",
+        function mapCuti(docSnapshot){
+            const data = docSnapshot.data();
 
-                        jabatan:
-                            data.jabatan || "",
+            return {
+                idCuti:
+                    data.idCuti || docSnapshot.id,
 
-                        statusKepegawaian:
-                            data.statusKepegawaian || "",
+                tanggalSurat:
+                    data.tanggalSuratPermohonan || "-",
 
-                        jenisCuti:
-                            data.jenisCuti || "",
+                nama: data.nama || "",
+                nip: data.nipNrp || "",
+                jabatan: data.jabatan || "",
+                statusKepegawaian: data.statusKepegawaian || "",
+                jenisCuti: data.jenisCuti || "",
+                tanggalAwal: data.tanggalAwalCuti || "",
+                tanggalAkhir: data.tanggalAkhirCuti || "",
+                jumlahCuti: data.jumlahCuti || 0,
+                keperluan: data.keperluan || "",
+                lampiran: data.fileLampiranUrl || "",
+                delegasi: data.penerimaDelegasi || "",
+                nipDelegasi: data.nipNrpDelegasi || "-",
+                tugasDelegasi: data.tugasYangDidelegasikan || "",
+                alamatSaatCuti: data.alamatSaatCuti || "-",
+                sisaCuti: data.sisaCuti || 0,
+                masaKerja: data.masaKerja || "-",
 
-                        tanggalAwal:
-                            data.tanggalAwalCuti || "",
+                status: String(data.status || "").trim(),
 
-                        tanggalAkhir:
-                            data.tanggalAkhirCuti || "",
+                approval1Nip: String(data.approval1Nip || "")
+                    .replace(/'/g, "")
+                    .replace(/\.0$/, "")
+                    .trim(),
 
-                        jumlahCuti:
-                            data.jumlahCuti || 0,
+                approval2Nip: String(data.approval2Nip || "")
+                    .replace(/'/g, "")
+                    .replace(/\.0$/, "")
+                    .trim()
+            };
+        }
 
-                        keperluan:
-                            data.keperluan || "",
+        approval1Snapshot.forEach(docSnapshot => {
+            result.push(mapCuti(docSnapshot));
+        });
 
-                        lampiran:
-                            data.fileLampiranUrl || "",
-
-                        delegasi:
-                            data.penerimaDelegasi || "",
-
-                        nipDelegasi:
-                            data.nipNrpDelegasi || "-",
-
-                        tugasDelegasi:
-                            data.tugasYangDidelegasikan || "",
-
-                        alamatSaatCuti:
-                            data.alamatSaatCuti || "-",
-
-                        sisaCuti:
-                            data.sisaCuti || 0,
-
-                        masaKerja:
-                            data.masaKerja || "-",
-
-                        status:
-                            String(data.status || "").trim(),
-
-                        approval1Nip:
-                            String(data.approval1Nip || "")
-                                .replace(/'/g, "")
-                                .replace(/\.0$/, "")
-                                .trim(),
-
-                        approval2Nip:
-                            String(data.approval2Nip || "")
-                                .replace(/'/g, "")
-                                .replace(/\.0$/, "")
-                                .trim()
-                    };
-                })
-                .filter(item => {
-                    const isApproval1 =
-                        item.status === "MENUNGGU_APPROVAL_1" &&
-                        item.approval1Nip === loginNip;
-
-                    const isApproval2 =
-                        item.status === "MENUNGGU_APPROVAL_2" &&
-                        item.approval2Nip === loginNip;
-
-                    return (
-                        isApproval1 ||
-                        isApproval2
-                    );
-                });
+        approval2Snapshot.forEach(docSnapshot => {
+            result.push(mapCuti(docSnapshot));
+        });
 
         return result;
     }
@@ -235,6 +212,152 @@ export async function smartofficeGetDokumenVerifikasiFirestore(){
         );
     }
 }
+
+
+/* ======================================================
+   GET APPROVAL SPD — FIRESTORE
+   OPTIMASI: FILTER STATUS LANGSUNG DI FIRESTORE
+
+   ROLE:
+   - PJ
+   - ADMIN
+   - SUPERADMIN
+
+   STATUS:
+   - MENUNGGU REVIEW
+   - PERLU REVISI
+====================================================== */
+export async function smartofficeGetApprovalSPDFirestore(){
+
+    try{
+        const spdQuery = query(
+            collection(
+                smartofficeFirestore,
+                "smartspdBLUD"
+            ),
+            where("STATUS_SPD", "in", [
+                "MENUNGGU REVIEW",
+                "PERLU REVISI"
+            ])
+        );
+
+        const snapshot = await getDocs(spdQuery);
+
+        const result = snapshot.docs.map(docSnapshot => {
+            const data = docSnapshot.data();
+
+            return {
+                idSPD:
+                    data["ID SPD"] ||
+                    data.idSPD ||
+                    docSnapshot.id,
+
+                nama:
+                    data["Nama"] || "",
+
+                nip:
+                    data["NIP / NRP"] || "",
+
+                pangkatGolongan:
+                    data["Pangkat & Golongan"] || "",
+
+                jabatan:
+                    data["Jabatan"] || "",
+
+                kegiatan:
+                    data["Kegiatan"] || "",
+
+                lokasi:
+                    data["Lokasi"] || "",
+
+                tanggalSPD:
+                    data["Tanggal SPD Dibuat"] || "",
+
+                tanggalBerangkat:
+                    data["Tanggal Berangkat"] || "",
+
+                tanggalPulang:
+                    data["Tanggal Pulang"] || "",
+
+                jumlahHari:
+                    data["Jumlah Hari"] || "",
+
+                tipeKeberangkatan:
+                    data["Tipe Keberangkatan"] || "",
+
+                jenisPerjalananDinas:
+                    data["JENIS_PERJALANAN_DINAS"] || "",
+
+                statusSPD:
+                    String(data["STATUS_SPD"] || "").trim(),
+
+                reviewer:
+                    data["REVIEWER"] || "",
+
+                reviewerNip:
+                    data["REVIEWER_NIP"] || "",
+
+                tglReview:
+                    data["TGL_REVIEW_SPD"] || "",
+
+                tglApprove:
+                    data["TGL_APPROVE_SPD"] || "",
+
+                tglRevisi:
+                    data["TGL_REVISI_SPD"] || "",
+
+                catatanRevisi:
+                    data["CATATAN_REVISI_SPD"] || "",
+
+                totalRevisi:
+                    data["TOTAL_REVISI_SPD"] || "0",
+
+                linkPdf:
+                    data["LINK_PDF_SPD"] || "",
+
+                statusData:
+                    data["STATUS_DATA"] || "",
+
+                pdfGenerated:
+                    data["PDF_GENERATED"] || "",
+
+                lastUpdate:
+                    data["LAST_UPDATE"] || "",
+
+                pengikut: [
+                    data["Nama Pengikut 1"] || "",
+                    data["Nama Pengikut 2"] || "",
+                    data["Nama Pengikut 3"] || "",
+                    data["Nama Pengikut 4"] || ""
+                ],
+
+                raw: data
+            };
+        });
+
+        /* URUTKAN TERBARU */
+        result.sort((a, b) => {
+            const dateA = String(a.tanggalSPD || "");
+            const dateB = String(b.tanggalSPD || "");
+
+            return dateB.localeCompare(dateA);
+        });
+
+        return result;
+    }
+    catch(error){
+        console.error(
+            "Firestore Get Approval SPD Error:",
+            error
+        );
+
+        throw new Error(
+            error?.message ||
+            "Gagal mengambil approval SPD dari Firestore."
+        );
+    }
+}
+
 
 
 /* ======================================================
@@ -349,389 +472,105 @@ export function smartofficeWatchVerifikasiDokumenFirestore(
 
 
 /* ======================================================
-   GET TOTAL PENDING APPROVAL
-   CUTI + DOKUMEN
+   WATCH STATUS APPROVAL CUTI
 ====================================================== */
-export async function smartofficeGetTotalPendingApprovalFirestore(
-    nip,
-    role
+export function smartofficeWatchApprovalCutiFirestore(
+    idCuti,
+    callback
 ){
-    try{
-        const loginNip =
-            String(nip || "")
-                .replace(/'/g, "")
-                .replace(/\.0$/, "")
-                .trim();
+    const targetId =
+        String(idCuti || "").trim();
 
-        /* ==================================================
-           PENDING CUTI
-        ================================================== */
-        const cutiSnapshot =
-            await getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "cuti"
-                )
-            );
-
-        let totalCuti = 0;
-
-        cutiSnapshot.docs.forEach(
-            docSnapshot => {
-                const data =
-                    docSnapshot.data();
-
-                const recordStatus =
-                    String(
-                        data.recordStatus || ""
-                    ).trim();
-
-                if(recordStatus !== "ACTIVE"){
-                    return;
-                }
-
-                const status =
-                    String(
-                        data.status || ""
-                    ).trim();
-
-                const approval1Nip =
-                    String(
-                        data.approval1Nip || ""
-                    )
-                    .replace(/'/g, "")
-                    .replace(/\.0$/, "")
-                    .trim();
-
-                const approval2Nip =
-                    String(
-                        data.approval2Nip || ""
-                    )
-                    .replace(/'/g, "")
-                    .replace(/\.0$/, "")
-                    .trim();
-
-                const isApproval1 =
-                    status === "MENUNGGU_APPROVAL_1" &&
-                    approval1Nip === loginNip;
-
-                const isApproval2 =
-                    status === "MENUNGGU_APPROVAL_2" &&
-                    approval2Nip === loginNip;
-                if(
-                    isApproval1 ||
-                    isApproval2
-                ){
-                    totalCuti++;
-                }
-            }
+    if(!targetId){
+        console.warn(
+            "WATCH APPROVAL CUTI: ID cuti kosong."
         );
 
-        /* ==================================================
-           PENDING DOKUMEN
-        ================================================== */
-        let totalDokumen = 0;
-
-        if(
-            role === "PJ" ||
-            role === "ADMIN" ||
-            role === "SUPERADMIN"
-        ){
-            const dokumenSnapshot =
-                await getDocs(
-                    query(
-                        collection(
-                            smartofficeFirestore,
-                            "dokumenPegawai"
-                        ),
-                        where(
-                            "statusVerifikasi",
-                            "==",
-                            "MENUNGGU_VERIFIKASI"
-                        )
-                    )
-                );
-
-            totalDokumen =
-                dokumenSnapshot.size;
-        }
-
-        /* ==================================================
-           TOTAL
-        ================================================== */
-        return totalCuti + totalDokumen;
+        return function(){};
     }
-    catch(error){
-        console.error(
-            "Firestore Total Pending Approval Error:",
-            error
+
+    if(typeof callback !== "function"){
+        console.warn(
+            "WATCH APPROVAL CUTI: callback tidak valid."
         );
 
-        throw new Error(
-            error?.message ||
-            "Gagal menghitung total pending approval."
-        );
+        return function(){};
     }
-}
-
-
-/* ======================================================
-   GET APPROVAL SPD — FIRESTORE
-
-   ROLE:
-   - PJ
-   - ADMIN
-   - SUPERADMIN
-
-   STATUS:
-   - MENUNGGU REVIEW
-   - PERLU REVISI
-====================================================== */
-export async function smartofficeGetApprovalSPDFirestore(){
 
     try{
-        /* ==================================================
-           AMBIL SEMUA DATA SPD
-        ================================================== */
-        const snapshot =
-            await getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "smartspdBLUD"
-                )
+        const cutiRef =
+            doc(
+                smartofficeFirestore,
+                "cuti",
+                targetId
             );
 
-        /* ==================================================
-           FILTER STATUS APPROVAL SPD
-        ================================================== */
-        const result =
-            snapshot.docs
-                .map(
-                    docSnapshot => {
-                        const data =
-                            docSnapshot.data();
+        const unsubscribe =
+            onSnapshot(
+                cutiRef,
 
-                        return {
-                            idSPD:
-                                data["ID SPD"] ||
-                                data.idSPD ||
-                                docSnapshot.id,
-
-                            nama:
-                                data["Nama"] ||
-                                "",
-
-                            nip:
-                                data["NIP / NRP"] ||
-                                "",
-
-                            pangkatGolongan:
-                                data["Pangkat & Golongan"] ||
-                                "",
-
-                            jabatan:
-                                data["Jabatan"] ||
-                                "",
-
-                            kegiatan:
-                                data["Kegiatan"] ||
-                                "",
-
-                            lokasi:
-                                data["Lokasi"] ||
-                                "",
-
-                            tanggalSPD:
-                                data["Tanggal SPD Dibuat"] ||
-                                "",
-
-                            tanggalBerangkat:
-                                data["Tanggal Berangkat"] ||
-                                "",
-
-                            tanggalPulang:
-                                data["Tanggal Pulang"] ||
-                                "",
-
-                            jumlahHari:
-                                data["Jumlah Hari"] ||
-                                "",
-
-                            tipeKeberangkatan:
-                                data["Tipe Keberangkatan"] ||
-                                "",
-
-                            jenisPerjalananDinas:
-                                data["JENIS_PERJALANAN_DINAS"] ||
-                                "",
-
-                            statusSPD:
-                                String(
-                                    data["STATUS_SPD"] ||
-                                    ""
-                                ).trim(),
-
-                            reviewer:
-                                data["REVIEWER"] ||
-                                "",
-
-                            reviewerNip:
-                                data["REVIEWER_NIP"] ||
-                                "",
-
-                            tglReview:
-                                data["TGL_REVIEW_SPD"] ||
-                                "",
-
-                            tglApprove:
-                                data["TGL_APPROVE_SPD"] ||
-                                "",
-
-                            tglRevisi:
-                                data["TGL_REVISI_SPD"] ||
-                                "",
-
-                            catatanRevisi:
-                                data["CATATAN_REVISI_SPD"] ||
-                                "",
-
-                            totalRevisi:
-                                data["TOTAL_REVISI_SPD"] ||
-                                "0",
-
-                            linkPdf:
-                                data["LINK_PDF_SPD"] ||
-                                "",
-
-                            statusData:
-                                data["STATUS_DATA"] ||
-                                "",
-
-                            pdfGenerated:
-                                data["PDF_GENERATED"] ||
-                                "",
-
-                            lastUpdate:
-                                data["LAST_UPDATE"] ||
-                                "",
-
-                            pengikut: [
-                                data["Nama Pengikut 1"] ||
-                                "",
-
-                                data["Nama Pengikut 2"] ||
-                                "",
-
-                                data["Nama Pengikut 3"] ||
-                                "",
-
-                                data["Nama Pengikut 4"] ||
-                                ""
-                            ],
-
-                            raw:
-                                data
-                        };
-                    }
-                )
-                .filter(
-                    item => {
-                        return (
-                            item.statusSPD ===
-                                "MENUNGGU REVIEW" ||
-
-                            item.statusSPD ===
-                                "PERLU REVISI"
+                snapshot => {
+                    if(!snapshot.exists()){
+                        console.warn(
+                            "WATCH APPROVAL CUTI: dokumen tidak ditemukan:",
+                            targetId
                         );
+
+                        return;
                     }
-                );
 
-        /* ==================================================
-           URUTKAN TERBARU
-        ================================================== */
-        result.sort(
-            function(a, b){
-                const dateA =
-                    String(
-                        a.tanggalSPD || ""
+                    const data =
+                        snapshot.data();
+
+                    const status =
+                        String(
+                            data.status || ""
+                        ).trim();
+
+                    console.log(
+                        "WATCH APPROVAL CUTI:",
+                        targetId,
+                        {
+                            status
+                        }
                     );
 
-                const dateB =
-                    String(
-                        b.tanggalSPD || ""
+                    callback({
+                        idCuti:
+                            data.idCuti ||
+                            targetId,
+
+                        status,
+                        data
+                    });
+                },
+
+                error => {
+                    console.error(
+                        "WATCH APPROVAL CUTI FIRESTORE ERROR:",
+                        targetId,
+                        error
                     );
 
-                return dateB.localeCompare(
-                    dateA
-                );
-            }
-        );
-
-        return result;
-    }
-    catch(error){
-        console.error(
-            "Firestore Get Approval SPD Error:",
-            error
-        );
-
-        throw new Error(
-            error?.message ||
-            "Gagal mengambil approval SPD dari Firestore."
-        );
-    }
-}
-
-
-/* ======================================================
-   GET TOTAL APPROVAL SPD — FIRESTORE
-====================================================== */
-export async function smartofficeGetTotalApprovalSPDFirestore(){
-
-    try{
-        const snapshot =
-            await getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "smartspdBLUD"
-                )
+                    callback({
+                        error: true,
+                        idCuti: targetId,
+                        message:
+                            error?.message ||
+                            "Gagal memantau status approval cuti."
+                    });
+                }
             );
 
-        let total = 0;
-
-        snapshot.docs.forEach(
-            docSnapshot => {
-                const data =
-                    docSnapshot.data();
-
-                const statusSPD =
-                    String(
-                        data["STATUS_SPD"] ||
-                        ""
-                    ).trim();
-                if(
-                    statusSPD ===
-                        "MENUNGGU REVIEW" ||
-
-                    statusSPD ===
-                        "PERLU REVISI"
-                ){
-                    total++;
-                }
-            }
-        );
-
-        return total;
+        return unsubscribe;
     }
     catch(error){
         console.error(
-            "Firestore Total Approval SPD Error:",
+            "WATCH APPROVAL CUTI INIT ERROR:",
+            targetId,
             error
         );
 
-        throw new Error(
-            error?.message ||
-            "Gagal menghitung approval SPD."
-        );
+        return function(){};
     }
 }

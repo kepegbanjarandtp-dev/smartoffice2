@@ -1,6 +1,21 @@
+import {
+    collection,
+    getDocs,
+    getCountFromServer,
+    query,
+    where
+} from "firebase/firestore";
+
+import {
+    smartofficeFirestore
+} from "../core/firebase-firestore.js";
+
+
+
 /* ======================================================
    GET TOTAL PENDING APPROVAL
-   CUTI + DOKUMEN
+   CUTI + DOKUMEN + SPD
+   OPTIMASI FIRESTORE READ
 ====================================================== */
 export async function smartofficeGetTotalPendingApprovalFirestore(
     nip,
@@ -13,104 +28,111 @@ export async function smartofficeGetTotalPendingApprovalFirestore(
                 .replace(/\.0$/, "")
                 .trim();
 
+        let totalCuti = 0;
+        let totalDokumen = 0;
+        let totalSPD = 0;
+        
         /* ==================================================
-           PENDING CUTI
+        CUTI
+        PJ + KAPUS
+        OPTIMASI: FILTER LANGSUNG BERDASARKAN NIP
         ================================================== */
-        const cutiSnapshot =
-            await getDocs(
+        if(
+            (role === "PJ" || role === "KAPUS") &&
+            loginNip
+        ){
+            const cutiCollection =
                 collection(
                     smartofficeFirestore,
                     "cuti"
-                )
-            );
+                );
 
-        let totalCuti = 0;
+            /* APPROVAL TAHAP 1 */
+            const approval1Query =
+                query(
+                    cutiCollection,
+                    where("recordStatus", "==", "ACTIVE"),
+                    where("status", "==", "MENUNGGU_APPROVAL_1"),
+                    where("approval1Nip", "==", loginNip)
+                );
 
-        cutiSnapshot.docs.forEach(
-            docSnapshot => {
-                const data =
-                    docSnapshot.data();
+            /* APPROVAL TAHAP 2 */
+            const approval2Query =
+                query(
+                    cutiCollection,
+                    where("recordStatus", "==", "ACTIVE"),
+                    where("status", "==", "MENUNGGU_APPROVAL_2"),
+                    where("approval2Nip", "==", loginNip)
+                );
 
-                const recordStatus =
-                    String(
-                        data.recordStatus || ""
-                    ).trim();
-                if(recordStatus !== "ACTIVE"){
-                    return;
-                }
+            /* HITUNG TANPA MENGUNDUH DOKUMEN */
+            const [
+                approval1Snapshot,
+                approval2Snapshot
+            ] = await Promise.all([
+                getCountFromServer(approval1Query),
+                getCountFromServer(approval2Query)
+            ]);
 
-                const status =
-                    String(
-                        data.status || ""
-                    ).trim();
-
-                const approval1Nip =
-                    String(
-                        data.approval1Nip || ""
-                    )
-                    .replace(/'/g, "")
-                    .replace(/\.0$/, "")
-                    .trim();
-
-                const approval2Nip =
-                    String(
-                        data.approval2Nip || ""
-                    )
-                    .replace(/'/g, "")
-                    .replace(/\.0$/, "")
-                    .trim();
-
-                const isApproval1 =
-                    status === "MENUNGGU_APPROVAL_1" &&
-                    approval1Nip === loginNip;
-
-                const isApproval2 =
-                    status === "MENUNGGU_APPROVAL_2" &&
-                    approval2Nip === loginNip;
-                if(
-                    isApproval1 ||
-                    isApproval2
-                ){
-                    totalCuti++;
-                }
-
-            }
-        );
+            totalCuti =
+                approval1Snapshot.data().count +
+                approval2Snapshot.data().count;
+        }
 
         /* ==================================================
-           PENDING DOKUMEN
+           DOKUMEN + SPD
+           PJ + ADMIN + SUPERADMIN
         ================================================== */
-        let totalDokumen = 0;
-
         if(
             role === "PJ" ||
             role === "ADMIN" ||
             role === "SUPERADMIN"
         ){
-            const dokumenSnapshot =
-                await getDocs(
-                    query(
-                        collection(
-                            smartofficeFirestore,
-                            "dokumenPegawai"
-                        ),
-                        where(
-                            "statusVerifikasi",
-                            "==",
-                            "MENUNGGU_VERIFIKASI"
-                        )
+            const dokumenQuery =
+                query(
+                    collection(
+                        smartofficeFirestore,
+                        "dokumenPegawai"
+                    ),
+                    where(
+                        "statusVerifikasi",
+                        "==",
+                        "MENUNGGU_VERIFIKASI"
                     )
                 );
 
+            const spdQuery =
+                query(
+                    collection(
+                        smartofficeFirestore,
+                        "smartspdBLUD"
+                    ),
+                    where(
+                        "STATUS_SPD",
+                        "in",
+                        [
+                            "MENUNGGU REVIEW",
+                            "PERLU REVISI"
+                        ]
+                    )
+                );
+
+            const [
+                dokumenCountSnapshot,
+                spdCountSnapshot
+            ] = await Promise.all([
+                getCountFromServer(dokumenQuery),
+                getCountFromServer(spdQuery)
+            ]);
+
             totalDokumen =
-                dokumenSnapshot.size;
+                dokumenCountSnapshot.data().count;
+
+            totalSPD =
+                spdCountSnapshot.data().count;
         }
 
-        /* ==================================================
-           TOTAL
-        ================================================== */
-        return totalCuti + totalDokumen;
-
+        return totalCuti + totalDokumen + totalSPD;
     }
     catch(error){
         console.error(

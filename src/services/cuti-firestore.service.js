@@ -8,7 +8,9 @@ import {
     query,
     where,
     doc,
-    getDoc
+    getDoc,
+    getCountFromServer,
+    onSnapshot
 } from "firebase/firestore";
 
 import {
@@ -55,6 +57,7 @@ export async function smartofficeGetRiwayatCutiFirestore(nip) {
 }
 
 
+
 /* ======================================================
    GET CUTI STATS USER
 ====================================================== */
@@ -62,68 +65,228 @@ export async function smartofficeGetCutiStatsFirestore(nip) {
 
     const nipValue = String(nip || "").trim();
 
-    if(!nipValue){
+    if (!nipValue) {
         return {
             success: false,
             message: "NIP tidak boleh kosong."
         };
     }
 
-    /* =========================
-       GET SISA CUTI
-       DARI PEGAWAI
-    ========================= */
-    const pegawaiRef = doc(
-        smartofficeFirestore,
-        "pegawai",
-        nipValue
-    );
+    try {
 
-    const pegawaiSnapshot = await getDoc(pegawaiRef);
+        // AMBIL REFERENSI
+        const pegawaiRef = doc(
+            smartofficeFirestore,
+            "pegawai",
+            nipValue
+        );
 
-    let sisaCuti = 0;
+        const cutiRef = collection(
+            smartofficeFirestore,
+            "cuti"
+        );
 
-    if(pegawaiSnapshot.exists()){
-        const pegawai = pegawaiSnapshot.data();
-        sisaCuti = Number(pegawai.sisaCuti || 0);
+        // QUERY TOTAL MENUNGGU
+        const qMenunggu = query(
+            cutiRef,
+            where("nipNrp", "==", nipValue),
+            where("status", "in", [
+                "MENUNGGU_APPROVAL_1",
+                "MENUNGGU_APPROVAL_2"
+            ])
+        );
+
+        // QUERY TOTAL DISETUJUI
+        const qDisetujui = query(
+            cutiRef,
+            where("nipNrp", "==", nipValue),
+            where("status", "==", "DISETUJUI")
+        );
+
+        // AMBIL DATA SECARA PARALEL
+        const [
+            pegawaiSnapshot,
+            menungguSnapshot,
+            disetujuiSnapshot
+        ] = await Promise.all([
+            getDoc(pegawaiRef),
+            getCountFromServer(qMenunggu),
+            getCountFromServer(qDisetujui)
+        ]);
+
+        // SISA CUTI
+        let sisaCuti = 0;
+
+        if (pegawaiSnapshot.exists()) {
+            const pegawai = pegawaiSnapshot.data();
+            sisaCuti = Number(pegawai.sisaCuti || 0);
+        }
+
+        return {
+            success: true,
+            data: {
+                sisaCuti: sisaCuti,
+                totalMenunggu: menungguSnapshot.data().count,
+                totalDisetujui: disetujuiSnapshot.data().count
+            }
+        };
+
+    } catch (error) {
+        console.error(
+            "Gagal mengambil statistik cuti:",
+            error
+        );
+
+        return {
+            success: false,
+            message: error.message || "Gagal mengambil statistik cuti."
+        };
     }
+}
 
-    /* =========================
-       GET DATA CUTI USER
-    ========================= */
-    const q = query(
-        collection(smartofficeFirestore, "cuti"),
-        where("nipNrp", "==", nipValue)
-    );
 
-    const snapshot = await getDocs(q);
+/* ======================================================
+   WATCH SUBMIT CUTI
+   POLA SAMA DENGAN SUBMIT DOKUMEN
+   WRITE TETAP MELALUI GAS
+====================================================== */
+export function smartofficeWatchSubmitCutiFirestore(nip){
 
-    let menunggu = 0;
-    let disetujui = 0;
+    const targetNip =
+        String(nip || "").trim();
 
-    snapshot.forEach(docSnapshot => {
+    let initialized = false;
+    let settled = false;
+    let unsubscribe = function(){};
 
-        const data = docSnapshot.data();
-        const status = String(data.status || "").trim();
+    let readyResolve;
+    let readyReject;
+    let promiseResolve;
+    let promiseReject;
 
-        if(
-            status === "MENUNGGU_APPROVAL_1" ||
-            status === "MENUNGGU_APPROVAL_2"
-        ){
-            menunggu++;
-        }
+    const baselineIds = new Set();
 
-        if(status === "DISETUJUI"){
-            disetujui++;
-        }
+    const ready = new Promise((resolve, reject) => {
+        readyResolve = resolve;
+        readyReject = reject;
     });
 
-    return {
-        success: true,
-        data: {
-            sisaCuti: sisaCuti,
-            totalMenunggu: menunggu,
-            totalDisetujui: disetujui
+    const promise = new Promise((resolve, reject) => {
+        promiseResolve = resolve;
+        promiseReject = reject;
+    });
+
+    function resolveSuccess(result){
+        if(settled) return;
+
+        settled = true;
+        promiseResolve(result);
+    }
+
+    function rejectError(error){
+        if(settled) return;
+
+        settled = true;
+        promiseReject(error);
+    }
+
+    if(!targetNip){
+        const error =
+            new Error("NIP pegawai tidak ditemukan.");
+
+        readyReject(error);
+        rejectError(error);
+
+        return {
+            ready,
+            promise,
+            unsubscribe
+        };
+    }
+
+    const q = query(
+        collection(smartofficeFirestore, "cuti"),
+        where("nipNrp", "==", targetNip)
+    );
+
+    unsubscribe = onSnapshot(
+        q,
+
+        snapshot => {
+
+            /* SNAPSHOT PERTAMA = BASELINE */
+            if(!initialized){
+
+                snapshot.docs.forEach(docSnapshot => {
+                    const data = docSnapshot.data();
+
+                    baselineIds.add(
+                        String(
+                            data.idCuti || docSnapshot.id
+                        ).trim()
+                    );
+
+                    baselineIds.add(
+                        String(docSnapshot.id).trim()
+                    );
+                });
+
+                initialized = true;
+                readyResolve();
+                return;
+            }
+
+            /* DOKUMEN BARU = KONFIRMASI FIRESTORE */
+            snapshot.docChanges().forEach(change => {
+
+                if(
+                    change.type !== "added" ||
+                    settled
+                ){
+                    return;
+                }
+
+                const docSnapshot = change.doc;
+                const data = docSnapshot.data();
+
+                const idCuti =
+                    String(
+                        data.idCuti || docSnapshot.id
+                    ).trim();
+
+                const docId =
+                    String(docSnapshot.id).trim();
+
+                if(
+                    !idCuti ||
+                    baselineIds.has(idCuti) ||
+                    baselineIds.has(docId)
+                ){
+                    return;
+                }
+
+                resolveSuccess({
+                    success: true,
+                    source: "firestore",
+                    idCuti,
+                    data
+                });
+            });
+        },
+
+        error => {
+            if(!initialized){
+                initialized = true;
+                readyReject(error);
+            }
+
+            rejectError(error);
         }
+    );
+
+    return {
+        ready,
+        promise,
+        unsubscribe
     };
 }

@@ -4,7 +4,8 @@ import {
     getDoc,
     getDocs,
     query,
-    where
+    where,
+    onSnapshot
 } from "firebase/firestore";
 
 import {
@@ -476,4 +477,166 @@ export async function smartofficeGetSuratKeluarFirestore(
 
         throw error;
     }
+}
+
+
+
+/* =====================================================
+   WATCHER SURAT KELUAR
+   DEFAULT: DETEKSI PERUBAHAN DATA
+   expectedStatus: OPSIONAL, MIS. "DRAFT"
+===================================================== */
+export function smartofficeWatchSubmitSuratKeluarFirestore(
+    nomor,
+    expectedStatus = ""
+){
+    const targetNomor =
+        String(nomor || "").trim();
+
+    const targetStatus =
+        String(expectedStatus || "")
+            .trim()
+            .toUpperCase();
+
+    let unsubscribeSnapshot = null;
+    let initialized = false;
+    let stopped = false;
+    let baselineData = null;
+
+    let resolveReady;
+    let rejectReady;
+    let resolveChange;
+    let rejectChange;
+
+    const ready = new Promise((resolve, reject) => {
+        resolveReady = resolve;
+        rejectReady = reject;
+    });
+
+    const promise = new Promise((resolve, reject) => {
+        resolveChange = resolve;
+        rejectChange = reject;
+    });
+
+    /* TANGANI REJECTION INTERNAL AGAR TIDAK UNHANDLED */
+    ready.catch(() => {});
+    promise.catch(() => {});
+
+    function stop(){
+        if(stopped) return;
+
+        stopped = true;
+
+        if(typeof unsubscribeSnapshot === "function"){
+            unsubscribeSnapshot();
+            unsubscribeSnapshot = null;
+        }
+    }
+
+    function fail(error){
+        if(!initialized){
+            initialized = true;
+            rejectReady(error);
+        }
+
+        rejectChange(error);
+        stop();
+    }
+
+    if(!targetNomor){
+        const error = new Error(
+            "Nomor dokumen Surat Keluar wajib diisi."
+        );
+
+        initialized = true;
+        rejectReady(error);
+        rejectChange(error);
+
+        return {
+            ready,
+            promise,
+            unsubscribe: stop
+        };
+    }
+
+    const targetRef = doc(
+        smartofficeFirestore,
+        "suratKeluar",
+        targetNomor
+    );
+
+    unsubscribeSnapshot = onSnapshot(
+        targetRef,
+
+        snapshot => {
+            if(stopped) return;
+
+            const exists = snapshot.exists();
+            const currentData =
+                exists ? snapshot.data() : null;
+
+            /* SNAPSHOT PERTAMA */
+            if(!initialized){
+                initialized = true;
+                baselineData = currentData;
+
+                /*
+                 * Dokumen belum ada:
+                 * tetap pasang watcher agar bisa mendeteksi
+                 * dokumen yang dibuat kemudian.
+                 */
+                resolveReady();
+                return;
+            }
+
+            /* DOKUMEN BELUM ADA / DIHAPUS */
+            if(!exists){
+                baselineData = null;
+                return;
+            }
+
+            const changed =
+                JSON.stringify(currentData) !==
+                JSON.stringify(baselineData);
+
+            if(!changed) return;
+
+            /* SIMPAN BASELINE TERBARU */
+            baselineData = currentData;
+
+            /* VALIDASI STATUS JIKA DIMINTA */
+            if(targetStatus){
+                const currentStatus =
+                    String(
+                        currentData?.status ||
+                        currentData?.statusSurat ||
+                        ""
+                    ).trim().toUpperCase();
+
+                if(currentStatus !== targetStatus){
+                    return;
+                }
+            }
+
+            resolveChange({
+                success: true,
+                source: "firestore",
+                nomor: targetNomor,
+                firestoreId: snapshot.id,
+                data: currentData
+            });
+
+            stop();
+        },
+
+        error => {
+            fail(error);
+        }
+    );
+
+    return {
+        ready,
+        promise,
+        unsubscribe: stop
+    };
 }

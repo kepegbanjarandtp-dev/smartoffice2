@@ -1,12 +1,14 @@
 /* ======================================================
    SMART OFFICE — ARSIP PEGAWAI FIRESTORE SERVICE
 ====================================================== */
-
 import {
     collection,
     getDocs,
     doc,
-    getDoc
+    getDoc,
+    query,
+    where,
+    getCountFromServer
 } from "firebase/firestore";
 
 import {
@@ -18,17 +20,105 @@ import {
 } from "./dokumen-saya-firestore.service.js";
 
 
+
+/* ======================================================
+   DEDUPLIKASI PEMBACAAN FIRESTORE ARSIP
+
+   Permintaan koleksi yang sama dan sedang berjalan
+   akan menggunakan Promise yang sama.
+
+   Setelah selesai, Promise dihapus agar pemanggilan
+   berikutnya dapat mengambil data terbaru.
+====================================================== */
+const smartofficeArsipReadInFlight = new Map();
+
+function smartofficeGetArsipCollectionSnapshot(
+    collectionName
+) {
+    const pending =
+        smartofficeArsipReadInFlight.get(collectionName);
+
+    if (pending) {
+        return pending;
+    }
+
+    const request = getDocs(
+        collection(
+            smartofficeFirestore,
+            collectionName
+        )
+    );
+
+    smartofficeArsipReadInFlight.set(
+        collectionName,
+        request
+    );
+
+    const cleanup = () => {
+        if (
+            smartofficeArsipReadInFlight.get(
+                collectionName
+            ) === request
+        ) {
+            smartofficeArsipReadInFlight.delete(
+                collectionName
+            );
+        }
+    };
+
+    request.then(cleanup, cleanup);
+
+    return request;
+}
+
+
+/* ======================================================
+   GET ARSIP PEGAWAI
+====================================================== */
+export async function smartofficeGetArsipPegawaiFirestore(nip){
+
+    const nipValue = String(nip || "").trim();
+
+    if(!nipValue){
+        throw new Error("NIP tidak boleh kosong.");
+    }
+
+    const pegawaiSnapshot = await getDoc(
+        doc(
+            smartofficeFirestore,
+            "pegawai",
+            nipValue
+        )
+    );
+
+    if(!pegawaiSnapshot.exists()){
+        throw new Error("Data pegawai tidak ditemukan.");
+    }
+
+    const pegawaiData = pegawaiSnapshot.data();
+
+    const dokumen = await smartofficeGetDokumenPegawaiFirestore(
+        nipValue
+    );
+
+    return {
+        pegawai: {
+            ...pegawaiData,
+            nip: pegawaiData.nip || nipValue
+        },
+        dokumen: dokumen || []
+    };
+}
+
+
+
 /* ======================================================
    GET DAFTAR PEGAWAI ARSIP
 ====================================================== */
 export async function smartofficeGetDaftarPegawaiArsipFirestore(){
 
-    const snapshot = await getDocs(
-        collection(
-            smartofficeFirestore,
-            "pegawai"
-        )
-    );
+    const snapshot =
+        await smartofficeGetArsipCollectionSnapshot("pegawai");
 
     const result = [];
 
@@ -47,78 +137,18 @@ export async function smartofficeGetDaftarPegawaiArsipFirestore(){
         result.push({
             nama: data.nama,
             nip: docSnapshot.id,
-            statusKepegawaian:
-                data.statusKepegawaian || ""
+            statusKepegawaian: data.statusKepegawaian || ""
         });
+
     });
 
-    result.sort((a,b) =>
-        String(a.nama).localeCompare(
-            String(b.nama)
-        )
+    result.sort((a, b) =>
+        String(a.nama).localeCompare(String(b.nama))
     );
 
     return result;
 }
 
-
-/* ======================================================
-   GET ARSIP PEGAWAI
-====================================================== */
-export async function smartofficeGetArsipPegawaiFirestore(
-    nip
-){
-
-    const nipValue = String(nip || "").trim();
-
-    if(!nipValue){
-        throw new Error(
-            "NIP tidak boleh kosong."
-        );
-    }
-
-    /* -----------------------------------------------
-       DATA PEGAWAI
-    ------------------------------------------------ */
-    const pegawaiSnapshot = await getDoc(
-        doc(
-            smartofficeFirestore,
-            "pegawai",
-            nipValue
-        )
-    );
-
-    if(!pegawaiSnapshot.exists()){
-        throw new Error(
-            "Data pegawai tidak ditemukan."
-        );
-    }
-
-    const pegawaiData =
-        pegawaiSnapshot.data();
-
-    /* -----------------------------------------------
-       DATA ARSIP
-       Gunakan service yang sudah melakukan
-       merge MASTER_DOKUMEN + DOKUMEN_PEGAWAI
-    ------------------------------------------------ */
-    const dokumen =
-        await smartofficeGetDokumenPegawaiFirestore(
-            nipValue
-        );
-
-    return {
-        pegawai: {
-            ...pegawaiData,
-            nip:
-                pegawaiData.nip ||
-                nipValue
-        },
-
-        dokumen:
-            dokumen || []
-    };
-}
 
 
 /* ======================================================
@@ -127,67 +157,54 @@ export async function smartofficeGetArsipPegawaiFirestore(
 export async function smartofficeGetArsipStatFirestore(){
 
     const [
-        pegawaiSnapshot,
-        dokumenSnapshot
+        pegawaiAktifSnapshot,
+        totalUploadSnapshot,
+        terverifikasiSnapshot
     ] = await Promise.all([
 
-        getDocs(
-            collection(
-                smartofficeFirestore,
-                "pegawai"
+        getCountFromServer(
+            query(
+                collection(
+                    smartofficeFirestore,
+                    "pegawai"
+                ),
+                where(
+                    "status",
+                    "==",
+                    "AKTIF"
+                )
             )
         ),
 
-        getDocs(
+        getCountFromServer(
             collection(
                 smartofficeFirestore,
                 "dokumenPegawai"
+            )
+        ),
+
+        getCountFromServer(
+            query(
+                collection(
+                    smartofficeFirestore,
+                    "dokumenPegawai"
+                ),
+                where(
+                    "statusVerifikasi",
+                    "==",
+                    "TERVERIFIKASI"
+                )
             )
         )
 
     ]);
 
-    let totalPegawai = 0;
-    let totalUpload = 0;
-    let totalTerverifikasi = 0;
-
-    /* -----------------------------------------------
-       PEGAWAI AKTIF
-    ------------------------------------------------ */
-    pegawaiSnapshot.forEach((docSnapshot) => {
-
-        const data = docSnapshot.data();
-
-        if(
-            String(data.status || "").trim() ===
-            "AKTIF"
-        ){
-            totalPegawai++;
-        }
-    });
-
-    /* -----------------------------------------------
-       DOKUMEN
-    ------------------------------------------------ */
-    dokumenSnapshot.forEach((docSnapshot) => {
-
-        const data = docSnapshot.data();
-
-        totalUpload++;
-
-        if(
-            String(data.statusVerifikasi || "").trim() ===
-            "TERVERIFIKASI"
-        ){
-            totalTerverifikasi++;
-        }
-    });
-
     return {
-        totalPegawai,
-        totalUpload,
-        totalTerverifikasi
+        totalPegawai: pegawaiAktifSnapshot.data().count,
+        totalUpload: totalUploadSnapshot.data().count,
+        totalTerverifikasi: terverifikasiSnapshot.data().count
     };
+
 }
 
 
@@ -208,83 +225,64 @@ export async function smartofficeGetProgressArsipFirestore(){
 
         /* ==================================================
            AMBIL DATA FIRESTORE
-        ================================================== */
-
+        ================================================== */                
         const [
             pegawaiSnapshot,
             masterSnapshot,
             dokumenSnapshot
         ] = await Promise.all([
+            smartofficeGetArsipCollectionSnapshot("pegawai"),
+            smartofficeGetArsipCollectionSnapshot("masterDokumen"),
 
             getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "pegawai"
-                )
-            ),
-
-            getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "masterDokumen"
-                )
-            ),
-
-            getDocs(
-                collection(
-                    smartofficeFirestore,
-                    "dokumenPegawai"
+                query(
+                    collection(
+                        smartofficeFirestore,
+                        "dokumenPegawai"
+                    ),
+                    where(
+                        "statusVerifikasi",
+                        "==",
+                        "TERVERIFIKASI"
+                    )
                 )
             )
-
         ]);
-
 
         /* ==================================================
            MASTER DOKUMEN
         ================================================== */
-
         const masterData = [];
 
         masterSnapshot.forEach(
             docSnapshot => {
-
                 masterData.push(
                     docSnapshot.data()
                 );
-
             }
         );
-
 
         /* ==================================================
            DOKUMEN PEGAWAI
         ================================================== */
-
         const dokumenData = [];
 
         dokumenSnapshot.forEach(
             docSnapshot => {
-
                 dokumenData.push(
                     docSnapshot.data()
                 );
-
             }
         );
-
 
         /* ==================================================
            HASIL
         ================================================== */
-
         const result = [];
-
 
         /* ==================================================
            URUTAN GOLONGAN
         ================================================== */
-
         const URUTAN_GOLONGAN = [
 
             "I/a",
@@ -309,7 +307,6 @@ export async function smartofficeGetProgressArsipFirestore(){
 
         ];
 
-
         /* ==================================================
            NORMALISASI GOLONGAN
 
@@ -320,7 +317,6 @@ export async function smartofficeGetProgressArsipFirestore(){
            II/d
            IV/a
         ================================================== */
-
         function normalisasiGolongan(value){
 
             return String(
@@ -340,25 +336,19 @@ export async function smartofficeGetProgressArsipFirestore(){
                     ) =>
                         `${romawi.toUpperCase()}/${huruf.toLowerCase()}`
                 );
-
         }
-
 
         /* ==================================================
            LOOP PEGAWAI AKTIF
         ================================================== */
-
         pegawaiSnapshot.forEach(
             docSnapshot => {
-
                 const pegawai =
                     docSnapshot.data();
-
 
                 /* ==========================================
                    HANYA PEGAWAI AKTIF
                 ========================================== */
-
                 if(
                     String(
                         pegawai.status || ""
@@ -370,11 +360,9 @@ export async function smartofficeGetProgressArsipFirestore(){
                     return;
                 }
 
-
                 /* ==========================================
                    IDENTITAS
                 ========================================== */
-
                 const nama =
                     String(
                         pegawai.nama || ""
@@ -387,7 +375,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                         ""
                     ).trim();
 
-
                 if(
                     !nama ||
                     !nip
@@ -395,18 +382,15 @@ export async function smartofficeGetProgressArsipFirestore(){
                     return;
                 }
 
-
                 /* ==========================================
                    DATA KEPEGAWAIAN
                 ========================================== */
-
                 const statusKepegawaian =
                     String(
                         pegawai.statusKepegawaian || ""
                     )
                     .trim()
                     .toUpperCase();
-
 
                 const jenisPegawai =
                     String(
@@ -415,28 +399,23 @@ export async function smartofficeGetProgressArsipFirestore(){
                     .trim()
                     .toUpperCase();
 
-
                 /* ==========================================
                    TMT
                 ========================================== */
-
                 const tahunTmtAwal =
                     smartofficeGetYear(
                         pegawai.tmtAwal
                     );
-
 
                 const tahunTmtPertama =
                     smartofficeGetYear(
                         pegawai.tmtPertama
                     );
 
-
                 const tahunAkhirBlud =
                     Number(
                         pegawai.tahunAkhirBlud || 0
                     );
-
 
                 /* ==========================================
                    RIWAYAT PENDIDIKAN
@@ -444,7 +423,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                    CONTOH:
                    SD,SMP,SMA,S1/D4,S2
                 ========================================== */
-
                 const riwayatPendidikan =
                     String(
                         pegawai.riwayatPendidikan || ""
@@ -457,16 +435,13 @@ export async function smartofficeGetProgressArsipFirestore(){
                     )
                     .filter(Boolean);
 
-
                 /* ==========================================
                    GOLONGAN PERTAMA
                 ========================================== */
-
                 const golonganPertama =
                     normalisasiGolongan(
                         pegawai.golonganPertama
                     );
-
 
                 /* ==========================================
                    GOLONGAN SEKARANG
@@ -477,18 +452,15 @@ export async function smartofficeGetProgressArsipFirestore(){
                    atau:
                    Penata / IIIc
                 ========================================== */
-
                 const pangkatGolonganRaw =
                     String(
                         pegawai.pangkatGolongan || ""
                     ).trim();
 
-
                 const matchGolongan =
                     pangkatGolonganRaw.match(
                         /(I{1,3}|IV)\/?([A-Da-d])\b/i
                     );
-
 
                 const golonganSekarang =
                     matchGolongan
@@ -498,7 +470,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                         : normalisasiGolongan(
                             pangkatGolonganRaw
                         );
-
 
                 /* ==========================================
                    RIWAYAT GOLONGAN
@@ -517,9 +488,7 @@ export async function smartofficeGetProgressArsipFirestore(){
                    III/b
                    III/c
                 ========================================== */
-
                 let riwayatGolongan = [];
-
 
                 const indexAwal =
                     URUTAN_GOLONGAN.findIndex(
@@ -528,7 +497,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                             golonganPertama
                     );
 
-
                 const indexAkhir =
                     URUTAN_GOLONGAN.findIndex(
                         item =>
@@ -536,21 +504,17 @@ export async function smartofficeGetProgressArsipFirestore(){
                             golonganSekarang
                     );
 
-
                 if(
                     indexAwal >= 0 &&
                     indexAkhir >= 0 &&
                     indexAkhir > indexAwal
                 ){
-
                     riwayatGolongan =
                         URUTAN_GOLONGAN.slice(
                             indexAwal + 1,
                             indexAkhir + 1
                         );
-
                 }
-
 
                 /* ==========================================
                    RIWAYAT JENJANG JABATAN
@@ -558,7 +522,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                    CONTOH:
                    Terampil;Mahir;Penyelia
                 ========================================== */
-
                 const riwayatJenjangJabatan =
                     String(
                         pegawai.jenjangJabatan || ""
@@ -571,7 +534,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                     )
                     .filter(Boolean);
 
-
                 /* ==================================================
                    SET DOKUMEN WAJIB
 
@@ -580,15 +542,12 @@ export async function smartofficeGetProgressArsipFirestore(){
 
                    Jadi MULTI_UPLOAD tidak menggandakan progress.
                 ================================================== */
-
                 const kodeDokumenWajib =
                     new Set();
-
 
                 /* ==================================================
                    LOOP MASTER DOKUMEN
                 ================================================== */
-
                 for(
                     const row of masterData
                 ){
@@ -596,7 +555,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                     /* ==============================================
                        STATUS AKTIF
                     ============================================== */
-
                     if(
                         String(
                             row.statusAktif || ""
@@ -608,11 +566,9 @@ export async function smartofficeGetProgressArsipFirestore(){
                         continue;
                     }
 
-
                     /* ==============================================
                        WAJIB UPLOAD
                     ============================================== */
-
                     if(
                         String(
                             row.wajibUpload || ""
@@ -624,21 +580,17 @@ export async function smartofficeGetProgressArsipFirestore(){
                         continue;
                     }
 
-
                     /* ==============================================
                        KODE DOKUMEN
                     ============================================== */
-
                     const kodeDokumen =
                         String(
                             row.kodeDokumen || ""
                         ).trim();
 
-
                     if(!kodeDokumen){
                         continue;
                     }
-
 
                     /* ==============================================
                        TARGET STATUS
@@ -649,7 +601,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                        PNS;BLUD
                        ALL
                     ============================================== */
-
                     const targetStatusList =
                         String(
                             row.targetStatus || "ALL"
@@ -663,27 +614,21 @@ export async function smartofficeGetProgressArsipFirestore(){
                         )
                         .filter(Boolean);
 
-
                     const statusPegawai = [
                         statusKepegawaian
                     ];
-
 
                     /* ==============================================
                        PEGAWAI DENGAN TMT PERTAMA
                        MENDAPAT STATUS BLUD
                     ============================================== */
-
                     if(
                         tahunTmtPertama > 0
                     ){
-
                         statusPegawai.push(
                             "BLUD"
                         );
-
                     }
-
 
                     const cocokStatus =
                         targetStatusList.length === 0 ||
@@ -695,16 +640,13 @@ export async function smartofficeGetProgressArsipFirestore(){
                                 )
                         );
 
-
                     if(!cocokStatus){
                         continue;
                     }
 
-
                     /* ==============================================
                        TARGET JENIS
                     ============================================== */
-
                     const targetJenisList =
                         String(
                             row.targetJenis || "ALL"
@@ -718,7 +660,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                         )
                         .filter(Boolean);
 
-
                     const cocokJenis =
                         targetJenisList.length === 0 ||
                         targetJenisList.includes("ALL") ||
@@ -726,16 +667,13 @@ export async function smartofficeGetProgressArsipFirestore(){
                             jenisPegawai
                         );
 
-
                     if(!cocokJenis){
                         continue;
                     }
 
-
                     /* ==============================================
                        FILTER PENDIDIKAN
                     ============================================== */
-
                     const filterPendidikanList =
                         String(
                             row.filterPendidikan || "ALL"
@@ -749,7 +687,6 @@ export async function smartofficeGetProgressArsipFirestore(){
                         )
                         .filter(Boolean);
 
-
                     const cocokPendidikan =
                         filterPendidikanList.length === 0 ||
                         filterPendidikanList.includes("ALL") ||
@@ -760,29 +697,23 @@ export async function smartofficeGetProgressArsipFirestore(){
                                 )
                         );
 
-
                     if(!cocokPendidikan){
                         continue;
                     }
 
-
                     /* ==============================================
                        TAHUN DOKUMEN
                     ============================================== */
-
                     const tahunDokumen =
                         Number(
                             row.tahunDokumen || 0
                         );
 
-
                     let cocokTahun = true;
-
 
                     if(
                         tahunDokumen > 0
                     ){
-
                         const targetStatus =
                             String(
                                 row.targetStatus || ""
@@ -790,17 +721,14 @@ export async function smartofficeGetProgressArsipFirestore(){
                             .trim()
                             .toUpperCase();
 
-
                         if(
                             targetStatus ===
                             "BLUD"
                         ){
-
                             const tahunMulai =
                                 tahunTmtPertama > 0
                                     ? tahunTmtPertama
                                     : tahunTmtAwal;
-
 
                             const tahunSelesai =
                                 tahunAkhirBlud > 0
@@ -808,34 +736,26 @@ export async function smartofficeGetProgressArsipFirestore(){
                                     : new Date()
                                         .getFullYear();
 
-
                             cocokTahun =
                                 tahunDokumen >=
                                     tahunMulai &&
                                 tahunDokumen <=
                                     tahunSelesai;
-
                         }
                         else{
-
                             cocokTahun =
                                 tahunDokumen >=
                                 tahunTmtAwal;
-
                         }
-
                     }
-
 
                     if(!cocokTahun){
                         continue;
                     }
 
-
                     /* ==============================================
                        PANGKAT / GOLONGAN
                     ============================================== */
-
                     const masterGolongan =
                         String(
                             row.pangkatGolongan || ""
@@ -849,15 +769,12 @@ export async function smartofficeGetProgressArsipFirestore(){
                         )
                         .filter(Boolean);
 
-
                     let cocokGolongan = true;
-
 
                     if(
                         masterGolongan.length > 0 &&
                         !masterGolongan.includes("ALL")
                     ){
-
                         cocokGolongan =
                             masterGolongan.some(
                                 golongan =>
@@ -865,19 +782,15 @@ export async function smartofficeGetProgressArsipFirestore(){
                                         golongan
                                     )
                             );
-
                     }
-
 
                     if(!cocokGolongan){
                         continue;
                     }
 
-
                     /* ==============================================
                        JENJANG JABATAN
                     ============================================== */
-
                     const masterJenjangJabatan =
                         String(
                             row.jenjangJabatan || ""
@@ -890,16 +803,13 @@ export async function smartofficeGetProgressArsipFirestore(){
                         )
                         .filter(Boolean);
 
-
                     let cocokJenjangJabatan =
                         true;
-
 
                     if(
                         masterJenjangJabatan.length > 0 &&
                         !masterJenjangJabatan.includes("ALL")
                     ){
-
                         cocokJenjangJabatan =
                             masterJenjangJabatan.some(
                                 jenjang =>
@@ -907,35 +817,27 @@ export async function smartofficeGetProgressArsipFirestore(){
                                         jenjang
                                     )
                             );
-
                     }
-
 
                     if(!cocokJenjangJabatan){
                         continue;
                     }
-
 
                     /* ==============================================
                        SEMUA FILTER LOLOS
 
                        MASUK SEBAGAI DOKUMEN WAJIB
                     ============================================== */
-
                     kodeDokumenWajib.add(
                         kodeDokumen
                     );
-
                 }
-
 
                 /* ==================================================
                    TOTAL DOKUMEN WAJIB
                 ================================================== */
-
                 const total =
                     kodeDokumenWajib.size;
-
 
                 /* ==================================================
                    DOKUMEN TERVERIFIKASI
@@ -945,19 +847,15 @@ export async function smartofficeGetProgressArsipFirestore(){
                    - MULTI UPLOAD TIDAK MENGGANDakan
                    - SATU KODE = SATU KELENGKAPAN
                 ================================================== */
-
                 const kodeDokumenVerified =
                     new Set();
-
 
                 for(
                     const row of dokumenData
                 ){
-
                     /* ==============================================
                        HARUS MILIK PEGAWAI
                     ============================================== */
-
                     if(
                         String(
                             row.nip || ""
@@ -967,11 +865,9 @@ export async function smartofficeGetProgressArsipFirestore(){
                         continue;
                     }
 
-
                     /* ==============================================
                        HARUS TERVERIFIKASI
                     ============================================== */
-
                     if(
                         String(
                             row.statusVerifikasi || ""
@@ -983,17 +879,14 @@ export async function smartofficeGetProgressArsipFirestore(){
                         continue;
                     }
 
-
                     const kodeDokumen =
                         String(
                             row.kodeDokumen || ""
                         ).trim();
 
-
                     /* ==============================================
                        HARUS TERMASUK DOKUMEN WAJIB
                     ============================================== */
-
                     if(
                         !kodeDokumenWajib.has(
                             kodeDokumen
@@ -1002,26 +895,20 @@ export async function smartofficeGetProgressArsipFirestore(){
                         continue;
                     }
 
-
                     kodeDokumenVerified.add(
                         kodeDokumen
                     );
-
                 }
-
 
                 /* ==================================================
                    VERIFIED
                 ================================================== */
-
                 const verified =
                     kodeDokumenVerified.size;
-
 
                 /* ==================================================
                    PROGRESS
                 ================================================== */
-
                 const progress =
                     total > 0
                         ? Math.round(
@@ -1032,16 +919,13 @@ export async function smartofficeGetProgressArsipFirestore(){
                         )
                         : 0;
 
-
                 /* ==================================================
                    INISIAL
                 ================================================== */
-
                 const namaParts =
                     nama
                         .split(" ")
                         .filter(Boolean);
-
 
                 const inisial =
                     namaParts.length >= 2
@@ -1054,52 +938,36 @@ export async function smartofficeGetProgressArsipFirestore(){
                             ""
                         );
 
-
                 /* ==================================================
                    PUSH HASIL
                 ================================================== */
-
                 result.push({
-
                     nama,
-
                     inisial:
                         inisial.toUpperCase(),
-
                     jabatan:
                         pegawai.jabatan || "",
-
                     nip,
-
                     total,
-
                     verified,
-
                     progress
-
                 });
-
             }
         );
-
 
         /* ==================================================
            SORT
            PROGRESS TERBESAR → TERKECIL
         ================================================== */
-
         result.sort(
             (a,b) =>
                 b.progress -
                 a.progress
         );
 
-
         return result;
-
     }
     catch(error){
-
         console.error(
             "Firestore Get Progress Arsip Error:",
             error
@@ -1109,9 +977,7 @@ export async function smartofficeGetProgressArsipFirestore(){
             error?.message ||
             "Gagal mengambil progress arsip."
         );
-
     }
-
 }
 
 

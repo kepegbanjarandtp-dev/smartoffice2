@@ -60,7 +60,8 @@ import {
 
 import {
     smartofficeGetRiwayatCutiFirestore,
-    smartofficeGetCutiStatsFirestore
+    smartofficeGetCutiStatsFirestore,
+    smartofficeWatchSubmitCutiFirestore
 } from "../../services/cuti-firestore.service.js";
 
 import {
@@ -2688,118 +2689,175 @@ export async function smartofficeSubmitCutiForm(){
   );
 
   /* KIRIM KE SHEET */
+  let success = false;
+  let watcher = null;
+  let timeoutTimer = null;
+
   try{
-      const response =
-          await smartofficeSubmitCuti(
-              formData
+
+      /* PASANG WATCHER SEBELUM SUBMIT */
+      watcher =
+          smartofficeWatchSubmitCutiFirestore(
+              formData.nip
           );
 
-      /* =========================
-        SUCCESS
-      ========================= */
-      if(
-          response.success
-      ){
-          /* RESET FORM */
-          smartofficeResetCutiForm();
+      await watcher.ready;
 
-          /* TOAST */
-          smartofficeShowToast(
-              "Pengajuan berhasil: " +
-              (response.data.idCuti || ""),
-              "success"
-          );
+      /* PROMISE ERROR GAS */
+      let gasErrorReject;
 
-          /* ==================================================
-            CLEAR CACHE DATA CUTI
-          ================================================== */
-          const nipKey =
-              String(formData.nip || "").trim();
-
-          /* CLEAR CACHE RIWAYAT */
-          smartofficeRiwayatCutiCache = null;
-
-          smartofficeCacheRemove(
-              "cuti_riwayat_" + nipKey
-          );
-
-          /* CLEAR CACHE MINI STAT */
-          smartofficeCacheRemove(
-              "cuti_stats_" + nipKey
-          );
-
-          /* ==================================================
-            RELOAD DATA TERBARU
-          ================================================== */
-          Promise.allSettled([
-              smartofficeLoadRiwayatCuti(
-                  formData.nip
-              ),
-
-              smartofficeLoadPegawai(
-                  formData.nip
-              )
-          ]).then(function(){
-              smartofficeFilterRiwayatCuti(
-                  "SEMUA"
-              );
-          }).catch(function(error){
-              console.error(
-                  "Gagal refresh data setelah submit:",
-                  error
-              );
+      const gasErrorPromise =
+          new Promise(function(resolve, reject){
+              gasErrorReject = reject;
           });
 
-          /* ==================================================
-            PINDAH TAB
-          ================================================== */
-          setTimeout(
-              function(){
-                  smartofficeSwitchCutiTab(
-                      "riwayat"
-                  );
-              },
-              700
+      /* SUBMIT GAS TANPA MENUNGGU RESPONSE SUKSES */
+      smartofficeSubmitCuti(formData)
+          .catch(function(error){
+
+              console.warn(
+                  "SUBMIT GAS ERROR, FIRESTORE MASIH DITUNGGU:",
+                  error
+              );
+
+              gasErrorReject(error);
+
+          });
+
+      /* TIMEOUT KONFIRMASI FIRESTORE */
+      timeoutTimer = setTimeout(function(){
+
+          if(
+              watcher &&
+              typeof watcher.unsubscribe === "function"
+          ){
+              watcher.unsubscribe();
+          }
+
+          gasErrorReject(
+              new Error(
+                  "Pengajuan belum terkonfirmasi di Firestore. Silakan periksa Riwayat Cuti."
+              )
           );
+
+      }, 40000);
+
+      /* TUNGGU FIRESTORE SUKSES ATAU GAS ERROR */
+      const firestoreResult =
+          await Promise.race([
+              watcher.promise,
+              gasErrorPromise
+          ]);
+
+      if(timeoutTimer){
+          clearTimeout(timeoutTimer);
+          timeoutTimer = null;
       }
-      else{
-          smartofficeShowToast(
-              response.message,
-              "error"
-          );
+
+      if(
+          watcher &&
+          typeof watcher.unsubscribe === "function"
+      ){
+          watcher.unsubscribe();
       }
-  }
-  catch(error){
+
+      console.log(
+          "SUBMIT CUTI BERHASIL:",
+          firestoreResult
+      );
+
+      /* RESET FORM */
+      smartofficeResetCutiForm();
+
+      /* CLEAR CACHE */
+      const nipKey =
+          String(formData.nip || "").trim();
+
+      smartofficeRiwayatCutiCache = null;
+
+      smartofficeCacheRemove(
+          "cuti_riwayat_" + nipKey
+      );
+
+      smartofficeCacheRemove(
+          "cuti_stats_" + nipKey
+      );
+
+      /* REFRESH DATA */
+      await Promise.allSettled([
+          smartofficeLoadRiwayatCuti(
+              formData.nip
+          ),
+          smartofficeLoadPegawai(
+              formData.nip
+          )
+      ]);
+
+      smartofficeFilterRiwayatCuti("SEMUA");
+
+      /* PINDAH TAB */
+      setTimeout(function(){
+          smartofficeSwitchCutiTab("riwayat");
+      }, 700);
+
+      success = true;
+
+  }catch(error){
+
+      if(timeoutTimer){
+          clearTimeout(timeoutTimer);
+          timeoutTimer = null;
+      }
+
+      if(
+          watcher &&
+          typeof watcher.unsubscribe === "function"
+      ){
+          watcher.unsubscribe();
+      }
+
+      console.error(
+          "Gagal submit cuti:",
+          error
+      );
+
       smartofficeShowToast(
           error.message ||
-          "Terjadi kesalahan saat mengajukan cuti.",
+          "Gagal mengajukan cuti.",
           "error"
       );
-  }
-  finally{
-      /* =========================
-        HIDE GLOBAL LOADING
-      ========================= */
-      smartofficeHideGlobalLoading();
 
-      /* =========================
-        RESET LOCK
-      ========================= */
-      smartofficeSubmitting =
-          false;
+  }finally{
 
-      /* =========================
-        ENABLE BUTTON
-      ========================= */
+      if(timeoutTimer){
+          clearTimeout(timeoutTimer);
+      }
+
       if(
-          submitButton
+          watcher &&
+          typeof watcher.unsubscribe === "function"
       ){
-          submitButton.disabled =
-              false;
+          watcher.unsubscribe();
+      }
+
+      smartofficeHideGlobalLoading();
+      smartofficeSubmitting = false;
+
+      if(submitButton){
+          submitButton.disabled = false;
+      }
+
+      /* SUCCESS TOAST */
+      if(success){
+          setTimeout(function(){
+              smartofficeShowToast(
+                  "Pengajuan cuti berhasil",
+                  "success"
+              );
+          }, 100);
       }
   }
 }
-
 
 
 /* ================================================================================
