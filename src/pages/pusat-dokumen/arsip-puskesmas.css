@@ -1,23 +1,1892 @@
-/* SMART OFFICE — ARSIP PUSKESMAS */
-.arp-shell{color:#14254d;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:clamp(12px,2vw,24px);max-width:1440px;margin:0 auto}
-.arp-shell *{box-sizing:border-box}
-.arp-icon{width:23px;height:23px;display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
-.arp-banner{display:flex;align-items:center;gap:clamp(12px,2vw,24px);min-height:150px;padding:22px 28px;margin-bottom:24px;border:1px solid #e4dcff;border-radius:28px;background:linear-gradient(105deg,#f5f1ff 0%,#eee8ff 62%,#e7e0ff 100%);overflow:hidden}
-.arp-banner-mark{width:76px;height:76px;display:grid;place-items:center;border-radius:20px;background:linear-gradient(145deg,#8c5cf6,#2879ee);color:white;box-shadow:0 10px 24px #7552e52a;flex-shrink:0}
-.arp-banner-mark .arp-icon{width:42px;height:42px;stroke-width:1.6}
-.arp-banner-copy{flex:1;min-width:0}.arp-banner-copy h2{font-size:clamp(22px,2.5vw,30px);line-height:1.15;margin:0 0 8px;font-weight:800;letter-spacing:-.5px}.arp-banner-copy p{font-size:clamp(14px,1.5vw,19px);line-height:1.5;color:#64718c;margin:0}
-.arp-folder-art{display:flex;align-items:end;justify-content:center;min-width:150px;height:90px;color:#6546d9;font-size:54px;letter-spacing:-22px;text-shadow:3px 3px #d7caff}.arp-folder-art span:nth-child(2){color:#4933b4;transform:translateY(-8px)}.arp-folder-art span:nth-child(3){color:#f0a833;font-size:60px;transform:translateY(4px)}
-.arp-slogan{font-size:18px;line-height:1.35;font-style:italic;font-weight:800;color:#6443cb;transform:rotate(-5deg);text-align:center;min-width:135px}
-.arp-toolbar{display:flex;gap:12px;align-items:stretch;margin:0 0 22px}.arp-search{display:flex;align-items:center;gap:14px;flex:1;min-width:100px;height:62px;border:1px solid #dce3ef;border-radius:19px;background:#fff;padding:0 20px;box-shadow:0 3px 12px #172b4d05}.arp-search .arp-icon{width:28px;height:28px}.arp-search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:#14254d;font:inherit;font-size:16px}.arp-search input::placeholder{color:#9aa5b7}
-.arp-tool-btn,.arp-primary-btn,.arp-secondary-btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;border:1px solid #dce3ef;border-radius:18px;background:#fff;color:#14254d;padding:0 20px;min-height:60px;font:inherit;font-weight:650;cursor:pointer;white-space:nowrap;box-shadow:0 3px 12px #172b4d05;transition:transform .15s,box-shadow .15s,border-color .15s}.arp-tool-btn:hover,.arp-secondary-btn:hover{border-color:#b9c9e7;box-shadow:0 5px 16px #172b4d0c}.arp-tool-btn:active,.arp-primary-btn:active{transform:scale(.98)}
-.arp-primary-btn{background:#2165e8;color:#fff;border-color:#2165e8;box-shadow:0 6px 16px #2165e82b}.arp-primary-btn:hover{background:#1556d3}.arp-secondary-btn{min-height:48px}
-.arp-category-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.arp-category-card{display:flex;flex-direction:column;align-items:stretch;min-width:0;min-height:236px;text-align:left;padding:22px 20px 14px;border:1px solid #e7edf6;border-radius:26px;background:linear-gradient(145deg,#fff,#fcfdff);box-shadow:0 5px 18px #22395c06;color:#14254d;cursor:pointer;transition:transform .16s,border-color .16s,box-shadow .16s}
-.arp-category-card:hover{transform:translateY(-2px);border-color:#cbdaf4;box-shadow:0 9px 22px #22395c0c}.arp-card-heading{display:flex;align-items:center;gap:16px;min-height:72px}.arp-category-icon{width:72px;height:72px;display:grid;place-items:center;flex-shrink:0;border-radius:22px}.arp-category-icon .arp-icon{width:39px;height:39px;stroke-width:2.1}.arp-category-title{font-size:clamp(15px,1.4vw,19px);font-weight:800;line-height:1.35;letter-spacing:-.25px}.arp-category-description{margin:12px 0 14px;color:#6c7890;font-size:16px;line-height:1.45;flex:1}.arp-card-footer{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 12px;border:1px solid #edf1f7;border-radius:15px;color:#63718a;font-size:14px;background:#fff}.arp-card-footer .arp-icon{width:21px;height:21px}.arp-card-footer .arp-card-chevron{margin-left:auto;color:#1764e8;width:24px;height:24px}
-.arp-tone-blue{background:#e7efff;color:#2167e8}.arp-tone-pink{background:#fde8f0;color:#e93e70}.arp-tone-green{background:#e1f7ed;color:#10a66b}.arp-tone-yellow{background:#fff2d6;color:#df9400}.arp-tone-purple{background:#efe5ff;color:#7b42db}.arp-tone-teal{background:#e0f8f7;color:#139c9b}.arp-tone-red{background:#ffe6ec;color:#ec4564}.arp-tone-gray{background:#e9ebf0;color:#677187}
-.arp-detail-header{display:flex;align-items:center;gap:16px;margin-bottom:22px}.arp-back-btn{display:flex;align-items:center;gap:5px;border:0;background:transparent;color:#2864ce;font:inherit;font-weight:700;cursor:pointer;padding:10px 0}.arp-detail-title{display:flex;align-items:center;gap:14px;flex:1;min-width:0}.arp-detail-title h2{font-size:clamp(20px,2vw,28px);margin:0 0 4px;font-weight:800}.arp-detail-title p{margin:0;color:#71809a;font-size:14px;line-height:1.4}.arp-refresh-btn{min-height:46px}.arp-detail-toolbar{flex-wrap:wrap}.arp-result-meta{display:flex;justify-content:space-between;align-items:center;color:#71809a;font-size:13px;margin:4px 2px 12px}.arp-result-meta strong{color:#24375c;font-size:15px}.arp-record-list{display:grid;gap:12px}.arp-record-card{display:flex;align-items:center;gap:16px;padding:18px;border:1px solid #e6edf6;border-radius:20px;background:#fff;box-shadow:0 3px 12px #172b4d05}.arp-record-file{display:grid;place-items:center;width:52px;height:58px;flex-shrink:0;border-radius:14px;background:#eaf1ff;color:#2468e8}.arp-record-file .arp-icon{width:30px;height:30px}.arp-record-main{flex:1;min-width:0}.arp-record-main h3{margin:0 0 5px;font-size:16px;line-height:1.4;overflow-wrap:anywhere}.arp-record-main p{margin:0 0 9px;color:#738098;font-size:14px;line-height:1.4;overflow-wrap:anywhere}.arp-record-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px;color:#71809a;font-size:12px}.arp-status{display:inline-flex;padding:4px 9px;border-radius:99px;background:#e8f8ef;color:#168653;font-weight:700}.arp-status-diarsipkan{background:#fff4dc;color:#a96c00}.arp-status-kedaluwarsa,.arp-status-tidak-aktif,.arp-status-nonaktif{background:#ffebee;color:#c4384e}.arp-open-file{display:grid;place-items:center;width:42px;height:42px;flex-shrink:0;border:1px solid #e7edf6;border-radius:14px;background:#fff;color:#2468e8;cursor:pointer}.arp-open-file:disabled{opacity:.35;cursor:not-allowed}.arp-empty{display:flex;align-items:center;flex-direction:column;text-align:center;padding:44px 20px;border:1px dashed #d6dfed;border-radius:22px;background:#fbfcff}.arp-empty>.arp-icon{width:40px;height:40px;color:#9ba9bf}.arp-empty h3{margin:12px 0 5px;font-size:18px}.arp-empty p{margin:0 0 18px;color:#71809a}.arp-empty .arp-primary-btn{min-height:46px}
-.arp-notice{padding:14px 16px;margin-bottom:14px;border-radius:14px;background:#fff6e3;color:#875c12;font-size:14px;line-height:1.5}
-.arp-modal-backdrop{position:fixed;z-index:9999;inset:0;display:flex;align-items:center;justify-content:center;padding:18px;background:#101a30a3;overflow-y:auto}.arp-modal{width:min(100%,520px);max-height:min(90vh,850px);overflow:auto;border-radius:24px;background:#fff;padding:24px;box-shadow:0 22px 80px #0a16354a;color:#14254d}.arp-modal-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}.arp-modal-head h3{margin:0;font-size:21px;font-weight:800}.arp-modal-head button{display:grid;place-items:center;width:38px;height:38px;border:0;border-radius:12px;background:#f2f5fa;color:#52617a;cursor:pointer}.arp-field{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;font-size:14px;font-weight:700}.arp-field b{color:#df3657}.arp-field input:not([type=file]),.arp-field select,.arp-field textarea{width:100%;border:1px solid #dce3ef;border-radius:13px;padding:12px 13px;background:#fff;color:#14254d;font:inherit;font-weight:450;outline:none}.arp-field input:focus,.arp-field select:focus,.arp-field textarea:focus{border-color:#4b83ed;box-shadow:0 0 0 3px #2165e817}.arp-field textarea{resize:vertical}.arp-upload-box{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px;border:1px dashed #c9d6eb;border-radius:15px;background:#f8faff;color:#65748d;font-weight:500}.arp-upload-box .arp-icon{color:#2165e8}.arp-upload-box input{width:100%;font-size:13px}.arp-help{font-size:12px;color:#7b879a;font-weight:450}.arp-modal-actions{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:22px}.arp-modal-actions .arp-primary-btn,.arp-modal-actions .arp-secondary-btn{min-height:46px}
-@media(max-width:900px){.arp-banner{padding:20px}.arp-folder-art{min-width:90px;font-size:42px}.arp-slogan{min-width:100px;font-size:15px}.arp-category-grid{gap:12px}.arp-category-card{padding:18px 14px 12px;min-height:225px}.arp-card-heading{gap:12px}.arp-category-icon{width:58px;height:58px;border-radius:18px}.arp-category-icon .arp-icon{width:32px;height:32px}.arp-category-description{font-size:14px}.arp-card-footer{font-size:12px;padding:0 9px}}
-@media(max-width:620px){.arp-shell{padding:12px}.arp-banner{gap:12px;padding:17px 15px;min-height:0;border-radius:22px;margin-bottom:16px}.arp-banner-mark{width:52px;height:52px;border-radius:15px}.arp-banner-mark .arp-icon{width:30px;height:30px}.arp-banner-copy h2{font-size:19px;margin-bottom:5px}.arp-banner-copy p{font-size:12px;line-height:1.4}.arp-folder-art{display:none}.arp-slogan{display:none}.arp-desktop-break{display:none}.arp-toolbar{gap:7px;margin-bottom:15px;flex-wrap:wrap}.arp-search{height:49px;border-radius:14px;padding:0 12px;gap:9px;flex-basis:100%;order:0}.arp-search .arp-icon{width:22px;height:22px}.arp-search input{font-size:14px}.arp-tool-btn{min-height:44px;padding:0 12px;border-radius:13px;font-size:13px;flex:1}.arp-tool-btn .arp-icon{width:19px;height:19px}.arp-category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.arp-category-card{min-height:0;padding:12px 10px 9px;border-radius:19px}.arp-card-heading{align-items:flex-start;flex-direction:column;gap:9px;min-height:0}.arp-category-icon{width:47px;height:47px;border-radius:14px}.arp-category-icon .arp-icon{width:27px;height:27px}.arp-category-title{font-size:13px;line-height:1.35}.arp-category-description{font-size:12px;line-height:1.42;margin:8px 0 10px}.arp-card-footer{gap:5px;min-height:34px;padding:0 7px;border-radius:11px;font-size:10px}.arp-card-footer .arp-icon{width:16px;height:16px}.arp-card-footer .arp-card-chevron{width:17px;height:17px}.arp-detail-header{gap:8px;align-items:flex-start;margin-bottom:15px}.arp-back-btn{font-size:12px;padding-top:8px}.arp-detail-title{gap:9px}.arp-detail-title .arp-category-icon{width:46px;height:46px}.arp-detail-title h2{font-size:17px}.arp-detail-title p{font-size:11px}.arp-refresh-btn{min-height:38px;padding:0 9px;font-size:11px}.arp-refresh-btn .arp-icon{width:16px;height:16px}.arp-detail-toolbar .arp-search{flex-basis:100%}.arp-detail-toolbar .arp-primary-btn{flex:1;min-height:44px;padding:0 10px;font-size:12px;border-radius:13px}.arp-detail-toolbar .arp-primary-btn .arp-icon{width:18px;height:18px}.arp-record-card{gap:10px;padding:12px;border-radius:16px}.arp-record-file{width:42px;height:48px}.arp-record-file .arp-icon{width:25px;height:25px}.arp-record-main h3{font-size:14px}.arp-record-main p{font-size:12px}.arp-record-meta{font-size:11px}.arp-open-file{width:34px;height:34px;border-radius:11px}.arp-modal{padding:18px;border-radius:20px}.arp-modal-head h3{font-size:18px}.arp-modal-actions{display:grid;grid-template-columns:1fr 1fr}.arp-modal-actions button{width:100%;padding:0 8px;font-size:13px}}
-@media(max-width:360px){.arp-category-grid{grid-template-columns:1fr}.arp-category-card{padding:14px}.arp-card-heading{flex-direction:row;align-items:center}.arp-category-title{font-size:14px}.arp-category-description{font-size:13px}.arp-card-footer{font-size:12px}}
+
+/* ==========================================================
+   ARSIP PUSKESMAS — LAYOUT DAN KOMPONEN UTAMA
+   ========================================================== */
+
+/* Shell utama: mengikuti lebar container induk tanpa batas 904px. */
+.arp-shell {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0 auto;
+  padding: 12px 0 24px;
+}
+
+/* Semua elemen di dalam shell menggunakan perhitungan box yang konsisten. */
+.arp-shell * {
+  box-sizing: border-box;
+}
+
+/* Ikon SVG standar untuk tombol, kartu, dan informasi arsip. */
+.arp-icon {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Banner utama halaman arsip dengan tata letak horizontal. */
+.arp-banner {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 24px);
+  min-height: 120px;
+  padding: 20px 28px;
+  margin-top: -10px;
+  margin-bottom: 16px;
+  border: 1px solid #e4dcff;
+  border-radius: 28px;
+  background: linear-gradient(105deg, #f5f1ff 0%, #eee8ff 62%, #e7e0ff 100%);
+  overflow: hidden;
+}
+
+/* Kotak ikon utama pada banner. */
+.arp-banner-mark {
+  display: grid;
+  place-items: center;
+  width: 70px;
+  height: 70px;
+  flex-shrink: 0;
+  border-radius: 20px;
+  background: linear-gradient(145deg, #8c5cf6, #2879ee);
+  color: #fff;
+  box-shadow: 0 10px 24px #7552e52a;
+}
+
+/* Ukuran SVG khusus di dalam ikon banner. */
+.arp-banner-mark .arp-icon {
+  width: 38px;
+  height: 38px;
+  stroke-width: 1.6;
+}
+
+/* Area teks banner: mengisi ruang yang tersedia dan mencegah konten meluber. */
+.arp-banner-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Judul banner: ukuran responsif, tebal, dan jarak bawah konsisten. */
+.arp-banner-copy h2 {
+  font-size: clamp(18px, 2.5vw, 26px);
+  line-height: 1.15;
+  margin: 0 0 8px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+/* Deskripsi banner: ukuran responsif dan warna teks sekunder. */
+.arp-banner-copy p {
+  font-size: clamp(12px, 1.5vw, 14px);
+  line-height: 1.5;
+  color: #64718c;
+  margin: 0;
+}
+
+/* Ilustrasi folder: menyusun elemen dekoratif secara horizontal. */
+.arp-folder-art {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  min-width: 150px;
+  height: 90px;
+  color: #6546d9;
+  font-size: 54px;
+  letter-spacing: -22px;
+  text-shadow: 3px 3px #d7caff;
+}
+
+/* Warna dan posisi folder kedua pada ilustrasi. */
+.arp-folder-art span:nth-child(2) {
+  color: #4933b4;
+  transform: translateY(-8px);
+}
+
+/* Warna, ukuran, dan posisi folder ketiga pada ilustrasi. */
+.arp-folder-art span:nth-child(3) {
+  color: #f0a833;
+  font-size: 60px;
+  transform: translateY(4px);
+}
+
+/* Slogan dekoratif pada banner: tebal, miring, dan rata tengah. */
+.arp-slogan {
+  font-size: 16px;
+  line-height: 1.35;
+  font-style: italic;
+  font-weight: 800;
+  color: #6443cb;
+  transform: rotate(-5deg);
+  text-align: center;
+  min-width: 135px;
+}
+
+/* Toolbar: menyusun pencarian dan tombol aksi dalam satu baris. */
+.arp-toolbar {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+  margin: 0 0 16px;
+}
+
+/* Mempertegas tinggi tombol Tambah Arsip pada toolbar. */
+.arp-toolbar > .arp-primary-btn {
+  height: 46px !important;
+  min-height: 46px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box;
+}
+
+/* Ukuran dan ketebalan SVG plus pada tombol tambah arsip. */
+.arp-toolbar .arp-primary-btn .arp-icon,
+.arp-empty .arp-primary-btn .arp-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  stroke-width: 2.5;
+}
+
+
+/* Kotak pencarian: ikon dan input sejajar dengan lebar fleksibel. */
+.arp-search {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 100px;
+  height: 48px;
+  padding: 0 20px;
+  border: 1px solid #dce3ef;
+  border-radius: 19px;
+  background: #fff;
+  box-shadow: 0 3px 12px #172b4d05;
+}
+
+/* Ikon pencarian: ukuran khusus di dalam kotak pencarian. */
+.arp-search .arp-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Input pencarian: memenuhi ruang tersedia tanpa meluber. */
+.arp-search input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #14254d;
+  font: inherit;
+  font-size: 14px;
+}
+
+/* Placeholder input pencarian: warna teks yang lebih lembut. */
+.arp-search input::placeholder {
+  color: #9aa5b7;
+}
+
+/* Tombol umum: menyamakan tata letak, ukuran, warna, dan transisi tombol. */
+.arp-tool-btn,
+.arp-primary-btn,
+.arp-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 20px;
+  min-height: 48px;
+  border: 1px solid #dce3ef;
+  border-radius: 18px;
+  background: #fff;
+  color: #14254d;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 3px 12px #172b4d05;
+  transition: transform .15s, box-shadow .15s, border-color .15s;
+}
+
+/* Efek hover tombol Urutkan dan tombol sekunder. */
+.arp-tool-btn:hover,
+.arp-secondary-btn:hover {
+  border-color: #b9c9e7;
+  box-shadow: 0 5px 16px #172b4d0c;
+}
+
+/* Efek tekan pada tombol aksi utama dan tombol alat. */
+.arp-tool-btn:active,
+.arp-primary-btn:active {
+  transform: scale(.98);
+}
+
+/* Tombol aksi utama: latar biru dengan teks putih. */
+.arp-primary-btn {
+  background: #2165e8;
+  color: #fff;
+  border-color: #2165e8;
+  box-shadow: 0 6px 16px #2165e82b;
+}
+
+/* Efek hover tombol aksi utama. */
+.arp-primary-btn:hover {
+  background: #1556d3;
+}
+
+/* Tombol sekunder: menggunakan tinggi yang lebih ringkas. */
+.arp-secondary-btn {
+  min-height: 48px;
+}
+
+/* Grid kategori: tiga kolom dengan jarak antar kartu. */
+.arp-category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* Kartu kategori: menyusun informasi secara vertikal dengan tampilan premium. */
+.arp-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+  min-height: 210px;
+  padding: 22px 20px 14px;
+  border: 1px solid #e7edf6;
+  border-radius: 26px;
+  background: linear-gradient(145deg, #fff, #fcfdff);
+  box-shadow: 0 5px 18px #22395c06;
+  color: #14254d;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .16s, border-color .16s, box-shadow .16s;
+}
+
+/* Efek hover kartu kategori. */
+.arp-category-card:hover {
+  transform: translateY(-2px);
+  border-color: #cbdaf4;
+  box-shadow: 0 9px 22px #22395c0c;
+}
+
+/* Baris judul kategori: menyelaraskan ikon dan teks. */
+.arp-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+}
+
+/* Wadah ikon kategori: memusatkan SVG di dalam kotak. */
+.arp-category-icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  border-radius: 22px;
+}
+
+/* Ukuran dan ketebalan garis SVG di dalam ikon kategori. */
+.arp-category-icon .arp-icon {
+  width: 30px;
+  height: 30px;
+  stroke-width: 2.1;
+}
+
+
+/* Judul kategori: ukuran responsif, tebal, dan jarak huruf yang rapat. */
+.arp-category-title {
+  font-size: clamp(15px, 1.4vw, 19px);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.25px;
+}
+
+/* Deskripsi kategori: mengisi ruang tersisa di dalam kartu. */
+.arp-category-description {
+  flex: 1;
+  margin: 12px 0 14px;
+  color: #6c7890;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* Footer kartu kategori: menampilkan informasi tambahan dan ikon. */
+.arp-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid #edf1f7;
+  border-radius: 15px;
+  background: #fff;
+  color: #63718a;
+  font-size: 14px;
+}
+
+/* Ikon pada footer kartu kategori. */
+.arp-card-footer .arp-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Ikon panah footer: berada di sisi paling kanan. */
+.arp-card-footer .arp-card-chevron {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  color: #1764e8;
+}
+
+/* Tema biru untuk ikon atau elemen kategori. */
+.arp-tone-blue {
+  background: #e7efff;
+  color: #2167e8;
+}
+
+/* Tema merah muda untuk ikon atau elemen kategori. */
+.arp-tone-pink {
+  background: #fde8f0;
+  color: #e93e70;
+}
+
+/* Tema hijau untuk ikon atau elemen kategori. */
+.arp-tone-green {
+  background: #e1f7ed;
+  color: #10a66b;
+}
+
+/* Tema kuning untuk ikon atau elemen kategori. */
+.arp-tone-yellow {
+  background: #fff2d6;
+  color: #df9400;
+}
+
+/* Tema ungu untuk ikon atau elemen kategori. */
+.arp-tone-purple {
+  background: #efe5ff;
+  color: #7b42db;
+}
+
+/* Tema toska untuk ikon atau elemen kategori. */
+.arp-tone-teal {
+  background: #e0f8f7;
+  color: #139c9b;
+}
+
+/* Tema merah untuk ikon atau elemen kategori. */
+.arp-tone-red {
+  background: #ffe6ec;
+  color: #ec4564;
+}
+
+/* Tema abu-abu untuk ikon atau elemen kategori. */
+.arp-tone-gray {
+  background: #e9ebf0;
+  color: #677187;
+}
+
+/* Header detail kategori: membungkus tombol kembali, identitas, dan refresh. */
+.arp-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top:-10px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  border: 1px solid #e1e9f6;
+  border-radius: 18px;
+  background: linear-gradient(115deg, #fff 0%, #f7faff 100%);
+  box-shadow: 0 6px 22px rgba(30, 64, 120, .055);
+}
+
+/* Tombol Kategori: warna biru muda, efek hover, klik, dan fokus keyboard. */
+.arp-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 7px 10px;
+  border: 1px solid #d9e6ff;
+  border-radius: 12px;
+  background: #edf4ff;
+  color: #1f5fd1;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color .16s ease, border-color .16s ease, transform .12s ease, box-shadow .16s ease;
+}
+
+/* Hover tombol Kategori: latar lebih pekat dan bayangan halus. */
+.arp-back-btn:hover {
+  background: #dceaff;
+  border-color: #b9d0ff;
+  box-shadow: 0 4px 12px rgba(33, 101, 232, .12);
+}
+
+/* Saat tombol Kategori ditekan. */
+.arp-back-btn:active {
+  background: #cbdfff;
+  transform: scale(.97);
+}
+
+/* Fokus keyboard tombol Kategori agar mudah dikenali saat navigasi. */
+.arp-back-btn:focus-visible {
+  outline: 3px solid rgba(33, 101, 232, .25);
+  outline-offset: 2px;
+}
+
+
+/* ==========================================================
+   JUDUL HEADER DETAIL KATEGORI
+   Mengatur posisi judul, ikon, dan jarak antar elemen.
+========================================================== */
+.arp-detail-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Judul utama pada header detail. */
+.arp-detail-title h2 {
+  font-size: clamp(16px, 2vw, 18px);
+  margin: 0 0 2px;
+  font-weight: 800;
+}
+
+/* Deskripsi singkat di bawah judul detail. */
+.arp-detail-title p {
+  margin: 0;
+  color: #71809a;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Mengatur tinggi minimum tombol refresh. */
+.arp-refresh-btn {
+  min-height: 42px;
+  font-size: 14px;
+}
+
+/* Mengizinkan toolbar detail turun ke baris berikutnya
+   ketika ruang tampilan tidak mencukupi. */
+.arp-detail-toolbar {
+  flex-wrap: wrap;
+}
+
+/* Baris informasi jumlah hasil dan metadata daftar. */
+.arp-result-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #71809a;
+  font-size: 12px;
+  margin: 0 2px 12px;
+  gap: 12px;
+}
+
+/* Menonjolkan jumlah atau informasi penting pada metadata. */
+.arp-result-meta strong {
+  color: #24375c;
+  font-size: 14px;
+}
+
+/* Menampilkan daftar dokumen dalam grid satu kolom. */
+.arp-record-list {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Kartu setiap dokumen, termasuk tata letak ikon dan konten. */
+.arp-record-card {
+  display: grid;
+  align-items: start;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #e5eaf2;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgba(24, 43, 77, .045);
+  position: relative;
+  flex-direction: column;
+  min-width: 0;
+  transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  width: 100%;
+  grid-template-columns: 52px minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 12px;
+  row-gap: 12px;
+}
+
+/* Kotak ikon berkas pada kartu dokumen. */
+.arp-record-file {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #eaf2ff, #f3f6ff);
+  color: #2b67db;
+  grid-column: 1;
+  grid-row: 1;
+  margin: 0;
+}
+
+/* Mengatur ukuran ikon di dalam kotak ikon berkas. */
+.arp-record-file .arp-icon {
+  width: 24px;
+  height: 24px;
+}
+
+
+/* ==========================================================
+   KONTEN UTAMA KARTU DOKUMEN
+   Mengatur posisi, lebar, dan jarak konten dokumen.
+========================================================== */
+.arp-record-main {
+  flex: 1;
+  min-width: 0;
+  grid-column: 2;
+  grid-row: 1;
+  padding-right: 100px;
+}
+
+/* Judul dokumen dengan penanganan teks panjang. */
+.arp-record-main h3 {
+  margin: 2px 0 7px;
+  font-size: 15px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  color: #14254d;
+  font-weight: 800;
+}
+
+/* Deskripsi atau informasi tambahan dokumen. */
+.arp-record-main p {
+  margin: 0;
+  color: #52627c;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+
+/* Baris metadata dokumen dengan elemen yang dapat membungkus. */
+.arp-record-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #64748b;
+  font-size: 12px;
+  margin-top: 10px;
+}
+
+/* Label status standar, misalnya dokumen aktif. */
+.arp-status {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 99px;
+  background: #e8f8ef;
+  color: #168653;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .1px;
+}
+
+/* Warna status untuk dokumen yang sudah diarsipkan. */
+.arp-status-diarsipkan {
+  background: #fff4dc;
+  color: #a96c00;
+}
+
+/* Warna status untuk dokumen kedaluwarsa atau tidak aktif. */
+.arp-status-kedaluwarsa,
+.arp-status-tidak-aktif,
+.arp-status-nonaktif {
+  background: #ffebee;
+  color: #c4384e;
+}
+
+/* Tombol untuk membuka atau melihat berkas dokumen. */
+.arp-open-file {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border: 1px solid #e7edf6;
+  border-radius: 14px;
+  background: #fff;
+  color: #2468e8;
+  cursor: pointer;
+}
+
+/* Tampilan tombol buka berkas ketika dinonaktifkan. */
+.arp-open-file:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   TAMPILAN KETIKA DATA KOSONG
+   Menata pesan kosong agar berada di tengah area konten.
+========================================================== */
+.arp-empty {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 44px 20px;
+  border: 1px dashed #d6dfed;
+  border-radius: 22px;
+  background: #fbfcff;
+}
+
+/* Ikon utama pada tampilan data kosong. */
+.arp-empty > .arp-icon {
+  width: 40px;
+  height: 40px;
+  color: #9ba9bf;
+}
+
+/* Judul pesan ketika tidak ada data yang ditampilkan. */
+.arp-empty h3 {
+  margin: 12px 0 5px;
+  font-size: 16px;
+}
+
+/* Deskripsi pada tampilan data kosong. */
+.arp-empty p {
+  margin: 0 0 18px;
+  color: #71809a;
+  font-size: 14px;
+}
+
+/* Menetapkan tinggi minimum tombol utama pada tampilan kosong. */
+.arp-empty .arp-primary-btn {
+  min-height: 46px;
+  font-size: 14px;
+}
+
+/* ==========================================================
+   KOTAK PEMBERITAHUAN
+   Menampilkan informasi atau peringatan kepada pengguna.
+========================================================== */
+.arp-notice {
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  border-radius: 14px;
+  background: #fff6e3;
+  color: #875c12;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ==========================================================
+   LATAR BELAKANG MODAL
+   Menutupi halaman dan memusatkan jendela modal.
+========================================================== */
+.arp-modal-backdrop {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: #101a30a3;
+  overflow-y: auto;
+}
+
+/* Kontainer utama modal dengan batas lebar dan tinggi. */
+.arp-modal {
+  width: min(100%, 520px);
+  max-height: min(90vh, 850px);
+  overflow: auto;
+  border-radius: 24px;
+  background: #fff;
+  padding: 24px;
+  box-shadow: 0 22px 80px #0a16354a;
+  color: #14254d;
+}
+
+/* Baris header modal untuk judul dan tombol tutup. */
+.arp-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+/* Judul pada bagian atas modal. */
+.arp-modal-head h3 {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 800;
+}
+
+/* Tombol tutup modal dengan ikon di tengah. */
+.arp-modal-head button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 12px;
+  background: #f2f5fa;
+  color: #52617a;
+  cursor: pointer;
+}
+
+
+/* ==========================================================
+   FORM INPUT
+   Mengatur susunan label, jarak, dan ukuran elemen formulir.
+========================================================== */
+.arp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Memberi warna merah pada penanda wajib diisi. */
+.arp-field b {
+  color: #df3657;
+}
+
+/* Gaya dasar input, pilihan dropdown, dan textarea. */
+.arp-field input:not([type=file]),
+.arp-field select,
+.arp-field textarea {
+  width: 100%;
+  border: 1px solid #dce3ef;
+  border-radius: 13px;
+  padding: 12px 13px;
+  background: #fff;
+  color: #14254d;
+  font: inherit;
+  font-weight: 450;
+  outline: none;
+}
+
+/* Menonjolkan elemen formulir yang sedang dipilih. */
+.arp-field input:focus,
+.arp-field select:focus,
+.arp-field textarea:focus {
+  border-color: #4b83ed;
+  box-shadow: 0 0 0 3px #2165e817;
+}
+
+/* Mengizinkan tinggi textarea diubah secara vertikal. */
+.arp-field textarea {
+  resize: vertical;
+}
+
+/* ==========================================================
+   AREA UPLOAD BERKAS
+   Menata ikon, petunjuk, dan input unggah file.
+========================================================== */
+.arp-upload-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px;
+  border: 1px dashed #c9d6eb;
+  border-radius: 15px;
+  background: #f8faff;
+  color: #65748d;
+  font-weight: 500;
+}
+
+/* Warna ikon pada area upload. */
+.arp-upload-box .arp-icon {
+  color: #2165e8;
+}
+
+/* Input pemilihan file pada area upload. */
+.arp-upload-box input {
+  width: 100%;
+  font-size: 13px;
+}
+
+/* Teks bantuan atau petunjuk tambahan pada formulir. */
+.arp-help {
+  font-size: 12px;
+  color: #7b879a;
+  font-weight: 450;
+}
+
+/* ==========================================================
+   TOMBOL AKSI MODAL
+   Menempatkan tombol aksi di sisi kanan bagian bawah modal.
+========================================================== */
+.arp-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/* Menyamakan tinggi minimum tombol utama dan sekunder. */
+.arp-modal-actions .arp-primary-btn,
+.arp-modal-actions .arp-secondary-btn {
+  min-height: 46px;
+}
+
+/* ==========================================================
+   EFEK HOVER KARTU DOKUMEN
+   Memberikan efek elevasi dan batas saat kartu disorot.
+========================================================== */
+.arp-record-card:hover {
+  transform: translateY(-2px);
+  border-color: #cad8ee;
+  box-shadow: 0 12px 26px rgba(24, 43, 77, .085);
+}
+
+/* Wadah bagian atas kartu untuk elemen status dan identitas. */
+.arp-record-top {
+  display: contents;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Posisi badge status pada sudut kanan atas kartu dokumen. */
+.arp-record-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  max-width: 45%;
+}
+
+/* Identitas dokumen dengan font monospace dan teks yang bisa membungkus. */
+.arp-record-id {
+  overflow-wrap: anywhere;
+  font-family: monospace;
+  color: #73819a;
+  font-size: 10px;
+}
+
+/* Baris tombol aksi di bagian bawah kartu dokumen. */
+.arp-record-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-top: 13px;
+  border-top: 1px solid #edf1f6;
+  grid-column: 1 / -1;
+  grid-row: 2;
+  width: 100%;
+  min-width: 0;
+  margin-top: 0;
+}
+
+/* Tombol buka berkas di dalam area aksi kartu. */
+.arp-record-actions .arp-open-file {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 14px;
+  border: 1px solid #dce8ff;
+  border-radius: 12px;
+  background: #f1f6ff;
+  color: #245ac7;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Perubahan warna tombol buka berkas saat disorot. */
+.arp-record-actions .arp-open-file:hover {
+  background: #e7f0ff;
+  border-color: #c6d9ff;
+}
+
+/* Tampilan tombol buka berkas ketika dinonaktifkan. */
+.arp-record-actions .arp-open-file:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+
+/* ==========================================================
+   MENU AKSI DOKUMEN
+   Menjadi wadah posisi untuk tombol dan dropdown aksi.
+========================================================== */
+.arp-action-menu {
+  position: relative;
+}
+
+/* Tombol pemicu dropdown menu aksi dokumen. */
+.arp-action-trigger {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  color: #53627a;
+  font-size: 22px;
+  cursor: pointer;
+  border-color: #e3e9f2;
+}
+
+/* Panel dropdown yang muncul di atas tombol pemicu. */
+.arp-action-dropdown {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: 180px;
+  padding: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+/* Menyembunyikan dropdown ketika atribut hidden aktif. */
+.arp-action-dropdown[hidden] {
+  display: none;
+}
+
+/* Tampilan setiap pilihan aksi di dalam dropdown. */
+.arp-action-dropdown button {
+  display: block;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #334155;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Memberikan latar saat pilihan dropdown disorot. */
+.arp-action-dropdown button:hover {
+  background: #f1f5f9;
+}
+
+/* Warna khusus untuk aksi berisiko, seperti menghapus data. */
+.arp-action-dropdown .arp-danger-action {
+  color: #dc2626;
+}
+
+/* Label penanda dokumen yang terkunci. */
+.arp-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Tampilan kartu dokumen dalam kondisi terkunci. */
+.arp-record-locked {
+  border-color: #f3d8b8;
+  background: linear-gradient(145deg, #fffefa, #fff);
+}
+
+
+/* ==========================================================
+   KARTU KONTROL PENCARIAN DAN FILTER
+   Membentuk panel kontrol dengan latar dan bayangan lembut.
+========================================================== */
+.arp-control-card {
+  margin: 0 0 22px;
+  padding: 20px;
+  border: 1px solid #e4eaf4;
+  border-radius: 18px;
+  background: linear-gradient(145deg, #fff 0%, #f8faff 100%);
+  box-shadow: 0 10px 30px rgba(32, 57, 99, .055);
+}
+
+/* Header panel kontrol beserta judul dan jumlah data. */
+.arp-control-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+/* Judul utama panel kontrol. */
+.arp-control-heading h3 {
+  margin: 5px 0 4px;
+  color: #17233d;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 800;
+  letter-spacing: -.3px;
+}
+
+/* Deskripsi singkat di bawah judul panel kontrol. */
+.arp-control-heading p {
+  margin: 0;
+  color: #77849b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Label kecil di atas judul panel kontrol. */
+.arp-control-eyebrow {
+  color: #2864d9;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.25px;
+}
+
+/* Lencana jumlah data pada panel kontrol. */
+.arp-control-count {
+  flex-shrink: 0;
+  padding: 8px 12px;
+  border: 1px solid #dbe7ff;
+  border-radius: 999px;
+  background: #edf4ff;
+  color: #285cc5;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+/* Mengatur jarak toolbar di dalam kartu kontrol. */
+.arp-control-card .arp-toolbar {
+  margin: 0;
+  gap: 10px;
+}
+
+/* Menyamakan tinggi, padding, dan bentuk kolom pencarian. */
+.arp-control-card .arp-search {
+  min-height: 48px;
+  height: 48px;
+  border-radius: 13px;
+  padding: 0 15px;
+  border-color: #e0e7f1;
+  box-shadow: none;
+}
+
+/* Ukuran dan warna ikon pencarian. */
+.arp-control-card .arp-search .arp-icon {
+  width: 20px;
+  height: 20px;
+  color: #71819c;
+}
+
+/* Ukuran teks pada kolom pencarian panel kontrol. */
+.arp-control-card .arp-search input {
+  font-size: 13px;
+}
+
+/* Menyamakan tinggi, padding, dan bentuk tombol toolbar. */
+.arp-control-card .arp-tool-btn,
+.arp-control-card .arp-primary-btn {
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 13px;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+/* Tampilan tombol sekunder pada panel kontrol. */
+.arp-control-card .arp-tool-btn {
+  border-color: #e0e7f1;
+  background: #fff;
+}
+
+/* Bayangan tombol utama untuk memberikan efek penekanan. */
+.arp-control-card .arp-primary-btn {
+  box-shadow: 0 5px 12px rgba(33, 101, 232, .18);
+}
+
+/* Label informasi hasil dengan huruf tebal dan kapital. */
+.arp-result-label {
+  color: #24395f;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .9px;
+}
+
+/* Metadata dokumen: latar biru muda, border biru, dan teks lebih tegas. */
+.arp-record-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  padding: 6px 9px;
+  border: 1px solid #cbdcf8;
+  border-radius: 9px;
+  background: #edf4ff;
+  color: #294b7a;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+
+/* ID dokumen mengikuti gaya metadata agar tampil seragam. */
+.arp-record-meta .arp-record-id {
+  font-family: monospace;
+  color: #294b7a;
+  font-size: 12px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* Ikon metadata menggunakan warna biru yang senada. */
+.arp-record-meta .arp-icon {
+  width: 14px;
+  height: 14px;
+  color: #2864c5;
+}
+
+
+/* ==========================================================
+   LEBAR PENUH KONTEN DETAIL ARSIP
+   Menyamakan lebar header, panel kontrol, metadata hasil,
+   dan daftar dokumen agar mengikuti lebar kontainer induk.
+========================================================== */
+.arp-detail-header,
+.arp-control-card,
+.arp-result-meta,
+.arp-record-list {
+  width: 100%;
+  max-width: none;
+}
+
+
+
+/* ==========================================================
+   ARSIP PUSKESMAS — RESPONSIVE MOBILE
+   Breakpoint: maksimal 768px.
+   Menyesuaikan layout agar nyaman di HP dan sejajar
+   dengan lebar header halaman.
+========================================================== */
+@media (max-width: 768px) {
+
+  /* Shell mengikuti lebar area konten pada tampilan mobile. */
+  .arp-shell {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    padding: 10px 0 20px;
+    margin: 0 auto;
+  }
+
+  /* Banner menyesuaikan ukuran layar HP. */
+  .arp-banner {
+    gap: 12px;
+    min-height: auto;
+    padding: 18px;
+    margin-bottom: 18px;
+    border-radius: 20px;
+  }
+
+  /* Ikon banner diperkecil untuk layar mobile. */
+  .arp-banner-mark {
+    width: 54px;
+    height: 54px;
+    border-radius: 15px;
+  }
+
+  /* Ukuran SVG ikon banner pada mobile. */
+  .arp-banner-mark .arp-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* Judul banner menyesuaikan lebar layar. */
+  .arp-banner-copy h2 {
+    font-size: clamp(18px, 4vw, 24px);
+    line-height: 1.25;
+  }
+
+  /* Deskripsi banner lebih ringkas pada mobile. */
+  .arp-banner-copy p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  /* Ilustrasi dekoratif disembunyikan agar ruang lebih efisien. */
+  .arp-folder-art,
+  .arp-slogan {
+    display: none;
+  }
+
+  /* Toolbar pencarian dan tombol dapat berpindah baris. */
+  .arp-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  /* Kolom pencarian mengikuti lebar toolbar. */
+  .arp-search {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    height: 48px;
+    padding: 0 14px;
+    gap: 10px;
+    border-radius: 13px;
+  }
+
+  /* Ikon pencarian pada mobile. */
+  .arp-search .arp-icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  /* Teks input pencarian pada mobile. */
+  .arp-search input {
+    font-size: 14px;
+  }
+
+  /* Tombol toolbar memiliki tinggi yang konsisten. */
+  .arp-tool-btn,
+  .arp-primary-btn,
+  .arp-secondary-btn {
+    min-height: 44px;
+    padding: 0 13px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+
+  /* Grid kategori menjadi dua kolom pada mobile. */
+  .arp-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  /* Kartu kategori dibuat lebih ringkas. */
+  .arp-category-card {
+    min-height: 0;
+    padding: 14px 12px 10px;
+    border-radius: 18px;
+  }
+
+  /* Jarak ikon dan judul kategori pada mobile. */
+  .arp-card-heading {
+    gap: 10px;
+    min-height: 48px;
+    align-items: center;
+  }
+
+  /* Ikon kategori diperkecil. */
+  .arp-category-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+  }
+
+  /* SVG ikon kategori pada mobile. */
+  .arp-category-icon .arp-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Judul kategori menyesuaikan lebar kartu. */
+  .arp-category-title {
+    font-size: 14px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  /* Deskripsi kategori diperkecil untuk layar HP. */
+  .arp-category-description {
+    margin: 10px 0 12px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  /* Footer kategori dibuat lebih ringkas. */
+  .arp-card-footer {
+    gap: 6px;
+    min-height: 36px;
+    padding: 0 8px;
+    border-radius: 10px;
+    font-size: 11px;
+  }
+
+  /* Ikon footer kategori pada mobile. */
+  .arp-card-footer .arp-icon {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Ikon panah footer kategori pada mobile. */
+  .arp-card-footer .arp-card-chevron {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Header detail mengikuti lebar shell dan membungkus elemen. */
+  .arp-detail-header {
+    width: 100%;
+    max-width: none;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 15px;
+  }
+
+  /* Tombol kembali kategori dibuat lebih ringkas. */
+  .arp-back-btn {
+    gap: 5px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+  }
+  
+  /* Area judul detail pada mobile. */
+  .arp-detail-title {
+    flex: 1 1 160px;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  /* Judul detail pada mobile. */
+  .arp-detail-title h2 {
+    font-size: clamp(18px, 4.5vw, 23px);
+    line-height: 1.3;
+    color: #14254d;
+    font-weight: 800;
+  }
+
+  /* Deskripsi detail dibuat lebih jelas dan mudah dibaca. */
+  .arp-detail-title p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #52627c;
+  }
+
+  /* MOBILE: sembunyikan ikon identitas/kategori di samping judul. */
+  .arp-detail-header .arp-detail-title > .arp-icon,
+  .arp-detail-header .arp-detail-title > svg,
+  .arp-detail-header .arp-detail-title > *:first-child:not(div) {
+    display: none !important;
+  }
+  
+  /* ==========================================================
+     TOMBOL REFRESH MOBILE
+     Posisi di kanan atas, hanya menampilkan ikon SVG.
+  ========================================================== */ 
+  /* Tombol refresh mobile: tetap di kanan atas. */
+  .arp-refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    margin-left: auto;
+    flex: 0 0 40px;
+    font-size: 0;
+    line-height: 0;
+    border-radius: 11px;
+  }
+
+  /* SVG refresh tepat di tengah tombol. */
+  .arp-refresh-btn > .arp-icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    padding: 0;
+    flex: 0 0 20px;
+  }
+
+  /* Sembunyikan tulisan Refresh pada mobile. */
+  .arp-refresh-btn > span {
+    display: none;
+  }
+
+  /* Toolbar detail mengikuti lebar kontainer. */
+  .arp-detail-toolbar {
+    width: 100%;
+    max-width: none;
+    gap: 8px;
+  }
+
+  /* Panel kontrol sejajar dengan header detail. */
+  .arp-control-card {
+    width: 100%;
+    max-width: none;
+    padding: 15px;
+    margin-bottom: 16px;
+    border-radius: 15px;
+  }
+
+  /* Header panel kontrol dapat membungkus pada layar sempit. */
+  .arp-control-heading {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  /* Judul panel kontrol pada mobile. */
+  .arp-control-heading h3 {
+    font-size: 16px;
+  }
+
+  /* Deskripsi panel kontrol pada mobile. */
+  .arp-control-heading p {
+    font-size: 12px;
+  }
+
+  /* Label kecil panel kontrol pada mobile. */
+  .arp-control-eyebrow {
+    font-size: 9px;
+    letter-spacing: 1px;
+  }
+
+  /* Lencana jumlah data dibuat lebih ringkas. */
+  .arp-control-count {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  /* Toolbar pencarian panel kontrol dapat membungkus. */
+  .arp-control-card .arp-toolbar {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* Kolom pencarian panel kontrol memenuhi lebar yang tersedia. */
+  .arp-control-card .arp-search {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    height: 46px;
+    min-height: 46px;
+    padding: 0 12px;
+  }
+
+  /* Tombol kontrol dapat menyesuaikan lebar layar. */
+  .arp-control-card .arp-tool-btn,
+  .arp-control-card .arp-primary-btn {
+    min-height: 44px;
+    padding: 0 12px;
+    border-radius: 11px;
+    font-size: 12px;
+  }
+
+  /* Metadata hasil mengikuti lebar kontainer. */
+  .arp-result-meta {
+    width: 100%;
+    max-width: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 10px;
+  }
+
+  /* Jumlah hasil dibuat sedikit lebih ringkas. */
+  .arp-result-meta strong {
+    font-size: 14px;
+  }
+
+  /* Daftar dokumen memenuhi lebar kontainer. */
+  .arp-record-list {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  /* Kartu dokumen menggunakan tata letak dua kolom. */
+  .arp-record-card {
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+    border-radius: 15px;
+    grid-template-columns: 42px minmax(0, 1fr);
+    column-gap: 10px;
+    row-gap: 12px;
+  }
+
+  /* Ikon berkas pada kartu dokumen diperkecil. */
+  .arp-record-file {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+  }
+
+  /* SVG ikon berkas pada mobile. */
+  .arp-record-file .arp-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Konten utama dokumen menggunakan ruang yang tersedia. */
+  .arp-record-main {
+    min-width: 0;
+    padding-right: 0;
+  }
+
+  /* Judul dokumen pada mobile. */
+  .arp-record-main h3 {
+    font-size: 14px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  /* Deskripsi dokumen pada mobile. */
+  .arp-record-main p {
+    font-size: 12px;
+  }
+
+  /* Badge dokumen mengikuti alur konten agar tidak bertumpuk. */
+  .arp-record-badges {
+    position: static;
+    grid-column: 1 / -1;
+    grid-row: auto;
+    justify-content: flex-start;
+    max-width: 100%;
+    gap: 6px;
+  }
+
+  /* Metadata dokumen lebih rapat pada layar HP. */
+  .arp-record-meta {
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 11px;
+  }
+
+  /* Setiap item metadata menyesuaikan lebar konten. */
+  .arp-record-meta > span {
+    padding: 5px 7px;
+    font-size: 11px;
+  }
+
+  /* Baris aksi dokumen memenuhi lebar kartu. */
+  .arp-record-actions {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding-top: 10px;
+  }
+
+  /* Tombol buka berkas tetap dapat menyusut di layar kecil. */
+  .arp-record-actions .arp-open-file {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    min-height: 40px;
+    padding: 9px 10px;
+    font-size: 12px;
+  }
+
+  /* Menu aksi tidak keluar dari area kartu. */
+  .arp-action-menu {
+    flex-shrink: 0;
+  }
+
+  /* Tombol pemicu menu aksi pada mobile. */
+  .arp-action-trigger {
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+  }
+
+  /* Dropdown aksi tetap berada di atas tombol pemicu. */
+  .arp-action-dropdown {
+    width: min(180px, calc(100vw - 40px));
+  }
+
+  /* Pesan kosong menggunakan padding yang lebih kecil. */
+  .arp-empty {
+    padding: 32px 16px;
+    border-radius: 17px;
+  }
+
+  /* Judul pesan kosong pada mobile. */
+  .arp-empty h3 {
+    font-size: 16px;
+  }
+
+  /* Deskripsi pesan kosong pada mobile. */
+  .arp-empty p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  /* Pemberitahuan lebih ringkas pada mobile. */
+  .arp-notice {
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  /* Modal menggunakan hampir seluruh lebar layar HP. */
+  .arp-modal-backdrop {
+    align-items: flex-start;
+    padding: 12px;
+  }
+
+  /* Kontainer modal menyesuaikan viewport mobile. */
+  .arp-modal {
+    width: 100%;
+    max-width: 520px;
+    max-height: calc(100dvh - 24px);
+    padding: 18px;
+    border-radius: 18px;
+    margin: auto;
+  }
+
+  /* Header modal pada layar mobile. */
+  .arp-modal-head {
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  /* Judul modal pada layar mobile. */
+  .arp-modal-head h3 {
+    font-size: 18px;
+  }
+
+  /* Tombol tutup modal pada layar mobile. */
+  .arp-modal-head button {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+  }
+
+  /* Jarak antarfield formulir diperkecil. */
+  .arp-field {
+    gap: 7px;
+    margin-bottom: 14px;
+    font-size: 13px;
+  }
+
+  /* Input formulir nyaman digunakan dengan sentuhan. */
+  .arp-field input:not([type=file]),
+  .arp-field select,
+  .arp-field textarea {
+    padding: 11px 12px;
+    font-size: 14px;
+  }
+
+  /* Area upload menyesuaikan lebar layar. */
+  .arp-upload-box {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  /* Input file tidak melampaui area upload. */
+  .arp-upload-box input {
+    min-width: 0;
+    font-size: 12px;
+  }
+
+  /* Tombol aksi modal dapat membungkus pada layar sempit. */
+  .arp-modal-actions {
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  /* Tombol aksi modal pada mobile. */
+  .arp-modal-actions .arp-primary-btn,
+  .arp-modal-actions .arp-secondary-btn {
+    min-height: 44px;
+  }
+}
+
+/* ==========================================================
+   MOBILE SEMPIT
+   Penyesuaian tambahan untuk layar maksimal 480px.
+========================================================== */
+@media (max-width: 480px) {
+
+  /* Banner menggunakan jarak dan padding lebih kecil. */
+  .arp-banner {
+    gap: 10px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  /* Ikon banner untuk layar sangat sempit. */
+  .arp-banner-mark {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+  }
+
+  /* SVG banner untuk layar sangat sempit. */
+  .arp-banner-mark .arp-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  /* Judul banner pada layar sangat sempit. */
+  .arp-banner-copy h2 {
+    font-size: 18px;
+  }
+
+  /* Kartu kategori mempertahankan dua kolom yang proporsional. */
+  .arp-category-grid {
+    gap: 8px;
+  }
+
+  /* Padding kartu kategori pada layar sempit. */
+  .arp-category-card {
+    padding: 11px 9px 9px;
+    border-radius: 15px;
+  }
+
+  /* Ikon kategori pada layar sempit. */
+  .arp-category-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+  }
+
+  /* SVG kategori pada layar sempit. */
+  .arp-category-icon .arp-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Jarak antara ikon dan judul kategori pada layar sempit. */
+  .arp-card-heading {
+    gap: 8px;
+  }
+
+  /* Judul kategori pada layar sempit. */
+  .arp-category-title {
+    font-size: 13px;
+  }
+
+  /* Deskripsi kategori pada layar sempit. */
+  .arp-category-description {
+    font-size: 11px;
+  }
+
+  /* Footer kartu kategori pada layar sempit. */
+  .arp-card-footer {
+    gap: 4px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+
+  /* Header detail: tombol kembali kiri, refresh kanan atas. */
+  .arp-detail-header {
+    width: 100%;
+    max-width: none;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    border-radius: 15px;
+  }
+
+  /* Tombol kembali: hanya menampilkan ikon panah. */
+  .arp-back-btn {
+    gap: 0;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 0;
+    flex-shrink: 0;
+  }
+
+  /* Sembunyikan ikon kategori, pertahankan ikon panah pertama. */
+  .arp-back-btn .arp-icon:not(:first-child) {
+    display: none;
+  }
+
+  .arp-back-btn .arp-icon:first-child {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Panel kontrol menggunakan padding lebih kecil. */
+  .arp-control-card {
+    padding: 12px;
+  }
+
+  /* Tombol kontrol boleh tumbuh secara fleksibel. */
+  .arp-control-card .arp-tool-btn,
+  .arp-control-card .arp-primary-btn {
+    flex: 1 1 auto;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  /* Kartu dokumen menggunakan padding lebih kecil. */
+  .arp-record-card {
+    padding: 12px;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 9px;
+  }
+
+  /* Ikon dokumen pada layar sempit. */
+  .arp-record-file {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  /* SVG ikon dokumen pada layar sempit. */
+  .arp-record-file .arp-icon {
+    width: 19px;
+    height: 19px;
+  }
+
+  /* Judul dokumen pada layar sempit. */
+  .arp-record-main h3 {
+    font-size: 13px;
+  }
+
+  /* Tombol aksi dokumen dapat membungkus teks. */
+  .arp-record-actions .arp-open-file {
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  /* Modal menggunakan padding lebih kecil. */
+  .arp-modal {
+    padding: 15px;
+  }
+}
+
+
