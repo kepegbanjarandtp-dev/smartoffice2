@@ -54,6 +54,11 @@ import {
 } from "./penomoran-sop.js";
 
 import {
+    smartofficeInitArsipPuskesmas,
+    smartofficeDestroyArsipPuskesmas
+} from "./arsip-puskesmas.js";
+
+import {
     smartofficeConvertFileToBase64
 } from "../../utils/file.js";
 
@@ -200,6 +205,11 @@ function smartofficeInitPusatDokumenTab(){
             "smartofficePenomoranSOPContent"
         );
 
+    const contentArsip =
+        document.getElementById(
+            "smartofficeArsipPuskesmasContent"
+        );
+
     /* ==================================================
        FUNGSI TAMPILKAN TAB
     ================================================== */
@@ -218,6 +228,28 @@ function smartofficeInitPusatDokumenTab(){
                 "none";
         }
 
+        if(contentArsip){
+            contentArsip.style.display =
+                "none";
+        }
+
+        /* =========================
+           ATUR VISIBILITAS INFO CARD
+        ========================= */
+        const infoSK = document.getElementById(
+            "smartofficePenomoranSKInfo"
+        );
+
+        if(infoSK){
+            infoSK.style.display =
+                (
+                    tab === "penomoran-sk" ||
+                    tab === "penomoran-sop"
+                )
+                ? ""
+                : "none";
+        }
+
         /* =========================
            TAMPILKAN YANG AKTIF
         ========================= */
@@ -234,6 +266,14 @@ function smartofficeInitPusatDokumenTab(){
             contentSOP
         ){
             contentSOP.style.display =
+                "";
+        }
+
+        if(
+            tab === "arsip-puskesmas" &&
+            contentArsip
+        ){
+            contentArsip.style.display =
                 "";
         }
     }
@@ -391,6 +431,12 @@ function smartofficeInitPusatDokumenTab(){
                     ){
                         smartofficeInitPenomoranSOP();
                         smartofficeLoadPenomoranSOP();
+                    }
+
+                    if(
+                        tab === "arsip-puskesmas"
+                    ){
+                        smartofficeInitArsipPuskesmas();
                     }
                 }
             );
@@ -3924,6 +3970,12 @@ export function smartofficeDestroyPage(){
     ================================================== */
     smartofficePusatDokumenDestroyed =
         true;
+
+
+    /* ==================================================
+       DESTROY ARSIP PUSKESMAS
+    ================================================== */
+    smartofficeDestroyArsipPuskesmas();
 
     /* ==================================================
        FILTER ELEMENT
