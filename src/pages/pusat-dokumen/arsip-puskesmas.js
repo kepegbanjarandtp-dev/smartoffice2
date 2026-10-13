@@ -119,7 +119,7 @@ const CATEGORIES = [
         id: "regulasi-pedoman",
         name: "Regulasi & Pedoman",
         description:
-            "Peraturan, kebijakan, pedoman dan surat edaran",
+            "Peraturan, kebijakan, pedoman, surat edaran, surat keputusan",
         icon: "gavel",
         tone: "pink"
     },
