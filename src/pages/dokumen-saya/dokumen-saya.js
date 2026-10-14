@@ -2949,7 +2949,7 @@ async function smartofficeSubmitEditDokumen(){
 
     /* =========================
        VALIDASI FILE
-    ========================= */
+    ========================= 
     if(!file){
         smartofficeShowToast(
             "Pilih file baru",
@@ -2957,7 +2957,7 @@ async function smartofficeSubmitEditDokumen(){
         );
 
         return;
-    }
+    } */
 
     /* =========================
        CARI DOKUMEN
@@ -3111,10 +3111,10 @@ async function smartofficeSubmitEditDokumen(){
                         keterangan,
 
                     namaFile:
-                        file.name,
+                        file ? file.name : "",
 
                     mimeType:
-                        file.type,
+                        file ? file.type : "",
 
                     base64:
                         e.target.result
@@ -3342,9 +3342,18 @@ async function smartofficeSubmitEditDokumen(){
     /* =========================
        START FILE READER
     ========================= */
-    reader.readAsDataURL(
-        file
-    );
+    if(file){
+        // Ada file baru: baca file seperti alur lama
+        reader.readAsDataURL(file);
+    }else{
+        // Tidak ada file baru: gunakan file lama
+        // Jalankan proses update yang sama tanpa membaca file
+        reader.onload({
+            target: {
+                result: ""
+            }
+        });
+    }
 }
 
 

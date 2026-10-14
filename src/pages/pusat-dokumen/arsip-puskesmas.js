@@ -18,8 +18,18 @@ import {
 import {
     smartofficeGetArsipPuskesmas,
     smartofficeSimpanArsipPuskesmas,
-    smartofficeUpdateStatusArsipPuskesmas
+    smartofficeUpdateStatusArsipPuskesmas,
+    smartofficeSetLockArsipPuskesmas,
+    smartofficeHapusArsipPuskesmas
 } from "../../services/arsip-puskesmas-service.js";
+
+import {
+    smartofficeShowLoading
+} from "../../components/loading/loading.js";
+
+import {
+    smartofficeShowToast
+} from "../../components/toast/toast.js";
 
 
 /* ==========================================================
@@ -28,6 +38,9 @@ import {
 ========================================================== */
 window.smartofficeArsipPuskesmasAdapter = {
 
+    /* ======================================================
+       AMBIL DAFTAR ARSIP
+    ====================================================== */
     async list({
         kategori = "",
         forceRefresh = false
@@ -54,13 +67,18 @@ window.smartofficeArsipPuskesmasAdapter = {
         return records;
     },
 
+    /* ======================================================
+       SIMPAN / EDIT ARSIP
+    ====================================================== */
     async save(payload = {}) {
+
         const file = payload.file
             ? {
                 name: payload.file.name,
-                type: payload.file.mimeType ||
-                      payload.file.type ||
-                      "application/octet-stream",
+                type:
+                    payload.file.mimeType ||
+                    payload.file.type ||
+                    "application/octet-stream",
                 data: payload.file.base64
             }
             : null;
@@ -76,12 +94,56 @@ window.smartofficeArsipPuskesmasAdapter = {
                 diperbaruiOleh: payload.diperbaruiOleh || "",
                 file
             });
+
         if (!response?.success) {
             throw new Error(
                 response?.message ||
                 "Gagal menyimpan Arsip Puskesmas."
             );
         }
+
+        return response;
+    },
+
+    /* ======================================================
+       KUNCI / BUKA KUNCI ARSIP
+       Backend: smartofficeSetLockArsipPuskesmas
+    ====================================================== */
+    async setLock(payload = {}) {
+
+        const response =
+            await smartofficeSetLockArsipPuskesmas({
+                idArsip: payload.idArsip || "",
+                isLock: payload.isLock === true,
+                diperbaruiOleh: payload.diperbaruiOleh || ""
+            });
+
+        if (!response?.success) {
+            throw new Error(
+                response?.message ||
+                "Gagal mengubah status lock Arsip Puskesmas."
+            );
+        }
+
+        return response;
+    },
+
+    /* ======================================================
+       HAPUS ARSIP
+    ====================================================== */    
+    async remove(payload = {}) {
+        const response = await smartofficeHapusArsipPuskesmas({
+            idArsip: payload.idArsip || "",
+            diperbaruiOleh: payload.diperbaruiOleh || ""
+        });
+
+        if (!response?.success) {
+            throw new Error(
+                response?.message || "Gagal menghapus arsip."
+            );
+        }
+
+        return response;
     }
 };
 
@@ -98,12 +160,9 @@ window.smartofficeArsipPuskesmasAdapter = {
 ========================================================== */
 const CATEGORIES = [
 
-    /* ------------------------------------------------------
-       1. PROFIL DAN IDENTITAS PUSKESMAS
-       Profil, struktur organisasi, dan dokumen pendirian.
-    ------------------------------------------------------ */
+    /* 1. PROFIL DAN IDENTITAS PUSKESMAS */
     {
-        id: "profil-identitas",
+        id: "PROFIL_IDENTITAS",
         name: "Profil & Identitas Puskesmas",
         description:
             "Profil, struktur organisasi, SK pendirian, data dasar",
@@ -111,12 +170,9 @@ const CATEGORIES = [
         tone: "blue"
     },
 
-    /* ------------------------------------------------------
-       2. REGULASI DAN PEDOMAN
-       Peraturan, kebijakan, pedoman, dan surat edaran.
-    ------------------------------------------------------ */
+    /* 2. REGULASI DAN PEDOMAN */
     {
-        id: "regulasi-pedoman",
+        id: "REGULASI_PEDOMAN",
         name: "Regulasi & Pedoman",
         description:
             "Peraturan, kebijakan, pedoman, surat edaran, surat keputusan",
@@ -124,12 +180,9 @@ const CATEGORIES = [
         tone: "pink"
     },
 
-    /* ------------------------------------------------------
-       3. MUTU DAN AKREDITASI
-       Dokumen mutu, instrumen, eviden, dan hasil survei.
-    ------------------------------------------------------ */
+    /* 3. MUTU DAN AKREDITASI */
     {
-        id: "mutu-akreditasi",
+        id: "MUTU_AKREDITASI",
         name: "Mutu & Akreditasi",
         description:
             "Dokumen mutu, instrumen, eviden, hasil survei",
@@ -137,12 +190,9 @@ const CATEGORIES = [
         tone: "green"
     },
 
-    /* ------------------------------------------------------
-       4. LAPORAN PENTING
-       Laporan tahunan, kinerja, dan evaluasi.
-    ------------------------------------------------------ */
+    /* 4. LAPORAN PENTING */
     {
-        id: "laporan-penting",
+        id: "LAPORAN_PENTING",
         name: "Laporan Penting",
         description:
             "Laporan tahunan, profil kesehatan, laporan kinerja dan evaluasi",
@@ -150,12 +200,9 @@ const CATEGORIES = [
         tone: "yellow"
     },
 
-    /* ------------------------------------------------------
-       5. PERENCANAAN
-       Dokumen perencanaan dan rencana kegiatan Puskesmas.
-    ------------------------------------------------------ */
+    /* 5. PERENCANAAN */
     {
-        id: "perencanaan",
+        id: "PERENCANAAN",
         name: "Perencanaan",
         description:
             "RUK, RPK, rencana kegiatan, dan dokumen perencanaan",
@@ -163,12 +210,9 @@ const CATEGORIES = [
         tone: "purple"
     },
 
-    /* ------------------------------------------------------
-       6. KERJA SAMA
-       MoU, PKS, jejaring, dan dokumen kerja sama.
-    ------------------------------------------------------ */
+    /* 6. KERJA SAMA */
     {
-        id: "kerja-sama",
+        id: "KERJA_SAMA",
         name: "Kerja Sama",
         description:
             "MoU, PKS, jejaring, dan dokumen kerja sama",
@@ -176,46 +220,47 @@ const CATEGORIES = [
         tone: "teal"
     },
 
-    /* ------------------------------------------------------
-       7. DOKUMEN KEDARURATAN
-       Dokumen yang perlu mudah diakses saat keadaan darurat.
-    ------------------------------------------------------ */
+    /* 7. BARANG MILIK DAERAH */
     {
-        id: "kedaruratan",
-        name: "Dokumen Kedaruratan",
+        id: "BARANG_MILIK_DAERAH",
+        name: "Barang Milik Daerah",
         description:
-            "Dokumen yang harus mudah diakses saat situasi darurat",
-        icon: "alert",
-        tone: "red"
-    },
-
-    /* ------------------------------------------------------
-       8. LAINNYA
-       Arsip penting yang tidak masuk kategori sebelumnya.
-    ------------------------------------------------------ */
-    {
-        id: "lainnya",
-        name: "Lainnya",
-        description:
-            "Arsip penting lainnya",
-        icon: "archive",
+            "Dokumen inventaris dan pengelolaan aset daerah",
+        icon: "asset",
         tone: "blue"
     },
 
-    /* ------------------------------------------------------
-       9. DOKUMEN KEDALUWARSA
-       Dokumen lama yang sudah tidak aktif.
-    ------------------------------------------------------ */
+    /* 8. BENDAHARA PENERIMAAN BLUD */
     {
-        id: "kedaluwarsa",
-        name: "Dokumen Kedaluwarsa",
+        id: "BENDAHARA_PENERIMAAN_BLUD",
+        name: "Bendahara Penerimaan BLUD",
         description:
-            "Dokumen lama yang tidak aktif",
-        icon: "trash",
-        tone: "gray"
-    }
+            "Dokumen administrasi penerimaan BLUD",
+        icon: "wallet",
+        tone: "green"
+    },
 
+    /* 9. BENDAHARA PENGELUARAN BLUD */
+    {
+        id: "BENDAHARA_PENGELUARAN_BLUD",
+        name: "Bendahara Pengeluaran BLUD",
+        description:
+            "Dokumen administrasi pengeluaran BLUD",
+        icon: "walletOut",
+        tone: "pink"
+    },
+
+    /* 10. BENDAHARA PENGELUARAN PEMBANTU */
+    {
+        id: "BENDAHARA_PENGELUARAN_PEMBANTU",
+        name: "Bendahara Pengeluaran Pembantu",
+        description:
+            "Dokumen administrasi pengeluaran bendahara pembantu",
+        icon: "receipt",
+        tone: "yellow"
+    }
 ];
+
 
 
 /* ==========================================================
@@ -226,92 +271,126 @@ const CATEGORIES = [
 ========================================================== */
 const ICONS = {
 
-    /* Identitas dan kategori arsip */
-    // Gedung: Profil dan identitas Puskesmas.
+    /* ======================================================
+       IKON KATEGORI ARSIP
+    ====================================================== */
+
+    // Profil dan identitas Puskesmas.
     building:
         '<rect x="4" y="9" width="16" height="12" rx="1"/>' +
         '<path d="M9 9V4h6v5M12 12v6M9 15h6M2 21h20"/>',
 
-    // Palu: Regulasi, peraturan, dan pedoman.
+    // Regulasi dan pedoman.
     gavel:
         '<path d="m14 6 4 4M12 8l4-4 4 4-4 4M4 20l9-9M3 21h10M6 6l4 4"/>',
 
-    // Perisai: Mutu, keamanan, dan akreditasi.
+    // Mutu dan akreditasi.
     shield:
         '<path d="M12 3 20 6v5c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/>' +
         '<path d="m8 12 3 3 5-6"/>',
 
-    // Dokumen laporan: Laporan penting dan evaluasi.
+    // Laporan penting.
     report:
         '<path d="M6 3h9l4 4v14H6zM15 3v5h4M9 12h7M9 16h7"/>',
 
-    // Kalender: Perencanaan dan jadwal kegiatan.
+    // Perencanaan.
     calendar:
         '<rect x="3" y="5" width="18" height="16" rx="2"/>' +
         '<path d="M7 3v4M17 3v4M3 10h18M8 14h3M8 17h7"/>',
 
-    // Jabat tangan: Kerja sama dan kemitraan.
+    // Kerja sama.
     handshake:
         '<path d="m3 12 4-4 4 2 3-2 7 4-5 6-4-2-3 2zM7 8 5 6l-3 3M17 8l2-2 3 3M9 13l3 3M12 11l4 4"/>',
 
-    // Tanda peringatan: Dokumen kedaruratan.
+    // Dokumen kedaruratan.
     alert:
         '<path d="M12 3 22 21H2zM12 9v5M12 17h.01"/>',
 
-    // Kotak arsip: Kategori arsip lainnya.
+    // Arsip lainnya.
     archive:
         '<rect x="3" y="4" width="18" height="5" rx="1"/>' +
         '<path d="M5 9v11h14V9M9 13h6"/>',
 
-    // Tempat sampah: Dokumen kedaluwarsa.
+    // Dokumen kedaluwarsa.
     trash:
         '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 14h10l1-14M9 7V4h6v3"/>',
 
-    // Dokumen umum: Ikon cadangan jika nama ikon tidak ditemukan.
+    /* ======================================================
+       KATEGORI BARU
+    ====================================================== */
+
+    // Barang Milik Daerah: inventaris dan aset.
+    asset:
+        '<path d="M3 7 12 3l9 4-9 4z"/>' +
+        '<path d="M3 7v10l9 4 9-4V7M12 11v10"/>' +
+        '<path d="m7 5 9 4"/>',
+
+    // Bendahara Penerimaan BLUD: penerimaan dan kas.
+    wallet:
+        '<rect x="3" y="6" width="18" height="15" rx="2"/>' +
+        '<path d="M3 9h18M16 14h5M17 14h.01"/>' +
+        '<path d="M6 6V4h12v2"/>',
+
+    // Bendahara Pengeluaran BLUD: pembayaran dan transaksi.
+    walletOut:
+        '<rect x="3" y="5" width="18" height="15" rx="2"/>' +
+        '<path d="M3 9h18M15 14h6M17 14h.01"/>' +
+        '<path d="m8 12 3 3-3 3M11 15H6"/>',
+
+    // Bendahara Pengeluaran Pembantu: bukti transaksi.
+    receipt:
+        '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/>' +
+        '<path d="M9 8h6M9 12h6M9 16h4"/>',
+
+    // Dokumen umum: ikon cadangan.
     file:
         '<path d="M6 3h8l4 4v14H6zM14 3v5h4M9 12h6M9 16h6"/>',
 
-    /* Ikon navigasi dan interaksi */
-    // Kaca pembesar: Pencarian arsip.
+    /* ======================================================
+       IKON NAVIGASI DAN INTERAKSI
+    ====================================================== */
+
+    // Pencarian.
     search:
         '<circle cx="10.5" cy="10.5" r="6.5"/>' +
         '<path d="m16 16 5 5"/>',
 
-    // Corong: Filter data.
+    // Filter.
     filter:
         '<path d="M3 4h18l-7 8v7l-4 2v-9z"/>',
 
-    // Garis horizontal: Pengurutan data.
+    // Pengurutan.
     sort:
         '<path d="M4 6h16M4 12h11M4 18h6"/>',
 
-    // Panah kiri: Kembali ke halaman sebelumnya.
+    // Kembali.
     back:
         '<path d="m15 18-6-6 6-6"/>',
 
-    // Tanda tambah: Menambah arsip.
+    // Tambah.
     plus:
         '<path d="M12 5v14M5 12h14"/>',
-    
-    // Refresh: ikon putar ulang yang sederhana dan simetris.
+
+    // Refresh.
     refresh:
         '<path d="M20 11a8 8 0 0 0-14.9-3L3 11"/>' +
         '<path d="M3 4v7h7"/>' +
         '<path d="M4 13a8 8 0 0 0 14.9 3L21 13"/>' +
         '<path d="M21 20v-7h-7"/>',
 
-    // Chevron kanan: Navigasi atau membuka detail.
+    // Chevron kanan.
     chevron:
         '<path d="m9 18 6-6-6-6"/>',
 
-    // Silang: Menutup modal atau panel.
+    // Tutup.
     close:
         '<path d="m6 6 12 12M18 6 6 18"/>',
 
-    // Panah ke atas: Mengunggah dokumen.
+    // Unggah.
     upload:
         '<path d="M12 16V4M7 9l5-5 5 5M4 16v4h16v-4"/>'
 };
+
 
 
 /* ==========================================================
@@ -434,13 +513,25 @@ function getArsipCurrentUser() {
 function canEditArsip(record) {
     const user = getArsipCurrentUser();
 
-    if (
-        record.isLock === true ||
-        record.isLock === "TRUE" ||
-        record.isLock === "Ya" ||
-        record.IS_LOCK === true ||
-        record.IS_LOCK === "TRUE"
-    ) {
+    if (!record || !user.nip) {
+        return false;
+    }
+
+    const rawLock =
+        record.isLock ??
+        record.IS_LOCK ??
+        record.is_locked ??
+        false;
+
+    const locked =
+        rawLock === true ||
+        rawLock === 1 ||
+        ["TRUE", "1", "YA", "TERKUNCI", "LOCKED"].includes(
+            String(rawLock).trim().toUpperCase()
+        );
+
+    // Arsip terkunci tidak boleh diedit oleh siapa pun
+    if (locked) {
         return false;
     }
 
@@ -452,13 +543,17 @@ function canEditArsip(record) {
         ""
     ).trim();
 
-    return Boolean(
-        user.nip &&
-        (
-            user.nip === pembuat ||
-            ["PJ", "ADMIN"].includes(user.role)
-        )
-    );
+    const role = user.role
+        .trim()
+        .toUpperCase()
+        .replace(/[\s-]+/g, "_");
+
+    const isPembuat = user.nip === pembuat;
+    const isPJ = ["PJ", "PENANGGUNG_JAWAB", "PENANGGUNGJAWAB"].includes(role);
+    const isAdmin = role === "ADMIN";
+    const isSuperAdmin = ["SUPERADMIN", "SUPER_ADMIN"].includes(role);
+
+    return isPembuat || isPJ || isAdmin || isSuperAdmin;
 }
 
 function isSuperAdminArsip() {
@@ -661,8 +756,9 @@ function bindRoot() {
    Mengambil adapter Arsip Puskesmas dari window.
 
    Adapter menyediakan operasi:
-   - list() : mengambil daftar arsip.
-   - save() : menyimpan atau memperbarui arsip.
+   - list()   : mengambil daftar arsip.
+   - save()   : menyimpan atau memperbarui arsip.
+   - setLock(): mengunci atau membuka kunci arsip.
 
    Mengembalikan null jika adapter belum tersedia.
 ========================================================== */
@@ -1189,6 +1285,54 @@ async function onClick(e) {
     ) {
         return;
     }
+            
+    // ==================================================
+    // TOGGLE MENU MORE / AKSI ARSIP
+    // ==================================================
+    const toggleMenu = e.target.closest("[data-arp-toggle-menu]");
+
+    if (toggleMenu) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const id = toggleMenu.dataset.arpToggleMenu;
+        const card = toggleMenu.closest(".arp-record-card");
+
+        if (!card) {
+            console.warn("Kartu arsip tidak ditemukan:", id);
+            return;
+        }
+
+        const dropdown = card.querySelector("[data-arp-menu]");
+
+        if (!dropdown) {
+            console.warn("Dropdown arsip tidak ditemukan:", id);
+            return;
+        }
+
+        // Tutup menu lain pada daftar arsip.
+        document.querySelectorAll("[data-arp-menu]").forEach((menu) => {
+            if (menu !== dropdown) {
+                menu.hidden = true;
+
+                const relatedButton = document.querySelector(
+                    `[data-arp-toggle-menu="${CSS.escape(menu.dataset.arpMenu)}"]`
+                );
+
+                relatedButton?.setAttribute("aria-expanded", "false");
+            }
+        });
+
+        // Buka atau tutup menu arsip yang diklik.
+        dropdown.hidden = !dropdown.hidden;
+
+        toggleMenu.setAttribute(
+            "aria-expanded",
+            String(!dropdown.hidden)
+        );
+
+        return;
+    }
 
     /* ======================================================
        2. BUKA KATEGORI ARSIP
@@ -1241,6 +1385,94 @@ async function onClick(e) {
     ====================================================== */
     if (target.matches("[data-arp-close-modal]")) {
         closeModal();
+        return;
+    }
+    
+    /* ==========================================================
+    KONFIRMASI LOCK / UNLOCK ARSIP DARI MODAL
+    ========================================================== */
+    if (target.matches("[data-arp-confirm-lock]")) {
+        const id = target.dataset.arpConfirmLock;
+        const nextLock =
+            target.dataset.lockValue === "true";
+
+        const record = state.records.find(item =>
+            String(
+                item.idArsip ||
+                item.ID_Arsip ||
+                item.id ||
+                ""
+            ) === String(id)
+        );
+
+        if (!record) {
+            alert("Data arsip tidak ditemukan.");
+            return;
+        }
+
+        const user = getArsipCurrentUser();
+
+        if (
+            !user ||
+            !["SUPERADMIN", "SUPER_ADMIN"].includes(
+                String(user.role || "")
+                    .trim()
+                    .toUpperCase()
+                    .replace(/[\s-]+/g, "_")
+            )
+        ) {
+            alert("Hanya SUPERADMIN yang dapat mengubah lock arsip.");
+            return;
+        }
+
+        const button = target;
+
+        try {
+            button.disabled = true;
+            button.setAttribute("aria-busy", "true");
+
+            button.innerHTML = `
+                <span class="arp-lock-spinner" aria-hidden="true"></span>
+                <span>Memproses...</span>
+            `;
+
+            await window.smartofficeArsipPuskesmasAdapter.setLock({
+                idArsip: id,
+                isLock: nextLock,
+                diperbaruiOleh: user.nip || ""
+            });
+
+            const categoryId = state.category?.id;
+
+            closeModal();
+
+            if (categoryId) {
+                state.cache.delete(categoryId);
+                await loadCategory(categoryId, true);
+            }
+
+            console.info(
+                nextLock
+                    ? "Arsip berhasil dikunci."
+                    : "Lock arsip berhasil dibuka."
+            );
+
+        } catch (error) {
+            console.error("Gagal mengubah lock arsip:", error);
+
+            alert(
+                error?.message ||
+                "Gagal mengubah lock arsip. Silakan coba kembali."
+            );
+
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
+
+            button.textContent = nextLock
+                ? "Ya, Kunci Arsip"
+                : "Ya, Buka Kunci";
+                    }
+
         return;
     }
 
@@ -1325,15 +1557,11 @@ async function onClick(e) {
         showForm(record);
         return;
     }
-
-    /* ======================================================
-       11. BUKA / TUTUP LOCK ARSIP
-       Hak akses: SUPERADMIN saja.
-
-       Memerlukan:
-       api.setLock(idArsip, statusLock)
-       Status lock: true = terkunci, false = terbuka.
-    ====================================================== */
+    
+    /* ==========================================================
+    11. BUKA / TUTUP LOCK ARSIP
+    Hak akses: SUPERADMIN saja.
+    ========================================================== */
     if (target.matches("[data-arp-lock]")) {
         const id = target.dataset.arpLock;
 
@@ -1353,11 +1581,13 @@ async function onClick(e) {
 
         const user = getArsipCurrentUser();
 
-        if (
-            String(user?.role || "").toUpperCase() !==
-            "SUPERADMIN"
-        ) {
-            alert("Hanya SUPERADMIN yang dapat membuka atau menutup lock.");
+        const role = String(user?.role || "")
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]+/g, "_");
+
+        if (!["SUPERADMIN", "SUPER_ADMIN"].includes(role)) {
+            alert("Hanya SUPERADMIN yang dapat mengubah lock arsip.");
             return;
         }
 
@@ -1365,89 +1595,34 @@ async function onClick(e) {
             !window.smartofficeArsipPuskesmasAdapter ||
             typeof window.smartofficeArsipPuskesmasAdapter.setLock !== "function"
         ) {
-            alert(
-                "Fitur lock belum terhubung ke service dan backend GAS."
-            );
+            alert("Fitur lock belum terhubung ke service dan backend GAS.");
             return;
         }
 
-        const isLocked = [
-            true,
-            1,
-            "1",
-            "true",
-            "ya",
-            "terkunci"
-        ].includes(
-            String(
-                record.isLock ??
-                record.IS_LOCK ??
-                record.is_locked ??
-                false
-            ).toLowerCase() === "false"
-                ? false
-                : String(
-                    record.isLock ??
-                    record.IS_LOCK ??
-                    record.is_locked ??
-                    false
-                ).toLowerCase()
-        );
+        const rawLock =
+            record.isLock ??
+            record.IS_LOCK ??
+            record.is_locked ??
+            false;
+
+        const isLocked =
+            rawLock === true ||
+            rawLock === 1 ||
+            ["TRUE", "1", "YA", "TERKUNCI", "LOCKED"].includes(
+                String(rawLock).trim().toUpperCase()
+            );
 
         const nextLock = !isLocked;
 
-        const actionText = nextLock
-            ? "mengunci"
-            : "membuka lock";
-
-        if (!confirm(`Yakin ingin ${actionText} arsip ini?`)) {
-            return;
-        }
-
-        try {
-            target.disabled = true;
-
-            await window.smartofficeArsipPuskesmasAdapter.setLock({
-                idArsip: id,
-                isLock: nextLock,
-                diperbaruiOleh: user?.nip || ""
-            });
-
-            const categoryId = state.category?.id;
-
-            if (categoryId) {
-                state.cache.delete(categoryId);
-                await loadCategory(categoryId, true);
-            }
-
-            alert(
-                nextLock
-                    ? "Arsip berhasil dikunci."
-                    : "Lock arsip berhasil dibuka."
-            );
-
-        } catch (error) {
-            console.error("Gagal mengubah lock arsip:", error);
-
-            alert(
-                error?.message ||
-                "Gagal mengubah lock arsip. Silakan coba kembali."
-            );
-
-        } finally {
-            target.disabled = false;
-        }
-
+        // Buka modal konfirmasi Smart Office.
+        showLockConfirm(record, nextLock);
         return;
     }
-
-    /* ======================================================
-       12. HAPUS ARSIP
-       Hak akses: SUPERADMIN saja.
-
-       Memerlukan:
-       api.remove(idArsip)
-    ====================================================== */
+    
+    /* ==========================================================
+    12. HAPUS ARSIP
+    Hak akses: SUPERADMIN saja
+    ========================================================== */
     if (target.matches("[data-arp-delete]")) {
         const id = target.dataset.arpDelete;
 
@@ -1466,11 +1641,12 @@ async function onClick(e) {
         }
 
         const user = getArsipCurrentUser();
+        const role = String(user?.role || "")
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]+/g, "_");
 
-        if (
-            String(user?.role || "").toUpperCase() !==
-            "SUPERADMIN"
-        ) {
+        if (!["SUPERADMIN", "SUPER_ADMIN"].includes(role)) {
             alert("Hanya SUPERADMIN yang dapat menghapus arsip.");
             return;
         }
@@ -1479,27 +1655,96 @@ async function onClick(e) {
             !window.smartofficeArsipPuskesmasAdapter ||
             typeof window.smartofficeArsipPuskesmasAdapter.remove !== "function"
         ) {
-            alert(
-                "Fitur hapus belum terhubung ke service dan backend GAS."
-            );
+            alert("Fitur hapus belum terhubung ke service dan backend GAS.");
             return;
         }
 
-        const namaArsip =
-            record.namaArsip ||
-            record.Nama_Arsip ||
-            "arsip ini";
+        showModal(`
+            <div class="arp-lock-confirm">
+                <div class="arp-modal-head">
+                    <h3>Hapus Arsip</h3>
+                    <button type="button"
+                        class="arp-lock-close"
+                        data-arp-close-modal
+                        aria-label="Tutup">
+                        <svg viewBox="0 0 24 24" width="20" height="20"
+                            fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round">
+                            <path d="m18 6-12 12M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
 
-        if (
-            !confirm(
-                `Yakin ingin menghapus "${namaArsip}"?\n\nTindakan ini dapat menghapus data arsip dan file terkait sesuai implementasi backend.`
-            )
-        ) {
+                <div class="arp-lock-confirm-body">
+                    <div class="arp-lock-icon-wrap is-lock">
+                        <svg class="arp-lock-confirm-icon"
+                            viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"/>
+                            <path d="m19 6-1 14H6L5 6"/>
+                            <path d="M9 6V4h6v2"/>
+                            <path d="M10 10v6M14 10v6"/>
+                        </svg>
+                    </div>
+
+                    <div class="arp-lock-confirm-copy">
+                        <p class="arp-lock-question">
+                            Yakin ingin menghapus arsip ini?
+                        </p>
+                        <strong class="arp-lock-document-name">
+                            ${esc(record.namaArsip || record.Nama_Arsip || "arsip ini")}
+                        </strong>
+                        <p class="arp-lock-description">
+                            Data arsip dan file terkait akan dihapus
+                            sesuai implementasi backend.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="arp-modal-actions">
+                    <button type="button"
+                        class="arp-secondary-btn"
+                        data-arp-close-modal>
+                        Batal
+                    </button>
+                    <button type="button"
+                        class="arp-primary-btn arp-lock-confirm-submit"
+                        data-arp-confirm-delete="${esc(id)}">
+                        Ya, Hapus Arsip
+                    </button>
+                </div>
+            </div>
+        `, "arp-lock-confirm");
+
+        return;
+    }
+
+    /* ==========================================================
+    KONFIRMASI HAPUS ARSIP DARI MODAL
+    ========================================================== */
+    if (target.matches("[data-arp-confirm-delete]")) {
+        const id = target.dataset.arpConfirmDelete;
+        const button = target;
+
+        const user = getArsipCurrentUser();
+        const role = String(user?.role || "")
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]+/g, "_");
+
+        if (!["SUPERADMIN", "SUPER_ADMIN"].includes(role)) {
+            alert("Hanya SUPERADMIN yang dapat menghapus arsip.");
             return;
         }
 
         try {
-            target.disabled = true;
+            button.disabled = true;
+            button.setAttribute("aria-busy", "true");
+            button.innerHTML = `
+                <span class="arp-lock-spinner" aria-hidden="true"></span>
+                <span>Menghapus...</span>
+            `;
 
             await window.smartofficeArsipPuskesmasAdapter.remove({
                 idArsip: id,
@@ -1508,23 +1753,26 @@ async function onClick(e) {
 
             const categoryId = state.category?.id;
 
+            closeModal();
+
             if (categoryId) {
                 state.cache.delete(categoryId);
                 await loadCategory(categoryId, true);
             }
 
-            alert("Arsip berhasil dihapus.");
+            console.info("Arsip berhasil dihapus.");
 
         } catch (error) {
             console.error("Gagal menghapus arsip:", error);
+
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
+            button.textContent = "Ya, Hapus Arsip";
 
             alert(
                 error?.message ||
                 "Gagal menghapus arsip. Silakan coba kembali."
             );
-
-        } finally {
-            target.disabled = false;
         }
 
         return;
@@ -1703,8 +1951,9 @@ async function loadCategory(
         ================================================== */
         state.busy = true;
 
-        renderRecords(
-            "Memuat arsip..."
+        smartofficeShowLoading(
+            "arp-records",
+            "Sedang mengambil data arsip..."
         );
 
         /* ==================================================
@@ -2152,6 +2401,7 @@ function renderRecord(r) {
 
     const canEdit = canEditArsip(r);
     const isSuper = isSuperAdminArsip();
+    const canShowEdit = !locked && (canEdit || isSuper);
 
     return `
         <article class="arp-record-card ${locked ? "arp-record-locked" : ""}">
@@ -2200,7 +2450,7 @@ function renderRecord(r) {
                 </button>
 
                 ${
-                    canEdit || isSuper
+                    canShowEdit || isSuper
                         ? `
                             <div class="arp-action-menu">
                                 <button
@@ -2217,12 +2467,12 @@ function renderRecord(r) {
                                     hidden
                                 >
                                     ${
-                                        canEdit
+                                        canShowEdit
                                             ? `
                                                 <button
                                                     type="button"
                                                     data-arp-edit="${esc(id)}"
-                                                >✎ Edit arsip</button>
+                                                >✎ Ubah arsip</button>
                                             `
                                             : ""
                                     }
@@ -2634,29 +2884,27 @@ function showForm(record = null) {
 
 /* ==========================================================
    TAMPILKAN MODAL ARSIP PUSKESMAS
+   Mendukung class khusus untuk modal lock.
 ========================================================== */
-function showModal(html) {
+function showModal(html, modalClass = "") {
+    const host = state.root.querySelector("[data-arp-modal-host]");
+    if (!host) return;
 
-  // Ambil elemen tempat modal ditampilkan.
-  const host = state.root.querySelector(
-    "[data-arp-modal-host]"
-  );
+    const extraClass = modalClass
+        ? ` ${esc(modalClass)}`
+        : "";
 
-  // Hentikan jika elemen modal tidak ditemukan.
-  if (!host) return;
-
-  // Render backdrop dan konten dialog modal.
-  host.innerHTML = `
-    <div class="arp-modal-backdrop">
-      <div
-        class="arp-modal"
-        role="dialog"
-        aria-modal="true"
-      >
-        ${html}
-      </div>
-    </div>
-  `;
+    host.innerHTML = `
+        <div class="arp-modal-backdrop">
+            <div
+                class="arp-modal${extraClass}"
+                role="dialog"
+                aria-modal="true"
+            >
+                ${html}
+            </div>
+        </div>
+    `;
 }
 
 
@@ -2729,11 +2977,21 @@ async function onSubmit(e) {
         }
     }
 
+    
     const submit = form.querySelector('[type="submit"]');
+
+    const labelAwal = editing
+        ? "Simpan Perubahan"
+        : "Simpan Arsip";
 
     if (submit) {
         submit.disabled = true;
-        submit.textContent = "Menyimpan...";
+        submit.setAttribute("aria-busy", "true");
+
+        submit.innerHTML = `
+            <span class="arp-save-spinner" aria-hidden="true"></span>
+            <span>Menyimpan...</span>
+        `;
     }
 
     state.busy = true;
@@ -2765,16 +3023,142 @@ async function onSubmit(e) {
     } catch (err) {
         console.error("Arsip: gagal menyimpan", err);
         alert(err?.message || "Gagal menyimpan arsip.");
+    
     } finally {
         state.busy = false;
 
         if (submit) {
             submit.disabled = false;
+            submit.removeAttribute("aria-busy");
+
             submit.textContent = editing
                 ? "Simpan Perubahan"
                 : "Simpan Arsip";
         }
     }
+}
+
+
+/* ==========================================================
+   MODAL KONFIRMASI LOCK / UNLOCK ARSIP
+========================================================== */
+function showLockConfirm(record, isLock) {
+    const id = String(
+        record?.idArsip ||
+        record?.ID_Arsip ||
+        record?.id ||
+        ""
+    );
+
+    const namaArsip = esc(
+        record?.namaArsip ||
+        record?.Nama_Arsip ||
+        "arsip ini"
+    );
+
+    const judul = isLock
+        ? "Kunci Arsip"
+        : "Buka Kunci Arsip";
+
+    const pesan = isLock
+        ? "Arsip yang terkunci tidak dapat diedit."
+        : "Arsip dapat diedit kembali sesuai hak akses.";
+
+    const ikon = isLock
+        ? `
+            <svg class="arp-lock-confirm-icon"
+                 viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="2"/>
+                <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                <circle cx="12" cy="15" r="1"/>
+                <path d="M12 16v2"/>
+            </svg>
+        `
+        : `
+            <svg class="arp-lock-confirm-icon"
+                 viewBox="0 0 24 24"
+                 fill="none" stroke="currentColor"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+                <rect x="5" y="10" width="14" height="11" rx="2"/>
+                <path d="M8 10V7a4 4 0 0 1 8 0"/>
+                <path d="M12 14v4"/>
+                <path d="M10 16h4"/>
+            </svg>
+        `;
+
+    showModal(`
+        <div class="arp-lock-confirm">
+
+            <div class="arp-modal-head">
+                <h3>${judul}</h3>
+
+                <button
+                    type="button"
+                    class="arp-lock-close"
+                    data-arp-close-modal
+                    aria-label="Tutup">
+                    <svg viewBox="0 0 24 24"
+                         width="20" height="20"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         aria-hidden="true">
+                        <path d="m18 6-12 12M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="arp-lock-confirm-body">
+
+                <div class="arp-lock-icon-wrap ${isLock ? "is-lock" : "is-unlock"}">
+                    ${ikon}
+                </div>
+
+                <div class="arp-lock-confirm-copy">
+                    <p class="arp-lock-question">
+                        Yakin ingin ${isLock ? "mengunci" : "membuka kunci"}
+                        arsip ini?
+                    </p>
+
+                    <strong class="arp-lock-document-name">
+                        ${namaArsip}
+                    </strong>
+
+                    <p class="arp-lock-description">
+                        ${pesan}
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="arp-modal-actions">
+                <button
+                    type="button"
+                    class="arp-secondary-btn"
+                    data-arp-close-modal>
+                    Batal
+                </button>
+
+                <button
+                    type="button"
+                    class="arp-primary-btn arp-lock-confirm-submit"
+                    data-arp-confirm-lock="${esc(id)}"
+                    data-lock-value="${isLock}">
+                    ${isLock ? "Ya, Kunci Arsip" : "Ya, Buka Kunci"}
+                </button>
+            </div>
+
+        </div>
+    `, "arp-lock-confirm");
 }
 
 

@@ -77,3 +77,52 @@ export async function smartofficeUpdateStatusArsipPuskesmas(
         }
     );
 }
+
+
+/* ==========================================================
+   KUNCI / BUKA KUNCI ARSIP PUSKESMAS
+========================================================== */
+export async function smartofficeSetLockArsipPuskesmas(
+    payload = {}
+) {
+    return await smartofficeApi(
+        "smartofficeSetLockArsipPuskesmas",
+        {
+            idArsip: payload.idArsip || "",
+            isLock: payload.isLock === true,
+            diperbaruiOleh: payload.diperbaruiOleh || ""
+        }
+    );
+}
+
+
+/* ==========================================================
+   HAPUS ARSIP PUSKESMAS
+   Backend: Google Apps Script
+   Hak akses: SUPERADMIN divalidasi backend
+========================================================== */
+export async function smartofficeHapusArsipPuskesmas(
+    payload = {}
+) {
+    const idArsip = String(payload.idArsip || "").trim();
+
+    if (!idArsip) {
+        throw new Error("ID arsip wajib diisi.");
+    }
+
+    const response = await smartofficeApi(
+        "smartofficeHapusArsipPuskesmas",
+        {
+            idArsip,
+            diperbaruiOleh: payload.diperbaruiOleh || ""
+        }
+    );
+
+    if (!response?.success) {
+        throw new Error(
+            response?.message || "Gagal menghapus arsip."
+        );
+    }
+
+    return response;
+}
