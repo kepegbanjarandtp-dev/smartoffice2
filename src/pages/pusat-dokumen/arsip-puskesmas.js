@@ -40,7 +40,7 @@ window.smartofficeArsipPuskesmasAdapter = {
 
     /* ======================================================
        AMBIL DAFTAR ARSIP
-    ====================================================== */
+    ====================================================== */  
     async list({
         kategori = "",
         forceRefresh = false
@@ -48,6 +48,14 @@ window.smartofficeArsipPuskesmasAdapter = {
 
         const response =
             await smartofficeGetArsipPuskesmas(kategori);
+
+        console.log("[ARSIP] Kategori:", kategori);
+        console.log("[ARSIP] Respons lengkap:", response);
+        console.log("[ARSIP] response.data:", response?.data);
+        console.log(
+            "[ARSIP] response.data.data:",
+            response?.data?.data
+        );
 
         if (!response?.success) {
             throw new Error(
@@ -63,6 +71,9 @@ window.smartofficeArsipPuskesmasAdapter = {
             : Array.isArray(result?.data)
                 ? result.data
                 : [];
+
+        console.log("[ARSIP] Jumlah data terbaca:", records.length);
+        console.log("[ARSIP] Data arsip:", records);
 
         return records;
     },
@@ -1947,14 +1958,12 @@ async function loadCategory(
         }
 
         /* ==================================================
-           5. TAMPILKAN STATUS LOADING
+           5. TAMPILKAN HALAMAN KATEGORI DAN LOADING
         ================================================== */
         state.busy = true;
+        state.records = [];
 
-        smartofficeShowLoading(
-            "arp-records",
-            "Sedang mengambil data arsip..."
-        );
+        renderRecords("Sedang mengambil data arsip...");
 
         /* ==================================================
            6. AMBIL DATA DARI ADAPTER
