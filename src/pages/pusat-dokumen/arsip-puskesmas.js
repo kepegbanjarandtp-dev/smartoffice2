@@ -1956,14 +1956,21 @@ async function loadCategory(
 
             return;
         }
-
+        
         /* ==================================================
-           5. TAMPILKAN HALAMAN KATEGORI DAN LOADING
+        5. TAMPILKAN STATUS LOADING
         ================================================== */
         state.busy = true;
-        state.records = [];
 
-        renderRecords("Sedang mengambil data arsip...");
+        // Render struktur halaman terlebih dahulu agar
+        // elemen #arp-records sudah tersedia.
+        renderRecords();
+
+        // Tampilkan loading di dalam daftar arsip.
+        smartofficeShowLoading(
+            "arp-records",
+            "Sedang mengambil data arsip..."
+        );
 
         /* ==================================================
            6. AMBIL DATA DARI ADAPTER
@@ -2320,8 +2327,8 @@ function renderRecords(message = "") {
 
             <!-- ==========================================
                  DAFTAR ARSIP ATAU KONDISI KOSONG
-            =========================================== -->
-            <div class="arp-record-list">
+            =========================================== -->           
+            <div id="arp-records" class="arp-record-list">
                 ${
                     filtered.length
                         // Render seluruh kartu arsip.
@@ -2461,14 +2468,14 @@ function renderRecord(r) {
                 ${
                     canShowEdit || isSuper
                         ? `
-                            <div class="arp-action-menu">
+                            <div class="arp-action-menu">                                
                                 <button
                                     type="button"
                                     class="arp-action-trigger"
                                     data-arp-toggle-menu="${esc(id)}"
                                     aria-label="Menu tindakan arsip"
                                     aria-expanded="false"
-                                >⋯</button>
+                                >⋮</button>
 
                                 <div
                                     class="arp-action-dropdown"
@@ -2829,13 +2836,13 @@ function showForm(record = null) {
 
             <label class="arp-field">
                 <span>Nama Arsip <b>*</b></span>
-                <input
+                <textarea
                     name="namaArsip"
                     maxlength="180"
+                    rows="2"
                     required
-                    value="${esc(nama)}"
                     placeholder="Masukkan nama dokumen"
-                >
+                >${esc(nama)}</textarea>
             </label>
 
             <label class="arp-field">

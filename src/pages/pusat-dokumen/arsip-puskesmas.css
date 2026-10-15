@@ -710,7 +710,9 @@
   align-items: center;
   justify-content: center;
   padding: 18px;
-  background: #101a30a3;
+  background: rgba(16, 26, 48, 0.58);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   overflow-y: auto;
 }
 
@@ -797,9 +799,11 @@
   box-shadow: 0 0 0 3px #2165e817;
 }
 
-/* Mengizinkan tinggi textarea diubah secara vertikal. */
+/* Textarea desktop */
 .arp-field textarea {
   resize: vertical;
+  min-height: 86px;
+  line-height: 1.5;
 }
 
 /* ==========================================================
@@ -828,6 +832,27 @@
 .arp-upload-box input {
   width: 100%;
   font-size: 13px;
+}
+
+/* Tombol Choose File */
+.arp-upload-box input[type="file"]::file-selector-button {
+  margin-right: 8px;
+  padding: 6px 11px;
+  border: 1px solid #d5e1f5;
+  border-radius: 8px;
+  background: #fff;
+  color: #294b7a;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+
+/* Hover tombol Choose File */
+.arp-upload-box input[type="file"]::file-selector-button:hover {
+  background: #edf4ff;
+  border-color: #b9d0f5;
 }
 
 /* Teks bantuan atau petunjuk tambahan pada formulir. */
@@ -885,6 +910,31 @@
   right: 20px;
   max-width: 45%;
 }
+
+/* Font badge dokumen lebih kecil di mobile */
+  .arp-record-badges > span {
+    font-size: 9px;
+    line-height: 1.3;
+    padding: 4px 7px;
+  }
+
+/* Status Aktif / Terkunci rata kanan pada mobile */
+  .arp-record-status {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+/* Font status Aktif dan Terkunci lebih kecil */
+  .arp-record-status > span {
+    font-size: 10px;
+    line-height: 1.3;
+    padding: 4px 8px;
+  }
 
 /* Identitas dokumen dengan font monospace dan teks yang bisa membungkus. */
 .arp-record-id {
@@ -1369,13 +1419,18 @@
     line-height: 1.45;
   }
 
-  /* Footer kategori dibuat lebih ringkas. */
+  /* Footer kategori: ukuran dan dimensi tetap seperti semula */
   .arp-card-footer {
     gap: 6px;
     min-height: 36px;
     padding: 0 8px;
     border-radius: 10px;
     font-size: 11px;
+  }
+
+  /* Kecilkan khusus teks Lihat dokumen */
+  .arp-card-footer {
+    font-size: 9px !important;
   }
 
   /* Ikon footer kategori pada mobile. */
@@ -1389,45 +1444,72 @@
     width: 18px;
     height: 18px;
   }
-
-  /* Header detail mengikuti lebar shell dan membungkus elemen. */
+  
+  /* Header detail: satu baris pada mobile */
   .arp-detail-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
     width: 100%;
     max-width: none;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 14px;
-    margin-bottom: 14px;
+    gap: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
     border-radius: 15px;
   }
-
-  /* Tombol kembali kategori dibuat lebih ringkas. */
+  
+  /* Tombol kembali kategori dibuat ringkas di mobile */
   .arp-back-btn {
-    gap: 5px;
-    padding: 8px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 30px;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    padding: 0;
+    gap: 0;
     border-radius: 10px;
-    font-size: 13px;
+    font-size: 0;
+    line-height: 0;
+    white-space: nowrap;
   }
+
+  /* SVG panah kembali pada tombol kategori mobile */
+  .arp-back-btn > .arp-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    min-width: 20px;
+    flex: 0 0 20px;
+    margin: 0;
+    padding: 0;
+  }
+
   
   /* Area judul detail pada mobile. */
   .arp-detail-title {
-    flex: 1 1 160px;
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
     min-width: 0;
     gap: 8px;
   }
 
   /* Judul detail pada mobile. */
   .arp-detail-title h2 {
-    font-size: clamp(18px, 4.5vw, 23px);
-    line-height: 1.3;
+    font-size: clamp(12px, 3.5vw, 16px);
+    line-height: 1.25;
+    overflow-wrap: anywhere;
     color: #14254d;
     font-weight: 800;
   }
 
   /* Deskripsi detail dibuat lebih jelas dan mudah dibaca. */
   .arp-detail-title p {
-    font-size: 13px;
-    line-height: 1.5;
+    font-size: 9px;
+    line-height: 1.35;
     color: #52627c;
   }
 
@@ -1436,34 +1518,33 @@
   .arp-detail-header .arp-detail-title > svg,
   .arp-detail-header .arp-detail-title > *:first-child:not(div) {
     display: none !important;
-  }
+  }  
   
   /* ==========================================================
      TOMBOL REFRESH MOBILE
-     Posisi di kanan atas, hanya menampilkan ikon SVG.
-  ========================================================== */ 
-  /* Tombol refresh mobile: tetap di kanan atas. */
+     Posisi di kanan, hanya menampilkan ikon SVG.
+  ========================================================== */
   .arp-refresh-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
     padding: 0;
-    margin-left: auto;
-    flex: 0 0 40px;
+    margin-left: 0;
+    flex: 0 0 32px;
     font-size: 0;
     line-height: 0;
-    border-radius: 11px;
+    border-radius: 10px;
   }
 
   /* SVG refresh tepat di tengah tombol. */
   .arp-refresh-btn > .arp-icon {
     display: block;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     margin: 0;
     padding: 0;
     flex: 0 0 20px;
@@ -1473,6 +1554,7 @@
   .arp-refresh-btn > span {
     display: none;
   }
+
 
   /* Toolbar detail mengikuti lebar kontainer. */
   .arp-detail-toolbar {
@@ -1493,55 +1575,103 @@
   /* Header panel kontrol dapat membungkus pada layar sempit. */
   .arp-control-heading {
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   /* Judul panel kontrol pada mobile. */
   .arp-control-heading h3 {
-    font-size: 16px;
+    font-size: 12px;
   }
 
   /* Deskripsi panel kontrol pada mobile. */
   .arp-control-heading p {
-    font-size: 12px;
+    font-size: 9px;
   }
 
   /* Label kecil panel kontrol pada mobile. */
   .arp-control-eyebrow {
-    font-size: 9px;
+    font-size: 8px;
     letter-spacing: 1px;
   }
 
   /* Lencana jumlah data dibuat lebih ringkas. */
   .arp-control-count {
     padding: 7px 9px;
-    font-size: 11px;
+    font-size: 9px;
   }
-
-  /* Toolbar pencarian panel kontrol dapat membungkus. */
+  
+  /* Toolbar pencarian panel kontrol pada mobile */
   .arp-control-card .arp-toolbar {
+    display: flex;
     width: 100%;
     flex-wrap: wrap;
+    align-items: center;
     gap: 8px;
   }
 
-  /* Kolom pencarian panel kontrol memenuhi lebar yang tersedia. */
+  /* Kolom pencarian memenuhi satu baris */
   .arp-control-card .arp-search {
+    display: flex;
     flex: 1 1 100%;
+    align-items: center;
+    gap: 8px;
     width: 100%;
     min-width: 0;
-    height: 46px;
-    min-height: 46px;
-    padding: 0 12px;
-  }
-
-  /* Tombol kontrol dapat menyesuaikan lebar layar. */
-  .arp-control-card .arp-tool-btn,
-  .arp-control-card .arp-primary-btn {
-    min-height: 44px;
+    height: 32px;
+    min-height: 32px;
     padding: 0 12px;
     border-radius: 11px;
-    font-size: 12px;
+  }
+
+  /* Ikon SVG pencarian */
+  .arp-control-card .arp-search > .arp-icon {
+    display: block;
+    flex: 0 0 18px;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+  }
+
+  /* Input pencarian */
+  .arp-control-card .arp-search input {
+    flex: 1 1 auto;
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    font-size: 11px;
+  }
+
+  /* Ikon SVG pada tombol Urutkan, Filter, Tambah Arsip */
+  .arp-control-card .arp-toolbar > .arp-tool-btn .arp-icon,
+  .arp-control-card .arp-toolbar > .arp-primary-btn .arp-icon {
+    display: block;
+    flex: 0 0 16px;
+    width: 14px;
+    height: 14px;
+    margin: 0;
+  }
+  
+  /* Tombol kontrol memiliki lebar sama pada mobile */
+  .arp-control-card .arp-toolbar > .arp-tool-btn,
+  .arp-control-card .arp-toolbar > .arp-primary-btn {
+    display: inline-flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    width: 0;
+    min-width: 0;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 4px !important;
+    border-radius: 11px;
+    font-size: 9px !important;
+    line-height: 1;
+    white-space: nowrap;
   }
 
   /* Metadata hasil mengikuti lebar kontainer. */
@@ -1555,15 +1685,15 @@
 
   /* Jumlah hasil dibuat sedikit lebih ringkas. */
   .arp-result-meta strong {
-    font-size: 14px;
+    font-size: 11px;
   }
 
-  /* Daftar dokumen memenuhi lebar kontainer. */
+  /* Jarak antar-card arsip pada mobile */
   .arp-record-list {
-    width: 100%;
-    max-width: none;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 12px;
+      width: 100%;
+      max-width: none;
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: 10px;
   }
 
   /* Kartu dokumen menggunakan tata letak dua kolom. */
@@ -1573,21 +1703,21 @@
     padding: 14px;
     border-radius: 15px;
     grid-template-columns: 42px minmax(0, 1fr);
-    column-gap: 10px;
+    column-gap: 4px;
     row-gap: 12px;
   }
 
   /* Ikon berkas pada kartu dokumen diperkecil. */
   .arp-record-file {
-    width: 40px;
-    height: 40px;
+    width: 34px;
+    height: 34px;
     border-radius: 12px;
   }
 
   /* SVG ikon berkas pada mobile. */
   .arp-record-file .arp-icon {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
   }
 
   /* Konten utama dokumen menggunakan ruang yang tersedia. */
@@ -1598,37 +1728,63 @@
 
   /* Judul dokumen pada mobile. */
   .arp-record-main h3 {
-    font-size: 14px;
+    margin: 0px 0 2px;
+    font-size: 12px;
     line-height: 1.4;
     overflow-wrap: anywhere;
   }
 
   /* Deskripsi dokumen pada mobile. */
   .arp-record-main p {
-    font-size: 12px;
+    font-size: 10px;
   }
 
-  /* Badge dokumen mengikuti alur konten agar tidak bertumpuk. */
+  /* Badge dokumen rata kanan pada mobile */
   .arp-record-badges {
     position: static;
     grid-column: 1 / -1;
     grid-row: auto;
-    justify-content: flex-start;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
     max-width: 100%;
     gap: 6px;
+    margin-left: auto;
   }
 
   /* Metadata dokumen lebih rapat pada layar HP. */
   .arp-record-meta {
     gap: 6px;
-    margin-top: 10px;
-    font-size: 11px;
+    margin-top: 6px;
+    font-size: 10px;
   }
 
-  /* Setiap item metadata menyesuaikan lebar konten. */
+  /* Badge metadata lebih ringkas di HP */
   .arp-record-meta > span {
+    gap: 4px;
+    min-width: 0;
     padding: 5px 7px;
-    font-size: 11px;
+    border-radius: 8px;
+    font-size: 9px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  /* ID dokumen pada mobile */
+  .arp-record-meta .arp-record-id {
+    font-size: 10px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  /* Ikon metadata pada mobile */
+  .arp-record-meta .arp-icon {
+    width: 12px;
+    height: 12px;
+    min-width: 12px;
+    flex: 0 0 12px;
   }
 
   /* Baris aksi dokumen memenuhi lebar kartu. */
@@ -1642,25 +1798,58 @@
     padding-top: 10px;
   }
 
-  /* Tombol buka berkas tetap dapat menyusut di layar kecil. */
+  /* Tombol buka dokumen lebih ringkas pada mobile */
   .arp-record-actions .arp-open-file {
+    display: inline-flex;
     flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
     width: auto;
     min-width: 0;
-    min-height: 40px;
-    padding: 9px 10px;
-    font-size: 12px;
+    height: 32px;
+    min-height: 32px;
+    padding: 0 10px;
+    font-size: 11px;
+    line-height: 1;
+  }
+
+  /* SVG file pada tombol Buka dokumen */
+  .arp-record-actions .arp-open-file .arp-icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    margin: 0;
   }
 
   /* Menu aksi tidak keluar dari area kartu. */
   .arp-action-menu {
     flex-shrink: 0;
   }
-
-  /* Tombol pemicu menu aksi pada mobile. */
+  
+  /* Tombol More: ukuran 32px pada mobile */
   .arp-action-trigger {
-    width: 40px;
-    height: 40px;    
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    padding: 0 !important;
+    line-height: 1;
+    flex: 0 0 32px;
+  }
+
+  /* SVG More tepat di tengah */
+  .arp-action-trigger .arp-icon {
+    display: block;
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    flex: 0 0 16px;
+    margin: 0;
   }
 
   /* Dropdown aksi tetap berada di atas tombol pemicu. */
@@ -1700,74 +1889,103 @@
   /* Modal menggunakan hampir seluruh lebar layar HP. */
   .arp-modal-backdrop {
     align-items: flex-start;
-    padding: 12px;
+    padding: 8px;
   }
 
   /* Kontainer modal menyesuaikan viewport mobile. */
   .arp-modal {
     width: 100%;
-    max-width: 520px;
-    max-height: calc(100dvh - 24px);
-    padding: 18px;
-    border-radius: 18px;
+    max-width: 560px;
+    max-height: calc(100dvh - 16px);
+    padding: 14px;
+    border-radius: 16px;
     margin: auto;
   }
 
   /* Header modal pada layar mobile. */
   .arp-modal-head {
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 10px;
   }
 
   /* Judul modal pada layar mobile. */
   .arp-modal-head h3 {
-    font-size: 18px;
+    font-size: 13px;
+    line-height: 1.3;
   }
 
   /* Tombol tutup modal pada layar mobile. */
   .arp-modal-head button {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
   }
 
   /* Jarak antarfield formulir diperkecil. */
   .arp-field {
-    gap: 7px;
-    margin-bottom: 14px;
-    font-size: 13px;
+    gap: 5px;
+    margin-bottom: 10px;
+    font-size: 11px;
   }
 
-  /* Input formulir nyaman digunakan dengan sentuhan. */
-  .arp-field input:not([type=file]),
+  /* Input, dropdown, dan textarea */
+  .arp-field input:not([type="file"]),
   .arp-field select,
   .arp-field textarea {
-    padding: 11px 12px;
-    font-size: 14px;
-  }
-
-  /* Area upload menyesuaikan lebar layar. */
-  .arp-upload-box {
-    gap: 10px;
-    padding: 12px;
-  }
-
-  /* Input file tidak melampaui area upload. */
-  .arp-upload-box input {
-    min-width: 0;
+    padding: 9px 10px;
     font-size: 12px;
+    border-radius: 11px;
+  }
+
+  .arp-field textarea {
+    min-height: 64px;
+  }
+
+  /* Area upload dokumen */
+  .arp-upload-box {
+    gap: 7px;
+    padding: 9px;
+  }
+
+  /* Input file pada modal mobile */
+  .arp-upload-box input[type="file"] {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 10px;
+    line-height: 1.4;
+  }
+
+  /* Tombol Choose File */
+  .arp-upload-box input[type="file"]::file-selector-button {
+    margin-right: 6px;
+    padding: 4px 7px;
+    border: 1px solid #cbdcf8;
+    border-radius: 6px;
+    background: #fff;
+    color: #294b7a;
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
   }
 
   /* Tombol aksi modal dapat membungkus pada layar sempit. */
   .arp-modal-actions {
-    gap: 8px;
-    margin-top: 18px;
+    gap: 7px;
+    margin-top: 12px;
   }
 
   /* Tombol aksi modal pada mobile. */
   .arp-modal-actions .arp-primary-btn,
   .arp-modal-actions .arp-secondary-btn {
-    min-height: 44px;
+    min-height: 32px;
+    padding: 0 12px;
+    font-size: 10px;
   }
 }
 
