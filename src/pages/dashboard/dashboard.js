@@ -36,7 +36,8 @@ import {
 ====================================================== */
 import {
     smartofficeGetDashboardStats,
-    smartofficeGetSedangCutiFirestore
+    smartofficeGetSedangCutiFirestore,
+    smartofficeGetTotalDokumenDitolak
 } from "../../services/dashboard.service.js";
 
 import {
@@ -250,6 +251,62 @@ export async function smartofficeLoadPage(){
     );
 
     /* =========================
+       LOAD DOKUMEN DITOLAK
+       BACKGROUND / NON-BLOCKING
+    ========================= */
+    smartofficeLoadDashboardDokumenDitolak(
+        sessionData,
+        pageInstance
+    ).catch(error => {
+        console.warn(
+            "Load Dokumen Ditolak Error:",
+            error
+        );
+    });
+        
+    /* ======================================================
+    KLIK CARD DOKUMEN DITOLAK
+    ====================================================== */
+    const dokumenDitolakCard = document.getElementById(
+        "smartofficeDashboardDokumenDitolak"
+    );
+
+    if (dokumenDitolakCard) {        
+        dokumenDitolakCard.onclick = async function(){
+            try{
+                sessionStorage.setItem(
+                    "smartofficeBukaTabRiwayat",
+                    "true"
+                );
+
+                await smartofficeNavigate(
+                    "dokumen-saya"
+                );
+
+            }catch(error){
+                sessionStorage.removeItem(
+                    "smartofficeBukaTabRiwayat"
+                );
+
+                alert(
+                    "Gagal membuka Dokumen Saya: " +
+                    (error?.message || String(error))
+                );
+            }
+        };
+
+        dokumenDitolakCard.onkeydown = function (event) {
+            if (
+                event.key === "Enter" ||
+                event.key === " "
+            ) {
+                event.preventDefault();
+                dokumenDitolakCard.click();
+            }
+        };
+    }
+
+    /* =========================
        PAGE MAY HAVE BEEN DESTROYED
     ========================= */
     if(
@@ -384,6 +441,31 @@ export async function smartofficeDestroyPage(){
             "keydown",
             pegawaiKeydownHandler
         );
+    }
+
+    const rejectedCard = document.getElementById(
+        "smartofficeDashboardDokumenDitolak"
+    );
+
+    if(rejectedCard){
+
+        const clickHandler =
+            smartofficeDashboardMenuHandlers[
+                "smartofficeDashboardDokumenDitolak"
+            ];
+
+        const keydownHandler =
+            smartofficeDashboardMenuHandlers[
+                "smartofficeDashboardDokumenDitolakKeydown"
+            ];
+
+        if(clickHandler){
+            rejectedCard.removeEventListener("click", clickHandler);
+        }
+
+        if(keydownHandler){
+            rejectedCard.removeEventListener("keydown", keydownHandler);
+        }
     }
 
     /* =========================
@@ -2189,3 +2271,64 @@ function smartofficeDashboardFormatTanggalCutiRange(
     return `${awal} – ${akhir}`;
 }
 
+
+/* ======================================================
+   LOAD NOTIFIKASI DOKUMEN DITOLAK
+====================================================== */
+async function smartofficeLoadDashboardDokumenDitolak(
+    sessionData,
+    pageInstance
+){
+    const card = document.getElementById(
+        "smartofficeDashboardDokumenDitolak"
+    );
+
+    const countElement = document.getElementById(
+        "smartofficeDashboardDokumenDitolakCount"
+    );
+
+    if(!card || !countElement){
+        return;
+    }
+
+    // Default: card disembunyikan.
+    card.hidden = true;
+
+    // Ambil NIP dari session login.
+    const nip = String(
+        sessionData?.nipNrp ||
+        sessionData?.nip ||
+        sessionData?.NIP ||
+        ""
+    ).trim();
+
+    if(!nip){
+        return;
+    }
+
+    try{
+        const total = await smartofficeGetTotalDokumenDitolak(nip);
+
+        // Abaikan hasil jika halaman sudah ditinggalkan.
+        if(
+            smartofficeDashboardDestroyed ||
+            pageInstance !== smartofficeDashboardPageInstance
+        ){
+            return;
+        }
+
+        countElement.textContent = total;
+
+        // Hanya tampilkan jika ada dokumen yang ditolak.
+        card.hidden = total <= 0;
+
+    }catch(error){
+        console.error(
+            "Dashboard dokumen ditolak error:",
+            error
+        );
+
+        // Jika gagal mengambil data, jangan tampilkan card.
+        card.hidden = true;
+    }
+}

@@ -192,9 +192,26 @@ export async function smartofficeLoadPage(){
     smartofficeInitUploadDokumen();
     smartofficeInitDokumenSayaFilter();
     smartofficeResetDokumenSayaFilter();
+    
+    /* =========================
+       DEFAULT TAB DOKUMEN
+    ========================= */
+    const bukaTabRiwayat =
+        sessionStorage.getItem(
+            "smartofficeBukaTabRiwayat"
+        ) === "true";
+
     smartofficeSwitchDokumenTab(
-        "upload"
+        bukaTabRiwayat
+            ? "riwayat"
+            : "upload"
     );
+
+    if(bukaTabRiwayat){
+        sessionStorage.removeItem(
+            "smartofficeBukaTabRiwayat"
+        );
+    }
 
     /* ==================================================
        SWIPE TAB DOKUMEN SAYA

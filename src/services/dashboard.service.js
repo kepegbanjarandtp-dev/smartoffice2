@@ -409,3 +409,56 @@ export async function smartofficeGetSedangCutiFirestore(){
 
     return result;
 }
+
+
+/* ======================================================
+   TOTAL DOKUMEN DITOLAK — DOKUMEN SAYA
+   CACHE 60 DETIK PER NIP
+====================================================== */
+const smartofficeDashboardDokumenDitolakCache = new Map();
+
+export async function smartofficeGetTotalDokumenDitolak(nip){
+
+    const nipValue = String(nip || "").trim();
+
+    if(!nipValue){
+        return 0;
+    }
+
+    const now = Date.now();
+
+    const cached =
+        smartofficeDashboardDokumenDitolakCache.get(nipValue);
+
+    if(
+        cached &&
+        now - cached.time < SMARTOFFICE_DASHBOARD_STATS_CACHE_MS
+    ){
+        return cached.count;
+    }
+
+    const dokumenDitolakQuery = query(
+        collection(
+            smartofficeFirestore,
+            "dokumenPegawai"
+        ),
+        where("nip", "==", nipValue),
+        where("statusVerifikasi", "==", "DITOLAK")
+    );
+
+    const snapshot = await getCountFromServer(
+        dokumenDitolakQuery
+    );
+
+    const count = snapshot.data().count;
+
+    smartofficeDashboardDokumenDitolakCache.set(
+        nipValue,
+        {
+            count,
+            time: now
+        }
+    );
+
+    return count;
+}
