@@ -358,6 +358,137 @@
             </span>
         </button>
     </div>
+    
+    <!-- ======================================================
+        INFO CARD DOKUMEN SAYA
+    ====================================================== -->
+    <div
+        id="smartofficeDokumenSayaInfo"
+        class="smartoffice-penomoransk-info"
+    >
+        <!-- ICON UTAMA -->
+        <div class="smartoffice-penomoransk-info-icon">
+            <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            >
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <path d="M14 2v6h6"/>
+                <path d="m9 15 2 2 4-4"/>
+            </svg>
+        </div>
+
+        <!-- INFORMASI -->
+        <div class="smartoffice-penomoransk-info-content">
+            <h2>Informasi Dokumen Saya</h2>
+
+            <p>
+                Pastikan dokumen yang Anda unggah sesuai dengan
+                jenis dokumen yang diminta. Periksa nomor dokumen
+                dan keterangan sebelum menyimpan. Dokumen yang
+                diunggah akan melalui tahapan verifikasi sesuai
+                SK Kepala Puskesmas Nambo No. 400.7.28.3/009/KL-1/PKMNAMBO/2026.
+            </p>
+
+            <!-- FEATURE BADGES -->
+            <div class="smartoffice-penomoransk-info-features">
+
+                <!-- UNGGAH -->
+                <div class="smartoffice-penomoransk-feature">
+                    <span class="smartoffice-penomoransk-feature-icon green">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M12 16V4"/>
+                            <path d="m7 9 5-5 5 5"/>
+                            <path d="M5 20h14"/>
+                        </svg>
+                    </span>
+                    <span>Unggah Dokumen</span>
+                </div>
+
+                <!-- VERIFIKASI -->
+                <div class="smartoffice-penomoransk-feature">
+                    <span class="smartoffice-penomoransk-feature-icon purple">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <circle cx="12" cy="12" r="9"/>
+                            <path d="m8 12 2.5 2.5L16 9"/>
+                        </svg>
+                    </span>
+                    <span>Verifikasi</span>
+                </div>
+
+                <!-- ARSIP -->
+                <div class="smartoffice-penomoransk-feature">
+                    <span class="smartoffice-penomoransk-feature-icon orange">
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M4 4h16v4H4z"/>
+                            <path d="M5 8v12h14V8"/>
+                            <path d="M9 12h6"/>
+                            <path d="M9 16h6"/>
+                        </svg>
+                    </span>
+                    <span>Tervalidasi</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ILUSTRASI -->
+        <div
+            class="smartoffice-penomoransk-info-art"
+            aria-hidden="true"
+        >
+            <div class="smartoffice-penomoransk-art-circle"></div>
+
+            <div class="smartoffice-penomoransk-art-badge">
+                DOC
+            </div>
+
+            <div class="smartoffice-penomoransk-art-paper">
+                <div class="smartoffice-penomoransk-paper-line line-1"></div>
+                <div class="smartoffice-penomoransk-paper-line line-2"></div>
+                <div class="smartoffice-penomoransk-paper-line line-3"></div>
+                <div class="smartoffice-penomoransk-paper-line line-4"></div>
+            </div>
+
+            <div class="smartoffice-penomoransk-art-pen">
+                <div class="smartoffice-penomoransk-pen-body"></div>
+                <div class="smartoffice-penomoransk-pen-grip"></div>
+                <div class="smartoffice-penomoransk-pen-tip"></div>
+            </div>
+
+            <div class="smartoffice-penomoransk-art-shape shape-one"></div>
+            <div class="smartoffice-penomoransk-art-shape shape-two"></div>
+
+            <div class="smartoffice-penomoransk-art-slogan">
+                <span>Dokumen Tertata,</span>
+                <strong>Administrasi Lebih Mudah</strong>
+            </div>
+        </div>
+    </div>
 
     <!-- =========================
         FORM UPLOAD
@@ -518,43 +649,43 @@
                         placeholder="Nomor dokumen"
                     >
                 </div>
-
+                
                 <!-- KETERANGAN -->
                 <div
                     class="
                         smartoffice-dokumen-saya-form-group
+                        full-width
                     "
                 >
-                    <label>
+                    <label for="smartofficeDokumenKeterangan">
                         Keterangan
                     </label>
 
-                    <input
-                        type="text"
+                    <textarea
                         id="smartofficeDokumenKeterangan"
-                        placeholder="Opsional"
-                    >
+                        placeholder="Tambahkan keterangan dokumen (opsional)"
+                        rows="3"
+                    ></textarea>
                 </div>
             </div>
 
             <!-- =========================
                 FILE DOKUMEN
             ========================== -->
-            <div
-                class="
-                    smartoffice-dokumen-saya-form-group
-                "
-            >
+            <div class="smartoffice-dokumen-saya-form-group full-width">
+                <label for="smartofficeDokumenFile">
+                    Upload Dokumen
+                </label>
+
                 <input
                     type="file"
                     id="smartofficeDokumenFile"
                     accept=".pdf,.jpg,.jpeg,.png"
                     hidden
                 >
+
                 <div
-                    class="
-                        smartoffice-dokumen-saya-upload-box
-                    "
+                    class="smartoffice-dokumen-saya-upload-box"
                     onclick="
                         document.getElementById(
                             'smartofficeDokumenFile'
@@ -566,12 +697,10 @@
                     </strong>
 
                     <p>
-                        PDF/JPG/PNG • Max 5 MB
+                        PDF/JPG/PNG • Maksimal 5 MB
                     </p>
 
-                    <span
-                        id="smartofficeDokumenSayaFileName"
-                    >
+                    <span id="smartofficeDokumenSayaFileName">
                         Belum ada file dipilih
                     </span>
                 </div>
@@ -683,6 +812,10 @@
 
                     <option value="TERVERIFIKASI">
                         Terverifikasi
+                    </option>
+
+                    <option value="DITOLAK">
+                        Ditolak
                     </option>
                 </select>
             </div>
