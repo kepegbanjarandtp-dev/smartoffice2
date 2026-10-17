@@ -272,6 +272,7 @@ export async function smartofficeLoadPage(){
     );
 
     if (dokumenDitolakCard) {        
+        
         dokumenDitolakCard.onclick = async function(){
             try{
                 sessionStorage.setItem(
@@ -279,13 +280,21 @@ export async function smartofficeLoadPage(){
                     "true"
                 );
 
+                sessionStorage.setItem(
+                    "smartofficeFilterStatusDokumen",
+                    "DITOLAK"
+                );
+
                 await smartofficeNavigate(
                     "dokumen-saya"
                 );
-
             }catch(error){
                 sessionStorage.removeItem(
                     "smartofficeBukaTabRiwayat"
+                );
+
+                sessionStorage.removeItem(
+                    "smartofficeFilterStatusDokumen"
                 );
 
                 alert(

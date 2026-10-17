@@ -152,8 +152,11 @@
 /* ======================================================
    FULL WIDTH
 ====================================================== */
-.smartoffice-dokumen-saya-form-group.full-width{
-   margin-top:28px;
+.smartoffice-dokumen-saya-form-group.full-width {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    margin-top: 0;
 }
 
 /* ======================================================
@@ -164,7 +167,7 @@
     2px dashed #cbd5e1;
   border-radius:18px;
   padding:20px;
-  margin-top:16px;
+  margin-top:0px;
   display:flex;
   align-items:center;
   gap:14px;
@@ -208,48 +211,30 @@
 /* ======================================================
    SUBMIT BUTTON
 ====================================================== */
-
 .smartoffice-dokumen-saya-submit-button{
-
     width:220px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     gap:8px;
-
     margin:32px auto 0;
-
     border:none;
-
     border-radius:18px;
-
     padding:16px;
     background:#2563eb;
-
     color:#ffffff;
-
     font-size:15px;
-
     font-weight:600;
-
     cursor:pointer;
-
     transition:0.2s ease;
 }
 
 .smartoffice-dokumen-saya-submit-button:disabled{
-
     opacity:.85;
-
     cursor:not-allowed;
 }
 
 .smartoffice-dokumen-saya-submit-button:hover{
-
     transform:
         translateY(-2px);
 
@@ -356,8 +341,11 @@
     /* ================================================
        FULL WIDTH
     ================================================ */
-    .smartoffice-dokumen-saya-form-group.full-width{
-        margin-top:20px;
+    .smartoffice-dokumen-saya-form-group.full-width {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+        margin-top: 0px;
     }
 
     /* ================================================
@@ -952,6 +940,34 @@
 }
 
 /* ======================================================
+   TEXTAREA KETERANGAN EDIT
+====================================================== */
+.smartoffice-dokumensaya-edit-group textarea {
+    display: block;
+    width: 100%;
+    min-height: 76px;
+    padding: 10px 11px;
+    border: 1px solid #dce5f1;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #1e293b;
+    font-family: inherit;
+    font-size: 10px;
+    line-height: 1.5;
+    outline: none;
+    box-sizing: border-box;
+    resize: vertical;
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.smartoffice-dokumensaya-edit-group textarea:focus {
+    border-color: #93b4e8;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+}
+
+/* ======================================================
    INPUT
 ====================================================== */
 .smartoffice-dokumensaya-edit-group input{
@@ -1253,6 +1269,17 @@
         border-radius:10px;
         font-size:10px;
         box-sizing:border-box;
+    }
+
+    /* TEXTAREA KETERANGAN */
+    .smartoffice-dokumensaya-edit-group textarea {
+        width: 100%;
+        min-height: 90px;
+        padding: 11px 12px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 1.6;
+        resize: vertical;
     }
 
     /* ==================================================

@@ -190,8 +190,34 @@ export async function smartofficeLoadPage(){
        Tidak bergantung API
     ========================= */
     smartofficeInitUploadDokumen();
+    
     smartofficeInitDokumenSayaFilter();
     smartofficeResetDokumenSayaFilter();
+
+    const statusDariDashboard =
+        sessionStorage.getItem(
+            "smartofficeFilterStatusDokumen"
+        );
+
+    if(statusDariDashboard){
+        const statusSelect =
+            document.getElementById(
+                "smartofficeDokumenSayaStatusFilter"
+            );
+        if(statusSelect){
+            statusSelect.value =
+                statusDariDashboard;
+
+            smartofficeDokumenSayaStatusFilter =
+                statusSelect.value;
+
+            smartofficeApplyDokumenSayaFilter();
+        }
+
+        sessionStorage.removeItem(
+            "smartofficeFilterStatusDokumen"
+        );
+    }
     
     /* =========================
        DEFAULT TAB DOKUMEN
@@ -700,7 +726,9 @@ async function smartofficeLoadDokumenSaya(forceRefresh = false){
         );
 
         smartofficeRenderDokumenSaya(
-            data
+            smartofficeGetFilteredDokumenSaya(
+                data
+            )
         );
 
         smartofficeDokumenLoaded =
@@ -2749,20 +2777,18 @@ function smartofficeUbahDokumen(
                     value="${dokumen.nomorDokumen || ""}"
                 >
             </div>
-
+                        
             <!-- KETERANGAN -->
-            <div
-                class="smartoffice-dokumensaya-edit-group"
-            >
-                <label>
+            <div class="smartoffice-dokumensaya-edit-group">
+                <label for="smartofficeEditKeterangan">
                     Keterangan
                 </label>
 
-                <input
-                    type="text"
+                <textarea
                     id="smartofficeEditKeterangan"
-                    value="${dokumen.keterangan || ""}"
-                >
+                    rows="3"
+                    placeholder="Tambahkan keterangan..."
+                >${dokumen.keterangan || ""}</textarea>
             </div>
 
             <!-- FILE LAMA -->

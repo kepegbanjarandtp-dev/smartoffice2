@@ -62,6 +62,8 @@ const smartofficeArsipPegawaiHandlers =
 
 let smartofficeArsipModalTimer = null;
 
+let smartofficeArsipStatusUploadFilter = "";
+
 
 /* ======================================================
    LOAD PAGE
@@ -197,6 +199,8 @@ export async function smartofficeDestroyPage(){
     smartofficeArsipDokumenSearch =
         "";
 
+    smartofficeArsipStatusUploadFilter = "";
+
     /* =========================
        RESET SEARCH INPUT
     ========================= */
@@ -213,6 +217,19 @@ export async function smartofficeDestroyPage(){
 
         searchInput.oninput =
             null;
+    }
+
+    /* =========================
+       RESET STATUS UPLOAD FILTER
+    ========================= */
+    const statusSelect = document.getElementById(
+        "smartofficeArsipStatusUploadFilter"
+    );
+
+    if (statusSelect) {
+        statusSelect.value = "";
+        statusSelect.disabled = true;
+        statusSelect.onchange = null;
     }
 
     /* =========================
@@ -391,6 +408,7 @@ export async function smartofficeCariArsipPegawai(
         ========================= */
         smartofficeArsipDokumenData = data;
         smartofficeArsipDokumenSearch = "";
+        smartofficeArsipStatusUploadFilter = "";
 
         /* =========================
            RESET SEARCH
@@ -406,6 +424,29 @@ export async function smartofficeCariArsipPegawai(
             searchInput.disabled = false;
             searchInput.oninput = function(){
                 smartofficeArsipDokumenSearch =
+                    this.value || "";
+
+                smartofficeRenderArsipPegawai(
+                    smartofficeArsipDokumenData
+                );
+            };
+        }
+        
+        /* =========================
+        FILTER STATUS UPLOAD
+        ========================= */
+        const statusSelect = document.getElementById(
+            "smartofficeArsipStatusUploadFilter"
+        );
+
+        if (statusSelect) {
+            statusSelect.disabled = false;
+            statusSelect.value = "";
+
+            smartofficeArsipStatusUploadFilter = "";
+
+            statusSelect.onchange = function() {
+                smartofficeArsipStatusUploadFilter =
                     this.value || "";
 
                 smartofficeRenderArsipPegawai(
@@ -492,6 +533,37 @@ function smartofficeFilterArsipDokumen(
 
 
 /* ======================================================
+   FILTER STATUS UPLOAD ARSIP PEGAWAI
+====================================================== */
+function smartofficeGetFilteredArsipPegawai(data) {
+    if (!Array.isArray(data)) {
+        return [];
+    }
+
+    const statusFilter = String(
+        smartofficeArsipStatusUploadFilter || ""
+    ).trim().toUpperCase();
+
+    if (!statusFilter) {
+        return data;
+    }
+
+    return data.filter(function(item) {
+        let status = String(
+            item.statusVerifikasi || ""
+        ).trim().toUpperCase();
+
+        // Status kosong berarti belum upload
+        if (!status) {
+            status = "BELUM_UPLOAD";
+        }
+
+        return status === statusFilter;
+    });
+}
+
+
+/* ======================================================
    RENDER ARSIP PEGAWAI
    FINAL — STRUKTUR SAMA DENGAN DOKUMEN SAYA
    CLASS TETAP ARSIP PEGAWAI
@@ -535,9 +607,14 @@ export function smartofficeRenderArsipPegawai(
        DOKUMEN HASIL SEARCH
        HANYA UNTUK LIST
     ========================= */
+    const dokumenStatus =
+        smartofficeGetFilteredArsipPegawai(
+            dokumenSemua
+        );
+
     const dokumen =
         smartofficeFilterArsipDokumen(
-            dokumenSemua,
+            dokumenStatus,
             smartofficeArsipDokumenSearch
         );
 
@@ -1417,19 +1494,28 @@ export function smartofficeRenderArsipPegawai(
         listContainer.innerHTML = `
             <div class="smartoffice-arsippegawai-empty">
                 <div class="smartoffice-arsippegawai-empty-icon">
-                    <!--
-                        PERTAHANKAN ICON
-                        EXISTING DI SINI
-                    -->
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <circle cx="11" cy="11" r="7"></circle>
+                        <path d="m20 20-3.5-3.5"></path>
+                        <path d="M8.5 11h5"></path>
+                    </svg>
                 </div>
 
                 <h3>
-                    Belum Ada Arsip
+                    Arsip Tidak Ditemukan
                 </h3>
 
                 <p>
-                    Belum ada dokumen arsip
-                    untuk pegawai ini.
+                    Tidak ada dokumen arsip yang sesuai
+                    dengan pencarian atau filter yang dipilih.
                 </p>
             </div>
         `;
@@ -2835,6 +2921,21 @@ export function smartofficeResetArsipPegawai(){
 
         searchInput.oninput =
             null;
+    }
+
+    /* =========================
+       RESET STATUS UPLOAD
+    ========================= */
+    smartofficeArsipStatusUploadFilter = "";
+
+    const statusSelect = document.getElementById(
+        "smartofficeArsipStatusUploadFilter"
+    );
+
+    if (statusSelect) {
+        statusSelect.value = "";
+        statusSelect.disabled = true;
+        statusSelect.onchange = null;
     }
 
     /* =========================

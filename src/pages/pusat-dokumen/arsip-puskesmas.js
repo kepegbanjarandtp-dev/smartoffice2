@@ -824,8 +824,7 @@ function renderHome() {
                     </h2>
 
                     <p>
-                        Dokumen penting dan arsip bersama
-                        <br class="arp-desktop-break">
+                        Dokumen penting dan arsip bersama  
                         untuk mendukung operasional Puskesmas.
                     </p>
                 </div>

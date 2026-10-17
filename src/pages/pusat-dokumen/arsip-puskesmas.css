@@ -76,14 +76,14 @@
 .arp-banner-copy h2 {
   font-size: clamp(16px, 2.5vw, 22px);
   line-height: 1.15;
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   font-weight: 800;
   letter-spacing: -0.5px;
 }
 
 /* Deskripsi banner: ukuran responsif dan warna teks sekunder. */
 .arp-banner-copy p {
-  font-size: clamp(10px, 1.5vw, 12px);
+  font-size: clamp(10px, 1.5vw, 13px);
   line-height: 1.5;
   color: #64718c;
   margin: 0;
@@ -1319,6 +1319,7 @@
   .arp-banner-copy h2 {
     font-size: clamp(12px, 2vw, 16px);
     line-height: 1.25;
+    margin: 0 0 2px;
   }
 
   /* Deskripsi banner lebih ringkas pada mobile. */
