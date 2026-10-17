@@ -31,6 +31,15 @@ import {
     smartofficeShowToast
 } from "../../components/toast/toast.js";
 
+import {
+    smartofficeOpenPreviewDokumen
+} from "../../components/preview/preview.js";
+
+import {
+    smartofficeGetDriveFileId
+} from "../../utils/drive.js";
+
+
 
 /* ==========================================================
    ADAPTER BACKEND ARSIP PUSKESMAS
@@ -1788,9 +1797,9 @@ async function onClick(e) {
 
         return;
     }
-
+    
     /* ======================================================
-       13. BUKA FILE ARSIP
+    13. BUKA FILE ARSIP MELALUI PREVIEW GLOBAL
     ====================================================== */
     if (target.matches("[data-arp-open-file]")) {
         const record = state.records.find(item =>
@@ -1809,17 +1818,30 @@ async function onClick(e) {
             record?.fileUrlDrive ||
             "";
 
-        if (fileUrl) {
-            window.open(
-                fileUrl,
-                "_blank",
-                "noopener,noreferrer"
+        if (!fileUrl) {
+            smartofficeShowToast(
+                "Tautan file belum tersedia pada data arsip ini.",
+                "error"
             );
-        } else {
-            alert(
-                "Tautan file belum tersedia pada data arsip ini."
-            );
+            return;
         }
+
+        const fileId = smartofficeGetDriveFileId(fileUrl);
+
+        if (!fileId) {
+            smartofficeShowToast(
+                "ID file Google Drive tidak valid.",
+                "error"
+            );
+            return;
+        }
+
+        smartofficeOpenPreviewDokumen(
+            fileId,
+            record?.namaArsip ||
+            record?.Nama_Arsip ||
+            "Dokumen Arsip Puskesmas"
+        );
 
         return;
     }
