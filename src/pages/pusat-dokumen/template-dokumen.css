@@ -1,0 +1,1397 @@
+
+/* ==========================================================
+   SMART OFFICE — TEMPLATE DOKUMEN
+========================================================== */
+
+/* ----------------------------------------------------------
+   1. CONTAINER UTAMA
+---------------------------------------------------------- */
+.smartoffice-template {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 8px 0 28px;
+    color: var(--text-primary, #1f2937);
+    box-sizing: border-box;
+}
+
+/* ----------------------------------------------------------
+   2. BOX SIZING
+---------------------------------------------------------- */
+.smartoffice-template *,
+.smartoffice-template *::before,
+.smartoffice-template *::after {
+    box-sizing: border-box;
+}
+
+/* ==========================================================
+   BANNER INFORMASI TEMPLATE DOKUMEN
+========================================================== */
+/* Banner utama */
+.smartoffice-template-banner {
+    display: flex;
+    align-items: center;
+    gap: clamp(12px, 2vw, 24px);
+    min-height: 120px;
+    padding: 20px 28px;
+    margin-top: -10px;
+    margin-bottom: 16px;
+    border: 1px solid #e4dcff;
+    border-radius: 28px;
+    background: linear-gradient(
+        105deg,
+        #f5f1ff 0%,
+        #eee8ff 62%,
+        #e7e0ff 100%
+    );
+    overflow: hidden;
+}
+
+/* Ikon utama banner */
+.smartoffice-template-banner-mark {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #8c5cf6, #2879ee);
+    color: #fff;
+    box-shadow: 0 10px 24px #7552e52a;
+}
+
+/* Ikon SVG */
+.smartoffice-template-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Ukuran ikon di dalam banner */
+.smartoffice-template-banner-mark
+.smartoffice-template-icon {
+    width: 30px;
+    height: 30px;
+    stroke-width: 1.6;
+}
+
+/* Area judul dan deskripsi */
+.smartoffice-template-banner-copy {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Judul banner */
+.smartoffice-template-banner-copy h2 {
+    margin: 0 0 6px;
+    font-size: clamp(16px, 2.5vw, 22px);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* Deskripsi banner */
+.smartoffice-template-banner-copy p {
+    margin: 0;
+    color: #64718c;
+    font-size: clamp(10px, 1.5vw, 13px);
+    line-height: 1.5;
+}
+
+/* Ilustrasi folder dekoratif */
+.smartoffice-template-folder-art {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    min-width: 150px;
+    height: 90px;
+    color: #6546d9;
+    font-size: 54px;
+    letter-spacing: -22px;
+    text-shadow: 3px 3px #d7caff;
+}
+
+.smartoffice-template-folder-art span:nth-child(2) {
+    color: #4933b4;
+    transform: translateY(-8px);
+}
+
+.smartoffice-template-folder-art span:nth-child(3) {
+    color: #f0a833;
+    font-size: 60px;
+    transform: translateY(4px);
+}
+
+/* Slogan banner */
+.smartoffice-template-slogan {
+    min-width: 135px;
+    color: #6443cb;
+    font-size: 15px;
+    line-height: 1.35;
+    font-style: italic;
+    font-weight: 800;
+    text-align: center;
+    transform: rotate(-5deg);
+}
+
+/* Responsif untuk layar ponsel */
+@media (max-width: 768px) {
+    .smartoffice-template-banner {
+        gap: 12px;
+        min-height: 100px;
+        padding: 16px;
+        border-radius: 22px;
+    }
+
+    .smartoffice-template-banner-mark {
+        width: 44px;
+        height: 44px;
+        border-radius: 15px;
+    }
+
+    .smartoffice-template-banner-mark
+    .smartoffice-template-icon {
+        width: 26px;
+        height: 26px;
+    }
+
+    .smartoffice-template-folder-art,
+    .smartoffice-template-slogan {
+        display: none;
+    }
+
+    .smartoffice-template-banner-copy h2 {
+        font-size: 17px;
+    }
+
+    .smartoffice-template-banner-copy p {
+        font-size: 12px;
+    }
+}
+
+/* ----------------------------------------------------------
+   3. FILTER
+---------------------------------------------------------- */
+.smartoffice-template-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 22px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 16px;
+}
+
+/* Pencarian template */
+.smartoffice-template-search {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 9px;
+    background: var(--input-bg, #ffffff);
+}
+
+.smartoffice-template-search > span {
+    color: var(--text-secondary, #6b7280);
+    font-size: 20px;
+    line-height: 1;
+}
+
+.smartoffice-template-search input {
+    width: 100%;
+    min-width: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 13px;
+}
+
+/* Grup label dan pencarian */
+.smartoffice-template-search-group {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+/* Label pencarian */
+.smartoffice-template-search-label {
+    color: var(--text-primary, #1f2937);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* Ikon SVG pencarian */
+.smartoffice-template-search-icon {
+    display: block;
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: var(--text-secondary, #6b7280);
+}
+
+/* Kategori dan status */
+.smartoffice-template-filters {
+    grid-column: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    min-width: 0;
+}
+
+.smartoffice-template-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.smartoffice-template-field > span {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary, #6b7280);
+}
+
+.smartoffice-template-field select {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 0 10px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 9px;
+    background: var(--input-bg, #ffffff);
+    color: var(--text-primary, #1f2937);
+    font: inherit;
+    font-size: 12px;
+}
+
+/* Tombol filter */
+.smartoffice-template-filter-actions {
+    grid-column: 2;
+    display: flex;
+    align-items: end;
+    flex-wrap: nowrap;
+    gap: 8px;
+    align-self: end;
+}
+
+.smartoffice-template-filter-actions .smartoffice-template-button {
+    min-height: 40px;
+    padding: 8px 11px;
+    white-space: nowrap;
+}
+
+/* ----------------------------------------------------------
+   4. TOMBOL
+   Style dasar, primary, secondary, hover, dan disabled
+---------------------------------------------------------- */
+.smartoffice-template-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 9px 14px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease;
+}
+
+.smartoffice-template-button:active {
+    transform: scale(0.98);
+}
+
+.smartoffice-template-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Tombol utama */
+.smartoffice-template-button.primary {
+    color: #ffffff;
+    background: var(--primary-color, #1769aa);
+}
+
+.smartoffice-template-button.primary:hover:not(:disabled) {
+    background: var(--primary-hover, #12558b);
+}
+
+/* Tombol sekunder */
+.smartoffice-template-button.secondary {
+    color: var(--text-primary, #374151);
+    background: var(--card-bg, #ffffff);
+    border-color: var(--border-color, #d1d5db);
+}
+
+.smartoffice-template-button.secondary:hover:not(:disabled) {
+    background: var(--hover-bg, #f3f4f6);
+}
+
+/* ----------------------------------------------------------
+   5. HEADING DAFTAR TEMPLATE
+   Judul daftar, jumlah template, dan tombol tambah
+---------------------------------------------------------- */
+/* Card daftar template */
+.smartoffice-template-list-card {
+    padding: 16px;
+    margin-bottom: 22px;
+    background: var(--card-bg, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 16px;
+}
+
+/* Ringkasan daftar template */
+.smartoffice-template-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* Judul daftar */
+.smartoffice-template-summary h3 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Keterangan jumlah template */
+.smartoffice-template-summary p {
+    margin: 0;
+    color: var(--text-secondary, #6b7280);
+    font-size: 13px;
+}
+
+/* ----------------------------------------------------------
+   6. RESPONSIVE MOBILE
+   Berlaku untuk layar dengan lebar maksimal 768px
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+    /* Container utama */
+    .smartoffice-template {
+        padding: 4px 0 20px;
+    }
+
+    /* Filter */
+    .smartoffice-template-toolbar {
+        gap: 10px;
+        padding: 12px;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .smartoffice-template-search,
+    .smartoffice-template-filters,
+    .smartoffice-template-filter-actions {
+        grid-column: 1;
+    }
+
+    /* Filter kategori dan status menjadi satu kolom */
+    .smartoffice-template-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Tombol reset dan muat ulang */
+    .smartoffice-template-filter-actions {
+        flex-wrap: wrap;
+    }
+
+    /* Ukuran tombol mobile */
+    .smartoffice-template-button {
+        min-height: 42px;
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+
+    /* Heading daftar dan tombol tambah */
+    .smartoffice-template-summary {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .smartoffice-template-summary h3 {
+        font-size: 16px;
+    }
+
+    /* Tombol tambah memenuhi lebar container */
+    .smartoffice-template-add-button {
+        width: 100%;
+    }
+
+    /* Konten kartu menjadi satu kolom */
+    .smartoffice-template-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+    }
+
+    .smartoffice-template-card {
+        padding: 15px;
+    }
+
+}
+
+/* ----------------------------------------------------------
+   6. GRID DAN KARTU DAFTAR TEMPLATE
+---------------------------------------------------------- */
+.smartoffice-template-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 16px;
+}
+
+.smartoffice-template-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 258px;
+    padding: 18px;
+    background: linear-gradient(160deg, #ffffff 0%, #ffffff 75%, #f8fbff 100%);
+    border: 1px solid #e3ebf7;
+    border-radius: 18px;
+    box-shadow: 0 5px 18px rgb(30 64 175 / 5%), 0 1px 3px rgb(15 23 42 / 3%);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.smartoffice-template-card:hover {
+    border-color: #cbdcf8;
+    box-shadow: 0 12px 28px rgb(30 64 175 / 10%), 0 3px 8px rgb(15 23 42 / 4%);
+    transform: translateY(-2px);
+}
+
+/* Bagian atas kartu: ikon dan status */
+.smartoffice-template-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+/* Ikon file */
+.smartoffice-template-file-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    border: 1px solid #dfebff;
+    border-radius: 15px;
+    background: linear-gradient(145deg, #eef6ff, #e5efff);
+    color: #2463b7;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 90%);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* Status aktif dan tidak aktif */
+.smartoffice-template-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 9px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.smartoffice-template-status.active {
+    color: #087443;
+    background: #e1f8ed;
+    border-color: #d1f3e2;
+}
+
+.smartoffice-template-status.inactive {
+    color: #9a5b08;
+    background: #fff5dc;
+    border-color: #ffebba;
+}
+
+/* Isi kartu */
+.smartoffice-template-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Kategori template */
+.smartoffice-template-category {
+    display: block;
+    margin-bottom: 7px;
+    color: #1769aa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* Judul template */
+.smartoffice-template-card-body h4 {
+    margin: 0 0 7px;
+    color: #142b4d;
+    overflow-wrap: anywhere;
+    font-size: 15px;
+    line-height: 1.45;
+    font-weight: 750;
+}
+
+/* Deskripsi template */
+.smartoffice-template-card-body p {
+    margin: 0 0 12px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* Nama file */
+.smartoffice-template-card-body small {
+    display: block;
+    max-width: 100%;
+    min-width: 0;
+    margin: 3px 0 4px;
+    padding: 10px 11px;
+    overflow: hidden;
+    border: 1px solid #edf2f8;
+    border-radius: 10px;
+    background: #f7faff;
+    color: #61738e;
+    font-size: 11px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Tombol aksi kartu */
+.smartoffice-template-card-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
+    gap: 8px;
+    align-items: stretch;
+    margin-top: 16px;
+}
+
+.smartoffice-template-card-actions .smartoffice-template-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+    padding: 9px 7px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+/* ----------------------------------------------------------
+   7. TAMPILAN LOADING, KOSONG, DAN ERROR
+---------------------------------------------------------- */
+.smartoffice-template-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+    padding: 28px 18px;
+    text-align: center;
+    background: var(--card-bg, #ffffff);
+    border: 1px dashed var(--border-color, #d1d5db);
+    border-radius: 14px;
+}
+
+.smartoffice-template-state h4 {
+    margin: 10px 0 6px;
+    font-size: 15px;
+}
+
+.smartoffice-template-state p {
+    max-width: 440px;
+    margin: 0;
+    color: var(--text-secondary, #6b7280);
+    font-size: 13px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.smartoffice-template-state.error h4 {
+    color: #b91c1c;
+}
+
+/* Ikon status */
+.smartoffice-template-state-icon {
+    font-size: 30px;
+    color: var(--text-secondary, #6b7280);
+}
+
+/* Animasi loading */
+.smartoffice-template-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border-color, #e5e7eb);
+    border-top-color: var(--primary-color, #1769aa);
+    border-radius: 50%;
+    animation: smartofficeTemplateSpin 0.8s linear infinite;
+}
+
+@keyframes smartofficeTemplateSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ----------------------------------------------------------
+   8. RESPONSIVE MOBILE
+   Berlaku untuk layar maksimal 768px
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+    /* Satu kartu per baris */
+    .smartoffice-template-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+    }
+
+    /* Penyesuaian ukuran kartu */
+    .smartoffice-template-card {
+        min-height: 0;
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    /* Bagian atas kartu */
+    .smartoffice-template-card-top {
+        margin-bottom: 13px;
+    }
+
+    /* Ikon file */
+    .smartoffice-template-file-icon {
+        width: 44px;
+        height: 44px;
+        flex-basis: 44px;
+    }
+
+    /* Judul template */
+    .smartoffice-template-card-body h4 {
+        font-size: 14px;
+    }
+
+    /* Tombol aksi kartu */
+    .smartoffice-template-card-actions {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
+        gap: 6px;
+        margin-top: 13px;
+    }
+
+    .smartoffice-template-card-actions .smartoffice-template-button {
+        padding: 9px 5px;
+        font-size: 11px;
+    }
+
+}
+
+/* ----------------------------------------------------------
+   9. AKSESIBILITAS
+   Mengurangi animasi sesuai preferensi perangkat
+---------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    .smartoffice-template *,
+    .smartoffice-template *::before,
+    .smartoffice-template *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* ----------------------------------------------------------
+   10. LEBAR KONTEN TEMPLATE DOKUMEN
+   Mengikuti lebar area header Pusat Dokumen
+---------------------------------------------------------- */
+#smartofficeTemplateDokumenContent,
+#smartofficeTemplateDokumenContent .smartoffice-template,
+#smartofficeTemplateDokumenContent .smartoffice-template-toolbar,
+#smartofficeTemplateDokumenContent .smartoffice-template-summary,
+#smartofficeTemplateDokumenContent .smartoffice-template-grid {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+/* Box sizing konten utama */
+#smartofficeTemplateDokumenContent {
+    box-sizing: border-box;
+}
+
+/* Perataan heading daftar template */
+#smartofficeTemplateDokumenContent .smartoffice-template-summary {
+    align-items: center;
+}
+
+/* Tombol tambah tidak menyusut */
+.smartoffice-template-add-button {
+    flex-shrink: 0;
+}
+
+/* ----------------------------------------------------------
+   11. MODAL TAMBAH TEMPLATE
+---------------------------------------------------------- */
+.smartoffice-template-modal {
+    display: none;
+}
+
+.smartoffice-template-modal.is-open {
+    display: block;
+}
+
+/* Latar belakang modal */
+.smartoffice-template-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+    background: rgb(15 23 42 / 55%);
+}
+
+/* Kotak dialog modal */
+.smartoffice-template-modal-dialog {
+    width: min(100%, 560px);
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: var(--card-bg, #fff);
+    color: var(--text-primary, #1f2937);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgb(15 23 42 / 25%);
+}
+
+/* Header modal */
+.smartoffice-template-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 22px 16px;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.smartoffice-template-modal-header h3 {
+    margin: 0 0 5px;
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.smartoffice-template-modal-header p {
+    margin: 0;
+    color: var(--text-secondary, #6b7280);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Tombol tutup modal */
+.smartoffice-template-modal-x {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 10px;
+    background: transparent;
+    color: inherit;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Form tambah template */
+.smartoffice-template-form {
+    display: grid;
+    gap: 16px;
+    padding: 20px 22px 22px;
+}
+
+/* Input, textarea, dan unggah file */
+.smartoffice-template-form .smartoffice-template-field input,
+.smartoffice-template-form .smartoffice-template-field textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 10px;
+    background: var(--input-bg, #fff);
+    color: var(--text-primary, #1f2937);
+    font: inherit;
+    font-size: 13px;
+}
+
+.smartoffice-template-form .smartoffice-template-field input[type="file"] {
+    padding: 10px;
+}
+
+.smartoffice-template-form .smartoffice-template-field textarea {
+    resize: vertical;
+}
+
+/* Fokus input */
+.smartoffice-template-form .smartoffice-template-field input:focus,
+.smartoffice-template-form .smartoffice-template-field textarea:focus,
+.smartoffice-template-form .smartoffice-template-field select:focus {
+    outline: 2px solid rgb(37 99 235 / 20%);
+    border-color: var(--primary-color, #2563eb);
+}
+
+/* Keterangan dan penanda wajib */
+.smartoffice-template-form .smartoffice-template-field b {
+    color: #dc2626;
+}
+
+.smartoffice-template-form .smartoffice-template-field small {
+    color: var(--text-secondary, #6b7280);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* Tombol aksi modal */
+.smartoffice-template-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 6px;
+}
+
+/* Kunci scroll halaman saat modal terbuka */
+body.smartoffice-template-modal-open {
+    overflow: hidden;
+}
+
+/* ----------------------------------------------------------
+   12. RESPONSIVE MODAL MOBILE
+   Berlaku untuk layar maksimal 768px
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+    /* Area latar belakang modal */
+    .smartoffice-template-modal-backdrop {
+        align-items: flex-start;
+        padding: 12px;
+    }
+
+    /* Kotak modal */
+    .smartoffice-template-modal-dialog {
+        width: 100%;
+        max-height: calc(100vh - 24px);
+        max-height: calc(100dvh - 24px);
+        border-radius: 14px;
+    }
+
+    /* Header modal */
+    .smartoffice-template-modal-header {
+        gap: 10px;
+        padding: 18px 16px 14px;
+    }
+
+    .smartoffice-template-modal-header h3 {
+        font-size: 16px;
+    }
+
+    .smartoffice-template-modal-header p {
+        font-size: 12px;
+    }
+
+    /* Form modal */
+    .smartoffice-template-form {
+        gap: 14px;
+        padding: 16px;
+    }
+
+    /* Tombol aksi modal */
+    .smartoffice-template-modal-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .smartoffice-template-modal-actions .smartoffice-template-button {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+/* ----------------------------------------------------------
+   13. MENU MORE — EDIT, LOCK, UNLOCK, DAN HAPUS TEMPLATE
+---------------------------------------------------------- */
+/* Badge pada bagian atas kartu */
+.smartoffice-template-card-badges {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-width: 0;
+    max-width: calc(100% - 56px);
+}
+
+/* Badge status terkunci */
+.smartoffice-template-lock-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 9px;
+    border: 1px solid #ffe0df;
+    border-radius: 999px;
+    background: #fff0f0;
+    color: #b42318;
+    font-size: 10px;
+    line-height: 1.2;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Tampilan kartu yang terkunci */
+.smartoffice-template-card.is-locked {
+    border-color: #f2caca;
+    background: linear-gradient(155deg, #fff 0%, #fff 78%, #fff8f8 100%);
+}
+
+/* Container tombol dan menu */
+.smartoffice-template-more {
+    position: relative;
+    min-width: 0;
+}
+
+/* Tombol menu tiga titik */
+.smartoffice-template-more-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-color: #dce5f1;
+    border-radius: 10px;
+    background: #fff;
+    color: #52647d;
+    font-size: 20px;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* Dropdown menu */
+.smartoffice-template-more-menu {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 6px);
+    right: 0;
+    min-width: 160px;
+    padding: 5px;
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 10px;
+    background: var(--card-bg, #fff);
+    box-shadow: 0 12px 30px rgb(15 23 42 / 16%);
+}
+
+/* Sembunyikan dropdown ketika tidak aktif */
+.smartoffice-template-more-menu[hidden] {
+    display: none !important;
+}
+
+/* Tombol di dalam dropdown */
+.smartoffice-template-more-menu button {
+    display: block;
+    width: 100%;
+    padding: 10px 11px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-primary, #1f2937);
+    text-align: left;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* Efek hover tombol dropdown */
+.smartoffice-template-more-menu button:hover {
+    background: var(--hover-bg, #f3f4f6);
+}
+
+/* Aksi berbahaya: hapus */
+.smartoffice-template-more-menu button.danger {
+    color: #b91c1c;
+}
+
+.smartoffice-template-more-menu button.danger:hover {
+    background: #fef2f2;
+}
+
+/* Catatan pada dropdown */
+.smartoffice-template-menu-note {
+    display: block;
+    padding: 9px 10px;
+    color: var(--text-secondary, #6b7280);
+    font-size: 11px;
+}
+
+/* ----------------------------------------------------------
+   14. RESPONSIVE MENU MORE — MOBILE
+   Penyesuaian font dan dropdown untuk layar maksimal 768px
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+    /* Badge pada bagian atas kartu */
+    .smartoffice-template-card-badges {
+        gap: 5px;
+        max-width: calc(100% - 48px);
+    }
+
+    /* Badge status terkunci */
+    .smartoffice-template-lock-badge {
+        gap: 4px;
+        padding: 5px 7px;
+        font-size: 9px;
+    }
+
+    /* Tombol menu tiga titik */
+    .smartoffice-template-more-trigger {
+        width: 36px;
+        height: 40px;
+        min-height: 40px;
+        font-size: 22px;
+    }
+
+    /* Dropdown menu */
+    .smartoffice-template-more-menu {
+        right: 0;
+        min-width: 170px;
+        max-width: calc(100vw - 40px);
+        padding: 5px;
+        border-radius: 10px;
+    }
+
+    /* Tombol pilihan menu */
+    .smartoffice-template-more-menu button {
+        padding: 11px 10px;
+        font-size: 12px;
+        line-height: 1.4;
+    }
+
+    /* Catatan pada dropdown */
+    .smartoffice-template-menu-note {
+        padding: 9px 10px;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+}
+
+/* ----------------------------------------------------------
+   15. MODAL KONFIRMASI LOCK / UNLOCK TEMPLATE
+---------------------------------------------------------- */
+.smartoffice-template-confirm-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgb(15 23 42 / 48%);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    animation: smartofficeTemplateFadeIn .16s ease-out;
+}
+
+/* Kotak dialog konfirmasi */
+.smartoffice-template-confirm-dialog {
+    width: min(100%, 430px);
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 75%);
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: 0 24px 70px rgb(15 23 42 / 25%);
+    animation: smartofficeTemplateDialogIn .2s ease-out;
+}
+
+/* Header konfirmasi */
+.smartoffice-template-confirm-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 22px 17px;
+    border-bottom: 1px solid #edf1f6;
+}
+
+/* Ikon Lock / Unlock */
+.smartoffice-template-confirm-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 46px;
+    flex: 0 0 46px;
+    border-radius: 15px;
+    font-size: 20px;
+}
+
+.smartoffice-template-confirm-icon.lock {
+    background: #fff1e8;
+}
+
+.smartoffice-template-confirm-icon.unlock {
+    background: #eaf7ef;
+}
+
+/* Judul dan keterangan konfirmasi */
+.smartoffice-template-confirm-heading {
+    flex: 1;
+    min-width: 0;
+}
+
+.smartoffice-template-confirm-heading h3 {
+    margin: 0 0 4px;
+    color: #172b4d;
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: -.3px;
+}
+
+.smartoffice-template-confirm-heading p {
+    margin: 0;
+    color: #8290a5;
+    font-size: 11px;
+}
+
+/* Tombol tutup modal */
+.smartoffice-template-confirm-close {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    padding: 0;
+    border: 0;
+    border-radius: 9px;
+    background: #f3f6fa;
+    color: #64748b;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+/* Isi konfirmasi */
+.smartoffice-template-confirm-content {
+    padding: 20px 22px 22px;
+}
+
+.smartoffice-template-confirm-question {
+    margin: 0 0 10px;
+    color: #46566d;
+    font-size: 13px;
+}
+
+/* Nama template yang dikonfirmasi */
+.smartoffice-template-confirm-name {
+    padding: 12px 13px;
+    border: 1px solid #e7edf5;
+    border-radius: 11px;
+    background: #f8faff;
+    color: #1e3a5f;
+    font-size: 13px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+/* Penjelasan dampak Lock / Unlock */
+.smartoffice-template-confirm-description {
+    margin: 12px 0 0;
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+/* Tombol aksi konfirmasi */
+.smartoffice-template-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 9px;
+    padding: 15px 22px 20px;
+    border-top: 1px solid #edf1f6;
+    background: #fcfdff;
+}
+
+.smartoffice-template-confirm-actions button {
+    min-height: 40px;
+    padding: 0 15px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+}
+
+.smartoffice-template-confirm-actions button:active {
+    transform: scale(.98);
+}
+
+/* Tombol batal */
+.smartoffice-template-confirm-cancel {
+    border-color: #dce4ef !important;
+    background: #fff;
+    color: #53647d;
+}
+
+/* Tombol konfirmasi Lock */
+.smartoffice-template-confirm-submit.danger {
+    background: linear-gradient(135deg, #c2410c, #ea580c);
+    color: #fff;
+    box-shadow: 0 4px 12px rgb(234 88 12 / 20%);
+}
+
+/* Tombol konfirmasi Unlock */
+.smartoffice-template-confirm-submit.primary {
+    background: linear-gradient(135deg, #1769aa, #2456d8);
+    color: #fff;
+    box-shadow: 0 4px 12px rgb(37 99 235 / 20%);
+}
+
+/* ----------------------------------------------------------
+   16. ANIMASI MODAL KONFIRMASI
+---------------------------------------------------------- */
+
+/* Animasi kemunculan backdrop */
+@keyframes smartofficeTemplateFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Animasi kemunculan kotak dialog */
+@keyframes smartofficeTemplateDialogIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.985);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ----------------------------------------------------------
+   17. RESPONSIVE MODAL KONFIRMASI — MOBILE
+   Berlaku untuk layar maksimal 768px
+---------------------------------------------------------- */
+@media (max-width: 768px) {
+
+    /* Posisi dan jarak modal */
+    .smartoffice-template-confirm-backdrop {
+        padding: 14px;
+    }
+
+    /* Kotak dialog */
+    .smartoffice-template-confirm-dialog {
+        width: 100%;
+        max-width: 430px;
+        border-radius: 16px;
+    }
+
+    /* Header konfirmasi */
+    .smartoffice-template-confirm-header {
+        gap: 10px;
+        padding: 17px 16px 14px;
+    }
+
+    /* Ikon Lock / Unlock */
+    .smartoffice-template-confirm-icon {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        border-radius: 12px;
+        font-size: 18px;
+    }
+
+    /* Judul dan keterangan */
+    .smartoffice-template-confirm-heading h3 {
+        font-size: 15px;
+    }
+
+    .smartoffice-template-confirm-heading p {
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    /* Isi konfirmasi */
+    .smartoffice-template-confirm-content {
+        padding: 16px;
+    }
+
+    .smartoffice-template-confirm-question {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .smartoffice-template-confirm-name {
+        padding: 11px;
+        font-size: 12px;
+    }
+
+    .smartoffice-template-confirm-description {
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    /* Tombol aksi */
+    .smartoffice-template-confirm-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        padding: 13px 16px 16px;
+    }
+
+    .smartoffice-template-confirm-actions button {
+        width: 100%;
+        min-width: 0;
+        min-height: 42px;
+        padding: 9px 8px;
+        font-size: 11px;
+        line-height: 1.4;
+    }
+}

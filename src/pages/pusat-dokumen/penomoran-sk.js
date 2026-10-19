@@ -59,6 +59,11 @@ import {
 } from "./arsip-puskesmas.js";
 
 import {
+    smartofficeInitTemplateDokumen,
+    smartofficeDestroyTemplateDokumen
+} from "./template-dokumen.js";
+
+import {
     smartofficeConvertFileToBase64
 } from "../../utils/file.js";
 
@@ -205,6 +210,11 @@ function smartofficeInitPusatDokumenTab(){
             "smartofficePenomoranSOPContent"
         );
 
+    const contentTemplate =
+        document.getElementById(
+            "smartofficeTemplateDokumenContent"
+        );
+
     const contentArsip =
         document.getElementById(
             "smartofficeArsipPuskesmasContent"
@@ -226,6 +236,10 @@ function smartofficeInitPusatDokumenTab(){
         if(contentSOP){
             contentSOP.style.display =
                 "none";
+        }
+
+        if(contentTemplate){
+            contentTemplate.style.display = "none";
         }
 
         if(contentArsip){
@@ -267,6 +281,13 @@ function smartofficeInitPusatDokumenTab(){
         ){
             contentSOP.style.display =
                 "";
+        }
+
+        if(
+            tab === "template-dokumen" &&
+            contentTemplate
+        ){
+            contentTemplate.style.display = "";
         }
 
         if(
@@ -431,6 +452,12 @@ function smartofficeInitPusatDokumenTab(){
                     ){
                         smartofficeInitPenomoranSOP();
                         smartofficeLoadPenomoranSOP();
+                    }
+
+                    if(
+                        tab === "template-dokumen"
+                    ){
+                        smartofficeInitTemplateDokumen();
                     }
 
                     if(
@@ -3971,11 +3998,15 @@ export function smartofficeDestroyPage(){
     smartofficePusatDokumenDestroyed =
         true;
 
-
     /* ==================================================
        DESTROY ARSIP PUSKESMAS
     ================================================== */
     smartofficeDestroyArsipPuskesmas();
+
+    /* ==================================================
+       DESTROY TEMPLATE DOKUMEN
+    ================================================== */
+    smartofficeDestroyTemplateDokumen();
 
     /* ==================================================
        FILTER ELEMENT
