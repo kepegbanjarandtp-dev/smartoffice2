@@ -1866,19 +1866,37 @@
 
   /* Pesan kosong menggunakan padding yang lebih kecil. */
   .arp-empty {
-    padding: 32px 16px;
+    padding: 22px 12px;
     border-radius: 17px;
+  }
+
+  /* Ikon utama pada tampilan data kosong. */
+  .arp-empty > .arp-icon {
+    width: 30px;
+    height: 30px;
   }
 
   /* Judul pesan kosong pada mobile. */
   .arp-empty h3 {
-    font-size: 16px;
+    font-size: 13px;
   }
 
   /* Deskripsi pesan kosong pada mobile. */
   .arp-empty p {
-    font-size: 13px;
+    font-size: 11px;
     line-height: 1.5;
+  }
+
+  /* Menetapkan tinggi minimum tombol utama pada tampilan kosong. */
+  .arp-empty .arp-primary-btn {
+    min-height: 34px;
+    font-size: 11px;
+  }
+
+  /* Ukuran dan ketebalan SVG plus pada tombol tambah arsip. */
+  .arp-empty .arp-primary-btn .arp-icon {
+    width: 14px;
+    height: 14px;
   }
 
   /* Pemberitahuan lebih ringkas pada mobile. */

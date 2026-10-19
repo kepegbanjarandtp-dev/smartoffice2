@@ -802,21 +802,62 @@ function smartofficeRenderTemplateList() {
                                 aria-label="Menu tindakan template"
                                 title="Menu tindakan"
                             >⋮</button>
-
+                            
                             <div
                                 class="smartoffice-template-more-menu"
                                 data-template-menu="${index}"
                                 hidden
                             >
-                                ${canEdit
-                                    ? `<button type="button" data-template-edit="${index}">Edit</button>`
-                                    : ""}
-                                ${canLock
-                                    ? `<button type="button" data-template-lock="${index}" data-lock-next="${locked ? "false" : "true"}">${locked ? "🔓 Unlock" : "🔒 Lock"}</button>`
-                                    : ""}
-                                ${canDelete
-                                    ? `<button type="button" class="danger" data-template-delete="${index}">Hapus</button>`
-                                    : ""}
+                                ${canEdit ? `
+                                    <button type="button" data-template-edit="${index}">
+                                        <svg viewBox="0 0 24 24" width="15" height="15"
+                                            fill="none" stroke="currentColor" stroke-width="1.8"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            aria-hidden="true">
+                                            <path d="M12 20h9"/>
+                                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                                        </svg>
+                                        <span>Edit</span>
+                                    </button>
+                                ` : ""}
+
+                                ${canLock ? `
+                                    <button
+                                        type="button"
+                                        data-template-lock="${index}"
+                                        data-lock-next="${locked ? "false" : "true"}"
+                                    >
+                                        <svg viewBox="0 0 24 24" width="15" height="15"
+                                            fill="none" stroke="currentColor" stroke-width="1.8"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            aria-hidden="true">
+                                            ${locked
+                                                ? '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0"/>'
+                                                : '<rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 7.5-2"/>'}
+                                        </svg>
+                                        <span>${locked ? "Unlock" : "Lock"}</span>
+                                    </button>
+                                ` : ""}
+
+                                ${canDelete ? `
+                                    <button
+                                        type="button"
+                                        class="danger"
+                                        data-template-delete="${index}"
+                                    >
+                                        <svg viewBox="0 0 24 24" width="15" height="15"
+                                            fill="none" stroke="currentColor" stroke-width="1.8"
+                                            stroke-linecap="round" stroke-linejoin="round"
+                                            aria-hidden="true">
+                                            <path d="M3 6h18"/>
+                                            <path d="M8 6V4h8v2"/>
+                                            <path d="m19 6-1 14H6L5 6"/>
+                                            <path d="M10 11v5M14 11v5"/>
+                                        </svg>
+                                        <span>Hapus</span>
+                                    </button>
+                                ` : ""}
+
                                 ${locked && !canLock
                                     ? '<span class="smartoffice-template-menu-note">Terkunci oleh SUPERADMIN</span>'
                                     : ""}
@@ -835,21 +876,59 @@ function smartofficeRenderTemplateList() {
             smartofficeTemplatePreview(record);
         });
     });
-
+    
     // EVENT UNDUH
     list.querySelectorAll("[data-template-download]").forEach(button => {
         button.addEventListener("click", () => {
             const record = filtered[Number(button.dataset.templateDownload)];
             const url = smartofficeTemplateFileUrl(record);
-            if (url) {
-                const link = document.createElement("a");
-                link.href = url;
-                link.download = "";
-                link.rel = "noopener noreferrer";
-                document.body.appendChild(link);
-                link.click();
-                link.remove();
+
+            if (!url) return;
+
+            let downloadUrl = url;
+
+            // Ubah URL file Google Drive menjadi URL unduh langsung
+            const driveMatch = url.match(
+                /drive\.google\.com\/file\/d\/([^/?#]+)/
+            );
+
+            const openMatch = url.match(
+                /drive\.google\.com\/open\?id=([^&#]+)/
+            );
+
+            const docsMatch = url.match(
+                /docs\.google\.com\/(document|spreadsheets|presentation)\/d\/([^/?#]+)/
+            );
+
+            const fileId =
+                driveMatch?.[1] ||
+                openMatch?.[1] ||
+                docsMatch?.[2];
+
+            if (fileId) {
+                if (docsMatch) {
+                    const type = docsMatch[1];
+                    const exportType = {
+                        document: "docx",
+                        spreadsheets: "xlsx",
+                        presentation: "pptx"
+                    };
+
+                    downloadUrl =
+                        `https://docs.google.com/${type}/d/${fileId}/export?format=${exportType[type]}`;
+                } else {
+                    downloadUrl =
+                        `https://drive.google.com/uc?export=download&id=${fileId}`;
+                }
             }
+
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.download = "";
+            link.rel = "noopener noreferrer";
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
         });
     });
 
@@ -1219,7 +1298,10 @@ async function smartofficeTemplateSubmitForm(event, root) {
 
     try {
         saveButton.disabled = true;
-        saveButton.textContent = isEdit ? "Menyimpan perubahan..." : "Menyimpan...";
+        saveButton.innerHTML = `
+            <span class="smartoffice-template-save-spinner" aria-hidden="true"></span>
+            <span>${isEdit ? "Menyimpan perubahan..." : "Menyimpan..."}</span>
+        `;
         if (file) payload.file = await smartofficeTemplateReadFile(file);
 
         await smartofficeSimpanTemplateDokumen(payload);
