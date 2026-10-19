@@ -687,37 +687,96 @@ function smartofficeRenderTemplateList() {
         const canDelete = canDeleteTemplate() && !locked;
         const canLock = canDeleteTemplate();
 
-        return `
+        return `            
             <article class="smartoffice-template-card ${locked ? "is-locked" : ""}">
+
+                <!-- HEADER: IKON DAN STATUS -->
                 <div class="smartoffice-template-card-top">
+                    
                     <div class="smartoffice-template-file-icon">
-                        ${smartofficeTemplateIcon(record) === "file-pdf" ? "PDF" :
-                          smartofficeTemplateIcon(record) === "file-spreadsheet" ? "XLS" : "DOC"}
+                        ${(() => {
+                            const iconType = smartofficeTemplateIcon(record);
+
+                            if (iconType === "file-pdf") {
+                                return `
+                                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                                        <path d="M11 4h18l10 10v29H11z"
+                                            fill="#fff0f0" stroke="#dc2626" stroke-width="2"/>
+                                        <path d="M29 4v11h10"
+                                            fill="none" stroke="#dc2626" stroke-width="2"/>
+                                        <rect x="5" y="25" width="38" height="13" rx="3"
+                                            fill="#dc2626"/>
+                                        <text x="24" y="34.5" text-anchor="middle"
+                                            font-size="10" font-weight="800" fill="#fff">PDF</text>
+                                    </svg>`;
+                            }
+
+                            if (iconType === "file-spreadsheet") {
+                                return `
+                                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                                        <path d="M11 4h18l10 10v29H11z"
+                                            fill="#e9f9ef" stroke="#16834a" stroke-width="2"/>
+                                        <path d="M29 4v11h10"
+                                            fill="none" stroke="#16834a" stroke-width="2"/>
+                                        <rect x="5" y="25" width="38" height="13" rx="3"
+                                            fill="#16834a"/>
+                                        <text x="24" y="34.5" text-anchor="middle"
+                                            font-size="10" font-weight="800" fill="#fff">XLS</text>
+                                    </svg>`;
+                            }
+
+                            return `
+                                <svg viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M11 4h18l10 10v29H11z"
+                                        fill="#eaf2ff" stroke="#2463b7" stroke-width="2"/>
+                                    <path d="M29 4v11h10"
+                                        fill="none" stroke="#2463b7" stroke-width="2"/>
+                                    <rect x="5" y="25" width="38" height="13" rx="3"
+                                        fill="#2463b7"/>
+                                    <text x="24" y="34.5" text-anchor="middle"
+                                        font-size="10" font-weight="800" fill="#fff">DOC</text>
+                                </svg>`;
+                        })()}
                     </div>
+
                     <div class="smartoffice-template-card-badges">
                         <span class="smartoffice-template-status ${
-                            smartofficeTemplateNormalize(statusRecord) === "aktif" ? "active" : "inactive"
-                        }"><span class="smartoffice-template-status-dot" aria-hidden="true"></span>${smartofficeTemplateEscape(statusRecord)}</span>
+                            smartofficeTemplateNormalize(statusRecord) === "aktif"
+                                ? "active"
+                                : "inactive"
+                        }">
+                            <span class="smartoffice-template-status-dot" aria-hidden="true"></span>
+                            ${smartofficeTemplateEscape(statusRecord)}
+                        </span>
                         ${locked
                             ? '<span class="smartoffice-template-lock-badge"><span aria-hidden="true">🔒</span> Terkunci</span>'
                             : '<span class="smartoffice-template-lock-badge unlocked"><span aria-hidden="true">🔓</span> Tidak Terkunci</span>'}
                     </div>
                 </div>
 
+                <!-- ISI CARD -->
                 <div class="smartoffice-template-card-body">
                     <span class="smartoffice-template-category">
                         Kategori: ${smartofficeTemplateEscape(kat)}
                     </span>
+
                     <h4>${smartofficeTemplateEscape(nama)}</h4>
                     <p>${smartofficeTemplateEscape(keterangan)}</p>
                     ${fileName ? `
-                        <div class="smartoffice-template-filename" title="${smartofficeTemplateEscape(fileName)}">
-                            <span class="smartoffice-template-filename-icon" aria-hidden="true">▤</span>
+                        <div
+                            class="smartoffice-template-filename"
+                            title="${smartofficeTemplateEscape(fileName)}"
+                        >
+                            <span
+                                class="smartoffice-template-filename-icon"
+                                aria-hidden="true"
+                            >▤</span>
                             <small>${smartofficeTemplateEscape(fileName)}</small>
                         </div>
                     ` : ""}
                 </div>
 
+                <!-- AKSI CARD -->
                 <div class="smartoffice-template-card-actions">
                     <button
                         type="button"
@@ -735,12 +794,32 @@ function smartofficeRenderTemplateList() {
 
                     ${canManage ? `
                         <div class="smartoffice-template-more">
-                            <button type="button" class="smartoffice-template-button secondary smartoffice-template-more-trigger" data-template-more="${index}" aria-expanded="false" aria-label="Menu tindakan template" title="Menu tindakan">⋮</button>
-                            <div class="smartoffice-template-more-menu" data-template-menu="${index}" hidden>
-                                ${canEdit ? `<button type="button" data-template-edit="${index}">Edit</button>` : ""}
-                                ${canLock ? `<button type="button" data-template-lock="${index}" data-lock-next="${locked ? "false" : "true"}">${locked ? "🔓 Unlock" : "🔒 Lock"}</button>` : ""}
-                                ${canDelete ? `<button type="button" class="danger" data-template-delete="${index}">Hapus</button>` : ""}
-                                ${locked && !canLock ? '<span class="smartoffice-template-menu-note">Terkunci oleh SUPERADMIN</span>' : ""}
+                            <button
+                                type="button"
+                                class="smartoffice-template-button secondary smartoffice-template-more-trigger"
+                                data-template-more="${index}"
+                                aria-expanded="false"
+                                aria-label="Menu tindakan template"
+                                title="Menu tindakan"
+                            >⋮</button>
+
+                            <div
+                                class="smartoffice-template-more-menu"
+                                data-template-menu="${index}"
+                                hidden
+                            >
+                                ${canEdit
+                                    ? `<button type="button" data-template-edit="${index}">Edit</button>`
+                                    : ""}
+                                ${canLock
+                                    ? `<button type="button" data-template-lock="${index}" data-lock-next="${locked ? "false" : "true"}">${locked ? "🔓 Unlock" : "🔒 Lock"}</button>`
+                                    : ""}
+                                ${canDelete
+                                    ? `<button type="button" class="danger" data-template-delete="${index}">Hapus</button>`
+                                    : ""}
+                                ${locked && !canLock
+                                    ? '<span class="smartoffice-template-menu-note">Terkunci oleh SUPERADMIN</span>'
+                                    : ""}
                             </div>
                         </div>
                     ` : ""}

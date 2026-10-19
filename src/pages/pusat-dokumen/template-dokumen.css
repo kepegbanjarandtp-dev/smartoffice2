@@ -460,7 +460,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
-    gap: 16px;
+    gap: 18px;
 }
 
 .smartoffice-template-card {
@@ -468,28 +468,28 @@
     display: flex;
     flex-direction: column;
     min-width: 0;
-    min-height: 258px;
-    padding: 18px;
-    background: linear-gradient(160deg, #ffffff 0%, #ffffff 75%, #f8fbff 100%);
-    border: 1px solid #e3ebf7;
+    min-height: 280px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #dce8f8;
     border-radius: 18px;
-    box-shadow: 0 5px 18px rgb(30 64 175 / 5%), 0 1px 3px rgb(15 23 42 / 3%);
+    box-shadow: 0 4px 16px rgb(30 64 175 / 5%);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .smartoffice-template-card:hover {
-    border-color: #cbdcf8;
-    box-shadow: 0 12px 28px rgb(30 64 175 / 10%), 0 3px 8px rgb(15 23 42 / 4%);
+    border-color: #bfd5f5;
+    box-shadow: 0 10px 24px rgb(30 64 175 / 9%);
     transform: translateY(-2px);
 }
 
 /* Bagian atas kartu: ikon dan status */
 .smartoffice-template-card-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 22px;
 }
 
 /* Ikon file */
@@ -497,16 +497,33 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 48px;
-    height: 48px;
-    flex: 0 0 48px;
-    border: 1px solid #dfebff;
+    width: 52px;
+    height: 52px;
+    flex: 0 0 52px;
+    border: 1px solid #d9e8ff;
     border-radius: 15px;
-    background: linear-gradient(145deg, #eef6ff, #e5efff);
-    color: #2463b7;
+    background: linear-gradient(145deg, #eff6ff, #e3efff);
+    color: #1769aa;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 90%);
     font-size: 11px;
     font-weight: 800;
+}
+
+.smartoffice-template-file-icon svg {
+    display: block;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+}
+
+/* Badge status dan lock */
+.smartoffice-template-card-badges {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 7px;
+    min-width: 0;
 }
 
 /* Status aktif dan tidak aktif */
@@ -514,25 +531,57 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 9px;
+    gap: 6px;
+    padding: 6px 10px;
     border: 1px solid transparent;
     border-radius: 999px;
-    font-size: 10px;
-    line-height: 1.2;
+    font-size: 11px;
+    line-height: 1.3;
     font-weight: 700;
     white-space: nowrap;
 }
 
 .smartoffice-template-status.active {
     color: #087443;
-    background: #e1f8ed;
-    border-color: #d1f3e2;
+    background: #e5f8ee;
+    border-color: #c9f0dc;
 }
 
 .smartoffice-template-status.inactive {
     color: #9a5b08;
     background: #fff5dc;
     border-color: #ffebba;
+}
+
+.smartoffice-template-status-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+/* Badge terkunci / tidak terkunci */
+.smartoffice-template-lock-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 10px;
+    border: 1px solid #ffdada;
+    border-radius: 999px;
+    background: #fff1f1;
+    color: #c03939;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.smartoffice-template-lock-badge.unlocked {
+    border-color: #d7e7ff;
+    background: #eff6ff;
+    color: #245fa8;
 }
 
 /* Isi kartu */
@@ -544,47 +593,64 @@
 /* Kategori template */
 .smartoffice-template-category {
     display: block;
-    margin-bottom: 7px;
+    margin-bottom: 8px;
     color: #1769aa;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0;
-    text-transform: none;
+    font-size: 12px;
+    font-weight: 650;
 }
 
 /* Judul template */
 .smartoffice-template-card-body h4 {
-    margin: 0 0 7px;
+    margin: 0 0 8px;
     color: #142b4d;
     overflow-wrap: anywhere;
-    font-size: 15px;
-    line-height: 1.45;
-    font-weight: 750;
+    font-size: 17px;
+    line-height: 1.4;
+    font-weight: 800;
+    letter-spacing: -0.25px;
 }
 
 /* Deskripsi template */
 .smartoffice-template-card-body p {
-    margin: 0 0 12px;
+    margin: 0 0 16px;
     color: #64748b;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.6;
     overflow-wrap: anywhere;
 }
 
-/* Nama file */
-.smartoffice-template-card-body small {
-    display: block;
-    max-width: 100%;
+/* Area nama file */
+.smartoffice-template-filename {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     min-width: 0;
-    margin: 3px 0 4px;
-    padding: 10px 11px;
+    margin-top: 16px;
+    padding: 12px 14px;
+    border: 1px solid #dceaff;
+    border-radius: 12px;
+    background: linear-gradient(110deg, #f3f8ff, #f8fbff);
+}
+
+.smartoffice-template-filename-icon {
+    flex: 0 0 auto;
+    color: #245fa8;
+    font-size: 18px;
+}
+
+.smartoffice-template-card-body .smartoffice-template-filename small {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
     overflow: hidden;
-    border: 1px solid #edf2f8;
-    border-radius: 10px;
-    background: #f7faff;
-    color: #61738e;
-    font-size: 11px;
-    line-height: 1.45;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #526985;
+    font-size: 12px;
+    line-height: 1.5;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -592,21 +658,52 @@
 /* Tombol aksi kartu */
 .smartoffice-template-card-actions {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 38px;
-    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 42px;
+    gap: 10px;
     align-items: stretch;
-    margin-top: 16px;
+    margin-top: 20px;
 }
 
 .smartoffice-template-card-actions .smartoffice-template-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-width: 0;
-    min-height: 40px;
-    padding: 9px 7px;
+    min-height: 44px;
+    padding: 10px 12px;
     border-radius: 10px;
-    font-size: 12px;
-    font-weight: 650;
+    font-size: 13px;
+    font-weight: 700;
 }
+
+.smartoffice-template-card-actions .smartoffice-template-button.primary {
+    background: #1769aa;
+    border-color: #1769aa;
+    color: #ffffff;
+}
+
+.smartoffice-template-card-actions .smartoffice-template-button.primary:hover:not(:disabled) {
+    background: #12558b;
+    border-color: #12558b;
+}
+
+.smartoffice-template-card-actions .smartoffice-template-button.secondary {
+    background: #ffffff;
+    border-color: #cbd7e6;
+    color: #24405f;
+}
+
+.smartoffice-template-card-actions .smartoffice-template-button.secondary:hover:not(:disabled) {
+    background: #f3f7fc;
+    border-color: #a9bfdc;
+}
+
+/* Kartu terkunci */
+.smartoffice-template-card.is-locked {
+    border-color: #e7d9d9;
+}
+
 
 /* ----------------------------------------------------------
    7. TAMPILAN LOADING, KOSONG, DAN ERROR
