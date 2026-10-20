@@ -502,7 +502,6 @@
     .smartoffice-template-card {
         padding: 15px;
     }
-
 }
 
 /* ----------------------------------------------------------
@@ -1078,6 +1077,21 @@
     font-size: 13px;
 }
 
+/* Nama Template: mendukung teks panjang beberapa baris */
+.smartoffice-template-form
+.smartoffice-template-field textarea[name="namaTemplate"] {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 56px;
+    padding: 11px 12px;
+    box-sizing: border-box;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    resize: vertical;
+}
+
 .smartoffice-template-form .smartoffice-template-field input[type="file"] {
     padding: 10px;
 }
@@ -1187,10 +1201,12 @@ body.smartoffice-template-modal-open {
 ---------------------------------------------------------- */
 @media (max-width: 768px) {
 
-    /* Area latar belakang modal */
+    /* Area latar belakang modal - posisi tengah di mobile */
     .smartoffice-template-modal-backdrop {
-        align-items: flex-start;
+        align-items: center;
+        justify-content: center;
         padding: 12px;
+        box-sizing: border-box;
     }
 
     /* Kotak modal */
@@ -1205,15 +1221,15 @@ body.smartoffice-template-modal-open {
     .smartoffice-template-modal-header {
         align-items: center;
         gap: 10px;
-        padding: 18px 16px 14px;
+        padding: 12px 16px 8px;
     }
 
     .smartoffice-template-modal-header h3 {
-        font-size: 16px;
+        font-size: 13px;
     }
 
     .smartoffice-template-modal-header p {
-        font-size: 12px;
+        font-size: 10px;
     }
 
     /* Form modal */
@@ -1222,12 +1238,39 @@ body.smartoffice-template-modal-open {
         padding: 16px;
     }
 
+    /* Tombol tutup modal */
+    .smartoffice-template-modal-x {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* Input, textarea, dan unggah file */
+    .smartoffice-template-form .smartoffice-template-field input,
+    .smartoffice-template-form .smartoffice-template-field textarea {
+        font-size: 11px;
+    }
+
+    /* Nama Template - khusus mobile */
+    .smartoffice-template-form
+    .smartoffice-template-field textarea[name="namaTemplate"] {
+        min-height: 56px;
+        padding: 10px 12px;
+        font-size: 11px;
+    }
+
     /* Input file agar tidak melewati lebar modal */
     .smartoffice-template-form input[type="file"] {
         width: 100%;
         min-width: 0;
         max-width: 100%;
         font-size: 11px;
+    }
+
+    .smartoffice-template-form .smartoffice-template-field small {
+        font-size: 10px;
     }
 
     /* Tombol aksi modal */
@@ -1241,9 +1284,9 @@ body.smartoffice-template-modal-open {
     .smartoffice-template-modal-actions .smartoffice-template-button {
         width: 100%;
         min-width: 0;
-        min-height: 40px;
+        min-height: 34px;
         padding: 9px 8px;
-        font-size: 12px;
+        font-size: 10px;
         white-space: nowrap;
     }
 
@@ -1252,8 +1295,9 @@ body.smartoffice-template-modal-open {
         min-width: 0;
         gap: 6px;
         padding: 9px 8px;
-        font-size: 12px;
+        font-size: 10px;
         white-space: nowrap;
+        min-height: 34px;
     }
 
     .smartoffice-template-save-spinner {
@@ -1522,8 +1566,9 @@ body.smartoffice-template-modal-open {
 
 /* Tombol tutup modal */
 .smartoffice-template-confirm-close {
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 32px;
     height: 32px;
     flex: 0 0 32px;
@@ -1532,8 +1577,13 @@ body.smartoffice-template-modal-open {
     border-radius: 9px;
     background: #f3f6fa;
     color: #64748b;
-    font-size: 23px;
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1;
+    text-align: center;
     cursor: pointer;
+    box-sizing: border-box;
 }
 
 /* Isi konfirmasi */
@@ -1661,21 +1711,30 @@ body.smartoffice-template-modal-open {
     /* Header konfirmasi */
     .smartoffice-template-confirm-header {
         gap: 10px;
-        padding: 17px 16px 14px;
+        padding: 14px 16px 8px;
     }
 
     /* Ikon Lock / Unlock */
     .smartoffice-template-confirm-icon {
-        width: 40px;
-        height: 40px;
-        flex-basis: 40px;
+        width: 34px;
+        height: 34px;
+        flex-basis: 34px;
         border-radius: 12px;
-        font-size: 18px;
+        font-size: 14px;
+    }
+
+    /* Tombol tutup modal */
+    .smartoffice-template-confirm-close {  
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;    
+        font-size: 18px;  
     }
 
     /* Judul dan keterangan */
     .smartoffice-template-confirm-heading h3 {
-        font-size: 15px;
+        margin: 0 0 2px;
+        font-size: 13px;
     }
 
     .smartoffice-template-confirm-heading p {
@@ -1689,17 +1748,17 @@ body.smartoffice-template-modal-open {
     }
 
     .smartoffice-template-confirm-question {
-        font-size: 12px;
+        font-size: 11px;
         line-height: 1.6;
     }
 
     .smartoffice-template-confirm-name {
         padding: 11px;
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .smartoffice-template-confirm-description {
-        font-size: 11px;
+        font-size: 10px;
         line-height: 1.6;
     }
 
@@ -1714,9 +1773,28 @@ body.smartoffice-template-modal-open {
     .smartoffice-template-confirm-actions button {
         width: 100%;
         min-width: 0;
-        min-height: 42px;
+        min-height: 34px;
         padding: 9px 8px;
-        font-size: 11px;
+        font-size: 10px;
         line-height: 1.4;
+    }
+}
+
+
+/* Spinner aksi template */
+.smartoffice-template-action-spinner {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    flex: 0 0 13px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: smartofficeTemplateActionSpin 0.7s linear infinite;
+}
+
+@keyframes smartofficeTemplateActionSpin {
+    to {
+        transform: rotate(360deg);
     }
 }

@@ -119,66 +119,161 @@ function canDeleteTemplate() {
 }
 
 /* ==========================================================
-   MODAL KONFIRMASI PREMIUM — LOCK / UNLOCK TEMPLATE
-   Menggantikan confirm() bawaan browser.
+   MODAL KONFIRMASI PREMIUM — LOCK / UNLOCK / HAPUS TEMPLATE
+   Menggunakan satu modal dan class CSS yang sama.
 ========================================================== */
-function smartofficeTemplateConfirmLock({ namaTemplate, isLock }) {
+function smartofficeTemplateConfirmLock({
+    namaTemplate,
+    isLock,
+    actionType = "lock"
+}) {
     return new Promise(resolve => {
-        const existing = document.getElementById("smartofficeTemplateConfirmModal");
+        const existing = document.getElementById(
+            "smartofficeTemplateConfirmModal"
+        );
         existing?.remove();
 
-        const action = isLock ? "mengunci" : "membuka kunci";
-        const title = isLock ? "Kunci Template?" : "Buka Kunci Template?";
-        const buttonLabel = isLock ? "Ya, Kunci Template" : "Ya, Buka Kunci";
-        const description = isLock
-            ? "Template akan dikunci. Metadata dan file tidak dapat diedit sampai SUPERADMIN membuka kuncinya kembali."
-            : "Template akan dibuka kuncinya sehingga dapat diedit kembali sesuai hak akses pengguna.";
+        const isDelete = actionType === "delete";
+
+        const action = isDelete
+            ? "menghapus"
+            : isLock
+                ? "mengunci"
+                : "membuka kunci";
+
+        const title = isDelete
+            ? "Hapus Template?"
+            : isLock
+                ? "Kunci Template?"
+                : "Buka Kunci Template?";
+
+        const buttonLabel = isDelete
+            ? "Ya, Hapus Template"
+            : isLock
+                ? "Ya, Kunci Template"
+                : "Ya, Buka Kunci";
+
+        const description = isDelete
+            ? "File dan data template akan dihapus. Tindakan ini tidak dapat dibatalkan."
+            : isLock
+                ? "Template akan dikunci. Metadata dan file tidak dapat diedit sampai SUPERADMIN membuka kuncinya kembali."
+                : "Template akan dibuka kuncinya sehingga dapat diedit kembali sesuai hak akses pengguna.";
+
+        const icon = isDelete
+            ? "🗑️"
+            : isLock
+                ? "🔒"
+                : "🔓";
+
+        const iconClass = isDelete
+            ? "lock"
+            : isLock
+                ? "lock"
+                : "unlock";
 
         const backdrop = document.createElement("div");
         backdrop.id = "smartofficeTemplateConfirmModal";
         backdrop.className = "smartoffice-template-confirm-backdrop";
+
         backdrop.innerHTML = `
-            <section class="smartoffice-template-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="smartofficeTemplateConfirmTitle">
+            <section
+                class="smartoffice-template-confirm-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="smartofficeTemplateConfirmTitle"
+            >
                 <div class="smartoffice-template-confirm-header">
-                    <div class="smartoffice-template-confirm-icon ${isLock ? "lock" : "unlock"}" aria-hidden="true">${isLock ? "🔒" : "🔓"}</div>
+                    <div
+                        class="smartoffice-template-confirm-icon ${iconClass}"
+                        aria-hidden="true"
+                    >${icon}</div>
+
                     <div class="smartoffice-template-confirm-heading">
-                        <h3 id="smartofficeTemplateConfirmTitle">${title}</h3>
-                        <p>Konfirmasi keamanan dokumen</p>
+                        <h3 id="smartofficeTemplateConfirmTitle">
+                            ${title}
+                        </h3>
+                        <p>Konfirmasi tindakan dokumen</p>
                     </div>
-                    <button type="button" class="smartoffice-template-confirm-close" data-confirm-cancel aria-label="Tutup">×</button>
+
+                    <button
+                        type="button"
+                        class="smartoffice-template-confirm-close"
+                        data-confirm-cancel
+                        aria-label="Tutup"
+                    >×</button>
                 </div>
+
                 <div class="smartoffice-template-confirm-content">
-                    <p class="smartoffice-template-confirm-question">Yakin ingin ${action} template ini?</p>
-                    <div class="smartoffice-template-confirm-name">${smartofficeTemplateEscape(namaTemplate)}</div>
-                    <p class="smartoffice-template-confirm-description">${description}</p>
+                    <p class="smartoffice-template-confirm-question">
+                        Yakin ingin ${action} template ini?
+                    </p>
+
+                    <div class="smartoffice-template-confirm-name">
+                        ${smartofficeTemplateEscape(namaTemplate)}
+                    </div>
+
+                    <p class="smartoffice-template-confirm-description">
+                        ${description}
+                    </p>
                 </div>
+
                 <div class="smartoffice-template-confirm-actions">
-                    <button type="button" class="smartoffice-template-confirm-cancel" data-confirm-cancel>Batal</button>
-                    <button type="button" class="smartoffice-template-confirm-submit ${isLock ? "danger" : "primary"}" data-confirm-submit>${buttonLabel}</button>
+                    <button
+                        type="button"
+                        class="smartoffice-template-confirm-cancel"
+                        data-confirm-cancel
+                    >Batal</button>
+
+                    <button
+                        type="button"
+                        class="smartoffice-template-confirm-submit ${
+                            isLock || isDelete ? "danger" : "primary"
+                        }"
+                        data-confirm-submit
+                    >${buttonLabel}</button>
                 </div>
             </section>
         `;
 
         let settled = false;
+
         const finish = value => {
             if (settled) return;
             settled = true;
+
             document.removeEventListener("keydown", onKeydown);
             backdrop.remove();
-            document.body.classList.remove("smartoffice-template-modal-open");
+            document.body.classList.remove(
+                "smartoffice-template-modal-open"
+            );
+
             resolve(value);
         };
+
         const onKeydown = event => {
-            if (event.key === "Escape") finish(false);
+            if (event.key === "Escape") {
+                finish(false);
+            }
         };
 
         backdrop.addEventListener("click", event => {
-            if (event.target === backdrop || event.target.closest("[data-confirm-cancel]")) finish(false);
-            if (event.target.closest("[data-confirm-submit]")) finish(true);
+            if (
+                event.target === backdrop ||
+                event.target.closest("[data-confirm-cancel]")
+            ) {
+                finish(false);
+                return;
+            }
+
+            if (event.target.closest("[data-confirm-submit]")) {
+                finish(true);
+            }
         });
+
         document.addEventListener("keydown", onKeydown);
         document.body.appendChild(backdrop);
         document.body.classList.add("smartoffice-template-modal-open");
+
         backdrop.querySelector("[data-confirm-submit]")?.focus();
     });
 }
@@ -963,25 +1058,36 @@ function smartofficeRenderTemplateList() {
             list.querySelectorAll("[data-template-more]").forEach(item => item.setAttribute("aria-expanded", "false"));
         }
     });
-
+    
     /* ==========================================================
-       EVENT LOCK / UNLOCK TEMPLATE — SUPERADMIN
+    EVENT LOCK / UNLOCK TEMPLATE — SUPERADMIN
     ========================================================== */
     list.querySelectorAll("[data-template-lock]").forEach(button => {
         button.addEventListener("click", async () => {
             const record = filtered[Number(button.dataset.templateLock)];
             const user = getTemplateCurrentUser();
             const nextLock = button.dataset.lockNext === "true";
-            const idTemplate = smartofficeTemplateGet(record, ["idTemplate", "ID_TEMPLATE"]);
+            const idTemplate = smartofficeTemplateGet(record, [
+                "idTemplate",
+                "ID_TEMPLATE"
+            ]);
 
             if (!record || !canDeleteTemplate()) {
-                smartofficeShowToast?.("Hanya SUPERADMIN yang dapat Lock/Unlock template.", "error");
+                smartofficeShowToast?.(
+                    "Hanya SUPERADMIN yang dapat Lock/Unlock template.",
+                    "error"
+                );
                 return;
             }
+
             if (!user.nip) {
-                smartofficeShowToast?.("NIP pengguna tidak ditemukan. Silakan login ulang.", "error");
+                smartofficeShowToast?.(
+                    "NIP pengguna tidak ditemukan. Silakan login ulang.",
+                    "error"
+                );
                 return;
             }
+
             if (!idTemplate) {
                 smartofficeShowToast?.("ID template tidak ditemukan.", "error");
                 return;
@@ -991,34 +1097,66 @@ function smartofficeRenderTemplateList() {
                 namaTemplate: smartofficeTemplateNama(record),
                 isLock: nextLock
             });
+
             if (!confirmed) return;
+
+            const originalHTML = button.innerHTML;
 
             try {
                 button.disabled = true;
+                button.innerHTML = `
+                    <span class="smartoffice-template-action-spinner"
+                        aria-hidden="true"></span>
+                    <span>${nextLock ? "Mengunci..." : "Membuka..."}</span>
+                `;
+
                 await smartofficeSetLockTemplateDokumen({
                     idTemplate,
                     isLock: nextLock,
                     diperbaruiOleh: user.nip
                 });
-                smartofficeShowToast?.(nextLock ? "Template berhasil dikunci." : "Template berhasil dibuka.", "success");
+
+                smartofficeShowToast?.(
+                    nextLock
+                        ? "Template berhasil dikunci."
+                        : "Template berhasil dibuka.",
+                    "success"
+                );
+
                 await smartofficeLoadTemplateDokumen(true);
+
             } catch (error) {
-                console.error("[Template Dokumen] Gagal Lock/Unlock:", error);
-                smartofficeShowToast?.(error?.message || "Gagal mengubah Lock Template Dokumen.", "error");
+                console.error(
+                    "[Template Dokumen] Gagal Lock/Unlock:",
+                    error
+                );
+
+                smartofficeShowToast?.(
+                    error?.message || "Gagal mengubah Lock Template Dokumen.",
+                    "error"
+                );
+
                 button.disabled = false;
+                button.innerHTML = originalHTML;
             }
         });
     });
-
+    
     /* ==========================================================
        EVENT TOMBOL HAPUS TEMPLATE
+       Menggunakan modal konfirmasi premium.
     ========================================================== */
     list.querySelectorAll("[data-template-delete]").forEach(button => {
         button.addEventListener("click", async () => {
-            const record = filtered[Number(button.dataset.templateDelete)];
+            const record = filtered[
+                Number(button.dataset.templateDelete)
+            ];
 
             if (!record || !canDeleteTemplate()) {
-                alert("Hanya SUPERADMIN yang dapat menghapus template.");
+                smartofficeShowToast?.(
+                    "Hanya SUPERADMIN yang dapat menghapus template.",
+                    "error"
+                );
                 return;
             }
 
@@ -1030,26 +1168,43 @@ function smartofficeRenderTemplateList() {
             const namaTemplate = smartofficeTemplateNama(record);
 
             if (!idTemplate) {
-                alert("ID template tidak ditemukan.");
+                smartofficeShowToast?.(
+                    "ID template tidak ditemukan.",
+                    "error"
+                );
                 return;
             }
 
-            const yakin = confirm(
-                `Yakin ingin menghapus template "${namaTemplate}"?\n\nFile dan data template akan dihapus.`
-            );
+            // Tampilkan modal konfirmasi premium yang sama.
+            const yakin = await smartofficeTemplateConfirmLock({
+                namaTemplate,
+                isLock: false,
+                actionType: "delete"
+            });
 
             if (!yakin) return;
 
+            const originalHTML = button.innerHTML;
+
             try {
                 button.disabled = true;
-                button.textContent = "Menghapus...";
+                button.innerHTML = `
+                    <span
+                        class="smartoffice-template-action-spinner"
+                        aria-hidden="true"
+                    ></span>
+                    <span>Menghapus...</span>
+                `;
 
                 await smartofficeHapusTemplateDokumen({
-                    idTemplate: idTemplate,
+                    idTemplate,
                     diperbaruiOleh: getTemplateCurrentUser().nip
                 });
 
-                alert("Template berhasil dihapus.");
+                smartofficeShowToast?.(
+                    "Template berhasil dihapus.",
+                    "success"
+                );
 
                 await smartofficeLoadTemplateDokumen(true);
 
@@ -1059,21 +1214,23 @@ function smartofficeRenderTemplateList() {
                     error
                 );
 
-                alert(error.message || "Gagal menghapus template.");
+                smartofficeShowToast?.(
+                    error?.message || "Gagal menghapus template.",
+                    "error"
+                );
 
                 button.disabled = false;
-                button.textContent = "Hapus";
+                button.innerHTML = originalHTML;
             }
         });
     });
-
+    
     /* ==========================================================
-       EVENT TOMBOL EDIT TEMPLATE
+    EVENT TOMBOL EDIT TEMPLATE
     ========================================================== */
     list.querySelectorAll("[data-template-edit]").forEach(button => {
         button.addEventListener("click", () => {
             const record = filtered[Number(button.dataset.templateEdit)];
-
             const root = document.getElementById(
                 "smartofficeTemplateDokumenContent"
             );
@@ -1119,7 +1276,13 @@ function smartofficeTemplateOpenForm(root) {
 
                     <label class="smartoffice-template-field">
                         <span>Nama Template <b>*</b></span>
-                        <input name="namaTemplate" type="text" maxlength="180" required placeholder="Contoh: Format Surat Tugas">
+                        <textarea
+                            name="namaTemplate"
+                            rows="2"
+                            maxlength="180"
+                            required
+                            placeholder="Contoh: Format Surat Tugas"
+                        ></textarea>
                     </label>
 
                     <label class="smartoffice-template-field">
