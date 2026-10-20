@@ -74,6 +74,7 @@ let smartofficeBukuSuratResetMasukHandler = null;
 let smartofficeSuratMasukPrintHandler = null;
 
 let smartofficeSuratMasukDisposisiSelected = [];
+let smartofficeSuratMasukPrintInProgress = false;
 
 
 /* =====================================================
@@ -315,6 +316,11 @@ export async function smartofficeDestroyPage(){
             "smartofficeTabSuratKeluar"
         );
 
+    const tabKodeSurat =
+        document.getElementById(
+            "smartofficeTabKodeSurat"
+        );
+
     const refreshButton =
         document.getElementById(
             "smartofficeBukuSuratRefreshButton"
@@ -391,6 +397,16 @@ export async function smartofficeDestroyPage(){
         tabSuratKeluar.removeEventListener(
             "click",
             smartofficeBukuSuratTabKeluarHandler
+        );
+    }
+
+    if(
+        tabKodeSurat &&
+        smartofficeBukuSuratTabKodeHandler
+    ){
+        tabKodeSurat.removeEventListener(
+            "click",
+            smartofficeBukuSuratTabKodeHandler
         );
     }
 
@@ -574,6 +590,11 @@ export async function smartofficeDestroyPage(){
         null;
     smartofficeSuratKeluarPrintHandler =
         null;
+
+    /* ==================================================
+       RESET HANDLER KODE SURAT
+    ================================================== */
+    smartofficeBukuSuratTabKodeHandler = null;
 
     /* ==================================================
        CLOSE MODAL DELETE SURAT MASUK
@@ -2001,6 +2022,12 @@ function initBulanAgendaMasuk(){
 ====================================================== */
 async function smartofficePrintSuratMasuk(){
 
+    if(smartofficeSuratMasukPrintInProgress){
+        return;
+    }
+
+    smartofficeSuratMasukPrintInProgress = true;
+
     const data =
         suratMasukViewData || [];
 
@@ -2120,6 +2147,7 @@ async function smartofficePrintSuratMasuk(){
     }
     finally{
         smartofficeHideGlobalLoading();
+        smartofficeSuratMasukPrintInProgress = false;
     }
 }
 

@@ -2445,7 +2445,16 @@ function renderRecord(r) {
 
             <div class="arp-record-top">
                 <span class="arp-record-file">
-                    ${svg("file")}
+                    <svg viewBox="0 0 48 48" aria-hidden="true">
+                        <path d="M11 4h18l10 10v29H11z"
+                            fill="#eaf2ff" stroke="#2463b7" stroke-width="2"/>
+                        <path d="M29 4v11h10"
+                            fill="none" stroke="#2463b7" stroke-width="2"/>
+                        <rect x="5" y="25" width="38" height="13" rx="3"
+                            fill="#2463b7"/>
+                        <text x="24" y="34.5" text-anchor="middle"
+                            font-size="10" font-weight="800" fill="#fff">DOC</text>
+                    </svg>
                 </span>
 
                 <div class="arp-record-badges">
@@ -2529,7 +2538,25 @@ function renderRecord(r) {
                                                     type="button"
                                                     class="arp-danger-action"
                                                     data-arp-delete="${esc(id)}"
-                                                >Hapus arsip</button>
+                                                >
+                                                    <svg
+                                                        viewBox="0 0 24 24"
+                                                        width="15"
+                                                        height="15"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        stroke-width="1.8"
+                                                        stroke-linecap="round"
+                                                        stroke-linejoin="round"
+                                                        aria-hidden="true"
+                                                    >
+                                                        <path d="M3 6h18"/>
+                                                        <path d="M8 6V4h8v2"/>
+                                                        <path d="M19 6l-1 14H6L5 6"/>
+                                                        <path d="M10 11v5M14 11v5"/>
+                                                    </svg>
+                                                    <span>Hapus arsip</span>
+                                                </button>
                                             `
                                             : ""
                                     }

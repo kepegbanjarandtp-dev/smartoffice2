@@ -70,7 +70,23 @@
     }
 
     .smartoffice-loading-text{
-        font-size:13px;
+        font-size:11px;
+    }
+}
+
+/* ======================================================
+   OVERRIDE LOADING MOBILE
+====================================================== */
+@media screen and (max-width: 768px) {
+    .smartoffice-loading .smartoffice-loading-text {
+        font-size: 11px !important;
+        line-height: 1.4;
+    }
+
+    .smartoffice-loading .smartoffice-loading-spinner {
+        width: 24px;
+        height: 24px;
+        border-width: 3px;
     }
 }
 
