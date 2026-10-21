@@ -26,6 +26,7 @@ import "./pages/arsip-pegawai/arsip-pegawai.css";
 import "./pages/pusat-dokumen/penomoran-sk.css";
 import "./pages/smartspd-blud/smartspd-blud.css";
 import "./pages/pengelolaan-spd/pengelolaan-spd.css";
+import "./pages/simbok/simbok.css";
 
 import "./components/button/button.css";
 import "./components/layout/layout.css";

@@ -1139,6 +1139,35 @@ function smartofficeInitDashboardMenu(){
         ] =
             handler;
     }
+    
+    /* ======================================================
+    MENU SIMBOK
+    ====================================================== */
+    const simbokMenu = document.getElementById(
+        "smartofficeSimbokMenuCard"
+    );
+
+    if (simbokMenu) {
+
+        const handler = async function () {
+
+            if (smartofficeDashboardDestroyed) {
+                return;
+            }
+
+            await smartofficeNavigate("simbok");
+
+        };
+
+        simbokMenu.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeSimbokMenuCard"
+        ] = handler;
+    }
 
     /* ======================================================
        MENU DALAM PENGEMBANGAN
@@ -1192,15 +1221,7 @@ function smartofficeInitDashboardMenu(){
                 "smartofficeDataPajakMenuCard",
             message:
                 "Fitur Data Pajak sedang dalam pengembangan."
-        },
-        
-        {
-            id:
-                "smartofficeSimbokMenuCard",
-            message:
-                "Fitur simBOK sedang dalam pengembangan."
-        }
-
+        },               
     ];
 
     menuPengembangan.forEach(
