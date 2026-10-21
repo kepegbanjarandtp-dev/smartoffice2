@@ -1174,51 +1174,37 @@ function categoryMatches(
    - Perbarui tampilan daftar arsip melalui renderRecords().
 ========================================================== */
 function onInput(e) {
+    if (!e.target.matches("[data-arp-search]")) {
+        return;
+    }
+
+    state.query = e.target.value.trim();
 
     /* ======================================================
-       1. TANGANI INPUT PENCARIAN
+       KATEGORI SEDANG DIBUKA:
+       Perbarui daftar saja, jangan render seluruh halaman.
     ====================================================== */
-    if (
-        e.target.matches("[data-arp-search]")
-    ) {
-        // Simpan kata kunci tanpa spasi di awal/akhir.
-        state.query =
-            e.target.value.trim();
+    if (state.category) {
+        renderRecordList();
+        return;
+    }
 
-        /* ==================================================
-           2. JIKA KATEGORI SEDANG DIBUKA
-           Render ulang daftar arsip.
-        ================================================== */
-        if (state.category) {
-            renderRecords();
+    /* ======================================================
+       HALAMAN KATEGORI:
+       Filter kartu kategori seperti sebelumnya.
+    ====================================================== */
+    const grid = state.root.querySelector(
+        "[data-arp-category-grid]"
+    );
 
-        } else {
+    if (grid) {
+        const filteredCategories = CATEGORIES.filter(
+            category => categoryMatches(category, state.query)
+        );
 
-            /* ==============================================
-               3. JIKA MASIH DI HALAMAN KATEGORI
-               Filter dan render ulang kartu kategori.
-            ============================================== */
-            const grid =
-                state.root.querySelector(
-                    "[data-arp-category-grid]"
-                );
-
-            if (grid) {
-                const filteredCategories =
-                    CATEGORIES.filter(
-                        category =>
-                            categoryMatches(
-                                category,
-                                state.query
-                            )
-                    );
-
-                grid.innerHTML =
-                    filteredCategories
-                        .map(renderCategory)
-                        .join("");
-            }
-        }
+        grid.innerHTML = filteredCategories
+            .map(renderCategory)
+            .join("");
     }
 }
 
@@ -2281,7 +2267,7 @@ function renderRecords(message = "") {
                         </p>
                     </div>
 
-                    <span class="arp-control-count">
+                    <span class="arp-control-count" data-arp-count>
                         ${filtered.length} dokumen
                     </span>
                 </div>
@@ -2568,6 +2554,91 @@ function renderRecord(r) {
             </div>
         </article>
     `;
+}
+
+
+/* ==========================================================
+   RENDER DAFTAR SAJA — PENCARIAN RESPONSIF
+   Tidak membangun ulang seluruh halaman.
+========================================================== */
+function renderRecordList() {
+    if (!state.root || !state.category) return;
+
+    const recordsContainer =
+        state.root.querySelector("#arp-records");
+
+    const countElement =
+        state.root.querySelector("[data-arp-count]");
+
+    if (!recordsContainer) return;
+
+    const query =
+        String(state.query || "").toLocaleLowerCase("id-ID");
+
+    const isExpiredCategory =
+        state.category.id === "kedaluwarsa";
+
+    const filtered = state.records.filter(record => {
+        const searchableText = [
+            record.namaArsip || record.nama || "",
+            record.keterangan || record.Keterangan || "",
+            record.tahunDokumen || record.tahun || ""
+        ].join(" ").toLocaleLowerCase("id-ID");
+
+        const status = String(
+            record.statusArsip || record.status || "Aktif"
+        );
+
+        const year = String(
+            record.tahunDokumen || record.tahun || ""
+        );
+
+        return (
+            (!query || searchableText.includes(query)) &&
+            (!state.status || status === state.status) &&
+            (!state.year || year === state.year) &&
+            (
+                !isExpiredCategory ||
+                /kedaluwarsa|tidak aktif|nonaktif/i.test(status)
+            )
+        );
+    });
+
+    filtered.sort((a, b) => {
+        if (state.sort === "name") {
+            return String(a.namaArsip || a.nama || "")
+                .localeCompare(
+                    String(b.namaArsip || b.nama || ""),
+                    "id"
+                );
+        }
+
+        if (state.sort === "oldest") {
+            return String(a.tahunDokumen || a.tahun || "")
+                .localeCompare(
+                    String(b.tahunDokumen || b.tahun || "")
+                );
+        }
+
+        return String(b.tahunDokumen || b.tahun || "")
+            .localeCompare(
+                String(a.tahunDokumen || a.tahun || "")
+            );
+    });
+
+    if (countElement) {
+        countElement.textContent = `${filtered.length} dokumen`;
+    }
+
+    recordsContainer.innerHTML = filtered.length
+        ? filtered.map(renderRecord).join("")
+        : `
+            <div class="arp-empty">
+                ${svg("file")}
+                <h3>Arsip tidak ditemukan</h3>
+                <p>Coba kata kunci pencarian yang lain.</p>
+            </div>
+        `;
 }
 
 
