@@ -94,6 +94,20 @@ export async function smartofficeGetAllPegawaiFromFirestore(){
                 )
             );
 
+        console.table(
+            snapshot.docs.map(docSnapshot => {
+                const data = docSnapshot.data();
+
+                return {
+                    nama: data.nama || data.NAMA || "",
+                    nip: docSnapshot.id,
+                    pangkatGol: data.pangkatGol ?? "(tidak ada)",
+                    pangkat: data.pangkat ?? "(tidak ada)",
+                    golongan: data.golongan ?? "(tidak ada)"
+                };
+            })
+        );
+
         return {
             success: true,
             data: snapshot.docs.map(docSnapshot => ({

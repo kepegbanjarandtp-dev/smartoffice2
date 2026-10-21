@@ -1968,20 +1968,40 @@ function smartofficeGetScheduleDate(hari){
 /* ======================================================
    10.12 FORMAT TANGGAL DETAIL JADWAL
 ====================================================== */
-function smartofficeFormatSPDScheduleDate(date){
+function smartofficeFormatSPDScheduleDate(value) {
+    if (!value) return "";
 
-    if(!date){
-        return "";
+    const namaBulan = [
+        "Januari", "Februari", "Maret", "April",
+        "Mei", "Juni", "Juli", "Agustus",
+        "September", "Oktober", "November", "Desember"
+    ];
+
+    let tahun, bulan, hari;
+
+    // Format ISO: YYYY-MM-DD
+    const iso = String(value).trim().match(
+        /^(\d{4})-(\d{2})-(\d{2})$/
+    );
+
+    if (iso) {
+        [, tahun, bulan, hari] = iso;
+    } else {
+        // Format string tanggal JavaScript atau objek Date
+        const date = value instanceof Date
+            ? value
+            : new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
+        }
+
+        tahun = date.getFullYear();
+        bulan = date.getMonth() + 1;
+        hari = date.getDate();
     }
 
-    return new Intl.DateTimeFormat(
-        "id-ID",
-        {
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }
-    ).format(date);
+    return `${String(hari).padStart(2, "0")} ${namaBulan[Number(bulan) - 1]} ${tahun}`;
 }
 
 /* ======================================================
@@ -2626,37 +2646,32 @@ async function smartofficeBuildSubmitPayload(){
        DETAIL JADWAL PERJALANAN
        HARI 1 - 3
     ================================================== */
-    for(let hari = 1; hari <= 3; hari++){
+    for (let hari = 1; hari <= 3; hari++) {
+        payload[`berangkatHari${hari}`] =
+            smartofficeFormatSPDScheduleDate(
+                document.getElementById(
+                    `smartofficeSPD_BerangkatHari${hari}`
+                )?.value || ""
+            );
 
-        payload[
-            `berangkatHari${hari}`
-        ] =
-            document.getElementById(
-                `smartofficeSPD_BerangkatHari${hari}`
-            )?.value || "";
-
-        payload[
-            `pulangHari${hari}`
-        ] =
-            document.getElementById(
-                `smartofficeSPD_PulangHari${hari}`
-            )?.value || "";
+        payload[`pulangHari${hari}`] =
+            smartofficeFormatSPDScheduleDate(
+                document.getElementById(
+                    `smartofficeSPD_PulangHari${hari}`
+                )?.value || ""
+            );
 
         /* ==================================================
            HARI 2 DAN HARI 3
            ADA LOKASI + TIBA
         ================================================== */
-        if(hari >= 2){
-            payload[
-                `lokasiHari${hari}`
-            ] =
+        if (hari >= 2) {
+            payload[`lokasiHari${hari}`] =
                 document.getElementById(
                     `smartofficeSPD_LokasiHari${hari}`
                 )?.value.trim() || "";
 
-            payload[
-                `tibaHari${hari}`
-            ] =
+            payload[`tibaHari${hari}`] =
                 document.getElementById(
                     `smartofficeSPD_TibaHari${hari}`
                 )?.value || "";

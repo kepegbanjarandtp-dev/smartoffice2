@@ -618,6 +618,10 @@ function smartofficeNormalizePengelolaanSPD(raw) {
             get("Lokasi", "LOKASI")
         ).trim(),
 
+        jenisPerjalananDinas: String(
+            get("JENIS_PERJALANAN_DINAS", "Jenis Perjalanan Dinas")
+        ).trim(),
+
         tanggalBerangkat: String(
             get("Tanggal Berangkat", "TANGGAL_BERANGKAT")
         ).trim(),
@@ -653,6 +657,11 @@ function smartofficeNormalizePengelolaanSPD(raw) {
         lockSPD: String(
             get("LOCK_SPD", "Lock SPD")
         ).trim().toUpperCase(),
+
+        // Status Pembayaran
+        tglTransfer: String(
+            get("TGL_TRANSFER", "Tgl Transfer", "Tanggal Transfer")
+        ).trim(),
 
         /* --------------------------------------------------
            NORMALISASI — VERIFIKASI SPJ
@@ -697,6 +706,12 @@ function smartofficeNormalizePengelolaanSPD(raw) {
             "JUMLAH UANG",
             "Jumlah Uang",
             "TOTAL_BIAYA"
+        ),
+
+        // Total pembayaran seluruh petugas.
+        totalPembayaran: get(
+            "TOTAL PEMBAYARAN",
+            "TOTAL_PEMBAYARAN"
         ),
 
         /* --------------------------------------------------
@@ -974,6 +989,8 @@ function smartofficeStatusLine(
     `;
 }
 
+
+
 /* ======================================================
    REKAP CARDS — RENDER DAFTAR SPD
    Menggunakan class kartu Riwayat SPD SmartSPD BLUD
@@ -1115,11 +1132,11 @@ function smartofficeRenderPengelolaanSPDList(data) {
         );
 
         const tanggalBerangkat = smartofficeEscapeHTML(
-            smartofficeFormatDate(item.tanggalBerangkat)
+            smartofficeFormatDateLongCard(item.tanggalBerangkat)
         );
 
         const tanggalPulang = smartofficeEscapeHTML(
-            smartofficeFormatDate(item.tanggalPulang)
+            smartofficeFormatDateLongCard(item.tanggalPulang)
         );
 
         const jumlahHari = smartofficeEscapeHTML(
@@ -1178,9 +1195,42 @@ function smartofficeRenderPengelolaanSPDList(data) {
                 </div>
 
                 <!-- ======================================
-                     IDENTITAS PEGAWAI
+                    JENIS PERJALANAN DINAS
+                ======================================= -->
+                <div class="smartoffice-pengelolaan-spd-jenis-perjalanan">
+                    <span class="smartoffice-pengelolaan-spd-jenis-perjalanan-icon">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                            <circle cx="12" cy="10" r="2.5"/>
+                        </svg>
+                    </span>
+
+                    <div class="smartoffice-pengelolaan-spd-jenis-perjalanan-info">
+                        <span>JENIS PERJALANAN DINAS</span>
+                        <strong>${smartofficeEscapeHTML(
+                            item.raw?.["JENIS_PERJALANAN_DINAS"] || "-"
+                        )}</strong>
+                    </div>
+                </div>
+
+                <!-- ======================================
+                    IDENTITAS PEGAWAI
                 ======================================= -->
                 <div class="smartoffice-pengelolaan-spd-card-person">
+                    <small class="smartoffice-pengelolaan-spd-card-person-label">
+                        PETUGAS UTAMA
+                    </small>
                     <strong>${nama}</strong>
                     <span>${nip}</span>
                 </div>
@@ -1194,9 +1244,9 @@ function smartofficeRenderPengelolaanSPDList(data) {
                     </span>
                     <strong>${kegiatan}</strong>
                 </div>
-
+                
                 <!-- ======================================
-                     INFORMASI PERJALANAN
+                    INFORMASI PERJALANAN
                 ======================================= -->
                 <div class="smartoffice-pengelolaan-spd-card-info-grid">
                     <div class="smartoffice-pengelolaan-spd-card-info-box">
@@ -1210,13 +1260,15 @@ function smartofficeRenderPengelolaanSPDList(data) {
                     </div>
 
                     <div class="smartoffice-pengelolaan-spd-card-info-box">
-                        <span>DURASI</span>
-                        <strong>${jumlahHari} hari</strong>
+                        <span>PERJALANAN</span>
+                        <strong>${smartofficeEscapeHTML(
+                            item.raw?.["Tipe Keberangkatan"] || "-"
+                        )}</strong>
                     </div>
 
                     <div class="smartoffice-pengelolaan-spd-card-info-box">
-                        <span>STATUS LOCK</span>
-                        <strong>${lockLabel}</strong>
+                        <span>JUMLAH HARI</span>
+                        <strong>${jumlahHari} hari</strong>
                     </div>
                 </div>
 
@@ -1288,6 +1340,36 @@ function smartofficeRenderPengelolaanSPDList(data) {
                         `
                         : ""
                 }
+
+                <!-- ======================================
+                    STATUS PEMBAYARAN
+                ======================================= -->
+                <div class="smartoffice-pengelolaan-spd-card-payment">
+                    <span class="smartoffice-pengelolaan-spd-card-label">
+                        STATUS PEMBAYARAN
+                    </span>
+
+                    ${
+                        item.tglTransfer
+                            ? `
+                                <div class="smartoffice-pengelolaan-spd-card-payment-status is-paid">
+                                    <span class="smartoffice-pengelolaan-spd-card-payment-dot"></span>
+                                    <strong>SUDAH DIBAYAR</strong>
+                                    <span class="smartoffice-pengelolaan-spd-card-payment-date">
+                                        ${smartofficeEscapeHTML(
+                                            smartofficeFormatDateLongCard(item.tglTransfer)
+                                        )}
+                                    </span>
+                                </div>
+                            `
+                            : `
+                                <div class="smartoffice-pengelolaan-spd-card-payment-status is-unpaid">
+                                    <span class="smartoffice-pengelolaan-spd-card-payment-dot"></span>
+                                    <strong>BELUM DIBAYAR</strong>
+                                </div>
+                            `
+                    }
+                </div>
 
                 <!-- ======================================
                    FOOTER DAN ACTION SMARTSPD BLUD
@@ -1628,14 +1710,7 @@ function smartofficePengelolaanSPDShowActionMenu(item) {
         .toUpperCase();
 
     const isLocked = lockSPD === "TERKUNCI";
-
-    const menuItems = [
-        {
-            action: "detail",
-            icon: smartofficeIcon("eye"),
-            label: "Detail SPD"
-        }
-    ];
+    const menuItems = [];
 
     if (allowed && isLocked) {
         menuItems.push({
@@ -2131,6 +2206,7 @@ function smartofficePengelolaanSPDVerifySPJ(item) {
 }
 
 
+
 /* ======================================================
    DETAIL / PAYMENT
 ====================================================== */
@@ -2138,7 +2214,6 @@ function smartofficePengelolaanSPDVerifySPJ(item) {
 /* ======================================================
    DETAIL SPD — MENGIKUTI SMARTSPD BLUD
 ====================================================== */
-
 function smartofficePengelolaanSPDShowDetail(item) {
     if (!item) return;
 
@@ -2172,13 +2247,22 @@ function smartofficePengelolaanSPDShowDetail(item) {
     const nip = first(item.nip, get("NIP / NRP", ""));
     const kegiatan = first(item.kegiatan, get("Kegiatan", ""));
     const lokasi = first(item.lokasi, get("Lokasi", ""));
-    const tanggalBerangkat = first(
-        item.tanggalBerangkat,
-        get("Tanggal Berangkat", "")
+    const tanggalBerangkat = smartofficeFormatDateLongCard(
+        first(
+            item.tanggalBerangkat,
+            get("Tanggal Berangkat", "")
+        )
     );
-    const tanggalPulang = first(
-        item.tanggalPulang,
-        get("Tanggal Pulang", "")
+
+    const tanggalPulang = smartofficeFormatDateLongCard(
+        first(
+            item.tanggalPulang,
+            get("Tanggal Pulang", "")
+        )
+    );
+
+    const tanggalSPDdibuat = smartofficeFormatDateLongCard(
+        get("Tanggal SPD Dibuat", "")
     );
     const jumlahHari = first(
         item.jumlahHari,
@@ -2312,8 +2396,13 @@ function smartofficePengelolaanSPDShowDetail(item) {
     const schedules = [];
 
     for (let i = 1; i <= 3; i++) {
-        const berangkat = get(`Berangkat Hari ${i}`, "");
-        const pulang = get(`Pulang Hari ${i}`, "");
+        const berangkat = smartofficeFormatTanggalJadwal(
+            get(`Berangkat Hari ${i}`, "")
+        );
+
+        const pulang = smartofficeFormatTanggalJadwal(
+            get(`Pulang Hari ${i}`, "")
+        );
         const lokasiHari = i === 1
             ? get("Lokasi", "")
             : get(`Lokasi Hari ${i}`, "");
@@ -2444,11 +2533,15 @@ function smartofficePengelolaanSPDShowDetail(item) {
                         ${valueHtml("Alat Angkut", get("Alat Angkut"))}
                         ${valueHtml("Kegiatan", kegiatan)}
                         ${valueHtml("Lokasi", lokasi)}
-                        ${valueHtml("Tanggal SPD Dibuat", get("Tanggal SPD Dibuat"))}
+                        ${valueHtml("Tanggal SPD Dibuat", tanggalSPDdibuat)}
                         ${valueHtml("Tanggal Berangkat", tanggalBerangkat)}
                         ${valueHtml("Tanggal Pulang", tanggalPulang)}
                         ${valueHtml("Jumlah Hari", jumlahHari)}
-                        ${valueHtml("Tipe Perjalanan", get("Tipe Keberangkatan"))}
+                        ${valueHtml(
+                            "Jenis Perjalanan Dinas",
+                            get("JENIS_PERJALANAN_DINAS")
+                        )}
+                        ${valueHtml("Tipe Keberangkatan", get("Tipe Keberangkatan"))}
                     </div>
                 </section>
 
@@ -2478,9 +2571,18 @@ function smartofficePengelolaanSPDShowDetail(item) {
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
                         ${valueHtml("Reviewer", get("REVIEWER"))}
                         ${valueHtml("NIP Reviewer", get("REVIEWER_NIP"))}
-                        ${valueHtml("Tanggal Review", get("TGL_REVIEW_SPD"))}
-                        ${valueHtml("Tanggal Persetujuan", get("TGL_APPROVE_SPD"))}
-                        ${valueHtml("Tanggal Revisi", get("TGL_REVISI_SPD"))}
+                        ${valueHtml(
+                            "Tanggal Review",
+                            smartofficeFormatTanggalReview(get("TGL_REVIEW_SPD", ""))
+                        )}
+                        ${valueHtml(
+                            "Tanggal Persetujuan",
+                            smartofficeFormatTanggalReview(get("TGL_APPROVE_SPD", ""))
+                        )}
+                        ${valueHtml(
+                            "Tanggal Revisi",
+                            smartofficeFormatTanggalReview(get("TGL_REVISI_SPD", ""))
+                        )}
                         ${valueHtml("Total Revisi", get("TOTAL_REVISI_SPD", "0"))}
                         ${valueHtml("Catatan Revisi", get("CATATAN_REVISI_SPD"))}
                     </div>
@@ -2505,9 +2607,15 @@ function smartofficePengelolaanSPDShowDetail(item) {
 
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
                         ${valueHtml("Status SPJ", statusSPJ)}
-                        ${valueHtml("Jumlah Uang", get("JUMLAH UANG"))}
+                        ${valueHtml(
+                            "Jumlah Uang (Nominal Transport)",
+                            smartofficeFormatRupiah(get("JUMLAH UANG", ""))
+                        )}
                         ${valueHtml("Catatan Revisi SPJ", get("CATATAN_REVISI_SPJ"))}
-                        ${valueHtml("Tanggal Update SPJ", get("TGL_UPDATE_SPJ"))}
+                        ${valueHtml(
+                            "Tanggal Update SPJ",
+                            smartofficeFormatTanggalReview(get("TGL_UPDATE_SPJ", ""))
+                        )}
                         ${valueHtml("Reminder SPJ", get("REMINDER_SPJ"))}
                     </div>
                 </section>
@@ -2518,8 +2626,15 @@ function smartofficePengelolaanSPDShowDetail(item) {
                     </div>
 
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
-                        ${valueHtml("Tanggal Transfer", get("TGL_TRANSFER"))}
+                        ${valueHtml(
+                            "Tanggal Transfer",
+                            smartofficeFormatTanggalReview(get("TGL_TRANSFER", ""))
+                        )}
                         ${linkHtml("Bukti Pembayaran", buktiTransfer, "Buka Bukti Pembayaran")}
+                        ${valueHtml(
+                            "Total Pembayaran",
+                            smartofficeFormatRupiah(get("TOTAL PEMBAYARAN", ""))
+                        )}
                     </div>
                 </section>
 
@@ -2531,7 +2646,10 @@ function smartofficePengelolaanSPDShowDetail(item) {
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
                         ${valueHtml("Status Data", get("STATUS_DATA"))}
                         ${valueHtml("Lock SPD", lockSPD)}
-                        ${valueHtml("Terakhir Diperbarui", get("LAST_UPDATE"))}
+                        ${valueHtml(
+                            "Terakhir Diperbarui",
+                            smartofficeFormatTanggalReview(get("LAST_UPDATE", ""))
+                        )}
                     </div>
                 </section>
 
@@ -2579,6 +2697,10 @@ function smartofficePengelolaanSPDShowDetail(item) {
 /* ======================================================
    MODAL INPUT PEMBAYARAN SPD BLUD
 ====================================================== */
+
+/* ======================================================
+   MODAL INPUT PEMBAYARAN SPD BLUD — PREMIUM
+====================================================== */
 function smartofficePengelolaanSPDShowPayment(item) {
     if (!item?.idSPD) {
         smartofficeShowToast("ID SPD tidak ditemukan.", "error");
@@ -2586,7 +2708,8 @@ function smartofficePengelolaanSPDShowPayment(item) {
     }
 
     const raw = item.raw || {};
-    const escape = value => smartofficeEscapeHTML(String(value ?? ""));
+    const escape = value =>
+        smartofficeEscapeHTML(String(value ?? ""));
 
     const uang = Number(
         item.jumlahUang ?? raw["JUMLAH UANG"] ?? 0
@@ -2611,101 +2734,397 @@ function smartofficePengelolaanSPDShowPayment(item) {
     const content = `
         <div class="smartoffice-pengelolaan-spd-modal-backdrop"
              data-modal-dismiss>
-            <section class="smartoffice-pengelolaan-spd-modal wide"
-                     role="dialog"
-                     aria-modal="true"
-                     aria-labelledby="pengelolaanSpdPaymentTitle">
 
-                <h3 id="pengelolaanSpdPaymentTitle">
-                    Input Pembayaran
-                </h3>
+            <section
+                class="smartoffice-pengelolaan-spd-modal smartoffice-pengelolaan-spd-payment-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="pengelolaanSpdPaymentTitle">
 
-                <p class="smartoffice-pengelolaan-spd-modal-subtitle">
-                    ${escape(item.idSPD)} · ${escape(item.nama || "")}
-                </p>
+                <header class="smartoffice-pengelolaan-spd-payment-header">
+                    <div class="smartoffice-pengelolaan-spd-payment-heading">
+                        <div class="smartoffice-pengelolaan-spd-payment-icon"
+                             aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <rect x="3" y="5" width="18" height="14"
+                                      rx="3" stroke="currentColor"
+                                      stroke-width="1.7"/>
+                                <path d="M3 10h18M7 15h4"
+                                      stroke="currentColor"
+                                      stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </div>
 
-                <label for="pengelolaanSpdPaymentUang">
-                    Jumlah Uang per Orang (Rp)
-                </label>
-                <input id="pengelolaanSpdPaymentUang"
-                       type="number" min="1" step="1"
-                       value="${uang || ""}"
-                       placeholder="Contoh: 170000"
-                       required>
+                        <div>
+                            <span class="smartoffice-pengelolaan-spd-payment-eyebrow">
+                                PENGELOLAAN SPD BLUD
+                            </span>
+                            <h3 id="pengelolaanSpdPaymentTitle">
+                                Input Pembayaran
+                            </h3>
+                            <p class="smartoffice-pengelolaan-spd-payment-description">
+                                Lengkapi informasi pembayaran perjalanan dinas.
+                            </p>
+                        </div>
+                    </div>
 
-                <label for="pengelolaanSpdPaymentPetugas">
-                    Jumlah Petugas Dibayarkan
-                </label>
-                <input id="pengelolaanSpdPaymentPetugas"
-                       type="number" min="1" step="1"
-                       value="${jumlahPetugas || ""}"
-                       placeholder="Masukkan jumlah petugas"
-                       required>
+                    <button type="button"
+                            class="smartoffice-pengelolaan-spd-payment-close"
+                            data-modal-cancel
+                            aria-label="Tutup modal">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <path d="m6 6 12 12M18 6 6 18"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </header>
 
-                <div class="smartoffice-pengelolaan-spd-payment-total">
-                    <span>Total Pembayaran</span>
-                    <strong id="pengelolaanSpdPaymentTotal">
-                        Rp${total.toLocaleString("id-ID")}
-                    </strong>
+                <div class="smartoffice-pengelolaan-spd-payment-body">
+                    <div class="smartoffice-pengelolaan-spd-payment-identity">
+                        <span class="smartoffice-pengelolaan-spd-payment-identity-icon"
+                              aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="8" r="3.2"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"/>
+                                <path d="M5.5 20c.4-3.5 2.8-5.3 6.5-5.3s6.1 1.8 6.5 5.3"
+                                      stroke="currentColor"
+                                      stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </span>
+
+                        <div class="smartoffice-pengelolaan-spd-payment-identity-text">
+                            <strong>${escape(item.nama || "Pegawai")}</strong>
+                            <span>${escape(item.idSPD)}</span>
+                        </div>
+
+                        <span class="smartoffice-pengelolaan-spd-payment-status">
+                            Pembayaran
+                        </span>
+                    </div>
+
+                    <div class="smartoffice-pengelolaan-spd-payment-form">                        
+                        <div class="smartoffice-pengelolaan-spd-payment-field">
+                            <label for="pengelolaanSpdPaymentUang">
+                                Jumlah Uang per Orang
+                                <span class="required">*</span>
+                            </label>
+
+                            <div class="smartoffice-pengelolaan-spd-payment-presets">
+
+                                <button type="button"
+                                        class="smartoffice-pengelolaan-spd-payment-preset"
+                                        data-payment-amount="105000">
+                                    Rp105.000
+                                </button>
+
+                                <button type="button"
+                                        class="smartoffice-pengelolaan-spd-payment-preset"
+                                        data-payment-amount="150000">
+                                    Rp150.000
+                                </button>
+
+                                <button type="button"
+                                        class="smartoffice-pengelolaan-spd-payment-preset"
+                                        data-payment-amount="170000">
+                                    Rp170.000
+                                </button>
+
+                                <button type="button"
+                                        class="smartoffice-pengelolaan-spd-payment-preset"
+                                        data-payment-amount="430000">
+                                    Rp430.000
+                                </button>
+
+                            </div>
+
+                            <input id="pengelolaanSpdPaymentUang"
+                                type="hidden"
+                                value="${[105000,150000,170000,430000].includes(uang) ? uang : ""}"
+                                required>
+
+                            <small>Pilih nominal pembayaran yang sesuai.</small>
+                        </div>
+
+                        <div class="smartoffice-pengelolaan-spd-payment-field">
+                            <label for="pengelolaanSpdPaymentPetugas">
+                                Jumlah Petugas Dibayarkan
+                                <span class="required">*</span>
+                            </label>
+
+                            <div class="smartoffice-pengelolaan-spd-payment-input-wrap">
+                                <span class="smartoffice-pengelolaan-spd-payment-input-icon"
+                                      aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <circle cx="9" cy="8" r="3"
+                                                stroke="currentColor"
+                                                stroke-width="1.7"/>
+                                        <path d="M3.5 19c.3-3 2.1-4.5 5.5-4.5s5.2 1.5 5.5 4.5M16 5.5a3 3 0 0 1 0 5.8M17 14.8c2.1.5 3.2 1.9 3.5 4.2"
+                                              stroke="currentColor"
+                                              stroke-width="1.7"
+                                              stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+
+                                <input id="pengelolaanSpdPaymentPetugas"
+                                       type="number"
+                                       min="1"
+                                       step="1"
+                                       inputmode="numeric"
+                                       value="${jumlahPetugas > 0 ? escape(jumlahPetugas) : ""}"
+                                       placeholder="Masukkan jumlah petugas"
+                                       required>
+                            </div>
+                            <small>Jumlah petugas yang menerima pembayaran.</small>
+                        </div>
+
+                        <div class="smartoffice-pengelolaan-spd-payment-total">
+                            <div class="smartoffice-pengelolaan-spd-payment-total-top">
+                                <span class="smartoffice-pengelolaan-spd-payment-total-icon"
+                                      aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2.8v18.4M16.5 7H9.8a3 3 0 0 0 0 6h4.4a3 3 0 0 1 0 6H7"
+                                              stroke="currentColor"
+                                              stroke-width="1.8"
+                                              stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                <span class="smartoffice-pengelolaan-spd-payment-total-label">
+                                    Total Pembayaran
+                                </span>
+                                <span class="smartoffice-pengelolaan-spd-payment-live">
+                                    <span></span> Otomatis
+                                </span>
+                            </div>
+
+                            <strong id="pengelolaanSpdPaymentTotal">
+                                Rp${total.toLocaleString("id-ID")}
+                            </strong>
+
+                            <p>Dihitung dari nominal per orang × jumlah petugas.</p>
+                        </div>
+
+                        <div class="smartoffice-pengelolaan-spd-payment-field">
+                            <label for="pengelolaanSpdPaymentTanggal">
+                                Tanggal Bayar / Transfer
+                                <span class="required">*</span>
+                            </label>
+
+                            <div class="smartoffice-pengelolaan-spd-payment-input-wrap">
+                                <span class="smartoffice-pengelolaan-spd-payment-input-icon"
+                                      aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <rect x="3.5" y="5" width="17" height="15"
+                                              rx="2.5" stroke="currentColor"
+                                              stroke-width="1.7"/>
+                                        <path d="M7.5 3v4M16.5 3v4M3.5 10h17"
+                                              stroke="currentColor"
+                                              stroke-width="1.7"
+                                              stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+
+                                <input id="pengelolaanSpdPaymentTanggal"
+                                       type="date"
+                                       value="${escape(tanggalTransfer)}"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="smartoffice-pengelolaan-spd-payment-field">
+                            <label for="pengelolaanSpdPaymentBukti">
+                                Bukti Transfer
+                                ${!buktiTransfer
+                                    ? '<span class="required">*</span>'
+                                    : '<span class="optional">Opsional jika tidak diganti</span>'}
+                            </label>
+
+                            <label class="smartoffice-pengelolaan-spd-payment-upload"
+                                   for="pengelolaanSpdPaymentBukti">
+
+                                <span class="smartoffice-pengelolaan-spd-payment-upload-icon"
+                                      aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 15V3m0 0L7.5 7.5M12 3l4.5 4.5"
+                                              stroke="currentColor"
+                                              stroke-width="1.8"
+                                              stroke-linecap="round"
+                                              stroke-linejoin="round"/>
+                                        <path d="M5 14v4.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V14"
+                                              stroke="currentColor"
+                                              stroke-width="1.8"
+                                              stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+
+                                <span class="smartoffice-pengelolaan-spd-payment-upload-text">
+                                    <strong id="pengelolaanSpdPaymentFileName">
+                                        ${buktiTransfer
+                                            ? "Bukti transfer sebelumnya tersedia"
+                                            : "Pilih file bukti transfer"}
+                                    </strong>
+                                    <span id="pengelolaanSpdPaymentFileHint">
+                                        PDF, JPG, atau PNG · Maksimal 10 MB
+                                    </span>
+                                </span>
+
+                                <span class="smartoffice-pengelolaan-spd-payment-upload-action">
+                                    Telusuri
+                                </span>
+
+                                <input id="pengelolaanSpdPaymentBukti"
+                                       type="file"
+                                       accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png">
+                            </label>
+
+                            ${buktiTransfer ? `
+                                <a class="smartoffice-pengelolaan-spd-payment-existing-link"
+                                   href="${escape(buktiTransfer)}"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    Lihat bukti transfer saat ini
+                                </a>
+                            ` : ""}
+                        </div>
+
+                    </div>
                 </div>
 
-                <label for="pengelolaanSpdPaymentTanggal">
-                    Tanggal Bayar / Transfer
-                </label>
-                <input id="pengelolaanSpdPaymentTanggal"
-                       type="date"
-                       value="${escape(tanggalTransfer)}"
-                       required>
-
-                <label for="pengelolaanSpdPaymentBukti">
-                    Bukti Transfer
-                </label>
-                <input id="pengelolaanSpdPaymentBukti"
-                       type="file"
-                       accept=".pdf,.jpg,.jpeg,.png"
-                       required>
-
-                ${buktiTransfer ? `
-                    <p class="smartoffice-pengelolaan-spd-payment-existing">
-                        Bukti transfer sebelumnya sudah tersedia.
-                        Pilih file baru hanya jika ingin menggantinya.
+                <footer class="smartoffice-pengelolaan-spd-payment-footer">
+                    <p>
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <circle cx="12" cy="12" r="9"
+                                    stroke="currentColor"
+                                    stroke-width="1.6"/>
+                            <path d="M12 10.5v5M12 7.5h.01"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                        </svg>
+                        Periksa kembali nominal dan tanggal transfer.
                     </p>
-                ` : ""}
 
-                <div class="smartoffice-pengelolaan-spd-modal-actions">
-                    <button type="button" class="secondary"
-                            data-modal-cancel>
-                        Batal
-                    </button>
-                    <button type="button" class="primary"
-                            data-payment-save>
-                        Simpan Pembayaran
-                    </button>
-                </div>
+                    <div class="smartoffice-pengelolaan-spd-modal-actions">
+                        <button type="button"
+                                class="secondary"
+                                data-modal-cancel>
+                            Batal
+                        </button>
+
+                        <button type="button"
+                                class="primary"
+                                data-payment-save>
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 aria-hidden="true">
+                                <path d="M5 4h12l3 3v13H4V4h1Z"
+                                      stroke="currentColor"
+                                      stroke-width="1.7"
+                                      stroke-linejoin="round"/>
+                                <path d="M8 4v6h8V4M8 20v-6h8v6"
+                                      stroke="currentColor"
+                                      stroke-width="1.7"
+                                      stroke-linejoin="round"/>
+                            </svg>
+                            <span>Simpan Pembayaran</span>
+                        </button>
+                    </div>
+                </footer>
+
             </section>
         </div>
     `;
-
+    
     const root = smartofficePengelolaanSPDOpenModal(content);
 
-    const uangInput = root.querySelector("#pengelolaanSpdPaymentUang");
-    const petugasInput = root.querySelector("#pengelolaanSpdPaymentPetugas");
-    const totalOutput = root.querySelector("#pengelolaanSpdPaymentTotal");
-    const fileInput = root.querySelector("#pengelolaanSpdPaymentBukti");
+    const uangInput =
+        root.querySelector("#pengelolaanSpdPaymentUang");
+    const petugasInput =
+        root.querySelector("#pengelolaanSpdPaymentPetugas");
+    const totalOutput =
+        root.querySelector("#pengelolaanSpdPaymentTotal");
+    const fileInput =
+        root.querySelector("#pengelolaanSpdPaymentBukti");
+    const fileNameOutput =
+        root.querySelector("#pengelolaanSpdPaymentFileName");
+    const fileHintOutput =
+        root.querySelector("#pengelolaanSpdPaymentFileHint");
+    const saveButton =
+        root.querySelector("[data-payment-save]");
 
+    /* TAMBAHKAN KODE PILIHAN NOMINAL DI SINI */
+    const paymentPresets = [
+        ...root.querySelectorAll("[data-payment-amount]")
+    ];
+
+    function selectPaymentAmount(amount) {
+        uangInput.value = String(amount);
+
+        paymentPresets.forEach(button => {
+            const selected =
+                Number(button.dataset.paymentAmount) === amount;
+
+            button.classList.toggle("is-selected", selected);
+            button.setAttribute(
+                "aria-pressed",
+                selected ? "true" : "false"
+            );
+        });
+
+        updateTotal();
+    }
+
+    paymentPresets.forEach(button => {
+        button.addEventListener("click", () => {
+            selectPaymentAmount(
+                Number(button.dataset.paymentAmount)
+            );
+        });
+    });
+
+    /* Fungsi updateTotal() yang lama tetap di bawah */
     function updateTotal() {
         const jumlahUang = Number(uangInput.value) || 0;
         const jumlahOrang = Number(petugasInput.value) || 0;
 
         totalOutput.textContent =
-            "Rp" + (jumlahUang * jumlahOrang).toLocaleString("id-ID");
+            "Rp" +
+            (jumlahUang * jumlahOrang).toLocaleString("id-ID");
     }
 
     uangInput.addEventListener("input", updateTotal);
     petugasInput.addEventListener("input", updateTotal);
 
-    root.querySelector("[data-modal-cancel]")
-        ?.addEventListener("click", smartofficePengelolaanSPDCloseModal);
+    fileInput.addEventListener("change", () => {
+        const file = fileInput.files?.[0];
+
+        if (!file) {
+            fileNameOutput.textContent = buktiTransfer
+                ? "Bukti transfer sebelumnya tersedia"
+                : "Pilih file bukti transfer";
+
+            fileHintOutput.textContent =
+                "PDF, JPG, atau PNG · Maksimal 10 MB";
+            return;
+        }
+
+        fileNameOutput.textContent = file.name;
+        fileHintOutput.textContent =
+            `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+    });
+
+    root.querySelectorAll("[data-modal-cancel]")
+        .forEach(button => {
+            button.addEventListener(
+                "click",
+                smartofficePengelolaanSPDCloseModal
+            );
+        });
 
     root.querySelector("[data-modal-dismiss]")
         ?.addEventListener("click", event => {
@@ -2714,89 +3133,87 @@ function smartofficePengelolaanSPDShowPayment(item) {
             }
         });
 
-    root.querySelector("[data-payment-save]")
-        ?.addEventListener("click", async event => {
-            const button = event.currentTarget;
-            const jumlahUang = Number(uangInput.value);
-            const jumlahPetugasDibayarkan = Number(petugasInput.value);
-            const tglTransfer = root.querySelector(
-                "#pengelolaanSpdPaymentTanggal"
-            ).value;
-            const file = fileInput.files[0];
+    saveButton?.addEventListener("click", async () => {
+        const jumlahUang = Number(uangInput.value);
+        const jumlahPetugasDibayarkan =
+            Number(petugasInput.value);
 
-            if (!Number.isFinite(jumlahUang) || jumlahUang <= 0) {
-                smartofficeShowToast(
-                    "Jumlah uang per orang harus lebih dari nol.",
-                    "error"
-                );
-                uangInput.focus();
-                return;
-            }
+        const tglTransfer = root.querySelector(
+            "#pengelolaanSpdPaymentTanggal"
+        ).value;
 
-            if (!Number.isInteger(jumlahPetugasDibayarkan) ||
-                jumlahPetugasDibayarkan <= 0) {
-                smartofficeShowToast(
-                    "Jumlah petugas dibayarkan harus diisi.",
-                    "error"
-                );
-                petugasInput.focus();
-                return;
-            }
+        const file = fileInput.files?.[0];
 
-            if (!tglTransfer) {
-                smartofficeShowToast(
-                    "Tanggal transfer wajib diisi.",
-                    "error"
-                );
-                return;
-            }
-
-            if (!file && !buktiTransfer) {
-                smartofficeShowToast(
-                    "Silakan pilih file bukti transfer.",
-                    "error"
-                );
-                fileInput.focus();
-                return;
-            }
-
-            if (file && ![
-                "application/pdf",
-                "image/jpeg",
-                "image/png"
-            ].includes(file.type)) {
-                smartofficeShowToast(
-                    "File harus berupa PDF, JPG, atau PNG.",
-                    "error"
-                );
-                return;
-            }
-
-            // Batas ukuran file 10 MB.
-            if (file && file.size > 10 * 1024 * 1024) {
-                smartofficeShowToast(
-                    "Ukuran file maksimal 10 MB.",
-                    "error"
-                );
-                return;
-            }
-
-            /*
-             * Integrasi penyimpanan:
-             * Upload file ke Drive, lalu simpan:
-             * JUMLAH UANG, TGL_TRANSFER,
-             * BUKTI_TRANSFER_URL, kolom BM dan BN.
-             *
-             * Belum memanggil backend karena nama fungsi
-             * penyimpanan pembayaran perlu dicocokkan
-             * dengan service GAS yang aktif.
-             */
+        if (!Number.isFinite(jumlahUang) || jumlahUang <= 0) {
             smartofficeShowToast(
-                "Modal siap. Integrasi penyimpanan GAS perlu disambungkan.",
-                "warning"
+                "Jumlah uang per orang harus lebih dari nol.",
+                "error"
             );
-        });
+            uangInput.focus();
+            return;
+        }
+
+        if (!Number.isInteger(jumlahPetugasDibayarkan) ||
+            jumlahPetugasDibayarkan <= 0) {
+            smartofficeShowToast(
+                "Jumlah petugas dibayarkan harus diisi.",
+                "error"
+            );
+            petugasInput.focus();
+            return;
+        }
+
+        if (!tglTransfer) {
+            smartofficeShowToast(
+                "Tanggal transfer wajib diisi.",
+                "error"
+            );
+            root.querySelector(
+                "#pengelolaanSpdPaymentTanggal"
+            ).focus();
+            return;
+        }
+
+        if (!file && !buktiTransfer) {
+            smartofficeShowToast(
+                "Silakan pilih file bukti transfer.",
+                "error"
+            );
+            fileInput.focus();
+            return;
+        }
+
+        if (file && ![
+            "application/pdf",
+            "image/jpeg",
+            "image/png"
+        ].includes(file.type)) {
+            smartofficeShowToast(
+                "File harus berupa PDF, JPG, atau PNG.",
+                "error"
+            );
+            return;
+        }
+
+        if (file && file.size > 10 * 1024 * 1024) {
+            smartofficeShowToast(
+                "Ukuran file maksimal 10 MB.",
+                "error"
+            );
+            return;
+        }
+
+        /*
+         * Integrasi backend belum dipasang.
+         * Jangan menampilkan pesan sukses palsu.
+         */
+        smartofficeShowToast(
+            "Integrasi penyimpanan pembayaran GAS belum disambungkan.",
+            "warning"
+        );
+    });
 }
+
 
 
 
@@ -2848,7 +3265,6 @@ function smartofficePengelolaanSPDOpenModal(html) {
     return wrapper;
 }
 
-
 /* ======================================================
    TUTUP MODAL
 ====================================================== */
@@ -2860,6 +3276,7 @@ function smartofficePengelolaanSPDCloseModal() {
 }
 
 
+
 /* ======================================================
    HELPERS
 ====================================================== */
@@ -2868,7 +3285,6 @@ function smartofficePengelolaanSPDCloseModal() {
    PARSE TANGGAL
    Mendukung ISO, dd/mm/yyyy, dan tanggal Indonesia
 ====================================================== */
-
 function smartofficeParseDate(value) {
     const text = String(value || "").trim();
 
@@ -2945,7 +3361,6 @@ function smartofficeParseDate(value) {
     return null;
 }
 
-
 /* ======================================================
    FORMAT TANGGAL
 ====================================================== */
@@ -2963,7 +3378,6 @@ function smartofficeFormatDate(value) {
     }).format(date);
 }
 
-
 /* ======================================================
    ESCAPE HTML
 ====================================================== */
@@ -2975,7 +3389,6 @@ function smartofficeEscapeHTML(value) {
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
 }
-
 
 /* ======================================================
    VALIDASI URL HTTP / HTTPS
@@ -2992,7 +3405,6 @@ function smartofficeSafeHttpURL(value) {
     }
 }
 
-
 /* ======================================================
    SLUG
 ====================================================== */
@@ -3002,7 +3414,6 @@ function smartofficeSlug(value) {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/^-|-$/g, "");
 }
-
 
 /* ======================================================
    ICON SVG
@@ -3090,4 +3501,108 @@ function smartofficeIcon(name) {
             ${paths[name] || ""}
         </svg>
     `;
+}
+
+/* ======================================================
+   FORMAT TANGGAL JADWAL SPD
+   Contoh: 5 Oktober 2026 → 05 Oktober 2026
+====================================================== */
+function smartofficeFormatTanggalJadwal(value) {
+    if (!value) return "";
+
+    const match = String(value).trim().match(
+        /^(\d{1,2})\s+(Januari|Februari|Maret|April|Mei|Juni|Juli|Agustus|September|Oktober|November|Desember)\s+(\d{4})$/i
+    );
+
+    if (!match) return String(value);
+
+    const hari = match[1].padStart(2, "0");
+    const bulan = match[2];
+    const tahun = match[3];
+
+    return `${hari} ${bulan} ${tahun}`;
+}
+
+/* ======================================================
+   FORMAT TANGGAL PANJANG CARD SPD
+   Mendukung ISO date dan ISO datetime
+====================================================== */
+function smartofficeFormatDateLongCard(value) {
+    if (!value) return "-";
+
+    const text = String(value).trim();
+
+    // Ambil tanggal dari YYYY-MM-DD atau YYYY-MM-DDTHH:mm:ss...
+    const match = text.match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/
+    );
+
+    if (match) {
+        const [, tahun, bulan, hari] = match;
+
+        const namaBulan = [
+            "Januari", "Februari", "Maret", "April",
+            "Mei", "Juni", "Juli", "Agustus",
+            "September", "Oktober", "November", "Desember"
+        ];
+
+        const nomorBulan = Number(bulan);
+
+        if (nomorBulan < 1 || nomorBulan > 12) {
+            return text;
+        }
+
+        return `${hari} ${namaBulan[nomorBulan - 1]} ${tahun}`;
+    }
+
+    return text;
+}
+
+/* ======================================================
+   FORMAT TANGGAL DETAIL REVIEW SPD
+   ISO → 09 Oktober 2026
+====================================================== */
+function smartofficeFormatTanggalReview(value) {
+    if (!value || String(value).trim() === "") {
+        return "—";
+    }
+
+    const match = String(value).trim().match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:T.*)?$/
+    );
+
+    if (!match) {
+        return String(value);
+    }
+
+    const [, tahun, bulan, hari] = match;
+
+    const namaBulan = [
+        "Januari", "Februari", "Maret", "April",
+        "Mei", "Juni", "Juli", "Agustus",
+        "September", "Oktober", "November", "Desember"
+    ];
+
+    return `${hari} ${namaBulan[Number(bulan) - 1]} ${tahun}`;
+}
+
+/* ======================================================
+   FORMAT RUPIAH DETAIL SPD
+====================================================== */
+function smartofficeFormatRupiah(value) {
+    if (value === null || value === undefined || value === "") {
+        return "—";
+    }
+
+    const angka = Number(
+        String(value).replace(/[^\d,-]/g, "").replace(",", ".")
+    );
+
+    if (!Number.isFinite(angka)) {
+        return String(value);
+    }
+
+    return "Rp " + angka.toLocaleString("id-ID", {
+        maximumFractionDigits: 0
+    });
 }
