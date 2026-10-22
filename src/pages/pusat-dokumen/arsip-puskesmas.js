@@ -2901,10 +2901,42 @@ function showForm(record = null) {
         return;
     }
 
-    const years = Array.from(
-        { length: 12 },
-        (_, i) => new Date().getFullYear() - i
-    );
+    /* ======================================================
+       PILIHAN TAHUN DOKUMEN
+       Dari tahun 2030 sampai 12 tahun sebelum tahun berjalan,
+       serta mempertahankan tahun lama yang ada pada arsip.
+    ====================================================== */
+    const currentYear = new Date().getFullYear();
+
+    const years = [
+        ...new Set([
+            ...Array.from(
+                { length: 2030 - (currentYear - 11) + 1 },
+                (_, i) => 2030 - i
+            ),
+            ...(state.records || [])
+                .map(record =>
+                    Number(
+                        record.tahunDokumen ||
+                        record.Tahun_Dokumen ||
+                        record.tahun ||
+                        ""
+                    )
+                )
+                .filter(year =>
+                    Number.isInteger(year) &&
+                    year >= 1900 &&
+                    year <= 9999
+                ),
+            ...(record ? [Number(
+                record.tahunDokumen ||
+                record.Tahun_Dokumen ||
+                ""
+            )] : [])
+        ])
+    ]
+        .filter(year => Number.isInteger(year))
+        .sort((a, b) => b - a);
 
     const id = String(
         record?.idArsip || record?.ID_Arsip || record?.id || ""

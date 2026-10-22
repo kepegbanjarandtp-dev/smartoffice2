@@ -1180,7 +1180,7 @@ function smartofficeRenderPengelolaanSPDList(data) {
                             </strong>
 
                             <span>
-                                SPD PERJALANAN DINAS
+                                SURAT PERJALANAN DINAS
                             </span>
                         </div>
                     </div>
@@ -1499,7 +1499,7 @@ function smartofficeApplyPengelolaanSPDFilters() {
         // Filter status SPD
         if (
             status &&
-            item.statusSPD !== status
+            String(item.statusSPD || "").trim().toUpperCase() !== status
         ) {
             return false;
         }
@@ -1522,8 +1522,9 @@ function smartofficeApplyPengelolaanSPDFilters() {
 
 }
 
+
 /* ======================================================
-   3. ISI DROPDOWN BULAN DAN TAHUN
+   3. ISI DROPDOWN FILTER BULAN, TAHUN, DAN STATUS SPD
    Pilihan dibuat berdasarkan data SPD yang tersedia
 ====================================================== */
 function smartofficePopulatePengelolaanSPDFilters() {
@@ -1539,11 +1540,16 @@ function smartofficePopulatePengelolaanSPDFilters() {
         "smartofficePengelolaanSPDYear"
     );
 
+    const statusSelect = document.getElementById(
+        "smartofficePengelolaanSPDStatus"
+    );
+
     /* ----------------------------------------------
        SIMPAN PILIHAN SEBELUM DIPERBARUI
     ---------------------------------------------- */
     const selectedMonth = monthSelect?.value || "";
     const selectedYear = yearSelect?.value || "";
+    const selectedStatus = statusSelect?.value || "";
 
     /* ----------------------------------------------
        KUMPULKAN TANGGAL SPD
@@ -1604,7 +1610,6 @@ function smartofficePopulatePengelolaanSPDFilters() {
                 `;
             }).join("");
 
-        // Pertahankan pilihan jika masih tersedia
         monthSelect.value = months.includes(
             Number(selectedMonth)
         )
@@ -1627,14 +1632,46 @@ function smartofficePopulatePengelolaanSPDFilters() {
                 `;
             }).join("");
 
-        // Pertahankan pilihan jika masih tersedia
         yearSelect.value = years.includes(
             Number(selectedYear)
         )
             ? selectedYear
             : "";
     }
+
+    /* ==================================================
+       6. DROPDOWN STATUS SPD
+    ================================================== */
+    if (statusSelect) {
+        const statuses = [
+            ...new Set(
+                smartofficePengelolaanSPDData
+                    .map(item =>
+                        String(item.statusSPD || "")
+                            .trim()
+                            .toUpperCase()
+                    )
+                    .filter(Boolean)
+            )
+        ].sort((a, b) => a.localeCompare(b, "id"));
+
+        statusSelect.innerHTML =
+            '<option value="">Semua Status</option>' +
+
+            statuses.map(status => `
+                <option value="${smartofficeEscapeHTML(status)}">
+                    ${smartofficeEscapeHTML(status)}
+                </option>
+            `).join("");
+
+        statusSelect.value = statuses.includes(
+            selectedStatus.trim().toUpperCase()
+        )
+            ? selectedStatus.trim().toUpperCase()
+            : "";
+    }
 }
+
 
 /* ======================================================
    ACTIONS — PENGELOLAAN SPD
@@ -2047,8 +2084,7 @@ function smartofficePengelolaanSPDVerifySPJ(item) {
                     Verifikasi SPJ
                 </h3>
 
-                <p>
-                    SPD
+                <p>                    
                     <strong>
                         ${smartofficeEscapeHTML(item.idSPD)}
                     </strong>
@@ -2471,7 +2507,7 @@ function smartofficePengelolaanSPDShowDetail(item) {
                         ${escape(idSPD)}
                     </h2>
 
-                    <p>SPD Perjalanan Dinas</p>
+                    <p>Surat Perjalanan Dinas</p>
                 </div>
 
                 <button
@@ -2652,13 +2688,12 @@ function smartofficePengelolaanSPDShowDetail(item) {
                         )}
                     </div>
                 </section>
-
             </div>
 
             <div class="smartoffice-pengelolaan-spd-detail-view-footer">
                 <button
                     type="button"
-                    class="smartoffice-pengelolaan-spd-detail-view-close"
+                    class="smartoffice-pengelolaan-spd-detail-view-close-tutup"
                     data-detail-close="true"
                 >
                     Tutup
@@ -2815,32 +2850,30 @@ function smartofficePengelolaanSPDShowPayment(item) {
                                 <span class="required">*</span>
                             </label>
 
-                            <div class="smartoffice-pengelolaan-spd-payment-presets">
-
+                            <div class="smartoffice-pengelolaan-spd-payment-presets">                                
                                 <button type="button"
                                         class="smartoffice-pengelolaan-spd-payment-preset"
                                         data-payment-amount="105000">
-                                    Rp105.000
+                                    Rp 105.000
                                 </button>
 
                                 <button type="button"
                                         class="smartoffice-pengelolaan-spd-payment-preset"
                                         data-payment-amount="150000">
-                                    Rp150.000
+                                    Rp 150.000
                                 </button>
 
                                 <button type="button"
                                         class="smartoffice-pengelolaan-spd-payment-preset"
                                         data-payment-amount="170000">
-                                    Rp170.000
+                                    Rp 170.000
                                 </button>
 
                                 <button type="button"
                                         class="smartoffice-pengelolaan-spd-payment-preset"
                                         data-payment-amount="430000">
-                                    Rp430.000
+                                    Rp 430.000
                                 </button>
-
                             </div>
 
                             <input id="pengelolaanSpdPaymentUang"
@@ -3093,13 +3126,13 @@ function smartofficePengelolaanSPDShowPayment(item) {
         const jumlahOrang = Number(petugasInput.value) || 0;
 
         totalOutput.textContent =
-            "Rp" +
+            "Rp " +
             (jumlahUang * jumlahOrang).toLocaleString("id-ID");
     }
 
     uangInput.addEventListener("input", updateTotal);
     petugasInput.addEventListener("input", updateTotal);
-
+    
     fileInput.addEventListener("change", () => {
         const file = fileInput.files?.[0];
 
@@ -3109,13 +3142,21 @@ function smartofficePengelolaanSPDShowPayment(item) {
                 : "Pilih file bukti transfer";
 
             fileHintOutput.textContent =
-                "PDF, JPG, atau PNG · Maksimal 10 MB";
+                "PDF, JPG, atau PNG · Maksimal 1 MB";
             return;
         }
 
         fileNameOutput.textContent = file.name;
+
+        const ukuranMB = file.size / (1024 * 1024);
+
         fileHintOutput.textContent =
-            `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+            `${ukuranMB.toFixed(2)} MB · Maksimal 1 MB`;
+
+        if (file.size > 1 * 1024 * 1024) {
+            fileHintOutput.textContent =
+                `${ukuranMB.toFixed(2)} MB · Melebihi batas 1 MB`;
+        }
     });
 
     root.querySelectorAll("[data-modal-cancel]")
@@ -3194,12 +3235,13 @@ function smartofficePengelolaanSPDShowPayment(item) {
             );
             return;
         }
-
-        if (file && file.size > 10 * 1024 * 1024) {
+        
+        if (file && file.size > 1 * 1024 * 1024) {
             smartofficeShowToast(
-                "Ukuran file maksimal 10 MB.",
+                "Ukuran file maksimal 1 MB.",
                 "error"
             );
+            fileInput.focus();
             return;
         }
 
