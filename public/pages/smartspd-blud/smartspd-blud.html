@@ -146,7 +146,7 @@
     ========================= -->
     <div
       id="smartofficeFormSPDContent"
-      class="smartoffice-cuti-content"
+      class="smartoffice-spd-content"
     >
       <div class="smartoffice-spd-form-card">
 
@@ -224,24 +224,25 @@
                 <span>Data Pegawai</span>
             </div>
 
-            <div class="smartoffice-cuti-form-grid">
-                <div class="smartoffice-cuti-form-group">
+            <div class="smartoffice-spd-form-grid">
+                <div class="smartoffice-spd-form-group">
                     <label>Nama <span class="required">*</span></label>
 
                     <input
                         id="smartofficeSPDNama"
                         type="text"
-                        placeholder="Cari atau pilih pegawai..."
+                        placeholder="Nama pegawai otomatis"
                         autocomplete="off"
+                        readonly
                     >
 
                     <div
                         id="smartofficeSPDNamaAutocomplete"
-                        class="smartoffice-cuti-autocomplete-list"
+                        class="smartoffice-spd-autocomplete-list"
                     ></div>
                 </div>
 
-                <div class="smartoffice-cuti-form-group">
+                <div class="smartoffice-spd-form-group">
                     <label>NIP / NRP</label>
                     <input
                         id="smartofficeSPDNip"
@@ -250,7 +251,7 @@
                     >
                 </div>
 
-                <div class="smartoffice-cuti-form-group">
+                <div class="smartoffice-spd-form-group">
                     <label>Pangkat & Golongan</label>
                     <input
                         id="smartofficeSPDPangkat"
@@ -259,7 +260,7 @@
                     >
                 </div>
 
-                <div class="smartoffice-cuti-form-group">
+                <div class="smartoffice-spd-form-group">
                     <label>Jabatan</label>
                     <input
                         id="smartofficeSPDJabatan"
@@ -268,7 +269,7 @@
                     >
                 </div>
 
-                <div class="smartoffice-cuti-form-group">
+                <div class="smartoffice-spd-form-group">
                     <label>Email</label>
                     <input
                         id="smartofficeSPDEmail"
@@ -277,7 +278,7 @@
                     >
                 </div>
 
-                <div class="smartoffice-cuti-form-group">
+                <div class="smartoffice-spd-form-group">
                     <label>No. WhatsApp</label>
                     <input
                         id="smartofficeSPDNoWA"
@@ -300,8 +301,8 @@
                 <span>Detail Perjalanan</span>
             </div>
 
-            <div class="smartoffice-cuti-form-grid">
-                <div class="smartoffice-cuti-form-group">
+            <div class="smartoffice-spd-form-grid">
+                <div class="smartoffice-spd-form-group">
                     <label>
                         Alat Angkut
                         <span class="required">*</span>
@@ -331,7 +332,7 @@
                 </div>
             </div>
 
-            <div class="smartoffice-cuti-form-group">
+            <div class="smartoffice-spd-form-group">
                 <label>
                     Kegiatan
                     <span class="required">*</span>
@@ -345,7 +346,7 @@
                 ></textarea>
             </div>
 
-            <div class="smartoffice-cuti-form-group">
+            <div class="smartoffice-spd-form-group">
                 <label>
                     Lokasi
                     <span class="required">*</span>
@@ -440,22 +441,76 @@
                     id="smartofficeSPDTipeContainer"
                     class="smartoffice-spd-trip-type"
                 >
+                    <!-- PULANG PERGI -->
                     <button
                         type="button"
                         id="smartofficeSPDTipePulangPergi"
                         class="smartoffice-spd-trip-button"
                         data-value="PULANG_PERGI"
                     >
-                        Pulang Pergi
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M7 7h13l-3-3"/>
+                            <path d="M20 7l-3 3"/>
+                            <path d="M17 17H4l3 3"/>
+                            <path d="M4 17l3-3"/>
+                        </svg>
+
+                        <span>Pulang Pergi</span>
+                        <svg class="smartoffice-spd-trip-lock-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+                            <rect x="4" y="10" width="16" height="11" rx="2"/>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                        </svg>
                     </button>
 
+                    <!-- MENGINAP -->
                     <button
                         type="button"
                         id="smartofficeSPDTipeMenginap"
                         class="smartoffice-spd-trip-button"
                         data-value="MENGINAP"
                     >
-                        Menginap
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M3 20V5"/>
+                            <path d="M3 16h18v4"/>
+                            <path d="M3 12h18a2 2 0 0 1 2 2v2"/>
+                            <path d="M7 12V9a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3"/>
+                        </svg>
+
+                        <span>Menginap</span>
+                        <svg class="smartoffice-spd-trip-lock-icon"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.8"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true">
+                            <rect x="4" y="10" width="16" height="11" rx="2"/>
+                            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                        </svg>
                     </button>
                 </div>
 
@@ -680,7 +735,7 @@
     ========================= -->
     <div
         id="smartofficeRiwayatSPDContent"
-        class="smartoffice-cuti-content"
+        class="smartoffice-spd-content"
         style="display:none;"
     >
         <!-- FILTER RIWAYAT SPD -->
@@ -858,7 +913,7 @@
     ========================= -->
     <div
         id="smartofficeRekapSPDContent"
-        class="smartoffice-cuti-content"
+        class="smartoffice-spd-content"
         style="display: none;"
     >
         <div class="smartoffice-spd-form-card">
