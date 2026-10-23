@@ -637,7 +637,7 @@ export async function smartofficeRefreshSPD(){
 
 /* ======================================================
    7.2 SWITCH TAB SPD
-   FORM SPD / RIWAYAT SPD / OVERVIEW SPD
+   FORM SPD / RIWAYAT SPD
 ====================================================== */
 export function smartofficeSwitchSPDTab(tab){
 
@@ -650,10 +650,6 @@ export function smartofficeSwitchSPDTab(tab){
             button: "smartofficeTabRiwayatSPD",
             content: "smartofficeRiwayatSPDContent"
         },
-        rekap: {
-            button: "smartofficeTabRekapSPD",
-            content: "smartofficeRekapSPDContent"
-        }
     };
 
     // VALIDASI TAB
@@ -1538,6 +1534,34 @@ function smartofficeRenderSPDTimeline(){
         return;
     }
 
+    /* ==================================================
+    VALIDASI LOKASI DETAIL PERJALANAN
+    JADWAL TIDAK DITAMPILKAN JIKA LOKASI KOSONG
+    ================================================== */
+    const lokasiTujuan =
+        document.getElementById(
+            "smartofficeSPDLokasi"
+        )?.value.trim() || "";
+
+    if(!lokasiTujuan){
+        if(emptyState){
+            emptyState.textContent =
+                "Isi terlebih dahulu lokasi pada Detail Perjalanan.";
+
+            emptyState.style.display = "block";
+        }
+
+        // Gunakan fungsi toast yang sudah tersedia
+        if(typeof smartofficeShowToast === "function"){
+            smartofficeShowToast(
+                "Isi terlebih dahulu lokasi pada Detail Perjalanan.",
+                "warning"
+            );
+        }
+
+        return;
+    }
+
     /* =========================
        PULANG PERGI MAX 3 HARI
     ========================= */
@@ -1651,14 +1675,6 @@ function smartofficeRenderSPDTimeline(){
     ========================= */
     const totalHari =
         Number(jumlahHari);
-
-    /* =========================
-       AMBIL LOKASI TUJUAN
-    ========================= */
-    const lokasiTujuan =
-        document.getElementById(
-            "smartofficeSPDLokasi"
-        )?.value.trim() || "";
 
     /* =========================
        ASAL / KEMBALI
@@ -3489,58 +3505,33 @@ async function smartofficeLoadRiwayatSPD(){
 }
 
 /* ======================================================
-   16.6 FILTER SPD SESUAI USER
-   NIP UTAMA ATAU PENGIKUT
+   16.6 FILTER RIWAYAT SPD SESUAI NIP USER LOGIN
+   NIP PETUGAS UTAMA ATAU NIP PENGIKUT
+   TANPA PENGECUALIAN ROLE
 ====================================================== */
-function smartofficeFilterSPDByUser(data){
+function smartofficeFilterSPDByUser(data) {
+    const sessionData = smartofficeGetSession();
 
-    const sessionData =
-        smartofficeGetSession();
-    if(!sessionData){
+    if (!sessionData || !sessionData.nip || !Array.isArray(data)) {
         return [];
     }
 
-    const role =
-        String(sessionData.role || "")
-            .trim()
-            .toUpperCase();
+    const normalizeNIP = value =>
+        String(value ?? "").trim().replace(/\s+/g, "");
 
-    const nipUser =
-        String(sessionData.nip || "")
-            .trim();
+    const nipUser = normalizeNIP(sessionData.nip);
 
-    /* ================================================
-       ROLE KHUSUS → LIHAT SEMUA SPD
-    ================================================ */
-    if(
-        role === "ADMIN" ||
-        role === "PJ" ||
-        role === "SUPERADMIN"
-    ){
-        return data;
-    }
+    return data.filter(function(item) {
+        const nipUtama = normalizeNIP(item.nip);
 
-    /* ================================================
-       PEGAWAI → NIP UTAMA ATAU PENGIKUT
-    ================================================ */
-    return data.filter(function(item){
+        const isPetugasUtama = nipUtama === nipUser;
 
-        const nipUtama =
-            String(item.nip || "")
-                .trim();
-        if(nipUtama === nipUser){
-            return true;
-        }
+        const isPengikut = Array.isArray(item.nipPengikut) &&
+            item.nipPengikut.some(function(nip) {
+                return normalizeNIP(nip) === nipUser;
+            });
 
-        const pengikut =
-            Array.isArray(item.nipPengikut)
-                ? item.nipPengikut
-                : [];
-
-        return pengikut.some(function(nip){
-            return String(nip || "")
-                .trim() === nipUser;
-        });
+        return isPetugasUtama || isPengikut;
     });
 }
 
