@@ -1783,7 +1783,7 @@
         overflow-wrap: anywhere;
         flex-shrink: 0;
         padding: 7px 9px;
-        font-size: 9px;
+        font-size: 8px;
     }
 
     .smartoffice-pengelolaan-spd-jenis-perjalanan {
@@ -1945,6 +1945,34 @@
     .smartoffice-pengelolaan-spd-card-payment-date {
         font-size: 9px;
         overflow-wrap: anywhere;
+    }
+
+    /* =========================================================
+       TOMBOL DETAIL SPD - OK
+    ========================================================= */
+    .smartoffice-pengelolaan-spd-card-detail {
+        min-height: 28px;
+        font-size: 9px;
+    }
+
+    .smartoffice-pengelolaan-spd-card-detail svg {
+        display: block;
+        width: 12px;
+        height: 12px;
+    }
+
+    /* =========================================================
+       TOMBOL MENU TIGA TITIK - OK
+    ========================================================= */
+    .smartoffice-pengelolaan-spd-card-more {
+        flex: 0 0 28px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .smartoffice-pengelolaan-spd-card-more svg {
+        width: 14px;
+        height: 14px;
     }
 }
 
@@ -2434,56 +2462,200 @@
     }
 }
 
+
+
 /* ==========================================================
-   RESPONSIVE — TABLET
+   RESPONSIVE MOBILE — DETAIL SPD
 ========================================================== */
 
 @media (max-width: 768px) {
     .smartoffice-pengelolaan-spd-detail-view-modal {
-        padding: 14px;
+        padding: 6px;
     }
 
     .smartoffice-pengelolaan-spd-detail-view-dialog {
-        max-height: calc(100vh - 28px);
-        border-radius: 16px;
+        width: 100%;
+        max-width: none;
+        max-height: calc(100vh - 12px);
+        border-radius: 15px;
     }
 
+    /* HEADER */
     .smartoffice-pengelolaan-spd-detail-view-header {
-        gap: 12px;
-        padding: 18px 16px 14px;
+        gap: 4px;
+        padding: 10px 14px 4px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-eyebrow {
+        font-size: 9px;
+        margin-bottom: 2px;
     }
 
     .smartoffice-pengelolaan-spd-detail-view-header h2 {
-        font-size: 18px;
+        font-size: 12px;
     }
 
+    .smartoffice-pengelolaan-spd-detail-view-header p {
+        font-size: 10px;
+        margin: 1px 0 0;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-close {
+        flex: 0 0 24px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-close svg {
+        width: 13px;
+        height: 13px;
+    }
+
+    /* STATUS SPD DAN LOCK */
     .smartoffice-pengelolaan-spd-detail-view-status-row {
-        padding: 12px 16px;
+        gap: 6px;
+        padding: 6px 14px;
     }
 
+    .smartoffice-pengelolaan-spd-detail-view-status,
+    .smartoffice-pengelolaan-spd-detail-view-lock {
+        min-height: 20px;
+        padding: 3px 8px;
+        font-size: 8px;
+    }
+
+    /* BODY */
     .smartoffice-pengelolaan-spd-detail-view-body {
-        padding: 16px;
+        padding: 10px 14px 4px;
+    }
+
+    /* SECTION */
+    .smartoffice-pengelolaan-spd-detail-view-section {
+        padding: 10px 0;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-section-title {
+        margin-bottom: 6px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-section-title > span {
+        font-size: 9px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-section-title small {
+        font-size: 10px;
+    }
+
+    /* GRID INFORMASI */
+    .smartoffice-pengelolaan-spd-detail-view-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-field {
+        padding: 6px 10px;
+        border-radius: 9px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-field > span {
+        margin-bottom: 2px;
+        font-size: 8px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-field > strong {
+        font-size: 9px;
+        line-height: 1.35;
+    }
+    
+    .smartoffice-pengelolaan-spd-detail-view-field > .smartoffice-pengelolaan-spd-detail-view-link {
+        display: block;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        font-size: 9px;
+        line-height: 1.35;
+        font-weight: 700;
+        oveflow-wrap: anywhere;
+    }
+    
+    .smartoffice-pengelolaan-spd-detail-view-grid > .smartoffice-pengelolaan-spd-detail-view-field {
+        min-height: 0;
+        box-sizing: border-box;
+    }
+
+    /* JADWAL PERJALANAN */
+    .smartoffice-pengelolaan-spd-detail-view-schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px !important;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-schedule {
+        position: relative;
+        flex: 0 0 auto;
+        margin: 0 0 6px;
+        padding: 9px;
+        border: 1px solid #e8edf3;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-schedule-title {
+        margin-bottom: 2px;
+        font-size: 9px;
     }
 
     .smartoffice-pengelolaan-spd-detail-view-schedule-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
     }
 
+    /* DAFTAR PENGIKUT */
     .smartoffice-pengelolaan-spd-detail-view-followers {
         grid-template-columns: minmax(0, 1fr);
+        gap: 7px;
     }
 
+    .smartoffice-pengelolaan-spd-detail-view-follower {
+        gap: 8px;
+        padding: 9px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-follower-number {
+        flex-basis: 18px;
+        width: 18px;
+        height: 18px;
+        font-size: 8px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-follower-info strong {
+        font-size: 10px;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-follower-info span {
+        font-size: 9px;
+    }
+
+    /* EMPTY STATE */
+    .smartoffice-pengelolaan-spd-detail-view-empty {
+        font-size: 10px;
+    }
+
+    /* FOOTER DAN TOMBOL TUTUP */
     .smartoffice-pengelolaan-spd-detail-view-footer {
-        padding: 8px 10px;
+        padding: 7px 10px;
     }
 
     .smartoffice-pengelolaan-spd-detail-view-close-tutup {
-        min-height: 30px;
-        padding: 5px 9px;
-        font-size: 12px;
+        min-height: 29px;
+        padding: 4px 9px;
+        font-size: 10px;
         border-radius: 7px;
     }
 }
+
+
 
 
 
@@ -2694,30 +2866,89 @@
     overflow-wrap: anywhere;
 } */
 
-/* RESPONSIVE */
+
+/* RESPONSIVE MOBILE */
 @media (max-width: 768px) {
     .smartoffice-pengelolaan-spd-modal-backdrop {
-        padding: 14px;
+        padding: 18px;
     }
 
     .smartoffice-pengelolaan-spd-modal {
-        padding: 20px;
+        width: calc(100% - 12px);
+        max-width: 400px;
+        max-height: min(88vh, 760px);
+        padding: 16px;
         border-radius: 16px;
+        box-sizing: border-box;
     }
 
+    .smartoffice-pengelolaan-spd-modal.wide {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* IKON MODAL */
+    .smartoffice-pengelolaan-spd-modal-icon {
+        width: 38px;
+        height: 38px;
+        margin-bottom: 8px;
+        border-radius: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-modal-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* JUDUL MODAL */
     .smartoffice-pengelolaan-spd-modal h3 {
-        font-size: 18px;
+        margin-bottom: 14px;
+        font-size: 14px;
+        line-height: 1.4;
     }
 
+    /* TEKS DAN IDENTITAS */
+    .smartoffice-pengelolaan-spd-modal p {
+        margin-bottom: 12px;
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    /* LABEL FORM */
+    .smartoffice-pengelolaan-spd-modal label {
+        margin: 11px 0 6px;
+        font-size: 11px;
+    }
+
+    /* INPUT FORM */
+    .smartoffice-pengelolaan-spd-modal select,
+    .smartoffice-pengelolaan-spd-modal textarea {
+        padding: 10px;
+        border-radius: 9px;
+        font-size: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-modal textarea {
+        min-height: 68px;
+    }
+
+    /* TOMBOL AKSI */
     .smartoffice-pengelolaan-spd-modal-actions {
         gap: 8px;
+        margin-top: 16px;
     }
 
     .smartoffice-pengelolaan-spd-modal-actions button,
     .smartoffice-pengelolaan-spd-modal-actions a {
-        flex: 1;
-    }   
+        flex: 1 1 0;
+        min-width: 0;
+        min-height: 32px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        font-size: 10px;
+    }
 }
+
 
 
 /* ======================================================
@@ -2818,6 +3049,42 @@
 }
 
 
+/* ======================================================
+   ACTION MENU — MOBILE RESPONSIVE
+====================================================== */
+@media (max-width: 768px) {
+    .smartoffice-pengelolaan-spd-action-menu {
+        width: 140px;
+        max-width: calc(100vw - 20px);
+        padding: 5px;
+        border-radius: 10px;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.14);
+        box-sizing: border-box;
+    }
+
+    .smartoffice-pengelolaan-spd-action-menu
+    .smartoffice-pengelolaan-spd-action-menu-item {
+        box-sizing: border-box;
+        width: 100%;
+        min-height: 30px;
+        gap: 5px;
+        padding: 7px 8px;
+        border-radius: 7px;
+        font-size: 10px;
+        line-height: 1.35;
+    }
+
+    .smartoffice-pengelolaan-spd-action-menu-icon {
+        width: 15px;
+        height: 15px;
+        flex: 0 0 15px;
+    }
+
+    .smartoffice-pengelolaan-spd-action-menu-icon svg {
+        width: 13px;
+        height: 13px;
+    }
+}
 
 
 
@@ -3312,6 +3579,10 @@ input[type="number"]::-webkit-outer-spin-button {
     transition: background 160ms ease, border-color 160ms ease;
 }
 
+.smartoffice-pengelolaan-spd-payment-field > .smartoffice-pengelolaan-spd-payment-upload {
+    margin: 0 !important;
+}
+
 .smartoffice-pengelolaan-spd-payment-upload:hover {
     background: #eff6ff;
     border-color: #60a5fa;
@@ -3422,8 +3693,6 @@ input[type="number"]::-webkit-outer-spin-button {
 .smartoffice-pengelolaan-spd-payment-existing-link:hover {
     text-decoration: underline;
 }
-
-
 
 /* FOOTER */
 .smartoffice-pengelolaan-spd-payment-footer {
@@ -3597,17 +3866,6 @@ button svg {
     outline-offset: 2px;
 }
 
-@media (max-width: 768px) {
-    .smartoffice-pengelolaan-spd-payment-presets {
-        gap: 8px;
-    }
-
-    .smartoffice-pengelolaan-spd-payment-preset {
-        min-height: 46px;
-        font-size: 13px;
-    }
-}
-
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
@@ -3617,8 +3875,8 @@ button svg {
     }
 
     .smartoffice-pengelolaan-spd-payment-modal {
-        width: calc(100vw - 8px) !important;
-        max-width: calc(100vw - 8px) !important;
+        width: calc(100vw - 15px) !important;
+        max-width: calc(100vw - 15px) !important;
         min-width: 0;
         max-height: calc(100dvh - 16px);
         margin-left: auto;
@@ -3627,7 +3885,7 @@ button svg {
     }
 
     .smartoffice-pengelolaan-spd-payment-header {
-        padding: 19px 18px 17px;
+        padding: 14px 14px 0px;
         gap: 10px;
     }
 
@@ -3636,34 +3894,70 @@ button svg {
     }
 
     .smartoffice-pengelolaan-spd-payment-icon {
-        flex-basis: 42px;
-        width: 42px;
-        height: 42px;
+        flex-basis: 34px;
+        width: 34px;
+        height: 34px;
         border-radius: 13px;
     }
 
-    .smartoffice-pengelolaan-spd-payment-header h3 {
-        font-size: 19px;
+    .smartoffice-pengelolaan-spd-payment-icon svg {
+        display: block;
+        width: 20px;
+        height: 20px;
     }
 
-    .smartoffice-pengelolaan-spd-payment-description {
-        font-size: 11px;
+    .smartoffice-pengelolaan-spd-payment-eyebrow {
+        font-size: 10px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-header h3 {
+        font-size: 13px;
+    }
+
+    p.smartoffice-pengelolaan-spd-payment-description {
+        font-size: 9px !important;
+        line-height: 1.3 !important;
+        margin-bottom: 6px !important;
     }
 
     .smartoffice-pengelolaan-spd-payment-close {
-        flex-basis: 32px;
-        width: 32px;
-        height: 32px;
+        flex-basis: 24px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-close svg {
+        width: 13px;
+        height: 13px;
     }
 
     .smartoffice-pengelolaan-spd-payment-body {
-        padding: 17px 18px 20px;
+        padding: 12px 12px 12px;
     }
 
     .smartoffice-pengelolaan-spd-payment-identity {
         gap: 9px;
-        padding: 11px;
-        margin-bottom: 20px;
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-identity-icon {
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-identity-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-identity-text strong {
+        font-size: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-identity-text > span {
+        font-size: 10px;
     }
 
     .smartoffice-pengelolaan-spd-payment-status {
@@ -3672,16 +3966,141 @@ button svg {
     }
 
     .smartoffice-pengelolaan-spd-payment-form {
-        gap: 18px;
+        gap: 12px;
     }
 
-    .smartoffice-pengelolaan-spd-payment-money-input input,
+    .smartoffice-pengelolaan-spd-payment-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-field > label:not(
+        .smartoffice-pengelolaan-spd-payment-upload
+    ) {
+        font-size: 10px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-presets {
+        gap: 6px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-preset {
+        min-height: 36px;
+        font-size: 12px;
+         padding: 8px 6px;
+         margin-top: -3px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-preset.is-selected::after {
+        width: 14px;
+        height: 14px;
+        font-size: 8px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-field .optional {
+        display: inline-block;
+        margin-left: 5px;
+        color: #94a3b8;
+        font-size: 10px;
+        font-weight: 500;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-field small {
+        color: #94a3b8;
+        font-size: 9px;
+        line-height: 1.5;
+        margin-top: -4px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-input-wrap {
+        min-height: 34px;
+        padding: 0 12px;
+        gap: 10px;
+        margin-top: -4px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-input-icon {
+        display: inline-flex;
+        flex: 0 0 16px;
+        width: 18px;
+        height: 18px;
+        color: #94a3b8;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-input-icon svg {
+        display: block;
+        width: 18px;
+        height: 18px;
+    }
+
     .smartoffice-pengelolaan-spd-payment-input-wrap input {
-        font-size: 16px;
+        min-height: 36px;
+        padding: 10px 0;
+        font-size: 11px;
+    }
+
+    #pengelolaanSpdPaymentTanggal {
+        font-size: 10px !important;
+        min-height: 32px;
+        padding: 8px 10px;
+    }
+
+    /* TOTAL CARD */
+    .smartoffice-pengelolaan-spd-payment-total {
+        gap: 5px; 
+        padding: 6px 14px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-total-top {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 9px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-total-icon {
+        width: 24px;
+        height: 24px;  
+    }
+
+    .smartoffice-pengelolaan-spd-payment-total-icon svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-total-label {
+        font-size: 11px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-live {
+        font-size: 8px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-total strong {
+        font-size: clamp(18px, 4vw, 24px);
+    }
+
+    .smartoffice-pengelolaan-spd-payment-total > p {
+        font-size: 9px;
     }
 
     .smartoffice-pengelolaan-spd-payment-footer {
-        padding: 14px 18px 18px;
+        padding: 6px 18px 16px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-footer > p {
+        gap: 5px;
+        margin: 0 0 15px;
+        font-size: 9px;
+    }
+
+    .smartoffice-pengelolaan-spd-payment-footer > p svg {
+        flex: 0 0 14px;
+        width: 14px;
+        height: 14px;
     }
 
     .smartoffice-pengelolaan-spd-payment-modal
@@ -3695,52 +4114,53 @@ button svg {
     .smartoffice-pengelolaan-spd-modal-actions button {
         min-width: 0;
         padding: 0 10px;
-        font-size: 11px;
+        font-size: 10px;
+        min-height: 34px;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        min-height: 160px;
-        padding: 18px 12px;
+        gap: 6px;
+        min-height: 125px;
+        padding: 12px 8px;
         text-align: center;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload-icon {
-        flex: 0 0 38px;
-        width: 38px;
-        height: 38px;
+        flex: 0 0 30px;
+        width: 30px;
+        height: 30px;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload-icon svg {
-        width: 21px;
-        height: 21px;
+        width: 17px;
+        height: 17px;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload-text {
         align-items: center;
-        gap: 7px;
+        gap: 5px;
         width: 100%;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload-text strong {
-        font-size: 12px;
+        font-size: 10px;
         text-align: center;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload-text > span {
-        font-size: 10px;
-        line-height: 1.6;
+        font-size: 8px;
+        line-height: 1.45;
         text-align: center;
     }
 
     .smartoffice-pengelolaan-spd-payment-upload-action {
-        min-height: 34px;
-        margin-top: 5px;
-        padding: 0 18px;
-        font-size: 11px;
+        min-height: 30px;
+        margin-top: 3px;
+        padding: 0 15px;
+        font-size: 9px;
     }
 }
 

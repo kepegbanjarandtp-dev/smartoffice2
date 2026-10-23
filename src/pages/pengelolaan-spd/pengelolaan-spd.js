@@ -2644,7 +2644,7 @@ function smartofficePengelolaanSPDShowDetail(item) {
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
                         ${valueHtml("Status SPJ", statusSPJ)}
                         ${valueHtml(
-                            "Jumlah Uang (Nominal Transport)",
+                            "Nominal Transport",
                             smartofficeFormatRupiah(get("JUMLAH UANG", ""))
                         )}
                         ${valueHtml("Catatan Revisi SPJ", get("CATATAN_REVISI_SPJ"))}

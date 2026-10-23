@@ -1221,7 +1221,14 @@ function smartofficeInitDashboardMenu(){
                 "smartofficeDataPajakMenuCard",
             message:
                 "Fitur Data Pajak sedang dalam pengembangan."
-        },               
+        },
+        
+        {
+            id:
+                "smartofficeSPDBOKMenuCard",
+            message:
+                "Fitur SmartSPD BOK sedang dalam pengembangan."
+        },
     ];
 
     menuPengembangan.forEach(

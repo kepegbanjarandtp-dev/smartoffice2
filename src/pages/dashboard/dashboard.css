@@ -515,6 +515,12 @@ smartofficeDashboardHeaderFade{
     color:#3B82F6;
 }
 
+/* SMARTSPD BOK */
+#smartofficeSPDBOKMenuCard .smartoffice-dashboard-menu-icon {
+    background: #FFECEF;
+    color: #F43F5E;
+}
+
 /* Dokumen */
 #smartofficeDokumenSayaMenuCard .smartoffice-dashboard-menu-icon{
     background:#F4ECFF;

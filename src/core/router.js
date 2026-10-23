@@ -70,6 +70,9 @@ const smartofficeModules = {
     "smartspd-blud": () =>
         import("../pages/smartspd-blud/smartspd-blud.js"),
 
+    "smartspd-bok": () =>
+        import("../pages/smartspd-bok/smartspd-bok.js"),
+
     "pengelolaan-spd": () =>
         import("../pages/pengelolaan-spd/pengelolaan-spd.js"),
 
