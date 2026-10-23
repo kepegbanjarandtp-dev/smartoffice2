@@ -1349,148 +1349,133 @@ function smartofficeHitungJumlahHariSPD(){
     return jumlahHari;
 }
 
-/* ======================================================
-   10.5 KUNCI TIPE PERJALANAN UNTUK 1 HARI
-====================================================== */
-function smartofficeUpdateTripTypeLock(){
+/* ==================================================
+   10.5 KUNCI TIPE PERJALANAN
+================================================== */
+function smartofficeUpdateTripTypeLock() {
+  const tanggalBerangkat = document.getElementById(
+    "smartofficeSPDTanggalBerangkat"
+  )?.value || "";
 
-    const jumlahHari =
-        Number(
-            document.getElementById(
-                "smartofficeSPDJumlahHari"
-            )?.value || 0
-        );
+  const tanggalPulang = document.getElementById(
+    "smartofficeSPDTanggalPulang"
+  )?.value || "";
 
-    const pulangPergi =
-        document.querySelector(
-            '#smartofficeSPDTipeContainer [data-value="PULANG_PERGI"]'
-        );
+  const pulangPergi = document.querySelector(
+    '#smartofficeSPDTipeContainer [data-value="PULANG_PERGI"]'
+  );
 
-    const menginap =
-        document.querySelector(
-            '#smartofficeSPDTipeContainer [data-value="MENGINAP"]'
-        );
+  const menginap = document.querySelector(
+    '#smartofficeSPDTipeContainer [data-value="MENGINAP"]'
+  );
 
-    const hidden =
-        document.getElementById(
-            "smartofficeSPDTipeKeberangkatan"
-        );
+  const hidden = document.getElementById(
+    "smartofficeSPDTipeKeberangkatan"
+  );
 
-    /* =========================
-       1 HARI
-    ========================= */
-    if(jumlahHari === 1){
+  if (!pulangPergi || !menginap) return;
 
-        /* Kunci Pulang Pergi */
-        if(pulangPergi){
-            pulangPergi.classList.add("active");
-            pulangPergi.disabled = true;
-            pulangPergi.setAttribute(
-                "aria-pressed",
-                "true"
-            );
-        }
+  const buttons = [pulangPergi, menginap];
 
-        /* Nonaktifkan Menginap */
-        if(menginap){
-            menginap.disabled = true;
-            menginap.classList.remove("active");
-            menginap.setAttribute(
-                "aria-disabled",
-                "true"
-            );
-        }
+  // Lepaskan status kunci otomatis terlebih dahulu
+  buttons.forEach(function (button) {
+    button.classList.remove("auto-locked");
+    button.disabled = false;
+    button.removeAttribute("aria-pressed");
+    button.removeAttribute("aria-disabled");
+  });
 
-        /* Paksa tipe menjadi Pulang Pergi */
-        if(hidden){
-            hidden.value =
-                "PULANG_PERGI";
-        }
+  // Tanggal belum lengkap: jangan mengunci pilihan
+  if (!tanggalBerangkat || !tanggalPulang) return;
 
-        return;
+  const berangkat = new Date(tanggalBerangkat + "T00:00:00");
+  const pulang = new Date(tanggalPulang + "T00:00:00");
+
+  // Tanggal tidak valid atau urutannya salah
+  if (
+    Number.isNaN(berangkat.getTime()) ||
+    Number.isNaN(pulang.getTime()) ||
+    pulang < berangkat
+  ) {
+    return;
+  }
+
+  const jumlahHari = Math.floor(
+    (pulang - berangkat) / 86400000
+  ) + 1;
+
+  if (jumlahHari === 1) {
+    // Satu hari: Pulang Pergi otomatis dipilih dan dikunci
+    pulangPergi.classList.add("active", "auto-locked");
+    pulangPergi.disabled = true;
+    pulangPergi.setAttribute("aria-pressed", "true");
+
+    // Menginap tidak aktif dan tidak bisa diklik
+    menginap.classList.remove("active", "auto-locked");
+    menginap.disabled = true;
+    menginap.setAttribute("aria-disabled", "true");
+
+    if (hidden) {
+      hidden.value = "PULANG_PERGI";
     }
 
-    /* =========================
-       LEBIH DARI 1 HARI
-    ========================= */
+  } else {
+    // Lebih dari satu hari: reset pilihan otomatis
+    buttons.forEach(function (button) {
+      button.classList.remove("active", "auto-locked");
+    });
 
-    if(pulangPergi){
-        pulangPergi.disabled = false;
-        pulangPergi.removeAttribute(
-            "aria-pressed"
-        );
+    // Pengguna wajib memilih ulang secara manual
+    if (hidden) {
+      hidden.value = "";
     }
-
-    if(menginap){
-        menginap.disabled = false;
-        menginap.removeAttribute(
-            "aria-disabled"
-        );
-    }
+  }
 }
 
-/* ======================================================
+/* ==================================================
    10.6 INIT TIPE PERJALANAN
-====================================================== */
-function smartofficeInitTripType(){
-    document
-        .querySelectorAll(
-            "#smartofficeSPDTipeContainer [data-value]"
-        )
-        .forEach(function(button){
-            smartofficeSPDAddHandler(
-                button,
-                "click",
-                function(){
-                    /* =========================
-                       ACTIVE BUTTON
-                    ========================= */
-                    document
-                        .querySelectorAll(
-                            "#smartofficeSPDTipeContainer [data-value]"
-                        )
-                        .forEach(function(item){
-                            item.classList.remove(
-                                "active"
-                            );
-                        });
+================================================== */
+function smartofficeInitTripType() {
+  document.querySelectorAll(
+    "#smartofficeSPDTipeContainer [data-value]"
+  ).forEach(function (button) {
 
-                    button.classList.add(
-                        "active"
-                    );
+    smartofficeSPDAddHandler(button, "click", function () {
 
-                    /* =========================
-                       SIMPAN TIPE
-                    ========================= */
-                    const hidden =
-                        document.getElementById(
-                            "smartofficeSPDTipeKeberangkatan"
-                        );
-                    if(hidden){
-                        hidden.value =
-                            button.dataset.value || "";
-                    }
+      // Jangan proses tombol yang terkunci
+      if (button.disabled) return;
 
-                    /* =========================
-                       HITUNG & RENDER
-                    ========================= */
-                    smartofficeHitungJumlahHariSPD();
-                    smartofficeRenderSPDTimeline();
+      const buttons = document.querySelectorAll(
+        "#smartofficeSPDTipeContainer [data-value]"
+      );
 
-                    /* =========================
-                       LANGSUNG BUKA
-                    ========================= */
-                    smartofficeOpenSPDJadwal();
-                    smartofficeUpdateProgress();
-                    smartofficeUpdateSubmitButton();
-                }
-            );
-        });
+      buttons.forEach(function (item) {
+        item.classList.remove("active", "auto-locked");
+      });
 
-    /* ==================================================
-       CEK KONDISI AWAL
-    ================================================== */
-    smartofficeUpdateTripTypeLock();
+      // Pilihan manual tidak menampilkan gembok
+      button.classList.add("active");
+
+      const hidden = document.getElementById(
+        "smartofficeSPDTipeKeberangkatan"
+      );
+
+      if (hidden) {
+        hidden.value = button.dataset.value || "";
+      }
+
+      smartofficeHitungJumlahHariSPD();
+      smartofficeRenderSPDTimeline();
+      smartofficeOpenSPDJadwal();
+      smartofficeUpdateProgress();
+      smartofficeUpdateSubmitButton();
+
+      // Periksa kembali aturan kunci otomatis
+      smartofficeUpdateTripTypeLock();
+    });
+  });
+
+  smartofficeUpdateTripTypeLock();
 }
 
 /* ======================================================
@@ -1614,7 +1599,7 @@ function smartofficeRenderSPDTimeline(){
 
             <div class="smartoffice-spd-timeline-day-title">
                 <span>
-                    ${rangeHari}
+                    ${rangeHari}:
                 </span>
 
                 <span class="smartoffice-spd-timeline-date">

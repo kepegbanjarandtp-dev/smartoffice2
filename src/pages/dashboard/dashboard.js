@@ -1168,6 +1168,32 @@ function smartofficeInitDashboardMenu(){
             "smartofficeSimbokMenuCard"
         ] = handler;
     }
+    
+    /* ======================================================
+       MENU PROFIL PUSKESMAS
+    ====================================================== */
+    const profilPuskesmasMenu = document.getElementById(
+        "smartofficeProfilPuskesmasMenuCard"
+    );
+
+    if (profilPuskesmasMenu) {
+        const handler = async function () {
+            if (smartofficeDashboardDestroyed) {
+                return;
+            }
+
+            await smartofficeNavigate("profil-puskesmas");
+        };
+
+        profilPuskesmasMenu.addEventListener(
+            "click",
+            handler
+        );
+
+        smartofficeDashboardMenuHandlers[
+            "smartofficeProfilPuskesmasMenuCard"
+        ] = handler;
+    }
 
     /* ======================================================
        MENU DALAM PENGEMBANGAN

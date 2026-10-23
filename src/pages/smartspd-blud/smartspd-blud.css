@@ -2,8 +2,30 @@
    SMART OFFICE SPD
 ====================================================== */
 
+/* =========================
+   CONTENT
+========================= */
+.smartoffice-spd-content{
+  animation:
+    smartofficeCutiFade
+    0.25s ease;
+}
+
+@keyframes smartofficeCutiFade{
+  from{
+    opacity:0;
+    transform:
+      translateY(8px);
+  }
+  to{
+    opacity:1;
+    transform:
+      translateY(0);
+  }
+}
+
 /* ======================================================
-   HEADER 
+   HEADER - OK
 ====================================================== */
 .smartoffice-smartspdblud-header-icon{
     background:#EAF3FF;
@@ -11,13 +33,13 @@
 }
 
 /* ======================================================
-   CARD SPD
+   CARD SPD - OK
 ====================================================== */
 .smartoffice-spd-card{
     background:#ffffff;
     border:1px solid #eef2f7;
     border-radius:18px;
-    padding:22px;
+    padding:18px;
     display:flex;
     flex-direction:column;
     gap:18px;
@@ -32,22 +54,22 @@
 }
 
 /* ======================================================
-   FORM CARD SPD
+   FORM CARD SPD - OK
 ====================================================== */
 .smartoffice-spd-form-card{
     display:flex;
     flex-direction:column;
-    gap:20px;
+    gap:12px;
 }
 
 /* ======================================================
-   SUB JUDUL SETIAP CARD
+   SUB JUDUL SETIAP CARD - OK
 ====================================================== */
 .smartoffice-spd-subtitle{
     display:flex;
     align-items:center;
     gap:12px;
-    margin-top:4px;
+    margin-top:2px;
     font-size:16px;
     font-weight:700;
     color:#1e293b;
@@ -68,31 +90,26 @@
 
 
 /* =========================================================
-   PROGRESS FORM SPD — MODERN CARD
+   PROGRESS FORM SPD — MODERN CARD - OK
 ========================================================= */
-
 .smartoffice-spd-progress-card {
     position: relative;
     padding: 16px 18px;
-    margin: 0 0 20px;
-
+    margin: 0 0 2px;
     background: #ffffff;
     border: 1px solid #e5eaf2;
     border-radius: 15px;
-
     box-shadow: 0 4px 14px rgba(15, 23, 42, .045);
     box-sizing: border-box;
 }
 
 /* HEADER */
-
 .smartoffice-spd-progress-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 14px;
-
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .smartoffice-spd-progress-info {
@@ -106,14 +123,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 42px;
     height: 42px;
     flex-shrink: 0;
-
     border: 1px solid #dbeafe;
     border-radius: 12px;
-
     background: #eff6ff;
     color: #2563eb;
 }
@@ -121,47 +135,41 @@
 .smartoffice-spd-progress-title {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 0px;
     min-width: 0;
 }
 
 .smartoffice-spd-progress-title strong {
     color: #0f172a;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 750;
     line-height: 1.4;
 }
 
 .smartoffice-spd-progress-title span {
     color: #64748b;
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1.5;
 }
 
 /* PERSENTASE */
-
 .smartoffice-spd-progress-percent {
     flex-shrink: 0;
-
     padding: 7px 11px;
     border: 1px solid #bfdbfe;
     border-radius: 10px;
-
     background: #eff6ff;
     color: #2563eb;
-
     font-size: 17px;
     font-weight: 800;
     font-variant-numeric: tabular-nums;
 }
 
 /* TRACK */
-
 .smartoffice-spd-progress-track {
     width: 100%;
     height: 9px;
     overflow: hidden;
-
     border-radius: 999px;
     background: #e9eef5;
 }
@@ -169,7 +177,6 @@
 .smartoffice-spd-progress-fill {
     width: 0%;
     height: 100%;
-
     border-radius: inherit;
     background: linear-gradient(
         90deg,
@@ -177,32 +184,27 @@
         #3b82f6 60%,
         #60a5fa 100%
     );
-
     transition: width .35s ease;
 }
 
 /* FOOTER */
-
 .smartoffice-spd-progress-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px;
-
     margin-top: 12px;
-
     color: #64748b;
-    font-size: 10px;
+    font-size: 11px;
 }
 
 .smartoffice-spd-progress-live {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-
     color: #2563eb;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 650;
 }
 
@@ -210,7 +212,6 @@
     width: 6px;
     height: 6px;
     flex-shrink: 0;
-
     border-radius: 50%;
     background: #3b82f6;
 }
@@ -221,110 +222,157 @@
    FROM LAYOUT
 ====================================================== */
 /* ======================================================
-   DATA PEGAWAI
+   SMARTSPD BLUD — DATA PEGAWAI - OK
 ====================================================== */
-
-/* Container Grid */
-.smartoffice-spd-card-pegawai{
-
+.smartoffice-spd-card-pegawai .smartoffice-spd-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 12px;
+    column-gap: 14px;
+    width: 100%;
+    min-width: 0;
 }
 
-/* Form Grid */
-.smartoffice-spd-card-pegawai
-.smartoffice-spd-form-grid{
-    row-gap:16px;
-    column-gap:20px;
+.smartoffice-spd-card-pegawai .smartoffice-spd-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    margin: 0;
 }
 
-/* Form Group */
-.smartoffice-spd-card-pegawai
-.smartoffice-spd-form-group,
-
-.smartoffice-spd-card-perjalanan
-.smartoffice-spd-form-group{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    margin-bottom:0;
+.smartoffice-spd-card-pegawai label {
+    display: block;
+    margin: 0;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
-/* Label */
-
-.smartoffice-spd-card-pegawai label{
-    font-size:13px;
-    font-weight:600;
-    line-height:1.3;
-    letter-spacing:.2px;
-    color:#334155;
+.smartoffice-spd-card-pegawai input {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #dbe3ed;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #334155;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.4;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-/* Input */
-.smartoffice-spd-card-pegawai input{
-    height:46px;
+.smartoffice-spd-card-pegawai input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
 }
 
-/* Readonly */
-.smartoffice-spd-card-pegawai input[readonly]{
-    background:#f8fafc;
-    color:#475569;
-    border-color:#e2e8f0;
+.smartoffice-spd-card-pegawai input[readonly] {
+    background: #f8fafc;
+    color: #475569;
+    border-color: #e2e8f0;
+    cursor: default;
+}
+
+.smartoffice-spd-card-pegawai .required,
+.smartoffice-spd-card-perjalanan .required {
+    color: #ef4444;
 }
 
 /* ======================================================
-   DETAIL PERJALANAN
+   SMARTSPD BLUD — DETAIL PERJALANAN - OK
 ====================================================== */
-
-/* Container */
-.smartoffice-spd-card-perjalanan{
-
+.smartoffice-spd-card-perjalanan .smartoffice-spd-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
 }
 
-/* Label */
-.smartoffice-spd-card-perjalanan label{
-    font-size:13px;
-    font-weight:600;
-    line-height:1.3;
-    letter-spacing:.2px;
-    color:#334155;
+.smartoffice-spd-card-perjalanan .smartoffice-spd-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    margin: 0;
 }
 
-/* Textarea */
-.smartoffice-spd-card-perjalanan textarea{
-    min-height:96px;
-    padding-top:12px;
-    resize:none;
+.smartoffice-spd-card-perjalanan label {
+    display: block;
+    margin: 0;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
-/* Character Counter */
-.smartoffice-spd-character-counter{
-    margin-top:6px;
-    font-size:11px;
-    line-height:1.2;
-    text-align:right;
-    color:#94a3b8;
-    font-weight:500;
-    letter-spacing:.2px;
+.smartoffice-spd-card-perjalanan input,
+.smartoffice-spd-card-perjalanan select,
+.smartoffice-spd-card-perjalanan textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid #dbe3ed;
+    border-radius: 12px;
+    background: #f8fafc;
+    color: #334155;
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-.smartoffice-spd-character-counter span{
-    font-weight:600;
-    color:#64748b;
+.smartoffice-spd-card-perjalanan input,
+.smartoffice-spd-card-perjalanan select {
+    height: 42px;
+    padding: 0 12px;
+}
+
+.smartoffice-spd-card-perjalanan textarea {
+    min-height: 76px;
+    padding: 10px 12px;
+    resize: vertical;
+}
+
+.smartoffice-spd-card-perjalanan input:focus,
+.smartoffice-spd-card-perjalanan select:focus,
+.smartoffice-spd-card-perjalanan textarea:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+}
+
+.smartoffice-spd-card-perjalanan .smartoffice-spd-character-counter {
+    margin-top: 2px;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: right;
+}
+
+.smartoffice-spd-card-perjalanan .smartoffice-spd-character-counter span {
+    color: #64748b;
+    font-weight: 600;
 }
 
 /* ======================================================
-   JADWAL PERJALANAN
+   JADWAL PERJALANAN - OK
 ====================================================== */
-
-/* Card */
-.smartoffice-spd-card-jadwal{
-
-}
-
 /* Grid */
 .smartoffice-spd-jadwal-grid{
     display:grid;
     grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:20px;
+    gap:16px;
 }
 
 /* Field */
@@ -335,7 +383,7 @@
 }
 
 .smartoffice-spd-field label{
-    font-size:13px;
+    font-size:14px;
     font-weight:600;
     line-height:1.3;
     letter-spacing:.2px;
@@ -384,7 +432,7 @@
 
 /* Label */
 .smartoffice-spd-card-jadwal label{
-    font-size:13px;
+    font-size:14px;
     font-weight:600;
     line-height:1.3;
     letter-spacing:.2px;
@@ -405,60 +453,113 @@ input[readonly]{
 }
 
 /* ======================================================
-   TIPE KEBERANGKATAN
+   SMARTSPD — TIPE KEBERANGKATAN - OK
+   Premium Icon Button
 ====================================================== */
-
-/* Container */
-.smartoffice-spd-trip-type{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:12px;
-    margin-top:8px;
+.smartoffice-spd-trip-type {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 0;
 }
 
-/* Grup */
-.smartoffice-spd-trip-section{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    margin-top:4px;
+.smartoffice-spd-trip-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 0;
 }
 
 /* Button */
-.smartoffice-spd-trip-button{
-    min-height:56px;
-    border:1px solid #dbe3ef;
-    border-radius:14px;
-    background:#ffffff;
-    color:#475569;
-    font-size:15px;
-    font-weight:700;
-    cursor:pointer;
-    transition:.25s;
+.smartoffice-spd-trip-button {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 68px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 12px;
+    border: 1px solid #dbe3ef;
+    border-radius: 14px;
+    background: #ffffff;
+    color: #475569;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 650;
+    line-height: 1.3;
+    text-align: center;
+    cursor: pointer;
+    transition:
+        border-color .2s ease,
+        background .2s ease,
+        color .2s ease,
+        box-shadow .2s ease,
+        transform .2s ease;
+}
+
+/* Icon */
+.smartoffice-spd-trip-button svg {
+    display: block;
+    width: 21px;
+    height: 21px;
+    flex: 0 0 21px;
+    stroke: currentColor;
+}
+
+/* Text */
+.smartoffice-spd-trip-button span {
+    display: block;
 }
 
 /* Hover */
-.smartoffice-spd-trip-button:hover{
-    border-color:#2563eb;
-    background:#f8fbff;
-    color:#2563eb;
+.smartoffice-spd-trip-button:hover {
+    border-color: #93b4ff;
+    background: #f5f8ff;
+    color: #2563eb;
 }
 
 /* Active */
-.smartoffice-spd-trip-button.active{
-    background:#2563eb;
-    border-color:#2563eb;
-    color:#ffffff;
-    box-shadow:0 4px 12px rgba(37,99,235,.15);
+.smartoffice-spd-trip-button.active {
+    border-color: #2563eb;
+    background: #eff6ff;
+    color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, .08);
+}
+
+/* Interaction */
+.smartoffice-spd-trip-button:active {
+    transform: scale(.985);
+}
+
+/* Default: selalu sembunyikan */
+.smartoffice-spd-trip-type
+.smartoffice-spd-trip-lock-icon {
+    display: none !important;
+}
+
+/* Tampilkan hanya ketika terkunci otomatis */
+.smartoffice-spd-trip-type
+.smartoffice-spd-trip-button.auto-locked
+.smartoffice-spd-trip-lock-icon {
+    display: block !important;
+}
+
+/* Warna gold ketika terkunci otomatis */
+.smartoffice-spd-trip-type
+.smartoffice-spd-trip-button.auto-locked {
+    background: #fff4d6;
+    border-color: #d4a017;
+    color: #8a6500;
 }
 
 /* ======================================================
-   DETAIL JADWAL PERJALANAN
+   DETAIL JADWAL PERJALANAN - OK
 ====================================================== */
-
 /* Accordion */
 .smartoffice-spd-accordion{
-    margin-top:12px;
+    margin-top:2px;
     border:1px solid #e8eef5;
     border-radius:18px;
     overflow:hidden;
@@ -494,18 +595,9 @@ input[readonly]{
     color:#1e293b;
 }
 
-.smartoffice-spd-card-title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-size:18px;
-    font-weight:700;
-    color:#1e293b;
-}
-
 .smartoffice-spd-card-title svg{
-    width:20px;
-    height:20px;
+    width:22px;
+    height:22px;
     color:#2563eb;
     flex-shrink:0;
 }
@@ -571,345 +663,246 @@ input[readonly]{
 .smartoffice-spd-empty-state{
     padding:40px 24px;
     text-align:center;
-    font-size:13px;
+    font-size:14px;
     line-height:1.6;
     color:#94a3b8;
     max-width:420px;
-
     margin:auto;
 }
 
 
 /* ======================================================
-   DATA PENGIKUT
+   SMARTSPD — DATA PENGIKUT - OK
 ====================================================== */
-
-/* Card */
-.smartoffice-spd-card-pengikut{
-
-}
-
 /* Container */
-.smartoffice-spd-pengikut-container{
-    display:grid;
-    grid-template-columns:1fr;
-    gap:18px;
-    margin-top:0;
+.smartoffice-spd-pengikut-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 0;
 }
 
 /* Header */
-.smartoffice-spd-card-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:0px;
+.smartoffice-spd-card-header,
+.smartoffice-spd-pengikut-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.smartoffice-spd-pengikut-card-header {
+    margin-bottom: 8px;
 }
 
 /* Card Pengikut */
-.smartoffice-spd-pengikut-item{
-    background:#ffffff;
-    border:1px solid #e2e8f0;
-    border-radius:18px;
-    padding:18px;
-    box-shadow:0 2px 8px rgba(15,23,42,.05);
+.smartoffice-spd-pengikut-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .05);
 }
 
-/* Header */
-.smartoffice-spd-pengikut-header{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-bottom:18px;
-
-    padding-bottom:14px;
-
-    border-bottom:1px solid #edf2f7;
-
+/* Judul Pengikut */
+.smartoffice-spd-pengikut-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1e293b;
 }
 
-/* Judul */
-.smartoffice-spd-pengikut-title{
-    font-size:14px;
-    font-weight:700;
-    color:#1e293b;
+/* Form Pengikut */
+.smartoffice-spd-pengikut-item .smartoffice-spd-form-group {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 6px;
+    margin-bottom: 14px;
+    box-sizing: border-box;
+}
+
+/* Label */
+.smartoffice-spd-pengikut-item .smartoffice-spd-form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: .2px;
+    color: #334155;
+}
+
+/* Input */
+.smartoffice-spd-pengikut-item .smartoffice-spd-form-group input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+    border: 1px solid #dbe2ea;
+    border-radius: 16px;
+    background: #f8fafc;
+    font-size: 14px;
+    color: #334155;
+    outline: none;
+    box-sizing: border-box;
+    transition: .2s ease;
+}
+
+/* Input Focus */
+.smartoffice-spd-pengikut-item .smartoffice-spd-form-group input:focus {
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .08);
+}
+
+/* Input Readonly */
+.smartoffice-spd-pengikut-item .smartoffice-spd-form-group input[readonly] {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
 }
 
 /* Tombol Hapus */
-.smartoffice-spd-pengikut-remove{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    min-width:72px;
-    height:34px;
-    padding:0 14px;
-    border:1px solid #fecaca;
-    border-radius:10px;
-    background:#fff5f5;
-    color:#dc2626;
-    font-size:12px;
-    font-weight:600;
-    cursor:pointer;
-    transition:all .25s ease;
+.smartoffice-spd-pengikut-remove {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-width: 72px;
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    background: #fff5f5;
+    color: #dc2626;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .25s ease;
 }
 
-.smartoffice-spd-pengikut-remove:hover{
-    background:#dc2626;
-    color:#ffffff;
-    border-color:#dc2626;
-    transform:translateY(-1px);
+.smartoffice-spd-pengikut-remove:hover {
+    background: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+    transform: translateY(-1px);
 }
 
-.smartoffice-spd-pengikut-remove svg{
-    width:15px;
-    height:15px;
+.smartoffice-spd-pengikut-remove svg {
+    width: 15px;
+    height: 15px;
 }
 
 /* Tombol Tambah */
-.smartoffice-spd-add-button{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 16px;
-    border:1px solid #dbeafe;
-    border-radius:12px;
-    background:#eff6ff;
-    color:#2563eb;
-    font-size:14px;
-    font-weight:600;
-    cursor:pointer;
-    transition:.25s;
+.smartoffice-spd-add-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: .25s;
 }
 
-.smartoffice-spd-add-button:hover{
-    background:#dbeafe;
-    border-color:#93c5fd;
+.smartoffice-spd-add-button:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
 }
 
-.smartoffice-spd-add-button svg{
-    width:18px;
-    height:18px;
+.smartoffice-spd-add-button svg {
+    width: 18px;
+    height: 18px;
 }
 
-/* Empty */
-.smartoffice-spd-empty-state{
-    border:1px dashed #dbe3ef;
-    border-radius:14px;
-    padding:36px 24px;
-    text-align:center;
-    color:#64748b;
+/* Tombol Tambah Disabled */
+.smartoffice-spd-add-button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    pointer-events: none;
 }
 
-
-/* ======================================================
-   TAMBAH DATA PENGIKUT
-====================================================== */
-.smartoffice-spd-pengikut-card-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:18px;
-}
-
-.smartoffice-spd-add-button:disabled{
-
-    opacity:.5;
-
-    cursor:not-allowed;
-
-    pointer-events:none;
-
-}
-
-/* ======================================================
-   FORM PENGIKUT - GRID DESKTOP
-====================================================== */
-
-.smartoffice-spd-pengikut-item{
-    display:flex;
-    flex-direction:column;
-}
-
-.smartoffice-spd-pengikut-item
-.smartoffice-spd-form-group{
-    width:100%;
-}
-
-/* ======================================================
-   FORM PENGIKUT
-====================================================== */
-
-.smartoffice-spd-pengikut-item
-.smartoffice-spd-form-group{
-    display:flex;
-    flex-direction:column;
-    gap:6px;
-    margin-bottom:16px;
-}
-
-.smartoffice-spd-pengikut-item
-.smartoffice-spd-form-group label{
-    font-size:13px;
-    font-weight:600;
-    line-height:1.3;
-    letter-spacing:.2px;
-    color:#334155;
-}
-
-.smartoffice-spd-pengikut-item
-.smartoffice-spd-form-group input{
-    width:100%;
-    height:46px;
-    padding:0 14px;
-    border:1px solid #dbe2ea;
-    border-radius:16px;
-    background:#f8fafc;
-    font-size:14px;
-    color:#334155;
-    outline:none;
-    box-sizing:border-box;
-    transition:.2s ease;
-}
-
-.smartoffice-spd-pengikut-item
-.smartoffice-spd-form-group input:focus{
-    border-color:#2563eb;
-    background:#ffffff;
-    box-shadow:
-        0 0 0 3px rgba(37,99,235,.08);
-}
-
-.smartoffice-spd-pengikut-item
-.smartoffice-spd-form-group input[readonly]{
-    background:#f8fafc;
-    color:#475569;
-    font-weight:600;
+/* Empty State */
+.smartoffice-spd-empty-state {
+    border: 1px dashed #dbe3ef;
+    border-radius: 14px;
+    padding: 36px 24px;
+    text-align: center;
+    color: #64748b;
 }
 
 /* ======================================================
    AUTOCOMPLETE WRAPPER
 ====================================================== */
-
 .smartoffice-spd-autocomplete-wrapper{
-
     position:relative;
-
 }
 
 /* ======================================================
    AUTOCOMPLETE
 ====================================================== */
-
 .smartoffice-spd-autocomplete{
-
     position:absolute;
-
     top:calc(100% + 6px);
-
     left:0;
-
     right:0;
-
     background:#fff;
-
     border:1px solid #dbe4f0;
-
     border-radius:14px;
-
     overflow:hidden;
-
     box-shadow:
         0 8px 24px rgba(15,23,42,.12);
-
     max-height:260px;
-
     overflow-y:auto;
-
     z-index:9999;
-
 }
 
 .smartoffice-spd-autocomplete-item{
-
     padding:14px;
-
     border:1px solid #e2e8f0;
-
     border-radius:14px;
-
     background:#ffffff;
-
     cursor:pointer;
-
     transition:.2s ease;
-
 }
 
 .smartoffice-spd-autocomplete-item:hover{
-
     background:#eff6ff;
-
     border-color:#2563eb;
-
 }
 
 .smartoffice-spd-autocomplete-item strong{
-
     display:block;
-
     font-size:14px;
-
     font-weight:600;
-
     color:#0f172a;
-
     margin-bottom:4px;
-
 }
 
 .smartoffice-spd-autocomplete-item span{
-
     display:block;
-
     font-size:12px;
-
     color:#64748b;
-
     word-break:break-all;
-
 }
 
 .smartoffice-spd-autocomplete-empty{
-
     padding:14px;
-
     text-align:center;
-
     font-size:13px;
-
     color:#64748b;
-
     border:1px dashed #cbd5e1;
-
     border-radius:14px;
-
     background:#f8fafc;
-
 }
 
 /* ======================================================
-   LAMPIRAN
+   LAMPIRAN - OK
 ====================================================== */
-
-/* Card */
-.smartoffice-spd-card-upload{
-
-}
-
 /* Upload Box */
 .smartoffice-spd-upload-box{
     display:flex;
@@ -957,7 +950,7 @@ input[readonly]{
 
 .smartoffice-spd-upload-content strong{
     display:block;
-    margin-bottom:2px;
+    margin-bottom:4px;
 }
 
 /* Judul */
@@ -1002,14 +995,13 @@ input[readonly]{
 /* =========================================================
    CARD KONFIRMASI & SUBMIT SPD
 ========================================================= */
-
 .smartoffice-spd-submit-card {
     display: flex;
     flex-direction: column;
     gap: 16px;
 
     padding: 20px;
-    margin-top: 16px;
+    margin-top: 2px;
 
     background: #ffffff;
     border: 1px solid #e5eaf2;
@@ -1020,14 +1012,12 @@ input[readonly]{
 }
 
 /* =========================================================
-   KONFIRMASI
+   KONFIRMASI - OK
 ========================================================= */
-
 .smartoffice-spd-confirm-label {
     display: flex;
     align-items: flex-start;
     gap: 12px;
-
     position: relative;
     cursor: pointer;
 }
@@ -1043,17 +1033,13 @@ input[readonly]{
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 21px;
     height: 21px;
     flex-shrink: 0;
-
-    margin-top: 2px;
-
+    margin-top: 0px;
     border: 1.5px solid #cbd5e1;
     border-radius: 6px;
     background: #ffffff;
-
     transition:
         background .2s ease,
         border-color .2s ease;
@@ -1063,10 +1049,8 @@ input[readonly]{
     content: "";
     width: 5px;
     height: 10px;
-
     border: solid #ffffff;
     border-width: 0 2px 2px 0;
-
     transform: rotate(45deg) scale(0);
     transition: transform .15s ease;
 }
@@ -1094,27 +1078,26 @@ input[readonly]{
 .smartoffice-spd-confirm-text {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
     min-width: 0;
 }
 
 .smartoffice-spd-confirm-text > strong {
     color: #0f172a;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 750;
     line-height: 1.5;
 }
 
 .smartoffice-spd-confirm-text > span {
     color: #64748b;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1.7;
 }
 
 /* =========================================================
    DIVIDER
 ========================================================= */
-
 .smartoffice-spd-submit-divider {
     width: 100%;
     height: 1px;
@@ -1122,9 +1105,8 @@ input[readonly]{
 }
 
 /* =========================================================
-   TOMBOL AJUKAN SPD
+   SMARTSPD — TOMBOL AJUKAN SPD - OK
 ========================================================= */
-
 .smartoffice-spd-submit-button {
     display: flex;
     align-items: center;
@@ -1132,9 +1114,14 @@ input[readonly]{
     gap: 10px;
 
     width: fit-content;
-    min-width: 160px;
+    min-width: 200px;
+    max-width: 100%;
     min-height: 46px;
     padding: 12px 18px;
+
+    flex: 0 0 auto;
+    align-self: center;
+    box-sizing: border-box;
 
     border: 1px solid #2563eb;
     border-radius: 10px;
@@ -1147,7 +1134,6 @@ input[readonly]{
     font-weight: 750;
 
     cursor: pointer;
-    box-sizing: border-box;
 
     transition:
         background .2s ease,
@@ -1180,26 +1166,12 @@ input[readonly]{
 }
 
 /* =========================================================
-   PERBAIKAN LEBAR TOMBOL AJUKAN SPD
+   CATATAN BAWAH TOMBOL - OK
 ========================================================= */
-
-.smartoffice-spd-submit-button {
-    width: fit-content !important;
-    min-width: 200px;
-    max-width: 100%;
-    flex: 0 0 auto;
-    align-self: center;
-}
-
-/* =========================================================
-   CATATAN BAWAH TOMBOL
-========================================================= */
-
 .smartoffice-spd-submit-note {
     margin: -5px 0 0;
-
     color: #94a3b8;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 1.6;
     text-align: center;
 }
@@ -1207,18 +1179,14 @@ input[readonly]{
 /* =========================================================
    SPINNER SUBMIT
 ========================================================= */
-
 .smartoffice-spd-submit-spinner {
     display: none;
-
     width: 15px;
     height: 15px;
     flex-shrink: 0;
-
     border: 2px solid rgba(255, 255, 255, .4);
     border-top-color: #ffffff;
     border-radius: 50%;
-
     animation: smartofficeSPDRotate .7s linear infinite;
 }
 
@@ -1315,6 +1283,18 @@ input[readonly]{
         grid-template-columns:1fr;
     }
 
+    /* Perjal;anan */
+
+    .smartoffice-spd-trip-button {
+        gap: 6px;
+    }
+
+    .smartoffice-spd-trip-button svg {
+        width: 16px;
+        height: 16px;
+        flex-basis: 16px;
+    }
+
     /* Upload */
     .smartoffice-spd-upload-box{
         min-height:88px;
@@ -1351,6 +1331,59 @@ input[readonly]{
     .smartoffice-spd-submit-button {
         min-height: 45px;
         font-size: 12px;
+    }
+}
+
+
+/* ======================================================
+   SMARTSPD BLUD — RESPONSIVE FORM
+====================================================== */
+
+@media (max-width: 768px) {
+    .smartoffice-spd-card-pegawai .smartoffice-spd-form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        row-gap: 12px;
+        column-gap: 10px;
+    }
+
+    .smartoffice-spd-card-pegawai .smartoffice-spd-form-group {
+        gap: 5px;
+    }
+
+    .smartoffice-spd-card-pegawai label,
+    .smartoffice-spd-card-perjalanan label {
+        font-size: 11px;
+    }
+
+    .smartoffice-spd-card-pegawai input {
+        height: 36px;
+        padding: 0 9px;
+        border-radius: 10px;
+        font-size: 10px;
+    }
+
+    .smartoffice-spd-card-perjalanan .smartoffice-spd-form-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
+
+    .smartoffice-spd-card-perjalanan input,
+    .smartoffice-spd-card-perjalanan select {
+        height: 38px;
+        padding: 0 10px;
+        border-radius: 10px;
+        font-size: 11px;
+    }
+
+    .smartoffice-spd-card-perjalanan textarea {
+        min-height: 68px;
+        padding: 9px 10px;
+        border-radius: 10px;
+        font-size: 11px;
+    }
+
+    .smartoffice-spd-card-perjalanan .smartoffice-spd-character-counter {
+        font-size: 10px;
     }
 }
 

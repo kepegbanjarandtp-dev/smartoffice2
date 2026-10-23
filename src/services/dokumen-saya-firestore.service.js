@@ -98,6 +98,21 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
         const pegawai =
             pegawaiSnapshot.data();
 
+        // DEBUG FIELD PEGAWAI FIRESTORE
+        console.log(
+            "[DEBUG FIELD PEGAWAI]",
+            Object.keys(pegawai)
+        );
+
+        console.log(
+            "[DEBUG DATA GOLONGAN PEGAWAI]",
+            Object.fromEntries(
+                Object.entries(pegawai).filter(([key]) =>
+                    /pangkat|golongan|jabatan/i.test(key)
+                )
+            )
+        );
+
         /* =========================
            DATA TAHUN
         ========================= */
@@ -211,12 +226,19 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
             );
 
         /* ======================================================
-        PANGKAT / GOLONGAN SEKARANG
+           PANGKAT / GOLONGAN SEKARANG
         ====================================================== */
         const pangkatGolonganRaw =
             String(
-                pegawai.pangkatGolongan || ""
+                pegawai.pangkatGol || ""
             ).trim();
+
+        console.log("[DEBUG SUMBER GOLONGAN]", {
+            nip,
+            pangkatGolonganField: pegawai.pangkatGolongan,
+            pangkatGolonganRaw,
+            golonganPertamaField: pegawai.golonganPertama
+        });
 
         const matchGolongan =
             pangkatGolonganRaw.match(
@@ -231,6 +253,15 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                 : normalisasiGolongan(
                     pangkatGolonganRaw
                 );
+
+        // LOG HARUS DI BAWAH DEKLARASI golonganSekarang
+        console.log("[DEBUG HASIL REGEX]", {
+            pangkatGolonganRaw,
+            matchGolongan: matchGolongan
+                ? matchGolongan[0]
+                : null,
+            golonganSekarang
+        });
 
         /* ======================================================
         INDEX
@@ -500,20 +531,43 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                             Boolean
                         );
 
+                    const golonganAwalNormal =
+                        normalisasiGolongan(golonganPertama || "");
+
+                    const golonganPegawaiUntukFilter = [
+                        ...new Set(
+                            riwayatGolongan
+                                .filter(Boolean)
+                                .map(g => normalisasiGolongan(g))
+                                .filter(g => g !== golonganAwalNormal)
+                        )
+                    ];
+
                     const cocokGolongan =
                         listGolongan.length === 0 ||
                         listGolongan.includes("ALL") ||
-                        listGolongan.some(
-                            golongan =>
-                                riwayatGolongan
-                                    .map(
-                                        g =>
-                                            normalisasiGolongan(g)
-                                    )
-                                    .includes(
-                                        golongan
-                                    )
+                        listGolongan.some(golongan =>
+                            golonganPegawaiUntukFilter.includes(
+                                normalisasiGolongan(golongan)
+                            )
                         );
+
+                    // TAMBAHKAN LOG INI TEPAT DI SINI
+                    if (
+                        String(item.kodeDokumen || "").startsWith("SK_KP") ||
+                        /SK PANGKAT/i.test(String(item.namaDokumen || ""))
+                    ) {
+                        console.log("[CEK SK PANGKAT]", {
+                            kode: item.kodeDokumen,
+                            nama: item.namaDokumen,
+                            statusAktif: item.statusAktif,
+                            targetStatus: item.targetStatus,
+                            statusPegawai,
+                            masterGolongan: listGolongan,
+                            riwayatGolongan,
+                            cocokGolongan
+                        });
+                    }
 
                     /*console.log(
                         "DOKUMEN DEBUG FILTER GOLONGAN",
@@ -529,9 +583,18 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                         }
                     );*/
 
-                    if(
-                        !cocokGolongan
-                    ){
+                    if (!cocokGolongan) {
+                        if (String(item.kodeDokumen).startsWith("SK_KP")) {
+                            console.log("SK PANGKAT GUGUR DI GOLONGAN", {
+                                kode: item.kodeDokumen,
+                                nama: item.namaDokumen,
+                                masterGolongan: listGolongan,
+                                riwayatGolongan,
+                                golonganPertama,
+                                golonganSekarang
+                            });
+                        }
+
                         return false;
                     }
 
@@ -576,7 +639,7 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
                             cocok:
                                 cocokJenjangJabatan
                         }
-                    );*/
+                    ); */
 
                     if(
                         !cocokJenjangJabatan

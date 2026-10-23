@@ -1,0 +1,415 @@
+/* ======================================================
+   PROFIL PUSKESMAS — STYLE MODUL
+   Header dan tab menggunakan style global Smart Office.
+   CSS khusus dibatasi dengan prefix smartoffice-pp-.
+====================================================== */
+
+.smartoffice-profil-puskesmas .smartoffice-profil-puskesmas-header-icon {
+    color: #087e70;
+    background: linear-gradient(145deg, #e4fbf4, #d2f4e9);
+    border: 1px solid #c4eee0;
+}
+
+.smartoffice-profil-puskesmas .smartoffice-profil-puskesmas-header-icon svg {
+    width: 27px;
+    height: 27px;
+}
+
+.smartoffice-pp-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 230px;
+    margin: 22px 0 18px;
+    padding: 28px 30px;
+    overflow: hidden;
+    border: 1px solid #d6e6ff;
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at 78% 15%, rgba(255,255,255,.95), transparent 26%),
+        linear-gradient(115deg, #e0edff 0%, #f5f9ff 53%, #dcecff 100%);
+    box-shadow: 0 10px 28px rgba(44, 91, 160, .08);
+}
+
+.smartoffice-pp-hero-copy {
+    position: relative;
+    z-index: 3;
+    width: 62%;
+    min-width: 0;
+}
+
+.smartoffice-pp-eyebrow {
+    display: block;
+    margin-bottom: 8px;
+    color: #6e87ae;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.8px;
+}
+
+.smartoffice-pp-active {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+    padding: 6px 11px;
+    border-radius: 30px;
+    color: #087b58;
+    background: #d9f9eb;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.smartoffice-pp-active i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #12b981;
+    box-shadow: 0 0 0 3px rgba(18,185,129,.12);
+}
+
+.smartoffice-pp-hero h1 {
+    margin: 0 0 7px;
+    color: #173461;
+    font-size: clamp(23px, 2.5vw, 34px);
+    line-height: 1.2;
+    font-weight: 800;
+    letter-spacing: -.8px;
+}
+
+.smartoffice-pp-subtitle {
+    margin: 0 0 10px;
+    color: #5d7394;
+    font-size: 13px;
+}
+
+.smartoffice-pp-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 14px;
+    color: #536c90;
+    font-size: 12px;
+}
+
+.smartoffice-pp-location svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+}
+
+.smartoffice-pp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.smartoffice-pp-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 30px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.smartoffice-pp-tag.tag-blue {
+    color: #fff;
+    background: #2876f5;
+}
+
+.smartoffice-pp-tag.tag-green {
+    color: #087b58;
+    background: #d8f8e9;
+    border: 1px solid #b2ecd3;
+}
+
+.smartoffice-pp-hero-art {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 38%;
+    height: 100%;
+    overflow: hidden;
+    background: linear-gradient(#a9d9ff 0%, #e8f6ff 69%, #a9d99b 69%, #7bc06d 100%);
+}
+
+.smartoffice-pp-art-sun {
+    position: absolute;
+    top: 13%;
+    right: 17%;
+    width: 39px;
+    height: 39px;
+    border-radius: 50%;
+    background: #fff3b4;
+    box-shadow: 0 0 0 9px rgba(255,255,255,.2);
+}
+
+.smartoffice-pp-art-cloud {
+    position: absolute;
+    height: 17px;
+    border-radius: 30px;
+    background: rgba(255,255,255,.7);
+}
+
+.smartoffice-pp-art-cloud::before,
+.smartoffice-pp-art-cloud::after {
+    position: absolute;
+    content: "";
+    bottom: 3px;
+    border-radius: 50%;
+    background: inherit;
+}
+
+.smartoffice-pp-art-cloud::before { left: 12px; width: 23px; height: 23px; }
+.smartoffice-pp-art-cloud::after { left: 29px; width: 18px; height: 18px; }
+.smartoffice-pp-art-cloud.cloud-one { top: 23%; left: 10%; width: 57px; }
+.smartoffice-pp-art-cloud.cloud-two { top: 12%; left: 45%; width: 48px; opacity: .65; }
+
+.smartoffice-pp-art-building {
+    position: absolute;
+    z-index: 2;
+    left: 15%;
+    bottom: 12%;
+    width: 72%;
+    height: 59%;
+    border: 3px solid #b5cbd7;
+    background: linear-gradient(90deg, #e6eef4, #fff 45%, #cfdee7);
+    box-shadow: 0 12px 20px rgba(29, 71, 97, .18);
+    transform: skewY(-2deg);
+}
+
+.smartoffice-pp-art-roof {
+    position: absolute;
+    top: -12px;
+    left: -4%;
+    width: 108%;
+    height: 13px;
+    background: #087e70;
+    border-bottom: 3px solid #075f58;
+}
+
+.smartoffice-pp-art-sign {
+    position: absolute;
+    top: 13%;
+    left: 10%;
+    right: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 3px;
+    color: #14565a;
+    background: #e3f5f1;
+    border: 1px solid #b8dcd5;
+    font-size: clamp(6px, .75vw, 9px);
+    text-align: center;
+}
+
+.smartoffice-pp-art-sign span { color: #07856f; font-size: 21px; }
+.smartoffice-pp-art-window {
+    position: absolute;
+    bottom: 11%;
+    width: 20%;
+    height: 31%;
+    background: linear-gradient(135deg, #78c8e6, #d8f4ff);
+    border: 3px solid #d5e3eb;
+}
+.smartoffice-pp-art-window.window-one { left: 12%; }
+.smartoffice-pp-art-window.window-two { right: 12%; }
+.smartoffice-pp-art-door {
+    position: absolute;
+    bottom: 0;
+    left: 41%;
+    width: 20%;
+    height: 39%;
+    background: #276b75;
+    border: 3px solid #e7f0f3;
+}
+.smartoffice-pp-art-ground {
+    position: absolute;
+    z-index: 3;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 13%;
+    background: linear-gradient(175deg, #9add7e, #65b45c);
+    clip-path: polygon(0 25%,100% 0,100% 100%,0 100%);
+}
+
+/* Tab wrapper/button tetap mengikuti global CSS; hanya detail icon/layout modul. */
+.smartoffice-profil-puskesmas > .smartoffice-tab-wrapper {
+    margin-bottom: 18px;
+}
+
+.smartoffice-pp-panel {
+    padding: 23px;
+    border: 1px solid #e2eaf7;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(39, 75, 126, .06);
+}
+
+.smartoffice-pp-panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.smartoffice-pp-section-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 45px;
+    height: 45px;
+    color: #1764f5;
+    background: #eaf2ff;
+    border: 1px solid #cfe0ff;
+    border-radius: 15px;
+}
+
+.smartoffice-pp-section-icon svg { width: 23px; height: 23px; }
+
+.smartoffice-pp-panel-heading h2 {
+    margin: 0 0 4px;
+    color: #18365f;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.smartoffice-pp-panel-heading p {
+    margin: 0;
+    color: #7587a2;
+    font-size: 12px;
+}
+
+.smartoffice-pp-edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    margin-left: auto;
+    padding: 10px 14px;
+    border: 1px solid #cfe0ff;
+    border-radius: 12px;
+    color: #1559d6;
+    background: #edf4ff;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.smartoffice-pp-edit-button svg { width: 16px; height: 16px; }
+.smartoffice-pp-edit-button[hidden] { display: none !important; }
+
+.smartoffice-pp-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.smartoffice-pp-summary-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+    min-height: 112px;
+    padding: 15px;
+    border-radius: 17px;
+}
+
+.smartoffice-pp-summary-card.summary-blue { color: #205b9c; background: linear-gradient(135deg,#eaf4ff,#deedff); }
+.smartoffice-pp-summary-card.summary-green { color: #087b5b; background: linear-gradient(135deg,#e7faf3,#d8f6eb); }
+.smartoffice-pp-summary-card.summary-purple { color: #7048c7; background: linear-gradient(135deg,#f3efff,#eae3ff); }
+.smartoffice-pp-summary-card.summary-orange { color: #a45c20; background: linear-gradient(135deg,#fff4e8,#ffead7); }
+
+.smartoffice-pp-summary-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.75);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.smartoffice-pp-summary-card p { margin: 2px 0 8px; font-size: 11px; font-weight: 700; }
+.smartoffice-pp-summary-card strong { display: block; margin-bottom: 5px; font-size: 13px; line-height: 1.35; }
+.smartoffice-pp-summary-card small { display: block; color: currentColor; opacity: .78; font-size: 10px; line-height: 1.45; }
+
+.smartoffice-pp-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 18px;
+    padding: 28px 20px;
+    text-align: center;
+    border: 1px dashed #d8e4f5;
+    border-radius: 18px;
+    background: #fbfdff;
+}
+
+.smartoffice-pp-empty-icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 12px;
+    color: #4c7fe0;
+    background: #eaf2ff;
+    border-radius: 17px;
+}
+
+.smartoffice-pp-empty-icon svg { width: 27px; height: 27px; }
+.smartoffice-pp-empty-state h3 { margin: 0 0 7px; color: #29466f; font-size: 15px; }
+.smartoffice-pp-empty-state p { max-width: 620px; margin: 0; color: #7486a1; font-size: 12px; line-height: 1.7; }
+
+@media (max-width: 1000px) {
+    .smartoffice-pp-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .smartoffice-pp-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .smartoffice-pp-hero-copy { width: 65%; }
+    .smartoffice-pp-hero-art { width: 35%; }
+}
+
+@media (max-width: 600px) {
+    .smartoffice-pp-hero {
+        min-height: 0;
+        display: block;
+        margin-top: 15px;
+        padding: 20px 17px 0;
+        border-radius: 21px;
+    }
+
+    .smartoffice-pp-hero-copy { width: 100%; padding-bottom: 18px; }
+    .smartoffice-pp-hero h1 { font-size: 23px; }
+    .smartoffice-pp-subtitle, .smartoffice-pp-location { font-size: 11px; }
+    .smartoffice-pp-hero-art {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        width: calc(100% + 34px);
+        height: 125px;
+        margin: 0 -17px;
+    }
+
+    .smartoffice-pp-art-building { left: 23%; width: 55%; height: 72%; }
+    .smartoffice-pp-panel { padding: 15px; border-radius: 19px; }
+    .smartoffice-pp-panel-heading { gap: 9px; }
+    .smartoffice-pp-section-icon { width: 39px; height: 39px; border-radius: 12px; }
+    .smartoffice-pp-panel-heading h2 { font-size: 15px; }
+    .smartoffice-pp-panel-heading p { font-size: 10px; line-height: 1.5; }
+    .smartoffice-pp-edit-button { padding: 8px 9px; font-size: 10px; }
+    .smartoffice-pp-summary-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .smartoffice-pp-summary-card { display: block; min-height: 110px; padding: 11px; }
+    .smartoffice-pp-summary-icon { width: 31px; height: 31px; margin-bottom: 9px; font-size: 18px; }
+    .smartoffice-pp-summary-card p { font-size: 10px; }
+    .smartoffice-pp-summary-card strong { font-size: 12px; }
+    .smartoffice-pp-summary-card small { font-size: 9px; }
+    .smartoffice-pp-empty-state { padding: 23px 13px; }
+}

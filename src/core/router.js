@@ -76,6 +76,9 @@ const smartofficeModules = {
     "pengelolaan-spd": () =>
         import("../pages/pengelolaan-spd/pengelolaan-spd.js"),
 
+    "profil-puskesmas": () =>
+        import("../pages/profil-puskesmas/profil-puskesmas.js"),
+
     simbok: () =>
         import("../pages/simbok/simbok.js")
 };

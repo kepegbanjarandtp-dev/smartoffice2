@@ -317,23 +317,13 @@ export async function smartofficeGetProgressArsipFirestore(){
            II/d
            IV/a
         ================================================== */
-        function normalisasiGolongan(value){
-
-            return String(
-                value || ""
-            )
+        function normalisasiGolongan(value) {
+            return String(value || "")
                 .trim()
+                .replace(/\s+/g, "")
                 .replace(
-                    /\s+/g,
-                    ""
-                )
-                .replace(
-                    /([IV]+)\/?([A-Da-d])/i,
-                    (
-                        _,
-                        romawi,
-                        huruf
-                    ) =>
+                    /\b(IV|III|II|I)\/?([A-D])\b/i,
+                    (_, romawi, huruf) =>
                         `${romawi.toUpperCase()}/${huruf.toLowerCase()}`
                 );
         }
@@ -454,12 +444,12 @@ export async function smartofficeGetProgressArsipFirestore(){
                 ========================================== */
                 const pangkatGolonganRaw =
                     String(
-                        pegawai.pangkatGolongan || ""
+                        pegawai.pangkatGol || ""
                     ).trim();
 
                 const matchGolongan =
                     pangkatGolonganRaw.match(
-                        /(I{1,3}|IV)\/?([A-Da-d])\b/i
+                        /\b(IV|III|II|I)\s*\/?\s*([A-D])\b/i
                     );
 
                 const golonganSekarang =

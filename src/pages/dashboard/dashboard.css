@@ -566,6 +566,12 @@ smartofficeDashboardHeaderFade{
     color:#7C3AED;
 }
 
+/* PROFIL PUSKESMAS */
+#smartofficeProfilPuskesmasMenuCard .smartoffice-dashboard-menu-icon {
+    background: #EAF3FF;
+    color: #2563EB;
+}
+
 /* LAPORAN & REKAP */
 #smartofficeLaporanMenuCard
 .smartoffice-dashboard-menu-icon{
