@@ -235,7 +235,7 @@ export async function smartofficeGetMasterDokumenFirestore(nip){
 
         console.log("[DEBUG SUMBER GOLONGAN]", {
             nip,
-            pangkatGolonganField: pegawai.pangkatGolongan,
+            pangkatGolonganField: pegawai.pangkatGol,
             pangkatGolonganRaw,
             golonganPertamaField: pegawai.golonganPertama
         });

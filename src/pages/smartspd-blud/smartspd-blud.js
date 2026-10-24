@@ -2470,14 +2470,10 @@ async function smartofficeHandleSubmitSPD(){
             );
         }
 
-        smartofficeShowToast(
-            response.message ||
-            "SPD berhasil disimpan.",
-            "success"
-        );
-
+        smartofficeShowToast(response.message || "SPD berhasil disimpan.", "success");
         smartofficeResetSPDForm();
         smartofficeSwitchSPDTab("riwayat");
+        await smartofficeLoadRiwayatSPD();
     }
     catch(error){
         console.error(
@@ -3106,6 +3102,40 @@ export function smartofficeRenderRiwayatSPDList(
                             )}
                         </div>
                     </div>
+                    
+                    <!-- ======================================
+                        JENIS PERJALANAN DINAS
+                    ======================================= -->
+                    <div class="smartoffice-spd-riwayat-jenis-perjalanan">
+                        <span class="smartoffice-spd-riwayat-jenis-perjalanan-icon">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="2.5"/>
+                            </svg>
+                        </span>
+
+                        <div class="smartoffice-spd-riwayat-jenis-perjalanan-info">
+                            <span>JENIS PERJALANAN DINAS</span>
+                            <strong>
+                                ${smartofficeEscapeHtml(
+                                    item.jenisPerjalananDinas ||
+                                    item.raw?.["JENIS_PERJALANAN_DINAS"] ||
+                                    "-"
+                                )}
+                            </strong>
+                        </div>
+                    </div>
 
                     <!-- =================================
                          PEGAWAI
@@ -3144,25 +3174,19 @@ export function smartofficeRenderRiwayatSPDList(
                     ================================= -->
                     <div class="smartoffice-spd-riwayat-info-grid">
                         <div class="smartoffice-spd-riwayat-info-box">
-                            <span>
-                                BERANGKAT
-                            </span>
-
+                            <span>BERANGKAT</span>
                             <strong>
                                 ${smartofficeEscapeHtml(
-                                    item.tanggalBerangkat || "-"
+                                    smartofficeFormatDateLongCard(item.tanggalBerangkat)
                                 )}
                             </strong>
                         </div>
 
                         <div class="smartoffice-spd-riwayat-info-box">
-                            <span>
-                                PULANG
-                            </span>
-
+                            <span>PULANG</span>
                             <strong>
                                 ${smartofficeEscapeHtml(
-                                    item.tanggalPulang || "-"
+                                    smartofficeFormatDateLongCard(item.tanggalPulang)
                                 )}
                             </strong>
                         </div>
@@ -3271,6 +3295,53 @@ export function smartofficeRenderRiwayatSPDList(
                             </strong>
                         </div>
                     </div>
+                    
+                    <!-- ======================================
+                        CATATAN REVISI SPJ
+                    ======================================= -->
+                    ${
+                        item.catatanRevisiSPJ
+                            ? `
+                                <div class="smartoffice-spd-riwayat-revision">
+                                    <strong>Catatan revisi SPJ</strong>
+                                    <p>
+                                        ${smartofficeEscapeHtml(item.catatanRevisiSPJ)}
+                                    </p>
+                                </div>
+                            `
+                            : ""
+                    }
+                    
+                    <!-- ======================================
+                        STATUS PEMBAYARAN
+                    ======================================= -->
+                    <div class="smartoffice-spd-riwayat-payment">
+                        <span class="smartoffice-spd-riwayat-payment-label">
+                            STATUS PEMBAYARAN
+                        </span>
+
+                        ${
+                            item.tglTransfer
+                                ? `
+                                    <div class="smartoffice-spd-riwayat-payment-status is-paid">
+                                        <span class="smartoffice-spd-riwayat-payment-dot"></span>
+                                        <strong>SUDAH DIBAYAR</strong>
+                                        <span class="smartoffice-spd-riwayat-payment-date">
+                                            ${smartofficeEscapeHtml(
+                                                smartofficeFormatDateLongCard(item.tglTransfer)
+                                            )}
+                                        </span>
+                                    </div>
+                                `
+                                : `
+                                    <div class="smartoffice-spd-riwayat-payment-status is-unpaid">
+                                        <span class="smartoffice-spd-riwayat-payment-dot"></span>
+                                        <strong>BELUM DIBAYAR</strong>
+                                    </div>
+                                `
+                        }
+                    </div>
+
 
                     <!-- =================================
                          FOOTER
@@ -3414,6 +3485,11 @@ function smartofficeNormalizeSPDData(item){
             item["JENIS_PERJALANAN_DINAS"] ||
             "",
 
+        jenisPerjalananDinas:
+            item["JENIS_PERJALANAN_DINAS"] ||
+            item["Tipe Keberangkatan"] ||
+            "",
+
         statusSPD:
             item["STATUS_SPD"] ||
             "",
@@ -3459,6 +3535,10 @@ function smartofficeNormalizeSPDData(item){
             item["NIP/NRP Pengikut 3"] || "",
             item["NIP/NRP Pengikut 4"] || ""
         ],
+
+        tglTransfer:
+            item["TGL_TRANSFER"] ||
+            "",
 
         raw: item
     };
@@ -6346,3 +6426,37 @@ function smartofficeEditSPD(item){
         "info"
     );
 }
+
+
+
+/* =========================================
+   FORMAT TANGGAL PANJANG CARD SMARTSPD BLUD
+========================================= */
+function smartofficeSPDFormatDateLongCard(value) {
+    if (!value) return "-";
+
+    const text = String(value).trim();
+
+    const match = text.match(
+        /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/
+    );
+
+    if (!match) return text;
+
+    const [, tahun, bulan, hari] = match;
+
+    const namaBulan = [
+        "Januari", "Februari", "Maret", "April",
+        "Mei", "Juni", "Juli", "Agustus",
+        "September", "Oktober", "November", "Desember"
+    ];
+
+    const nomorBulan = Number(bulan);
+
+    if (nomorBulan < 1 || nomorBulan > 12) {
+        return text;
+    }
+
+    return `${hari} ${namaBulan[nomorBulan - 1]} ${tahun}`;
+}
+

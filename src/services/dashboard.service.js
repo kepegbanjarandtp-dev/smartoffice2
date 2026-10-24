@@ -420,7 +420,6 @@ const smartofficeDashboardDokumenDitolakCache = new Map();
 export async function smartofficeGetTotalDokumenDitolak(nip){
 
     const nipValue = String(nip || "").trim();
-
     if(!nipValue){
         return 0;
     }
@@ -429,7 +428,6 @@ export async function smartofficeGetTotalDokumenDitolak(nip){
 
     const cached =
         smartofficeDashboardDokumenDitolakCache.get(nipValue);
-
     if(
         cached &&
         now - cached.time < SMARTOFFICE_DASHBOARD_STATS_CACHE_MS
