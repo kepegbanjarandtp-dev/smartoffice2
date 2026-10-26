@@ -20,59 +20,6 @@ import {
 } from "../core/cache.js";
 
 
-
-
-/* ======================================================
-   DEDUPLIKASI PEMBACAAN FIRESTORE ARSIP
-
-   Permintaan koleksi yang sama dan sedang berjalan
-   akan menggunakan Promise yang sama.
-
-   Setelah selesai, Promise dihapus agar pemanggilan
-   berikutnya dapat mengambil data terbaru.
-====================================================== */
-const smartofficeArsipReadInFlight = new Map();
-
-function smartofficeGetArsipCollectionSnapshot(
-    collectionName
-) {
-    const pending =
-        smartofficeArsipReadInFlight.get(collectionName);
-
-    if (pending) {
-        return pending;
-    }
-
-    const request = getDocs(
-        collection(
-            smartofficeFirestore,
-            collectionName
-        )
-    );
-
-    smartofficeArsipReadInFlight.set(
-        collectionName,
-        request
-    );
-
-    const cleanup = () => {
-        if (
-            smartofficeArsipReadInFlight.get(
-                collectionName
-            ) === request
-        ) {
-            smartofficeArsipReadInFlight.delete(
-                collectionName
-            );
-        }
-    };
-
-    request.then(cleanup, cleanup);
-
-    return request;
-}
-
-
 /* ======================================================
    GET DAFTAR PEGAWAI ARSIP
    FIRESTORE READ

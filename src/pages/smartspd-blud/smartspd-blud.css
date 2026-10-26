@@ -2280,7 +2280,7 @@ input[readonly]{
 }
 
 /* =========================================================
-   INFO GRID
+   INFO GRID - OK
 ========================================================= */
 .smartoffice-spd-riwayat-info-grid{
     display:grid;
@@ -2318,313 +2318,373 @@ input[readonly]{
     text-overflow:ellipsis;
 }
 
-
 /* =========================================================
-   LOKASI
+   LOKASI - OK
 ========================================================= */
-
-.smartoffice-spd-riwayat-location{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    padding:1px 0 10px;
-
+.smartoffice-spd-riwayat-location {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    min-width: 0;
+    padding: 1px 0 10px;
 }
 
-.smartoffice-spd-riwayat-location strong{
-
-    min-width:0;
-
-    overflow:hidden;
-
-    color:#334155;
-
-    font-size:11px;
-
-    font-weight:600;
-
-    white-space:nowrap;
-
-    text-overflow:ellipsis;
-
+.smartoffice-spd-riwayat-location > span {
+    flex-shrink: 0;
 }
 
+.smartoffice-spd-riwayat-location > strong {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
 
 /* =========================================================
-   PENGIKUT
+   PENGIKUT - OK
 ========================================================= */
-
 .smartoffice-spd-riwayat-followers{
-
     padding:10px 0;
-
     border-top:1px solid #edf1f5;
-
 }
 
 .smartoffice-spd-riwayat-followers-list{
-
     display:grid;
-
     grid-template-columns:
         repeat(2,minmax(0,1fr));
-
     gap:6px 20px;
-
-    margin-top:7px;
-
+    margin-top:5px;
 }
 
 .smartoffice-spd-riwayat-follower{
-
     min-width:0;
-
     display:flex;
-
     align-items:center;
-
     gap:8px;
-
 }
 
 .smartoffice-spd-riwayat-follower-number{
-
-    width:20px;
-
-    height:20px;
-
-    flex:0 0 20px;
-
+    width:22px;
+    height:22px;
+    flex:0 0 22px;
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     border-radius:6px;
-
     background:#2563eb;
-
     color:#fff;
-
-    font-size:8px;
-
+    font-size:10px;
     font-weight:800;
-
 }
 
 .smartoffice-spd-riwayat-follower-name{
-
     min-width:0;
-
     overflow:hidden;
-
     color:#334155;
-
-    font-size:10px;
-
+    font-size:12px;
     font-weight:650;
-
     white-space:nowrap;
-
     text-overflow:ellipsis;
-
 }
 
-
 /* =========================================================
-   STATUS SPJ
+   STATUS SPJ - OK
 ========================================================= */
-
 .smartoffice-spd-riwayat-spj{
-
     margin-top:3px;
-
     padding:8px 10px;
-
     border-radius:9px;
-
     background:#f8fafc;
-
 }
 
 .smartoffice-spd-riwayat-spj-label{
-
     display:flex;
-
     align-items:center;
-
     gap:9px;
-
 }
 
 .smartoffice-spd-riwayat-spj-label > span{
-
     color:#94a3b8;
-
-    font-size:8px;
-
+    font-size:10px;
     font-weight:700;
-
     letter-spacing:.07em;
-
 }
-
 
 /* =========================================================
    STATUS SPJ BADGE
 ========================================================= */
-
 .smartoffice-spd-riwayat-spj-status{
-
     display:inline-flex;
-
     align-items:center;
-
     min-height:20px;
-
     padding:3px 8px;
-
     border-radius:6px;
-
-    font-size:8px;
-
+    font-size:11px;
     font-weight:800;
-
     letter-spacing:.02em;
-
 }
-
 
 /* BELUM ADA */
-
 .smartoffice-spd-riwayat-spj-status-belum{
-
     background:#e2e8f0;
-
     color:#475569;
-
 }
-
 
 /* REVISI */
-
 .smartoffice-spd-riwayat-spj-status-revisi{
-
     background:#ffedd5;
-
     color:#c2410c;
-
 }
-
 
 /* SELESAI */
-
 .smartoffice-spd-riwayat-spj-status-selesai{
-
     background:#dcfce7;
-
     color:#15803d;
-
 }
-
 
 /* DIPROSES */
-
 .smartoffice-spd-riwayat-spj-status-proses{
-
     background:#dbeafe;
-
     color:#1d4ed8;
-
 }
-
 
 /* DEFAULT */
-
 .smartoffice-spd-riwayat-spj-status-default{
-
     background:#e2e8f0;
-
     color:#475569;
+}
 
+/* =========================================================
+   STATUS PEMBAYARAN - OK
+========================================================= */
+.smartoffice-spd-riwayat-payment {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 11px 12px;
+    margin-top: 8px;
+    border: 1px solid #e5eaf1;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.smartoffice-spd-riwayat-payment-label {
+    color: #94a3b8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .07em;
+}
+
+.smartoffice-spd-riwayat-payment-status {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 7px;
+    font-size: 12px;
+    min-width: 0;
+}
+
+.smartoffice-spd-riwayat-payment-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+}
+
+.smartoffice-spd-riwayat-payment-status.is-paid {
+    color: #087443;
+}
+
+.smartoffice-spd-riwayat-payment-status.is-paid
+.smartoffice-spd-riwayat-payment-dot {
+    background: #16a36a;
+}
+
+.smartoffice-spd-riwayat-status.is-unpaid {
+    color: #a16207;
+}
+
+.smartoffice-spd-riwayat-status.is-unpaid
+.smartoffice-spd-riwayat-dot {
+    background: #e5a000;
+}
+
+.smartoffice-spd-riwayat-payment-date {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   CATATAN REVISI SPJ
+========================================================= */
+.smartoffice-spd-riwayat-revision {
+    margin-top: 10px;
+    padding: 11px 12px;
+    border: 1px solid #fed7aa;
+    border-radius: 9px;
+    background: #fff7ed;
+    color: #9a3412;
+}
+
+.smartoffice-spd-riwayat-revision > strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.smartoffice-spd-riwayat-revision > p {
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
 }
 
 
 /* =========================================================
-   FOOTER
+   FOOTER RIWAYAT SPD - OK
 ========================================================= */
+.smartoffice-spd-riwayat-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #edf1f5;
+}
 
-.smartoffice-spd-riwayat-footer{
+/* ======================================================
+   TOMBOL DETAIL SPD — BIRU - OK
+====================================================== */
+.smartoffice-spd-riwayat-detail-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 12px;
 
-    display:flex;
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #ffffff;
 
-    align-items:center;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
 
-    justify-content:space-between;
+.smartoffice-spd-riwayat-detail-action:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+}
 
-    gap:8px;
+/* ======================================================
+   TOMBOL LIHAT SPD — HIJAU - OK
+====================================================== */
+.smartoffice-spd-riwayat-detail {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 12px;
 
-    margin-top:10px;
+    border: 1px solid #16a34a;
+    border-radius: 8px;
+    background: #16a34a;
+    color: #ffffff;
 
-    padding-top:10px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
 
-    border-top:1px solid #edf1f5;
+.smartoffice-spd-riwayat-detail:hover {
+    background: #15803d;
+    border-color: #15803d;
+}
 
+.smartoffice-spd-riwayat-detail svg {
+    display: block;
+    flex-shrink: 0;
 }
 
 
-/* =========================================================
-   LIHAT SPD
-========================================================= */
+/* ======================================================
+   SMARTSPD BLUD — TOMBOL UBAH DOKUMEN RIWAYAT SPD
+====================================================== */
+.smartoffice-spd-riwayat-edit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 0 12px;
 
-.smartoffice-spd-riwayat-detail{
+    border: 1px solid #d97706;
+    border-radius: 8px;
 
-    min-height:32px;
+    background: #f59e0b;
+    color: #ffffff;
 
-    padding:0 11px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
 
-    display:inline-flex;
+    white-space: nowrap;
+    cursor: pointer;
 
-    align-items:center;
-
-    justify-content:center;
-
-    gap:6px;
-
-    border:0;
-
-    border-radius:8px;
-
-    background:#eff6ff;
-
-    color:#2563eb;
-
-    font-family:inherit;
-
-    font-size:10px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.smartoffice-spd-riwayat-detail:hover{
-
-    background:#dbeafe;
-
+/* Hover */
+.smartoffice-spd-riwayat-edit:hover {
+    background: #d97706;
+    border-color: #b45309;
+    box-shadow: 0 2px 5px rgba(217, 119, 6, 0.18);
 }
 
-.smartoffice-spd-riwayat-detail svg{
-
-    display:block;
-
+/* Focus keyboard */
+.smartoffice-spd-riwayat-edit:focus-visible {
+    outline: 2px solid #f59e0b;
+    outline-offset: 2px;
 }
+
+/* Ikon SVG */
+.smartoffice-spd-riwayat-edit svg {
+    display: block;
+    flex-shrink: 0;
+}
+
+/* Active */
+.smartoffice-spd-riwayat-edit:active {
+    transform: translateY(1px);
+}
+
+
 
 
 /* =========================================================
@@ -2889,108 +2949,115 @@ input[readonly]{
 /* ==========================================================
    SMARTSPD DETAIL MODAL
 ========================================================== */
-
 .smartoffice-spd-detail-modal{
-    position:fixed;
-    inset:0;
-    z-index:10000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .smartoffice-spd-detail-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(15,23,42,.55);
-    backdrop-filter:blur(3px);
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, .55);
+    backdrop-filter: blur(3px);
 }
 
 .smartoffice-spd-detail-dialog{
-    position:relative;
-    z-index:1;
-    width:min(900px, 100%);
-    max-height:calc(100vh - 40px);
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-    background:#fff;
-    border:1px solid #e5e7eb;
-    border-radius:18px;
-    box-shadow:0 24px 70px rgba(15,23,42,.22);
-    animation:smartofficeSPDDetailIn .18s ease-out;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(900px, 100%);
+    max-height: calc(100vh - 40px);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 18px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .22);
+    animation: smartofficePengelolaanSPDDetailViewIn .18s ease-out;
 }
 
 .smartoffice-spd-detail-header{
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:20px;
-    padding:20px 22px 16px;
-    border-bottom:1px solid #eef2f7;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 22px 10px;
+    border-bottom: 1px solid #eef2f7;
 }
 
 .smartoffice-spd-detail-eyebrow{
-    display:block;
-    margin-bottom:4px;
-    color:#64748b;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:.08em;
+    display: block;
+    margin-bottom: 4px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
 }
 
 .smartoffice-spd-detail-header h2{
-    margin:0;
-    color:#0f172a;
-    font-size:20px;
-    line-height:1.25;
+    margin: 0;
+    color: #0f172a;
+    font-size: 18px;
+    line-height: 1.25;
 }
 
 .smartoffice-spd-detail-header p{
-    margin:4px 0 0;
-    color:#64748b;
-    font-size:12px;
+    margin: 2px 0 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .smartoffice-spd-detail-close{
-    width:34px;
-    height:34px;
-    flex:0 0 34px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border:0;
-    border-radius:9px;
-    background:#f1f5f9;
-    color:#64748b;
-    cursor:pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 9px;
+    background: #f1f5f9;
+    color: #64748b;
+    cursor: pointer;
 }
 
 .smartoffice-spd-detail-close:hover{
-    background:#e2e8f0;
-    color:#0f172a;
+    background: #e2e8f0;
+    color: #0f172a;
+}
+
+.smartoffice-spd-detail-close svg {
+    display: block;
+    width: 16px;
+    height: 16px;
 }
 
 .smartoffice-spd-detail-status-row{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-wrap:wrap;
-    padding:12px 22px;
-    border-bottom:1px solid #eef2f7;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 22px;
+    border-bottom: 1px solid #eef2f7;
 }
 
 .smartoffice-spd-detail-status,
 .smartoffice-spd-detail-lock{
-    display:inline-flex;
-    align-items:center;
-    min-height:26px;
-    padding:4px 9px;
-    border-radius:999px;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:.02em;
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .02em;
 }
 
 .smartoffice-spd-detail-status-waiting{
@@ -3047,64 +3114,66 @@ input[readonly]{
 }
 
 .smartoffice-spd-detail-section-title{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    margin-bottom:13px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 11px;
 }
 
 .smartoffice-spd-detail-section-title > span{
-    color:#0f172a;
-    font-size:12px;
-    font-weight:800;
-    letter-spacing:.03em;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .03em;
 }
 
 .smartoffice-spd-detail-section-title small{
     color:#64748b;
-    font-size:11px;
+    font-size: 12px;
 }
 
 .smartoffice-spd-detail-grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .smartoffice-spd-detail-field{
-    min-width:0;
-    padding:11px 12px;
-    background:#f8fafc;
-    border:1px solid #eef2f7;
-    border-radius:10px;
+    min-width: 0;
+    padding: 11px 12px;
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
+    border-radius: 10px;
 }
 
 .smartoffice-spd-detail-field > span{
-    display:block;
-    margin-bottom:4px;
-    color:#64748b;
-    font-size:10px;
-    font-weight:700;
-    text-transform:uppercase;
-    letter-spacing:.03em;
+    display: block;
+    margin-bottom: 4px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
 }
 
 .smartoffice-spd-detail-field > strong{
-    display:block;
-    color:#1e293b;
-    font-size:12px;
-    line-height:1.45;
-    word-break:break-word;
+    display: block;
+    color: #1e293b;
+    font-size: 13px;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .smartoffice-spd-detail-link{
-    display:inline-block;
-    color:#2563eb;
-    font-size:12px;
-    font-weight:700;
-    text-decoration:none;
-    word-break:break-all;
+    display: inline-block;
+    color: #2563eb;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+    word-break: break-all;
 }
 
 .smartoffice-spd-detail-link:hover{
@@ -3118,23 +3187,23 @@ input[readonly]{
 }
 
 .smartoffice-spd-detail-schedule{
-    padding:12px;
-    background:#f8fafc;
-    border:1px solid #e8edf3;
-    border-radius:12px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #e8edf3;
+    border-radius: 12px;
 }
 
 .smartoffice-spd-detail-schedule-title{
-    margin-bottom:9px;
-    color:#334155;
-    font-size:11px;
-    font-weight:800;
+    margin-bottom: 8px;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .smartoffice-spd-detail-schedule-grid{
-    display:grid;
-    grid-template-columns:repeat(4, minmax(0, 1fr));
-    gap:8px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
 }
 
 .smartoffice-spd-detail-schedule-grid
@@ -3143,77 +3212,83 @@ input[readonly]{
 }
 
 .smartoffice-spd-detail-followers{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0, 1fr));
-    gap:10px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
 }
 
 .smartoffice-spd-detail-follower{
-    display:flex;
-    gap:10px;
-    padding:12px;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    background:#fff;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
 }
 
 .smartoffice-spd-detail-follower-number{
-    width:27px;
-    height:27px;
-    flex:0 0 27px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:8px;
-    background:#e0f2fe;
-    color:#0369a1;
-    font-size:11px;
-    font-weight:800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 27px;
+    width: 27px;
+    height: 27px;
+    border-radius: 8px;
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 12px;
+    font-weight: 800;
 }
 
 .smartoffice-spd-detail-follower-info{
-    min-width:0;
-    display:flex;
-    flex-direction:column;
-    gap:3px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
 }
 
 .smartoffice-spd-detail-follower-info strong{
-    color:#1e293b;
-    font-size:12px;
-    line-height:1.4;
+    color: #1e293b;
+    font-size: 13px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
 }
 
 .smartoffice-spd-detail-follower-info span{
-    color:#64748b;
-    font-size:10px;
-    line-height:1.35;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
 }
 
-.smartoffice-spd-detail-note{
-    margin-top:10px;
-    padding:12px;
-    border-radius:10px;
-    background:#f8fafc;
-    border:1px solid #eef2f7;
+.smartoffice-spd-detail-note {
+    margin-top: 10px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #eef2f7;
 }
 
-.smartoffice-spd-detail-note > span{
-    display:block;
-    margin-bottom:5px;
-    color:#64748b;
-    font-size:10px;
-    font-weight:700;
-    text-transform:uppercase;
+.smartoffice-spd-detail-note > span {
+    display: block;
+    margin-bottom: 5px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
-.smartoffice-spd-detail-note p{
-    margin:0;
-    color:#334155;
-    font-size:12px;
-    line-height:1.55;
-    white-space:pre-wrap;
-    word-break:break-word;
+.smartoffice-spd-detail-note-content {
+    margin: 0;
+    padding: 0;
+    color: #334155;
+    font-size: 12px;
+    line-height: 1.55;
+    text-align: left;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
 }
 
 .smartoffice-spd-detail-spj-status{
@@ -3254,7 +3329,6 @@ input[readonly]{
 }
 
 @keyframes smartofficeSPDDetailIn{
-
     from{
         opacity:0;
         transform:translateY(8px) scale(.985);
@@ -3264,41 +3338,264 @@ input[readonly]{
         opacity:1;
         transform:translateY(0) scale(1);
     }
-
 }
 
 
-@media(max-width:700px){
 
-    .smartoffice-spd-detail-modal{
-        padding:0;
-        align-items:flex-end;
+/* ==========================================================
+   SMARTSPD DETAIL MODAL
+   RESPONSIVE TABLET & MOBILE — MAX WIDTH 768PX
+
+   Fokus:
+   1. Menyesuaikan ukuran modal pada layar <= 768px.
+   2. Mengatur header, tombol tutup, dan status.
+   3. Mengatur grid data, jadwal SPD, dan pengikut.
+   4. Menangani teks panjang agar tidak merusak layout.
+   5. Memastikan body modal dapat di-scroll.
+   6. Hanya berlaku untuk modal detail SPD.
+========================================================== */
+@media (max-width: 768px) {
+
+    /* 1. Overlay modal */
+    .smartoffice-spd-detail-modal {
+        padding: 6px;
+        box-sizing: border-box;
     }
 
-    .smartoffice-spd-detail-dialog{
-        width:100%;
-        max-height:94vh;
-        border-radius:18px 18px 0 0;
+    /* 2. Dialog utama */
+    .smartoffice-spd-detail-dialog {
+        width: 100%;
+        max-width: none;
+        max-height: calc(100vh - 12px);
+        border-radius: 15px;
     }
 
-    .smartoffice-spd-detail-header{
-        padding:17px 16px 14px;
+    /* 3. Header modal */
+    .smartoffice-spd-detail-header {
+        gap: 4px;
+        padding: 10px 14px 4px;
     }
 
-    .smartoffice-spd-detail-body{
-        padding:16px;
+    /* 4. Area judul agar tidak mendorong tombol tutup */
+    .smartoffice-spd-detail-header > div {
+        flex: 1 1 auto;
+        min-width: 0;
     }
 
-    .smartoffice-spd-detail-grid{
-        grid-template-columns:1fr;
+    .smartoffice-spd-detail-eyebrow {
+        font-size: 9px;
+        margin-bottom: 2px;
     }
 
-    .smartoffice-spd-detail-schedule-grid{
-        grid-template-columns:repeat(2, minmax(0, 1fr));
+    .smartoffice-spd-detail-header h2 {
+        font-size: 12px;
     }
 
-    .smartoffice-spd-detail-followers{
-        grid-template-columns:1fr;
+    .smartoffice-spd-detail-header p {
+        font-size: 10px;
+        margin: 1px 0 0;
+    }
+
+    /* 5. Tombol tutup */
+    .smartoffice-spd-detail-close {
+        flex: 0 0 24px;
+        width: 24px;
+        height: 24px;
+    }
+
+    .smartoffice-spd-detail-close svg {
+         width: 13px;
+        height: 13px;
+    }
+
+    /* 6. Baris badge status */
+    .smartoffice-spd-detail-status-row {
+        gap: 6px;
+        padding: 6px 14px;
+    }
+
+    .smartoffice-spd-detail-status,
+    .smartoffice-spd-detail-lock {
+        min-height: 20px;
+        padding: 3px 8px;
+        font-size: 8px;
+    }
+
+    /* 7. Body modal: area scroll utama */
+    .smartoffice-spd-detail-body {
+        padding: 10px 14px 4px;
+    }
+
+    /* 8. Section detail */
+    .smartoffice-spd-detail-section {
+        padding: 10px 0;
+    }
+   
+    /* 9. Judul section */
+    .smartoffice-spd-detail-section-title {
+        margin-bottom: 6px;
+    }
+
+    .smartoffice-spd-detail-section-title > span {
+        font-size: 9px;
+    }
+
+    .smartoffice-spd-detail-section-title small {
+        font-size: 10px;
+    }
+
+    /* 10. Grid data utama: dua kolom */
+    .smartoffice-spd-detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px;
+    }
+
+    /* 11. Kartu data */
+    .smartoffice-spd-detail-field {
+        padding: 6px 10px;
+        border-radius: 9px;
+    }
+
+    .smartoffice-spd-detail-field > span {
+        margin-bottom: 2px;
+        font-size: 8px;
+    }
+
+    .smartoffice-spd-detail-field > strong {
+        font-size: 9px;
+        line-height: 1.35;
+    }
+
+    /* 12. Link dokumen */
+    .smartoffice-spd-detail-link {
+        max-width: 100%;
+        font-size: 12px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+        word-break: break-all;
+    }
+
+    /* 13. Daftar jadwal SPD */
+    .smartoffice-spd-detail-schedule-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px !important;
+    }
+
+    .smartoffice-spd-detail-schedule {
+        position: relative;
+        flex: 0 0 auto;
+        margin: 0 0 6px;
+        padding: 9px;
+        border: 1px solid #e8edf3;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+    .smartoffice-spd-detail-schedule-title {
+        margin-bottom: 2px;
+        font-size: 9px;
+    }
+
+    /* 14. Grid jadwal: empat field menjadi dua kolom */
+    .smartoffice-spd-detail-schedule-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .smartoffice-spd-detail-schedule-grid
+    .smartoffice-spd-detail-field {
+        min-width: 0;
+        padding: 9px 10px;
+        background: #fff;
+        border-radius: 9px;
+    }
+
+    .smartoffice-spd-detail-schedule-grid
+    .smartoffice-spd-detail-field > span {
+        font-size: 10px;
+        line-height: 1.45;
+    }
+
+    .smartoffice-spd-detail-schedule-grid
+    .smartoffice-spd-detail-field > strong {
+        font-size: 11px;
+        line-height: 1.5;
+    }
+
+    /* 15. Daftar pengikut: dua kolom */
+    .smartoffice-spd-detail-followers {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .smartoffice-spd-detail-follower {
+        gap: 8px;
+        padding: 9px;
+    }
+
+    /* 16. Nomor pengikut tidak boleh menyusut */
+    .smartoffice-spd-detail-follower-number {
+        flex-basis: 18px;
+        width: 18px;
+        height: 18px;
+        font-size: 8px;
+    }
+
+    /* 17. Informasi pengikut */
+    .smartoffice-spd-detail-follower-info {
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: 100%;
+        gap: 4px;
+    }
+
+    .smartoffice-spd-detail-follower-info strong {
+        font-size: 10px;
+    }
+
+    .smartoffice-spd-detail-follower-info span {
+        font-size: 9px;
+    }
+
+    /* 18. Catatan dan catatan revisi */
+    .smartoffice-spd-detail-note {
+        min-width: 0;
+        padding: 11px;
+        box-sizing: border-box;
+    }
+
+    .smartoffice-spd-detail-note > span {
+        margin-bottom: 5px;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+    .smartoffice-spd-detail-note-content {
+        font-size: 12px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    /* 19. Badge status SPJ */
+    .smartoffice-spd-detail-spj-status {
+        max-width: 100%;
+        padding: 5px 8px;
+        font-size: 10px;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    /* 20. Kondisi data kosong */
+    .smartoffice-spd-detail-empty {
+        padding: 14px 12px;
+        font-size: 12px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+        word-break: break-word;
     }
 
 }

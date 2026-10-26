@@ -31,6 +31,10 @@ import {
     smartofficeRenderMobileNavbar
 } from "../../components/navbar/navbar.js";
 
+import {
+    smartofficeOpenPreviewDokumen
+} from "../../components/preview/preview.js";
+
 /* ======================================================
    1.3 SERVICE
 ====================================================== */
@@ -55,6 +59,10 @@ import {
 import {
     smartofficeConvertFileToBase64
 } from "../../utils/file.js";
+
+import {
+    smartofficeGetDriveFileId
+} from "../../utils/drive.js";
 
 
 
@@ -2520,6 +2528,22 @@ async function smartofficeBuildSubmitPayload(){
             "lampiran";
     }
 
+    // ==================================================
+    // FORMAT TIPE KEBERANGKATAN UNTUK PENYIMPANAN
+    // ==================================================
+    const tipeKeberangkatan = String(
+        document.getElementById(
+            "smartofficeSPDTipeKeberangkatan"
+        )?.value || ""
+    ).trim().toUpperCase();
+
+    const tipeKeberangkatanLabel =
+        tipeKeberangkatan === "PULANG_PERGI"
+            ? "Pulang Pergi"
+            : tipeKeberangkatan === "MENGINAP"
+                ? "Menginap"
+                : "";
+
     /* ==================================================
        PAYLOAD UTAMA
     ================================================== */
@@ -2606,11 +2630,9 @@ async function smartofficeBuildSubmitPayload(){
 
         /* ==================================================
            TIPE KEBERANGKATAN
+           Disimpan sebagai teks yang mudah dibaca
         ================================================== */
-        tipeKeberangkatan:
-            document.getElementById(
-                "smartofficeSPDTipeKeberangkatan"
-            )?.value || "",
+        tipeKeberangkatan: tipeKeberangkatanLabel,
 
         /* ==================================================
            JENIS PERJALANAN DINAS
@@ -3030,6 +3052,18 @@ export function smartofficeRenderRiwayatSPDList(
             }
 
             /* ------------------------------------------
+               STATUS LOCK SPD
+               Tombol edit hanya tampil jika SPD terbuka
+            ------------------------------------------ */
+            const lockSPD = String(
+                item.lockSPD ||
+                item.raw?.["LOCK_SPD"] ||
+                ""
+            ).trim().toUpperCase();
+
+            const bolehEdit = lockSPD === "TERBUKA";
+
+            /* ------------------------------------------
                RENDER
             ------------------------------------------ */
             return `
@@ -3177,7 +3211,7 @@ export function smartofficeRenderRiwayatSPDList(
                             <span>BERANGKAT</span>
                             <strong>
                                 ${smartofficeEscapeHtml(
-                                    smartofficeFormatDateLongCard(item.tanggalBerangkat)
+                                    smartofficeSPDFormatDateLongCard(item.tanggalBerangkat)
                                 )}
                             </strong>
                         </div>
@@ -3186,7 +3220,7 @@ export function smartofficeRenderRiwayatSPDList(
                             <span>PULANG</span>
                             <strong>
                                 ${smartofficeEscapeHtml(
-                                    smartofficeFormatDateLongCard(item.tanggalPulang)
+                                    smartofficeSPDFormatDateLongCard(item.tanggalPulang)
                                 )}
                             </strong>
                         </div>
@@ -3328,7 +3362,7 @@ export function smartofficeRenderRiwayatSPDList(
                                         <strong>SUDAH DIBAYAR</strong>
                                         <span class="smartoffice-spd-riwayat-payment-date">
                                             ${smartofficeEscapeHtml(
-                                                smartofficeFormatDateLongCard(item.tglTransfer)
+                                                smartofficeSPDFormatDateLongCard(item.tglTransfer)
                                             )}
                                         </span>
                                     </div>
@@ -3340,80 +3374,93 @@ export function smartofficeRenderRiwayatSPDList(
                                     </div>
                                 `
                         }
-                    </div>
-
-
+                    </div>                                     
+                    
                     <!-- =================================
-                         FOOTER
+                        FOOTER RIWAYAT SPD
+                        Urutan: Detail → PDF → Edit
                     ================================= -->
                     <div class="smartoffice-spd-riwayat-footer">
+
+                        <!-- =================================
+                            1. DETAIL SPD
+                            Selalu tampil
+                        ================================= -->
                         <button
                             type="button"
-                            class="smartoffice-spd-riwayat-detail"
+                            class="smartoffice-spd-riwayat-detail-action"
                             data-action="detail"
-                            data-id-spd="${smartofficeEscapeHtml(
-                                item.idSPD || ""
-                            )}"
+                            data-id-spd="${smartofficeEscapeHtml(item.idSPD || "")}"
                         >
-                            <span>
-                                Lihat SPD
-                            </span>
-
-                            <!-- SVG ARROW -->
-                            <svg
-                                viewBox="0 0 24 24"
-                                width="13"
-                                height="13"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                aria-hidden="true"
-                            >
-                                <path d="M5 12h14"/>
-
-                                <path d="m13 6 6 6-6 6"/>
-                            </svg>
+                            <span>Detail SPD</span>
                         </button>
 
-                        <!-- SVG MORE -->
-                        <button
-                            type="button"
-                            class="smartoffice-spd-riwayat-more"
-                            data-action="more"
-                            data-id-spd="${smartofficeEscapeHtml(
-                                item.idSPD || ""
-                            )}"
-                            aria-label="Menu SPD"
-                        >
-                            <svg
-                                viewBox="0 0 24 24"
-                                width="17"
-                                height="17"
-                                fill="currentColor"
-                                aria-hidden="true"
+                        <!-- =================================
+                            2. LIHAT SPD
+                            Tampil jika link PDF tersedia
+                        ================================= -->
+                        ${(
+                            item.linkPdf ||
+                            item.raw?.["LINK_PDF_SPD"] ||
+                            ""
+                        ).toString().trim() ? `
+                            <button
+                                type="button"
+                                class="smartoffice-spd-riwayat-detail"
+                                data-action="pdf"
+                                data-id-spd="${smartofficeEscapeHtml(item.idSPD || "")}"
                             >
+                                <span>Lihat SPD</span>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    width="13"
+                                    height="13"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M5 12h14"/>
+                                    <path d="m13 6 6 6-6 6"/>
+                                </svg>
+                            </button>
+                        ` : ""}
 
-                                <circle
-                                    cx="12"
-                                    cy="5"
-                                    r="1.7"
-                                />
-
-                                <circle
-                                    cx="12"
-                                    cy="12"
-                                    r="1.7"
-                                />
-
-                                <circle
-                                    cx="12"
-                                    cy="19"
-                                    r="1.7"
-                                />
-                            </svg>
-                        </button>
+                        <!-- =================================
+                            3. UBAH DOKUMEN
+                            Tampil jika LOCK_SPD = TERBUKA
+                        ================================= -->
+                        ${String(
+                            item.lockSPD ||
+                            item.raw?.["LOCK_SPD"] ||
+                            ""
+                        ).trim().toUpperCase() === "TERBUKA" ? `
+                            <button
+                                type="button"
+                                class="smartoffice-spd-riwayat-edit"
+                                data-action="edit"
+                                data-id-spd="${smartofficeEscapeHtml(item.idSPD || "")}"
+                            >
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    width="15"
+                                    height="15"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M12 20H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5v3"/>
+                                    <path d="M14 3v5h5"/>
+                                    <path d="m16 19 4-4 2 2-4 4-3 1z"/>
+                                </svg>
+                                <span>Ubah Ajuan</span>
+                            </button>
+                        ` : ""}
                     </div>
                 </article>
             `;
@@ -3482,12 +3529,10 @@ function smartofficeNormalizeSPDData(item){
 
          tipePerjalanan:
             item["Tipe Keberangkatan"] ||
-            item["JENIS_PERJALANAN_DINAS"] ||
             "",
 
         jenisPerjalananDinas:
             item["JENIS_PERJALANAN_DINAS"] ||
-            item["Tipe Keberangkatan"] ||
             "",
 
         statusSPD:
@@ -3538,6 +3583,10 @@ function smartofficeNormalizeSPDData(item){
 
         tglTransfer:
             item["TGL_TRANSFER"] ||
+            "",
+
+        lockSPD:
+            item["LOCK_SPD"] ||
             "",
 
         raw: item
@@ -4020,77 +4069,146 @@ function smartofficeSafeUrl(value){
    SMARTSPD BLUD
    ACTION MENU RIWAYAT SPD
 ========================================================== */
-function smartofficeInitSPDActionMenu(){
+function smartofficeInitSPDActionMenu() {
+    const list = document.getElementById(
+        "smartofficeRiwayatSPDList"
+    );
 
-    const list =
-        document.getElementById(
-            "smartofficeRiwayatSPDList"
-        );
-    if(!list){
-        return;
-    }
+    if (!list) return;
 
-    /*
-     * Hapus listener lama jika fungsi dipanggil ulang.
-     */
-    if(list._smartofficeSPDActionMenuHandler){
+    // Hapus listener lama jika fungsi dipanggil ulang.
+    if (list._smartofficeSPDActionMenuHandler) {
         list.removeEventListener(
             "click",
             list._smartofficeSPDActionMenuHandler
         );
     }
 
-    const handler =
-        function(event){
-            const button =
-                event.target.closest(
-                    '.smartoffice-spd-riwayat-more[data-action="more"]'
-                );
-            if(!button){
-                return;
+    const handler = function(event) {
+        /* ==================================================
+            SELECTOR TOMBOL AKSI RIWAYAT SPD
+        ================================================== */
+        const button = event.target.closest(
+            // DETAIL SPD
+            '.smartoffice-spd-riwayat-detail-action[data-action="detail"], ' +
+
+            // LIHAT PDF SPD
+            '.smartoffice-spd-riwayat-detail[data-action="pdf"], ' +
+
+            // UBAH DOKUMEN SPD
+            '.smartoffice-spd-riwayat-edit[data-action="edit"], ' +
+
+            // MENU MORE (jika masih digunakan)
+            '.smartoffice-spd-riwayat-more[data-action="more"]'
+        );
+
+        if (!button || !list.contains(button)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const idSPD = String(
+            button.dataset.idSpd || ""
+        ).trim();
+
+        if (!idSPD) return;
+
+        const item = smartofficeSPDRiwayat.find(
+            function(data) {
+                return String(data.idSPD || "").trim() === idSPD;
             }
+        );
 
-            event.preventDefault();
-            event.stopPropagation();
-
-            const idSPD =
-                String(
-                    button.dataset.idSpd || ""
-                ).trim();
-            if(!idSPD){
-                return;
-            }
-
-            const item =
-                smartofficeSPDRiwayat.find(
-                    function(data){
-                        return String(
-                            data.idSPD || ""
-                        ).trim() === idSPD;
-                    }
-                );
-            if(!item){
-                console.warn(
-                    "SMARTSPD ACTION MENU: data tidak ditemukan",
-                    idSPD
-                );
-
-                return;
-            }
-
-            smartofficeOpenSPDActionMenu(
-                button,
-                item
+        if (!item) {
+            console.warn(
+                "SMARTSPD: data SPD tidak ditemukan",
+                idSPD
             );
-        };
+            return;
+        }
 
-    list.addEventListener(
-        "click",
-        handler
-    );
+        // ==================================================
+        // UBAH DOKUMEN SPD
+        // Hanya dapat dilakukan jika LOCK_SPD = TERBUKA
+        // ==================================================
+        if (
+            button.dataset.action === "edit" &&
+            button.classList.contains(
+                "smartoffice-spd-riwayat-edit"
+            )
+        ) {
+            // Periksa status lock terbaru pada data yang tersedia
+            const lockSPD = String(
+                item.lockSPD ||
+                item.raw?.["LOCK_SPD"] ||
+                ""
+            ).trim().toUpperCase();
 
-    list._smartofficeSPDActionMenuHandler =
-        handler;
+            // SPD terkunci: batalkan proses edit
+            if (lockSPD !== "TERBUKA") {
+                smartofficeShowToast(
+                    "SPD terkunci dan tidak dapat diubah.",
+                    "warning"
+                );
+                return;
+            }
+
+            // SPD terbuka: buka form edit
+            smartofficeHandleSPDAction("edit", item);
+            return;
+        }
+
+        // Detail SPD: buka detail perjalanan.
+        if (
+            button.dataset.action === "detail" &&
+            button.classList.contains(
+                "smartoffice-spd-riwayat-detail-action"
+            )
+        ) {
+            smartofficeHandleSPDAction("detail", item);
+            return;
+        }
+
+        // Lihat SPD: buka preview PDF melalui preview.js.
+        if (
+            button.dataset.action === "pdf" &&
+            button.classList.contains(
+                "smartoffice-spd-riwayat-detail"
+            )
+        ) {
+            const linkPdf =
+                item.linkPdf ||
+                item.raw?.["LINK_PDF_SPD"] ||
+                "";
+
+            if (!linkPdf) {
+                smartofficeShowToast(
+                    "File PDF SPD belum tersedia.",
+                    "warning"
+                );
+                return;
+            }
+
+            const fileId = smartofficeGetDriveFileId(linkPdf);
+
+            if (!fileId) {
+                smartofficeShowToast(
+                    "ID file PDF SPD tidak valid.",
+                    "warning"
+                );
+                return;
+            }
+
+            smartofficeOpenPreviewDokumen(fileId, "SPD");
+            return;
+        }
+
+        // Pertahankan perilaku menu More jika masih digunakan.
+        smartofficeOpenSPDActionMenu(button, item);
+    };
+
+    list.addEventListener("click", handler);
+    list._smartofficeSPDActionMenuHandler = handler;
 }
 
 
@@ -5701,15 +5819,8 @@ function smartofficeOpenSPDDetail(item){
                     </div>
 
                     <div class="smartoffice-spd-detail-note">
-                        <span>
-                            Catatan Revisi SPJ
-                        </span>
-
-                        <p>
-                            ${escape(
-                                catatanRevisiSPJ || "-"
-                            )}
-                        </p>
+                        <span>Catatan Revisi SPJ</span>
+                        <div class="smartoffice-spd-detail-note-content">${catatanRevisiSPJ ? escape(catatanRevisiSPJ) : "—"}</div>
                     </div>
                 </section>
 
@@ -6078,21 +6189,46 @@ function smartofficeEditSPD(item){
        TIPE KEBERANGKATAN
        PULANG_PERGI / MENGINAP
     ================================================== */
-    const tipe =
-        String(
-            raw["Tipe Keberangkatan"] ||
-            item.tipeKeberangkatan ||
-            ""
-        ).trim();
+    
+    /* ==================================================
+    TIPE KEBERANGKATAN
+    Pulihkan Pulang Pergi / Menginap
+    ================================================== */
+    const tipe = String(
+        raw["Tipe Keberangkatan"] ||
+        item.tipeKeberangkatan ||
+        ""
+    ).trim().toUpperCase();
 
-    const hiddenTipe =
-        document.getElementById(
-            "smartofficeSPDTipeKeberangkatan"
-        );
+    const hiddenTipe = document.getElementById(
+        "smartofficeSPDTipeKeberangkatan"
+    );
 
-    if(hiddenTipe){
+    if (hiddenTipe) {
         hiddenTipe.value = tipe;
     }
+
+    document
+        .querySelectorAll(
+            "#smartofficeSPDTipeContainer [data-value]"
+        )
+        .forEach(function(button) {
+            const value = String(
+                button.dataset.value || ""
+            ).trim().toUpperCase();
+
+            const active = value === tipe;
+
+            button.classList.toggle("active", active);
+            button.setAttribute(
+                "aria-pressed",
+                active ? "true" : "false"
+            );
+        });
+
+    /* Perbarui tampilan sesuai tipe terpilih */
+    smartofficeUpdateTripTypeLock();
+    smartofficeRenderSPDTimeline();
 
     /* ==================================================
        AKTIFKAN TOMBOL TIPE

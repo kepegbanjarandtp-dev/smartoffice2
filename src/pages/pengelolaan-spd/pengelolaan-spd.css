@@ -28,6 +28,14 @@
     box-sizing: border-box;
 }
 
+/* ======================================================
+   HEADER - OK
+====================================================== */
+.smartoffice-pengelolaanspd-header-icon {
+    background:#EDEBFF;
+    color:#6D5AE6;
+}
+
 /* =====================================================
    OVERVIEW SPD — TITLE
 ===================================================== */
@@ -1543,7 +1551,7 @@
     min-height: 20px;
     padding: 3px 8px;
     border-radius: 6px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: .02em;
 }
@@ -1616,9 +1624,10 @@
 .smartoffice-pengelolaan-spd-card-payment-status {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 7px;
     font-size: 12px;
+    min-width: 0;
 }
 
 .smartoffice-pengelolaan-spd-card-payment-dot {
@@ -1648,7 +1657,9 @@
 
 .smartoffice-pengelolaan-spd-card-payment-date {
     color: #64748b;
+    font-size: 12px;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 /* =========================================================
@@ -2172,8 +2183,8 @@
 .smartoffice-pengelolaan-spd-detail-view-section-title {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: flex-start;
+    gap: 8px;
     margin-bottom: 11px;
 }
 
@@ -2330,9 +2341,10 @@
     overflow-wrap: anywhere;
 }
 
+
 /* ==========================================================
-   CATATAN - GAK ADA
-========================================================== 
+   CATATAN REVISI SPJ
+========================================================== */
 .smartoffice-pengelolaan-spd-detail-view-note {
     margin-top: 10px;
     padding: 12px;
@@ -2345,30 +2357,32 @@
     display: block;
     margin-bottom: 5px;
     color: #64748b;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
 }
 
-.smartoffice-pengelolaan-spd-detail-view-note p {
+.smartoffice-pengelolaan-spd-detail-view-note-content {
     margin: 0;
+    padding: 0;
     color: #334155;
     font-size: 12px;
     line-height: 1.55;
     white-space: pre-wrap;
     overflow-wrap: anywhere;
     word-break: break-word;
-} */
+}
+
 
 /* ==========================================================
    STATUS SPJ - GAK ADA
-========================================================== 
+========================================================== */
 .smartoffice-pengelolaan-spd-detail-view-spj-status {
     display: inline-flex;
     align-items: center;
     padding: 4px 8px;
     border-radius: 999px;
-    font-size: 10px;
+    font-size: 12px;
     font-weight: 800;
 }
 
@@ -2390,7 +2404,7 @@
 .smartoffice-pengelolaan-spd-detail-view-spj-status-selesai {
     background: #ecfdf5;
     color: #047857;
-} */
+} 
 
 /* ======================================================
    DETAIL SPD — TOMBOL TUTUP POJOK KANAN BAWAH - OK
@@ -2611,6 +2625,14 @@
         gap: 6px;
     }
 
+    .smartoffice-pengelolaan-spd-detail-view-schedule-grid
+    .smartoffice-pengelolaan-spd-detail-view-schedule-full {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
     /* DAFTAR PENGIKUT */
     .smartoffice-pengelolaan-spd-detail-view-followers {
         grid-template-columns: minmax(0, 1fr);
@@ -2634,6 +2656,34 @@
     }
 
     .smartoffice-pengelolaan-spd-detail-view-follower-info span {
+        font-size: 9px;
+    }
+
+    /* SIMBOK — CATATAN REVISI SPJ MOBILE */
+    .smartoffice-pengelolaan-spd-detail-view-note {
+        margin-top: 8px;
+        padding: 10px;
+        border-radius: 9px;
+        min-width: 0;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-note > span {
+        margin-bottom: 5px;
+        font-size: 8px;
+        line-height: 1.4;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-note-content {
+        font-size: 9px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .smartoffice-pengelolaan-spd-detail-view-spj-status {
         font-size: 9px;
     }
 

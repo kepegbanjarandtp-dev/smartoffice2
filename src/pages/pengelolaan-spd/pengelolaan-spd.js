@@ -2328,9 +2328,9 @@ function smartofficePengelolaanSPDShowDetail(item) {
     // Escape menggunakan helper yang sudah tersedia di Pengelolaan SPD.
     const escape = value =>
         smartofficeEscapeHTML(value ?? "");
-
-    const valueHtml = (label, value) => `
-        <div class="smartoffice-pengelolaan-spd-detail-view-field">
+    
+    const valueHtml = (label, value, extraClass = "") => `
+        <div class="smartoffice-pengelolaan-spd-detail-view-field ${extraClass}">
             <span>${escape(label)}</span>
             <strong>${escape(value || "—")}</strong>
         </div>
@@ -2456,7 +2456,7 @@ function smartofficePengelolaanSPDShowDetail(item) {
             });
         }
     }
-
+    
     const scheduleHtml = schedules.length
         ? schedules.map(schedule => `
             <div class="smartoffice-pengelolaan-spd-detail-view-schedule">
@@ -2467,10 +2467,18 @@ function smartofficePengelolaanSPDShowDetail(item) {
                 <div class="smartoffice-pengelolaan-spd-detail-view-schedule-grid">
                     ${valueHtml("Berangkat", schedule.berangkat)}
                     ${valueHtml("Pulang", schedule.pulang)}
-                    ${valueHtml("Lokasi", schedule.lokasi)}
+                    ${valueHtml(
+                        "Lokasi",
+                        schedule.lokasi,
+                        "smartoffice-pengelolaan-spd-detail-view-schedule-full"
+                    )}
                     ${
                         schedule.hari > 1
-                            ? valueHtml("Tiba", schedule.tiba)
+                            ? valueHtml(
+                                "Tiba",
+                                schedule.tiba,
+                                "smartoffice-pengelolaan-spd-detail-view-schedule-full"
+                            )
                             : ""
                     }
                 </div>
@@ -2603,7 +2611,7 @@ function smartofficePengelolaanSPDShowDetail(item) {
                     <div class="smartoffice-pengelolaan-spd-detail-view-section-title">
                         <span>REVIEW SPD</span>
                     </div>
-
+                    
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
                         ${valueHtml("Reviewer", get("REVIEWER"))}
                         ${valueHtml("NIP Reviewer", get("REVIEWER_NIP"))}
@@ -2620,7 +2628,11 @@ function smartofficePengelolaanSPDShowDetail(item) {
                             smartofficeFormatTanggalReview(get("TGL_REVISI_SPD", ""))
                         )}
                         ${valueHtml("Total Revisi", get("TOTAL_REVISI_SPD", "0"))}
-                        ${valueHtml("Catatan Revisi", get("CATATAN_REVISI_SPD"))}
+                    </div>
+
+                    <div class="smartoffice-pengelolaan-spd-detail-view-note">
+                        <span>Catatan Revisi SPD</span>
+                        <div class="smartoffice-pengelolaan-spd-detail-view-note-content">${escape(get("CATATAN_REVISI_SPD"))}</div>
                     </div>
                 </section>
 
@@ -2635,24 +2647,46 @@ function smartofficePengelolaanSPDShowDetail(item) {
                         ${valueHtml("PDF Generated", get("PDF_GENERATED", "FALSE"))}
                     </div>
                 </section>
-
+                
                 <section class="smartoffice-pengelolaan-spd-detail-view-section">
                     <div class="smartoffice-pengelolaan-spd-detail-view-section-title">
                         <span>SPJ</span>
+
+                        <strong class="
+                            smartoffice-pengelolaan-spd-detail-view-spj-status
+                            smartoffice-pengelolaan-spd-detail-view-spj-status-${statusSPJClass}
+                        ">
+                            ${escape(statusSPJ)}
+                        </strong>
                     </div>
 
                     <div class="smartoffice-pengelolaan-spd-detail-view-grid">
                         ${valueHtml("Status SPJ", statusSPJ)}
+
                         ${valueHtml(
                             "Nominal Transport",
                             smartofficeFormatRupiah(get("JUMLAH UANG", ""))
                         )}
-                        ${valueHtml("Catatan Revisi SPJ", get("CATATAN_REVISI_SPJ"))}
+
                         ${valueHtml(
                             "Tanggal Update SPJ",
                             smartofficeFormatTanggalReview(get("TGL_UPDATE_SPJ", ""))
                         )}
+
                         ${valueHtml("Reminder SPJ", get("REMINDER_SPJ"))}
+                    </div>
+
+                    <div class="smartoffice-pengelolaan-spd-detail-view-note">
+                        <span>Catatan Revisi SPJ</span>
+                        <div class="smartoffice-pengelolaan-spd-detail-view-note-content">${escape(first(
+                            item.catatanRevisiSPJ,
+                            item.CATATAN_REVISI_SPJ,
+                            get("CATATAN_REVISI_SPJ", "")
+                        ) === "—" ? "—" : first(
+                            item.catatanRevisiSPJ,
+                            item.CATATAN_REVISI_SPJ,
+                            get("CATATAN_REVISI_SPJ", "")
+                        ))}</div>
                     </div>
                 </section>
 
