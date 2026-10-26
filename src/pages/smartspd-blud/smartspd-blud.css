@@ -3116,7 +3116,7 @@ input[readonly]{
 .smartoffice-spd-detail-section-title{
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 12px;
     margin-bottom: 11px;
 }
@@ -3297,6 +3297,7 @@ input[readonly]{
     border-radius:999px;
     font-size:10px;
     font-weight:800;
+    flex-shrink: 0;
 }
 
 .smartoffice-spd-detail-spj-status-belum{
@@ -3317,6 +3318,30 @@ input[readonly]{
 .smartoffice-spd-detail-spj-status-selesai{
     background:#ecfdf5;
     color:#047857;
+}
+
+/* Judul SPJ: badge sejajar dengan teks */
+.smartoffice-spd-detail-spj-title {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.smartoffice-spd-detail-spj-title > span {
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    line-height: 1;
+}
+
+.smartoffice-spd-detail-spj-title .smartoffice-spd-detail-spj-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    line-height: 1.2;
+    vertical-align: middle;
 }
 
 .smartoffice-spd-detail-empty{
@@ -3383,7 +3408,7 @@ input[readonly]{
     }
 
     .smartoffice-spd-detail-eyebrow {
-        font-size: 9px;
+        font-size: 10px;
         margin-bottom: 2px;
     }
 
@@ -3437,7 +3462,7 @@ input[readonly]{
     }
 
     .smartoffice-spd-detail-section-title > span {
-        font-size: 9px;
+        font-size: 10px;
     }
 
     .smartoffice-spd-detail-section-title small {
@@ -3458,18 +3483,33 @@ input[readonly]{
 
     .smartoffice-spd-detail-field > span {
         margin-bottom: 2px;
-        font-size: 8px;
+        font-size: 9px;
     }
 
     .smartoffice-spd-detail-field > strong {
-        font-size: 9px;
+        font-size: 10px;
         line-height: 1.35;
+    }
+
+    /* Samakan posisi link dokumen dengan Pengelolaan SPD */
+    .smartoffice-spd-detail-grid > .smartoffice-spd-detail-field:has(a) {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        min-width: 0;
+    }
+
+    .smartoffice-spd-detail-grid > .smartoffice-spd-detail-field:has(a) a {
+        align-self: flex-start;
+        text-align: left;
+        margin-left: 0;
     }
 
     /* 12. Link dokumen */
     .smartoffice-spd-detail-link {
         max-width: 100%;
-        font-size: 12px;
+        font-size: 11px;
         line-height: 1.5;
         overflow-wrap: anywhere;
         word-break: break-all;
@@ -3494,7 +3534,7 @@ input[readonly]{
 
     .smartoffice-spd-detail-schedule-title {
         margin-bottom: 2px;
-        font-size: 9px;
+        font-size: 10px;
     }
 
     /* 14. Grid jadwal: empat field menjadi dua kolom */
@@ -3513,19 +3553,27 @@ input[readonly]{
 
     .smartoffice-spd-detail-schedule-grid
     .smartoffice-spd-detail-field > span {
-        font-size: 10px;
+        font-size: 9px;
         line-height: 1.45;
     }
 
     .smartoffice-spd-detail-schedule-grid
     .smartoffice-spd-detail-field > strong {
-        font-size: 11px;
+        font-size: 10px;
         line-height: 1.5;
+    }
+
+    .smartoffice-spd-detail-schedule-grid
+    .smartoffice-spd-detail-schedule-full {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
     }
 
     /* 15. Daftar pengikut: dua kolom */
     .smartoffice-spd-detail-followers {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1fr);
         gap: 10px;
     }
 
@@ -3539,7 +3587,7 @@ input[readonly]{
         flex-basis: 18px;
         width: 18px;
         height: 18px;
-        font-size: 8px;
+        font-size: 9px;
     }
 
     /* 17. Informasi pengikut */
@@ -3567,12 +3615,12 @@ input[readonly]{
 
     .smartoffice-spd-detail-note > span {
         margin-bottom: 5px;
-        font-size: 10px;
+        font-size: 9px;
         line-height: 1.5;
     }
 
     .smartoffice-spd-detail-note-content {
-        font-size: 12px;
+        font-size: 10px;
         line-height: 1.6;
         white-space: pre-wrap;
         overflow-wrap: anywhere;
@@ -3581,18 +3629,39 @@ input[readonly]{
 
     /* 19. Badge status SPJ */
     .smartoffice-spd-detail-spj-status {
-        max-width: 100%;
-        padding: 5px 8px;
-        font-size: 10px;
-        line-height: 1.4;
-        white-space: normal;
-        overflow-wrap: anywhere;
+        font-size:9px;
+    }
+
+    .smartoffice-spd-detail-section-title.smartoffice-spd-detail-spj-title {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 8px !important;
+        min-height: 18px;
+    }
+
+    .smartoffice-spd-detail-section-title.smartoffice-spd-detail-spj-title > span {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 18px !important;
+    }
+
+    .smartoffice-spd-detail-section-title.smartoffice-spd-detail-spj-title > strong {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+        padding: 4px 8px !important;
+        align-self: center !important;
     }
 
     /* 20. Kondisi data kosong */
     .smartoffice-spd-detail-empty {
         padding: 14px 12px;
-        font-size: 12px;
+        font-size: 10px;
         line-height: 1.6;
         overflow-wrap: anywhere;
         word-break: break-word;

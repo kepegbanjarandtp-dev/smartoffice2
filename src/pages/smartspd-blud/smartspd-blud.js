@@ -5057,16 +5057,22 @@ function smartofficeOpenSPDDetail(item){
         item.lokasi ||
         get("Lokasi");
 
-    const tanggalSPD =
-        get("Tanggal SPD Dibuat");
+    /* ======================================================
+       FORMAT TANGGAL — SAMAKAN DENGAN PENGELOLAAN SPD
+    ====================================================== */
+    const tanggalSPD = smartofficeSPDFormatDateLongCard(
+        get("Tanggal SPD Dibuat", "")
+    );
 
-    const tanggalBerangkat =
+    const tanggalBerangkat = smartofficeSPDFormatDateLongCard(
         item.tanggalBerangkat ||
-        get("Tanggal Berangkat");
+        get("Tanggal Berangkat", "")
+    );
 
-    const tanggalPulang =
+    const tanggalPulang = smartofficeSPDFormatDateLongCard(
         item.tanggalPulang ||
-        get("Tanggal Pulang");
+        get("Tanggal Pulang", "")
+    );
 
     const jumlahHari =
         item.jumlahHari ||
@@ -5162,6 +5168,12 @@ function smartofficeOpenSPDDetail(item){
      * PEMBAYARAN
      * ======================================================
      */
+    const totalPembayaran =
+    get(
+        "TOTAL PEMBAYARAN",
+        get("TOTAL_PEMBAYARAN", "")
+    );
+
     const tglTransfer =
         get("TGL_TRANSFER");
 
@@ -5266,18 +5278,10 @@ function smartofficeOpenSPDDetail(item){
         ){
             schedules.push({
                 hari: i,
-
-                berangkat:
-                    berangkat || "-",
-
-                pulang:
-                    pulang || "-",
-
-                lokasi:
-                    lokasiHari || "-",
-
-                tiba:
-                    tiba || "-"
+                berangkat: smartofficeSPDFormatDateLongCard(berangkat),
+                pulang: smartofficeSPDFormatDateLongCard(pulang),
+                lokasi: lokasiHari || "-",
+                tiba: smartofficeSPDFormatDateLongCard(tiba)
             });
         }
     }
@@ -5299,20 +5303,19 @@ function smartofficeOpenSPDDetail(item){
             );
         };
 
-    const valueHtml =
-        function(label, value){
-            return `
-                <div class="smartoffice-spd-detail-field">
-                    <span>
-                        ${escape(label)}
-                    </span>
+    const valueHtml = function(label, value, extraClass = ""){
+        return `
+            <div class="smartoffice-spd-detail-field ${extraClass}">
+                <span>
+                    ${escape(label)}
+                </span>
 
-                    <strong>
-                        ${escape(value || "-")}
-                    </strong>
-                </div>
-            `;
-        };
+                <strong>
+                    ${escape(value || "-")}
+                </strong>
+            </div>
+        `;
+    };
 
     const linkHtml =
         function(
@@ -5409,24 +5412,26 @@ function smartofficeOpenSPDDetail(item){
                             <div class="smartoffice-spd-detail-schedule-grid">
                                 ${valueHtml(
                                     "Berangkat",
-                                    schedule.berangkat
+                                    smartofficeSPDFormatDateLongCard(schedule.berangkat)
                                 )}
 
                                 ${valueHtml(
                                     "Pulang",
-                                    schedule.pulang
+                                    smartofficeSPDFormatDateLongCard(schedule.pulang)
                                 )}
 
                                 ${valueHtml(
                                     "Lokasi",
-                                    schedule.lokasi
+                                    schedule.lokasi,
+                                    "smartoffice-spd-detail-schedule-full"
                                 )}
 
                                 ${
                                     schedule.hari > 1
                                         ? valueHtml(
                                             "Tiba",
-                                            schedule.tiba
+                                            smartofficeSPDFormatDateLongCard(schedule.tiba),
+                                            "smartoffice-spd-detail-schedule-full"
                                         )
                                         : ""
                                 }
@@ -5720,17 +5725,17 @@ function smartofficeOpenSPDDetail(item){
 
                         ${valueHtml(
                             "Tanggal Review",
-                            tglReview
+                            smartofficeSPDFormatDateLongCard(tglReview)
                         )}
 
                         ${valueHtml(
                             "Tanggal Approve",
-                            tglApprove
+                            smartofficeSPDFormatDateLongCard(tglApprove)
                         )}
 
                         ${valueHtml(
                             "Tanggal Revisi",
-                            tglRevisi
+                            smartofficeSPDFormatDateLongCard(tglRevisi)
                         )}
 
                         ${valueHtml(
@@ -5786,10 +5791,8 @@ function smartofficeOpenSPDDetail(item){
                      SPJ
                 =========================================== -->
                 <section class="smartoffice-spd-detail-section">
-                    <div class="smartoffice-spd-detail-section-title">
-                        <span>
-                            SPJ
-                        </span>
+                    <div class="smartoffice-spd-detail-section-title smartoffice-spd-detail-spj-title">
+                        <span>SPJ</span>
 
                         <strong
                             class="
@@ -5803,13 +5806,13 @@ function smartofficeOpenSPDDetail(item){
 
                     <div class="smartoffice-spd-detail-grid">
                         ${valueHtml(
-                            "Jumlah Uang",
-                            jumlahUang
+                            "Nominal Transport",
+                            smartofficeSPDFormatRupiah(jumlahUang)
                         )}
 
                         ${valueHtml(
                             "Tanggal Update SPJ",
-                            tglUpdateSPJ
+                            smartofficeSPDFormatDateLongCard(tglUpdateSPJ)
                         )}
 
                         ${valueHtml(
@@ -5825,19 +5828,22 @@ function smartofficeOpenSPDDetail(item){
                 </section>
 
                 <!-- ==========================================
-                     PEMBAYARAN
+                    PEMBAYARAN
                 =========================================== -->
                 <section class="smartoffice-spd-detail-section">
                     <div class="smartoffice-spd-detail-section-title">
-                        <span>
-                            PEMBAYARAN
-                        </span>
+                        <span>PEMBAYARAN</span>
                     </div>
 
                     <div class="smartoffice-spd-detail-grid">
                         ${valueHtml(
+                            "Total Pembayaran",
+                            smartofficeSPDFormatRupiah(totalPembayaran)
+                        )}
+
+                        ${valueHtml(
                             "Tanggal Transfer",
-                            tglTransfer
+                            smartofficeSPDFormatDateLongCard(tglTransfer)
                         )}
 
                         ${linkHtml(
@@ -5871,7 +5877,7 @@ function smartofficeOpenSPDDetail(item){
 
                         ${valueHtml(
                             "Last Update",
-                            lastUpdate
+                            smartofficeSPDFormatDateLongCard(lastUpdate)
                         )}
                     </div>
                 </section>
@@ -6573,26 +6579,67 @@ function smartofficeSPDFormatDateLongCard(value) {
 
     const text = String(value).trim();
 
-    const match = text.match(
-        /^(\d{4})-(\d{2})-(\d{2})(?:$|T)/
-    );
-
-    if (!match) return text;
-
-    const [, tahun, bulan, hari] = match;
-
     const namaBulan = [
         "Januari", "Februari", "Maret", "April",
         "Mei", "Juni", "Juli", "Agustus",
         "September", "Oktober", "November", "Desember"
     ];
 
-    const nomorBulan = Number(bulan);
+    // Format YYYY-MM-DD atau ISO timestamp
+    let match = text.match(/^(\d{4})-(\d{2})-(\d{2})(?:$|T)/);
 
-    if (nomorBulan < 1 || nomorBulan > 12) {
+    if (match) {
+        const [, tahun, bulan, hari] = match;
+        const nomorBulan = Number(bulan);
+
+        if (nomorBulan >= 1 && nomorBulan <= 12) {
+            return `${hari} ${namaBulan[nomorBulan - 1]} ${tahun}`;
+        }
+
         return text;
     }
 
-    return `${hari} ${namaBulan[nomorBulan - 1]} ${tahun}`;
+    // Format teks: 5 Oktober 2026 atau 05 Oktober 2026
+    match = text.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/);
+
+    if (match) {
+        const [, hari, bulanTeks, tahun] = match;
+        const nomorBulan = namaBulan.findIndex(
+            bulan => bulan.toLowerCase() === bulanTeks.toLowerCase()
+        );
+
+        if (nomorBulan !== -1) {
+            return `${hari.padStart(2, "0")} ${namaBulan[nomorBulan]} ${tahun}`;
+        }
+    }
+
+    return text;
 }
 
+
+/* ======================================================
+   FORMAT RUPIAH DETAIL SMARTSPD BLUD
+====================================================== */
+function smartofficeSPDFormatRupiah(value) {
+    if (
+        value === null ||
+        value === undefined ||
+        value === ""
+    ) {
+        return "—";
+    }
+
+    const angka = Number(
+        String(value)
+            .replace(/[^\d,-]/g, "")
+            .replace(",", ".")
+    );
+
+    if (!Number.isFinite(angka)) {
+        return String(value);
+    }
+
+    return "Rp " + angka.toLocaleString("id-ID", {
+        maximumFractionDigits: 0
+    });
+}
