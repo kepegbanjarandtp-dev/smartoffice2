@@ -961,6 +961,12 @@ export function smartofficeInitAutoHitungCuti(){
                     "smartofficeCutiJumlah"
                 );
 
+            /* JENIS CUTI */
+            const jenisCuti =
+                document.getElementById(
+                    "smartofficeCutiJenis"
+                )?.value?.toUpperCase().trim() || "";
+
             /* TANGGAL AWAL BERUBAH */
             if(
                 event.target.id ===
@@ -985,6 +991,8 @@ export function smartofficeInitAutoHitungCuti(){
                             tanggalAwal.value
                         );
                     if(
+                        jenisCuti !== "CUTI SAKIT" &&
+                        jenisCuti !== "CUTI ALASAN PENTING" &&
                         suratDate > startDate
                     ){
                         smartofficeShowToast(
@@ -1056,8 +1064,12 @@ export function smartofficeInitAutoHitungCuti(){
                         suratInput.value
                     );
                 if(
-                    suratDate > startDate ||
-                    suratDate > endDate
+                    jenisCuti !== "CUTI SAKIT" &&
+                    jenisCuti !== "CUTI ALASAN PENTING" &&
+                    (
+                        suratDate > startDate ||
+                        suratDate > endDate
+                    )
                 ){
                     smartofficeShowToast(
                         "Tanggal surat permohonan tidak boleh melebihi tanggal awal maupun tanggal akhir cuti.",
@@ -1070,28 +1082,35 @@ export function smartofficeInitAutoHitungCuti(){
             }
 
             /* VALIDASI MINGGU */
+            /* KECUALI CUTI MELAHIRKAN */
             if(
-                startDate.getDay() === 0
+                jenisCuti !== "CUTI MELAHIRKAN"
             ){
-                smartofficeShowToast(
-                    "Tanggal awal tidak boleh hari Minggu",
-                    "error"
-                );
-                smartofficeResetTanggalAkhir();
-                tanggalAwal.focus();
-                return;
-            }
+                if(
+                    startDate.getDay() === 0
+                ){
+                    smartofficeShowToast(
+                        "Tanggal awal tidak boleh hari Minggu",
+                        "error"
+                    );
 
-            if(
-                endDate.getDay() === 0
-            ){
-                smartofficeShowToast(
-                    "Tanggal akhir tidak boleh hari Minggu",
-                    "error"
-                );
-                smartofficeResetTanggalAkhir();
-                tanggalAkhir.focus();
-                return;
+                    smartofficeResetTanggalAkhir();
+                    tanggalAwal.focus();
+                    return;
+                }
+
+                if(
+                    endDate.getDay() === 0
+                ){
+                    smartofficeShowToast(
+                        "Tanggal akhir tidak boleh hari Minggu",
+                        "error"
+                    );
+
+                    smartofficeResetTanggalAkhir();
+                    tanggalAkhir.focus();
+                    return;
+                }
             }
 
             /* LOADING */
@@ -1102,7 +1121,8 @@ export function smartofficeInitAutoHitungCuti(){
                 const response =
                     await smartofficeGetJumlahCuti(
                         tanggalAwal.value,
-                        tanggalAkhir.value
+                        tanggalAkhir.value,
+                        jenisCuti
                     );
 
                 /* VALIDASI */
@@ -1134,21 +1154,15 @@ export function smartofficeInitAutoHitungCuti(){
                         "smartofficeCutiSisaCuti"
                     );
 
-                /* JENIS CUTI */
-                const jenisCuti =
-                    document.getElementById(
-                        "smartofficeCutiJenis"
-                    )?.value || "";
-
                 /* CUTI TAHUNAN */
                 if(
-                    jenisCuti ===
-                    "CUTI TAHUNAN"
+                    jenisCuti === "CUTI TAHUNAN"
                 ){
                     const sisaAwal =
                         Number(
                             sisaField.dataset.original || 0
                         );
+
                     if(
                         jumlahHari > sisaAwal
                     ){
@@ -1156,18 +1170,16 @@ export function smartofficeInitAutoHitungCuti(){
                             "Jumlah cuti melebihi sisa cuti tahunan.",
                             "error"
                         );
+
                         jumlahField.value = 0;
-                        sisaField.value =
-                            sisaAwal;
+                        sisaField.value = sisaAwal;
                         return;
                     }
 
                     const sisaSetelahCuti =
-                        sisaAwal -
-                        jumlahHari;
+                        sisaAwal - jumlahHari;
 
-                    sisaField.value =
-                        sisaSetelahCuti;
+                    sisaField.value = sisaSetelahCuti;
                 }
 
                 /* SELAIN CUTI TAHUNAN */
@@ -1315,6 +1327,7 @@ export function smartofficeValidateSunday(
     inputId,
     message
 ){
+
     /* INPUT ELEMENT */
     const input =
         document.getElementById(
@@ -1322,9 +1335,7 @@ export function smartofficeValidateSunday(
         );
 
     /* VALIDASI ELEMENT */
-    if(
-        !input
-    ){
+    if(!input){
         return;
     }
 
@@ -1333,9 +1344,26 @@ export function smartofficeValidateSunday(
         "change",
 
         function(){
+
             /* EMPTY VALUE */
+            if(!input.value){
+                return;
+            }
+
+            /* JENIS CUTI */
+            const jenisCuti =
+                document.getElementById(
+                    "smartofficeCutiJenis"
+                )?.value?.toUpperCase().trim() || "";
+
+            /* CUTI MELAHIRKAN:
+               TANGGAL AWAL DAN AKHIR BOLEH MINGGU */
             if(
-                !input.value
+                jenisCuti === "CUTI MELAHIRKAN" &&
+                (
+                    inputId === "smartofficeCutiTanggalAwal" ||
+                    inputId === "smartofficeCutiTanggalAkhir"
+                )
             ){
                 return;
             }
@@ -1343,22 +1371,21 @@ export function smartofficeValidateSunday(
             /* DATE OBJECT */
             const selectedDate =
                 new Date(
-                    input.value +
-                    "T00:00:00"
+                    input.value + "T00:00:00"
                 );
 
             /* HARI MINGGU */
             if(
                 selectedDate.getDay() === 0
             ){
+
                 smartofficeShowToast(
                     message,
                     "error"
                 );
 
                 /* RESET VALUE */
-                input.value =
-                    "";
+                input.value = "";
             }
         }
     );
