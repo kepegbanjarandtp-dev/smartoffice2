@@ -89,22 +89,21 @@ export async function smartofficeSearchPegawaiCuti(
 ====================================================== */
 export async function smartofficeGetJumlahCuti(
     tanggalAwal,
-    tanggalAkhir
+    tanggalAkhir,
+    jenisCuti
 ){
     const response =
         await smartofficeApi(
             "smartofficeGetJumlahCuti",
             {
                 tanggalAwal,
-                tanggalAkhir
+                tanggalAkhir,
+                jenisCuti
             }
         );
-    if(
-        !response.success
-    ){
-        throw new Error(
-            response.message
-        );
+
+    if(!response.success){
+        throw new Error(response.message);
     }
 
     return response;
