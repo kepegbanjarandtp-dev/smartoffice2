@@ -1,6 +1,20 @@
-/* ======================================================
-   SIMBOK — AREA KONTEN
-====================================================== */
+/* ============================================================
+   SIMBOK — CSS TERKONSOLIDASI
+   Satu definisi utama per selector; aturan responsif dipisah
+   pada bagian media query di bawah.
+============================================================ */
+
+/* Reset ukuran komponen simBOK agar konsisten. */
+.simbok-content-area,
+.simbok-content-panel,
+.simbok-plan-shell {
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   01. KONTEN TAB DAN KARTU PENGEMBANGAN
+============================================================ */
+
 .simbok-content-area {
   width: 100%;
   min-width: 0;
@@ -18,29 +32,21 @@
   display: none !important;
 }
 
-/* ======================================================
-   SIMBOK — KARTU PENGEMBANGAN
-====================================================== */
 .simbok-development-card {
   display: grid;
-  grid-template-columns: minmax(250px, 0.82fr) minmax(0, 1.18fr);
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,320px),1fr));
   align-items: stretch;
   overflow: hidden;
   width: 100%;
   min-width: 0;
-  min-height: 350px;
-  background: #ffffff;
+  min-height: 0;
+  background: #fff;
   border: 1px solid #e7edf7;
   border-radius: 24px;
-  box-shadow:
-    0 14px 40px rgba(31, 65, 114, 0.055),
-    0 2px 8px rgba(31, 65, 114, 0.025);
+  box-shadow: 0 14px 40px rgba(31,65,114,.055),0 2px 8px rgba(31,65,114,.025);
   box-sizing: border-box;
 }
 
-/* ======================================================
-   SIMBOK — AREA ILUSTRASI SVG
-====================================================== */
 .simbok-development-visual {
   position: relative;
   display: flex;
@@ -48,83 +54,47 @@
   align-items: center;
   justify-content: center;
   min-width: 0;
-  min-height: 350px;
+  min-height: clamp(220px,28vw,350px);
   overflow: hidden;
   padding: 28px;
   color: #2563eb;
-  background:
-    radial-gradient(
-      circle at 50% 40%,
-      rgba(255, 255, 255, 0.95),
-      transparent 42%
-    ),
-    linear-gradient(145deg, #edf4ff 0%, #dfeaff 100%);
+  background: radial-gradient(circle at 50% 40%,rgba(255,255,255,.95),transparent 42%),linear-gradient(145deg,#edf4ff 0%,#dfeaff 100%);
   box-sizing: border-box;
 }
 
 .simbok-visual-dashboard {
   color: #7c3aed;
-  background:
-    radial-gradient(
-      circle at 50% 40%,
-      #ffffff,
-      transparent 42%
-    ),
-    linear-gradient(145deg, #f5efff 0%, #e7dcff 100%);
+  background: radial-gradient(circle at 50% 40%,#fff,transparent 42%),linear-gradient(145deg,#f5efff 0%,#e7dcff 100%);
 }
 
 .simbok-visual-perencanaan {
   color: #2563eb;
-  background:
-    radial-gradient(
-      circle at 50% 40%,
-      #ffffff,
-      transparent 42%
-    ),
-    linear-gradient(145deg, #edf4ff 0%, #dfeaff 100%);
+  background: radial-gradient(circle at 50% 40%,#fff,transparent 42%),linear-gradient(145deg,#edf4ff 0%,#dfeaff 100%);
 }
 
 .simbok-visual-realisasi {
   color: #0f9f83;
-  background:
-    radial-gradient(circle at 50% 40%, #ffffff, transparent 42%),
-    linear-gradient(145deg, #e9fbf6, #d6f5eb);
+  background: radial-gradient(circle at 50% 40%,#fff,transparent 42%),linear-gradient(145deg,#e9fbf6,#d6f5eb);
 }
 
 .simbok-visual-dokumen {
   color: #7c5ce0;
-  background:
-    radial-gradient(circle at 50% 40%, #ffffff, transparent 42%),
-    linear-gradient(145deg, #f3efff, #e6e0ff);
+  background: radial-gradient(circle at 50% 40%,#fff,transparent 42%),linear-gradient(145deg,#f3efff,#e6e0ff);
 }
 
 .simbok-visual-laporan {
   color: #d97706;
-  background:
-    radial-gradient(circle at 50% 40%, #ffffff, transparent 42%),
-    linear-gradient(145deg, #fff6e8, #ffebca);
+  background: radial-gradient(circle at 50% 40%,#fff,transparent 42%),linear-gradient(145deg,#fff6e8,#ffebca);
 }
 
-/* Dekorasi lembut di belakang ilustrasi. */
 .simbok-visual-orb {
   position: absolute;
   border: 1px solid currentColor;
   border-radius: 50%;
-  opacity: 0.1;
+  opacity: .1;
   pointer-events: none;
 }
 
-.simbok-orb-one {
-  width: 230px;
-  height: 230px;
-}
-
-.simbok-orb-two {
-  width: 290px;
-  height: 290px;
-}
-
-/* Wadah ilustrasi SVG. */
 .simbok-visual-icon {
   position: relative;
   z-index: 1;
@@ -132,12 +102,10 @@
   place-items: center;
   width: 150px;
   height: 150px;
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255,255,255,.9);
   border-radius: 34px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow:
-    0 20px 45px rgba(38, 73, 126, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  background: rgba(255,255,255,.78);
+  box-shadow: 0 20px 45px rgba(38,73,126,.1),inset 0 1px 0 rgba(255,255,255,.9);
   backdrop-filter: blur(10px);
 }
 
@@ -152,25 +120,22 @@
   z-index: 1;
   margin-top: 25px;
   padding: 8px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255,255,255,.85);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255,255,255,.65);
   color: inherit;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.8px;
 }
 
-/* ======================================================
-   SIMBOK — INFORMASI PENGEMBANGAN
-====================================================== */
 .simbok-development-body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
   min-width: 0;
-  padding: 38px 40px;
+  padding: clamp(18px,3vw,40px);
   box-sizing: border-box;
 }
 
@@ -185,7 +150,7 @@
   color: #1d4ed8;
   font-size: 10px;
   font-weight: 800;
-  letter-spacing: 0.65px;
+  letter-spacing: .65px;
 }
 
 .simbok-status-dot {
@@ -194,16 +159,16 @@
   flex: 0 0 7px;
   border-radius: 50%;
   background: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+  box-shadow: 0 0 0 3px rgba(59,130,246,.12);
 }
 
 .simbok-development-body h2 {
   margin: 22px 0 12px;
   color: #172b4d;
-  font-size: clamp(23px, 2.3vw, 30px);
+  font-size: clamp(23px,2.3vw,30px);
   font-weight: 750;
   line-height: 1.25;
-  letter-spacing: -0.8px;
+  letter-spacing: -.8px;
 }
 
 .simbok-development-description {
@@ -215,12 +180,6 @@
   line-height: 1.85;
 }
 
-
-/* ======================================================
-   SIMBOK — PERENCANAAN ANGGARAN
-====================================================== */
-
-/* Tombol utama untuk membuka dokumen Google Sheets */
 .simbok-planning-link {
   display: inline-flex;
   align-items: center;
@@ -232,17 +191,14 @@
   border: 1px solid #2563eb;
   border-radius: 12px;
   background: #2563eb;
-  color: #ffffff;
+  color: #fff;
   font-size: 13px;
   font-weight: 650;
   line-height: 1.5;
   text-align: center;
   text-decoration: none;
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.18);
-  transition:
-    background 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+  box-shadow: 0 8px 20px rgba(37,99,235,.18);
+  transition: background .2s ease,box-shadow .2s ease,transform .2s ease;
   box-sizing: border-box;
 }
 
@@ -254,21 +210,18 @@
 
 .simbok-planning-link:hover {
   background: #1d4ed8;
-  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 10px 24px rgba(37,99,235,.25);
   transform: translateY(-1px);
 }
 
 .simbok-planning-link:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.35);
+  outline: 3px solid rgba(37,99,235,.35);
   outline-offset: 3px;
 }
 
-/* ======================================================
-   SIMBOK — DAFTAR FITUR
-====================================================== */
 .simbok-feature-list {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,220px),1fr));
   gap: 12px 18px;
   width: 100%;
   margin-top: 24px;
@@ -297,9 +250,6 @@
   font-weight: 800;
 }
 
-/* ======================================================
-   SIMBOK — FOOTER KARTU
-====================================================== */
 .simbok-development-footer {
   display: flex;
   align-items: center;
@@ -318,200 +268,2166 @@
   font-size: 18px;
 }
 
+/* ============================================================
+   07. KOMPONEN PENDUKUNG
+============================================================ */
 
+.simbok-orb-one {
+  width: 230px;
+  height: 230px;
+}
 
-/* ======================================================
-   SIMBOK — RESPONSIVE MOBILE
-   BREAKPOINT: MAX-WIDTH 768PX
-====================================================== */
-@media (max-width: 768px) {
+.simbok-orb-two {
+  width: 290px;
+  height: 290px;
+}
 
-  /* AREA KONTEN */
-  .simbok-content-area {
-    width: 100%;
-    min-width: 0;
-    margin-top: 16px;
-  }
+.simbok-plan-field-wide {
+  min-width: 0;
+}
 
-  .simbok-content-panel {
-    width: 100%;
-    min-width: 0;
-  }
+.simbok-plan-remove {
+  width: 38px;
+  height: 42px;
+  border: 1px solid #fee2e2;
+  border-radius: 10px;
+  background: #fff7f7;
+  color: #dc2626;
+  font-size: 19px;
+  cursor: pointer;
+}
 
-  /* KARTU PENGEMBANGAN */
-  .simbok-development-card {
-    display: grid;
+.simbok-component-section-title {
+  align-items: center;
+}
+
+.simbok-component-section-title > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.simbok-component-index {
+  padding: 5px 8px;
+  border-radius: 7px;
+  background: #eaf2ff;
+  color: #2458ad;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.simbok-plan-art-sheet {
+  position: absolute;
+  top: 0;
+  right: 30px;
+  display: grid;
+  gap: 8px;
+  width: 67px;
+  height: 80px;
+  padding: 15px 11px;
+  border: 1px solid #d7e5fb;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.12);
+  transform: rotate(7deg);
+}
+
+.simbok-plan-art-sheet span {
+  height: 5px;
+  border-radius: 99px;
+  background: #dce8fb;
+}
+
+.simbok-plan-art-sheet span:nth-child(2) {
+  width: 75%;
+}
+
+.simbok-plan-art-sheet span:nth-child(3) {
+  width: 58%;
+}
+
+.simbok-plan-art-sheet i {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: #16a36a;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.simbok-plan-art-folder {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 88px;
+  height: 43px;
+  border: 1px solid #7eafff;
+  border-radius: 10px 10px 12px 12px;
+  background: linear-gradient(135deg, #60a5fa, #2563eb);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.22);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 850;
+  letter-spacing: 1px;
+}
+
+.simbok-year-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 150px;
+}
+
+.simbok-year-control input,
+
+.simbok-recap-year-control input {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 32px 8px 11px;
+  border: 1px solid #d7e3f3;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.simbok-year-control span {
+  position: absolute;
+  right: 10px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+.simbok-recap-year-control {
+  display: grid;
+  gap: 7px;
+  min-width: 145px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.simbok-master-workspace-card,
+
+.simbok-plan-content-card {
+  overflow: hidden;
+  padding: 16px;
+  border: 1px solid #e4eaf3;
+  border-radius: 17px;
+  background: #ffffff;
+  box-shadow: 0 7px 22px rgba(31, 65, 114, 0.035);
+}
+
+.simbok-master-component-chip {
+  display: inline-flex;
+  padding: 4px 7px;
+  border: 1px solid #e7edf6;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 9px;
+  line-height: 1.3;
+}
+
+.simbok-master-empty {
+  display: grid;
+  justify-items: center;
+  min-height: 190px;
+  align-content: center;
+  gap: 7px;
+}
+
+.simbok-master-empty-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 25px;
+}
+
+.simbok-master-empty strong {
+  color: #334761;
+  font-size: 12px;
+}
+
+.simbok-master-empty p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.simbok-sr-only {
+  position: absolute;
+  overflow: hidden;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
+/* ============================================================
+   06. WORKSPACE, RENCANA BULANAN, DAN REKAP PAGU
+============================================================ */
+
+.simbok-plan-shell {
+  --simbok-plan-ink: #172b4d;
+  --simbok-plan-muted: #64748b;
+  --simbok-plan-line: #e5eaf2;
+  --simbok-plan-blue: #2563eb;
+  width: 100%;
+  min-width: 0;
+  color: var(--simbok-plan-ink);
+}
+
+.simbok-plan-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.simbok-plan-eyebrow {
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.simbok-plan-heading h2 {
+  margin: 7px 0;
+  color: #172b4d;
+  font-size: clamp(22px,2.5vw,30px);
+  letter-spacing: -.7px;
+}
+
+.simbok-plan-heading p,.simbok-plan-section-head p,.simbok-plan-component-head p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.simbok-plan-year {
+  display: grid;
+  gap: 6px;
+  min-width: 140px;
+}
+
+.simbok-plan-year label,.simbok-plan-form label,.simbok-plan-filter-row label {
+  display: grid;
+  gap: 7px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.simbok-plan-year input,.simbok-plan-form input,.simbok-plan-form select,.simbok-plan-filter-row select,.simbok-plan-component-row input,.simbok-plan-component-row select {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #fff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.simbok-plan-year input:focus,.simbok-plan-form input:focus,.simbok-plan-form select:focus,.simbok-plan-filter-row select:focus,.simbok-plan-component-row input:focus,.simbok-plan-component-row select:focus {
+  outline: 3px solid rgba(37,99,235,.12);
+  border-color: #7aa7f8;
+}
+
+.simbok-plan-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  overflow-x: auto;
+  padding: 5px;
+  margin-bottom: 17px;
+  border: 1px solid #e7ecf4;
+  border-radius: 14px;
+  background: #f8faff;
+}
+
+.simbok-plan-tab {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1 1 170px;
+  justify-content: center;
+  min-height: 43px;
+  padding: 9px 14px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #64748b;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.simbok-plan-tab span {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.simbok-plan-view {
+  padding: clamp(14px,2.5vw,22px);
+  border: 1px solid #e6ebf3;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 8px 25px rgba(31,65,114,.035);
+}
+
+.simbok-plan-view[hidden] {
+  display: none !important;
+}
+
+.simbok-plan-section-head,.simbok-plan-component-head,.simbok-plan-list-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.simbok-plan-section-head {
+  margin-bottom: 20px;
+}
+
+.simbok-plan-section-head h3,.simbok-plan-list-head h3 {
+  margin: 0 0 6px;
+  color: #172b4d;
+  font-size: 17px;
+}
+
+.simbok-plan-access {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff7e8;
+  color: #a16207;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.simbok-plan-form {
+  display: grid;
+  gap: 20px;
+}
+
+.simbok-plan-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,220px),1fr));
+  gap: 14px;
+}
+
+.simbok-plan-component-head {
+  align-items: center;
+  flex-wrap: wrap;
+  padding-top: 17px;
+  border-top: 1px solid #edf1f6;
+}
+
+.simbok-plan-component-head h4 {
+  margin: 0 0 5px;
+  font-size: 14px;
+}
+
+.simbok-plan-component-list {
+  display: grid;
+  gap: 10px;
+}
+
+.simbok-plan-component-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,145px),1fr));
+  align-items: end;
+  gap: 9px;
+  padding: 13px;
+  border: 1px solid #e8edf4;
+  border-radius: 12px;
+  background: #fbfcfe;
+}
+
+.simbok-plan-component-row label {
+  font-size: 10px !important;
+}
+
+.simbok-plan-form-footer,.simbok-plan-actions,.simbok-plan-month-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.simbok-plan-form-footer {
+  padding-top: 17px;
+  border-top: 1px solid #edf1f6;
+}
+
+.simbok-plan-live-total {
+  display: grid;
+  gap: 4px;
+}
+
+.simbok-plan-live-total span,.simbok-plan-month-footer span {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.simbok-plan-live-total strong,.simbok-plan-month-footer strong {
+  color: #172b4d;
+  font-size: 20px;
+}
+
+.simbok-plan-actions {
+  justify-content: flex-end;
+}
+
+.simbok-plan-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 9px 14px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background .15s ease,border-color .15s ease;
+}
+
+.simbok-plan-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.simbok-plan-button.is-primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.simbok-plan-button.is-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.simbok-plan-button.is-secondary {
+  border-color: #dbe5f5;
+  background: #f5f8ff;
+  color: #2458ad;
+}
+
+.simbok-plan-button.is-ghost {
+  border-color: #e2e8f0;
+  background: #fff;
+  color: #64748b;
+}
+
+.simbok-plan-list-head {
+  align-items: center;
+  margin: 28px 0 12px;
+}
+
+.simbok-plan-list-head span {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.simbok-plan-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e8edf4;
+  border-radius: 12px;
+}
+
+.simbok-plan-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.simbok-plan-table th {
+  padding: 12px 14px;
+  background: #f7f9fc;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.simbok-plan-table td {
+  padding: 12px 14px;
+  border-top: 1px solid #edf1f6;
+  color: #475569;
+  vertical-align: middle;
+}
+
+.simbok-plan-table td strong {
+  color: #172b4d;
+}
+
+.simbok-plan-table .simbok-plan-number {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.simbok-plan-table-actions {
+  display: flex;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.simbok-plan-table-actions button {
+  padding: 6px 9px;
+  border: 1px solid #dce5f2;
+  border-radius: 7px;
+  background: #fff;
+  color: #2458ad;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.simbok-plan-empty {
+  padding: 28px 18px;
+  color: #94a3b8;
+  font-size: 12px;
+  text-align: center;
+}
+
+.simbok-plan-filter-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(min(100%,200px),1fr));
+  gap: 13px;
+  margin-bottom: 15px;
+}
+
+.simbok-plan-month-footer {
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding: 14px 2px 0;
+  border-top: 1px solid #edf1f6;
+}
+
+.simbok-plan-month-footer span {
+  margin-right: auto;
+}
+
+.simbok-plan-notice {
+  margin: 13px 2px 0;
+  color: #94a3b8;
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.simbok-plan-inline-input {
+  width: 150px;
+  min-height: 36px;
+  padding: 7px 9px;
+  border: 1px solid #dce3ed;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+}
+
+.simbok-plan-progress {
+  width: 120px;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 99px;
+  background: #e9eef6;
+}
+
+.simbok-plan-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #3b82f6;
+}
+
+.simbok-plan-tab.is-active {
+  background: linear-gradient(100deg, #0875ff 0%, #1459ed 100%);
+  color: #ffffff;
+  box-shadow: 0 5px 13px rgba(8, 102, 245, 0.2);
+}
+
+.simbok-plan-tab.is-active span {
+  color: #dceaff;
+}
+
+/* ============================================================
+   03. RINGKASAN DAN KARTU STATISTIK
+============================================================ */
+
+.simbok-plan-stat span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.simbok-plan-stat small {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.simbok-plan-summary {
+  display: grid;
+  gap: 13px;
+  margin-bottom: 20px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0 0 14px;
+}
+
+.simbok-plan-stat strong {
+  color: #172b4d;
+  letter-spacing: -.5px;
+  font-size: clamp(17px, 1.7vw, 22px);
+  overflow-wrap: anywhere;
+}
+
+.simbok-plan-stat {
+  gap: 7px;
+  border: 1px solid #e6ebf3;
+  background: #fff;
+  position: relative;
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  grid-template-rows: auto auto auto;
+  align-content: center;
+  align-items: center;
+  column-gap: 13px;
+  row-gap: 5px;
+  min-height: 94px;
+  padding: 14px 16px;
+  border-radius: 17px;
+  box-shadow: 0 5px 15px rgba(15, 45, 95, 0.055);
+}
+
+.simbok-stat-icon {
+  display: grid;
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+}
+
+.simbok-stat-icon svg {
+  width: 27px;
+  height: 27px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-plan-stat > span:not(.simbok-stat-icon) {
+  grid-column: 2;
+  grid-row: 1;
+  color: #172b4d;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.simbok-plan-stat > strong {
+  grid-column: 2;
+  grid-row: 2;
+  color: #0b1b4c;
+  font-size: clamp(19px, 1.8vw, 24px);
+  font-weight: 850;
+  letter-spacing: -0.65px;
+}
+
+.simbok-plan-stat > small {
+  grid-column: 2;
+  grid-row: 3;
+  color: #647da4;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.simbok-stat-blue {
+  border-color: #cfe1ff;
+  background: linear-gradient(135deg, #ffffff 0%, #e8f2ff 100%);
+}
+
+.simbok-stat-blue .simbok-stat-icon {
+  background: #d9eaff;
+  color: #0866f5;
+}
+
+.simbok-stat-purple {
+  border-color: #e0d5ff;
+  background: linear-gradient(135deg, #ffffff 0%, #f0eaff 100%);
+}
+
+.simbok-stat-purple .simbok-stat-icon {
+  background: #e8ddff;
+  color: #7138f5;
+}
+
+.simbok-stat-green {
+  border-color: #c9f3df;
+  background: linear-gradient(135deg, #ffffff 0%, #e1faef 100%);
+}
+
+.simbok-stat-green .simbok-stat-icon {
+  background: #d2f7e4;
+  color: #0aa64f;
+}
+
+.simbok-stat-year {
+  border-color: #cfe5ff;
+  background: linear-gradient(135deg, #ffffff 0%, #eaf6ff 100%);
+}
+
+.simbok-stat-year .simbok-stat-icon {
+  background: #d9f0ff;
+  color: #0787d9;
+}
+
+.simbok-stat-year .simbok-year-control {
+  grid-column: 2;
+  grid-row: 2 / span 2;
+  width: 100%;
+  max-width: 150px;
+}
+
+.simbok-plan-summary-master {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.simbok-plan-summary-master .simbok-plan-stat {
+  min-width: 0;
+}
+
+/* ============================================================
+   05. MODAL MASTER DETAIL MENU DAN FORM
+============================================================ */
+
+.simbok-plan-component-row .simbok-plan-component-total {
+  display: grid;
+  gap: 7px;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.simbok-plan-component-total strong {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  color: #172b4d;
+  font-size: 12px;
+}
+
+body.simbok-modal-open {
+  overflow: hidden;
+}
+
+.simbok-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(15, 23, 42, .58);
+  backdrop-filter: blur(5px);
+  box-sizing: border-box;
+}
+
+.simbok-modal-backdrop[hidden] {
+  display: none !important;
+}
+
+.simbok-master-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 980px);
+  max-height: min(92vh, 900px);
+  overflow: hidden;
+  border: 1px solid #e3eaf4;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 28px 90px rgba(15, 23, 42, .28);
+}
+
+.simbok-master-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 26px;
+  border-bottom: 1px solid #e8edf4;
+  background: #fbfdff;
+}
+
+.simbok-master-modal-header h3 {
+  margin: 6px 0;
+  color: #172b4d;
+  font-size: 20px;
+}
+
+.simbok-master-modal-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.simbok-modal-close {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border: 1px solid #e2e8f0;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.simbok-master-form {
+  display: block;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 22px 26px 0;
+}
+
+.simbok-modal-section {
+  margin-bottom: 24px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #edf1f6;
+}
+
+.simbok-modal-section-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.simbok-modal-section-title > span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border-radius: 9px;
+  background: #edf4ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.simbok-modal-section-title h4 {
+  margin: 0 0 4px;
+  color: #172b4d;
+  font-size: 14px;
+}
+
+.simbok-modal-section-title p {
+  margin: 0;
+  color: #64748b;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.simbok-master-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+/* ============================================================
+   IDENTITAS DETAIL MENU — LAYOUT GRID
+============================================================ */
+/* Lebar kolom identitas Detail Menu. */
+.simbok-master-identity-grid {
+  grid-template-columns:
+    minmax(0, 0.75fr)
+    minmax(0, 1fr)
+    minmax(0, 3.25fr);
+  gap: 12px;
+}
+
+/* Tahun Anggaran */
+.simbok-master-identity-grid .simbok-field-year {
+  grid-column: 1;
+}
+
+/* Kode Detail */
+.simbok-master-identity-grid .simbok-field-code {
+  grid-column: 2;
+}
+
+/* Menu */
+.simbok-master-identity-grid .simbok-field-menu {
+  grid-column: 3;
+}
+
+/* Rincian Menu */
+.simbok-master-identity-grid .simbok-field-rincian {
+  grid-column: 1 / -1;
+}
+
+.simbok-master-identity-grid .simbok-field-rincian select {
+  min-height: 58px;
+  height: auto;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: normal;
+}
+
+/* Definisi dan rekening kegiatan menggunakan lebar penuh. */
+.simbok-master-identity-grid > .simbok-field-span-2 {
+  grid-column: 1 / -1;
+}
+
+/* ============================================================
+   KODE DAN NAMA REKENING KEGIATAN — SATU BARIS
+============================================================ */
+
+.simbok-rekening-kegiatan-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 3.2fr);
+  gap: 12px;
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.simbok-rekening-kegiatan-row label {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.simbok-rekening-kegiatan-row input {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #f7f9fc;
+  color: #475569;
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .simbok-rekening-kegiatan-row {
     grid-template-columns: minmax(0, 1fr);
-    width: 100%;
-    min-width: 0;
-    min-height: auto;
-    border-radius: 20px;
-    box-shadow:
-      0 8px 26px rgba(31, 65, 114, 0.055),
-      0 2px 6px rgba(31, 65, 114, 0.025);
-  }
-
-  /* AREA ILUSTRASI */
-  .simbok-development-visual {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    min-width: 0;
-    min-height: 220px;
-    padding: 24px 18px 20px;
-  }
-
-  /* DEKORASI ORB */
-  .simbok-orb-one {
-    width: 165px;
-    height: 165px;
-  }
-
-  .simbok-orb-two {
-    width: 215px;
-    height: 215px;
-  }
-
-  /* WADAH ILUSTRASI SVG */
-  .simbok-visual-icon {
-    width: 108px;
-    height: 108px;
-    border-radius: 27px;
-  }
-
-  .simbok-visual-icon svg {
-    display: block;
-    width: 70px;
-    height: 70px;
-  }
-
-  /* LABEL ILUSTRASI */
-  .simbok-visual-label {
-    margin-top: 17px;
-    padding: 7px 11px;
-    font-size: 9px;
-    letter-spacing: 1.5px;
-  }
-  
-  /* BADAN INFORMASI */
-  .simbok-development-body {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    width: 100%;
-    min-width: 0;
-    padding: 18px 18px 18px;
-    box-sizing: border-box;
-  }
-
-  /* STATUS */
-  .simbok-status {
-    align-self: flex-start;
-    max-width: 100%;
-    gap: 7px;
-    padding: 4px 8px;
-    font-size: 9px;
-    line-height: 1.5;
-    letter-spacing: 0.45px;
-  }
-
-  .simbok-status-dot {
-    width: 6px;
-    height: 6px;
-    flex-basis: 6px;
-  }
-
-  /* JUDUL */
-  .simbok-development-body h2 {
-    margin: 8px 0 2px;
-    font-size: clamp(16px, 4vw, 22px);
-    line-height: 1.3;
-    letter-spacing: -0.5px;
-    overflow-wrap: anywhere;
-  }
-
-  /* DESKRIPSI */
-  .simbok-development-description {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-    font-size: 11px;
-    line-height: 1.8;
-    overflow-wrap: anywhere;
-  }
-
-  /* DAFTAR FITUR */
-  .simbok-feature-list {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 9px;
-    width: 100%;
-    min-width: 0;
-    margin-top: 15px;
-  }
-
-  .simbok-feature-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 9px;
-    min-width: 0;
-    font-size: 11px;
-    line-height: 1.65;
-  }
-
-  .c {
-    width: 16px;
-    height: 16px;
-    flex: 0 0 16px;
-    font-size: 11px;
-  }
-
-  /* TOMBOL GOOGLE SHEETS */
-  .simbok-planning-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
-    margin-top: 22px;
-    padding: 13px 14px;
-    border-radius: 12px;
-    font-size: 11px;
-    line-height: 1.5;
-    text-align: center;
-    white-space: normal;
-    overflow-wrap: anywhere;
-    box-sizing: border-box;
-  }
-
-  .simbok-planning-link svg {
-    width: 15px;
-    height: 15px;
-    flex: 0 0 15px;
-  }
-
-  /* FOOTER KARTU */
-  .simbok-development-footer {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    width: 100%;
-    min-width: 0;
-    margin-top: 17px;
-    padding-top: 12px;
-    font-size: 11px;
-    line-height: 1.7;
-  }
-
-  .simbok-footer-icon {
-    flex: 0 0 auto;
-    font-size: 16px;
-    line-height: 1.4;
   }
 }
 
+.simbok-master-grid label {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.simbok-master-grid input,.simbok-master-grid select,.simbok-master-grid textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+.simbok-master-grid textarea {
+  min-height: 78px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.simbok-master-grid input[readonly],.simbok-master-grid textarea[readonly] {
+  background: #f7f9fc;
+  color: #475569;
+}
+
+.simbok-master-grid small {
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.simbok-field-span-2 {
+  grid-column: span 2;
+}
+
+.simbok-component-card {
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid #e4eaf3;
+  border-radius: 14px;
+  background: #fbfcfe;
+}
+
+.simbok-component-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.simbok-component-card-head > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.simbok-component-card-head h5 {
+  margin: 0;
+  color: #172b4d;
+  font-size: 12px;
+}
+
+/* ============================================================
+   KOMPONEN BELANJA — LAYOUT BARU
+============================================================ */
+
+.simbok-component-grid {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.simbok-component-grid label {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-width: 0;
+  color: #475569;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.simbok-component-grid input,
+.simbok-component-grid select {
+  width: 100%;
+  min-width: 0;
+  min-height: 39px;
+  padding: 9px 10px;
+  border: 1px solid #dce3ed;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.simbok-component-grid input[readonly] {
+  background: #f3f6fa;
+  color: #52627a;
+}
+
+/* Input internal untuk perhitungan, tidak ditampilkan. */
+.simbok-component-grid input[type="hidden"] {
+  display: none !important;
+}
+
+/* Baris 1: Jenis Belanja dan Rekening */
+.simbok-component-main-row {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 0.8fr)
+    minmax(0, 0.85fr)
+    minmax(0, 2fr);
+  gap: 12px;
+  min-width: 0;
+}
+
+/* Baris 2: Volume Kegiatan */
+.simbok-component-volume-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
+  min-width: 0;
+}
+
+/* Kartu ringkasan dengan ikon SVG. */
+.simbok-component-summary-row {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr;
+  gap: 12px;
+  min-width: 0;
+}
+
+.simbok-component-summary-row .simbok-component-total {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 12px 14px;
+  border: 1px solid #e2eaf6;
+  border-radius: 13px;
+  background: #edf4ff;
+  box-sizing: border-box;
+}
+
+.simbok-summary-icon {
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-summary-icon.blue {
+  color: #155eef;
+}
+
+.simbok-summary-icon.green {
+  color: #079455;
+}
+
+.simbok-component-total > div {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.simbok-component-total span {
+  color: #526b98;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.simbok-component-total strong {
+  color: #172b4d;
+  font-size: 14px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.simbok-component-total.is-green {
+  border-color: #d1f3e0;
+  background: #e5f8ef;
+}
+
+.simbok-component-total.is-green strong {
+  color: #087443;
+}
+
+
+/* Tablet */
+@media (max-width: 760px) {
+  .simbok-component-main-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .simbok-component-type,
+  .simbok-component-name-field {
+    grid-column: 1 / -1;
+  }
+
+  .simbok-component-volume-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .simbok-component-summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* HP */
+@media (max-width: 480px) {
+  .simbok-component-main-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .simbok-component-type,
+  .simbok-component-code-field,
+  .simbok-component-name-field {
+    grid-column: 1;
+  }
+
+  .simbok-component-volume-row,
+  .simbok-component-summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.simbok-master-modal-footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0 -26px;
+  padding: 17px 26px;
+  border-top: 1px solid #e8edf4;
+  background: #ffffff;
+  box-shadow: 0 -6px 18px rgba(31, 65, 114, .035);
+}
+
+.simbok-master-modal-footer .simbok-plan-live-total strong {
+  color: #13804e;
+}
+
+.simbok-master-component-summary span,.simbok-table-subtext {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.simbok-table-subtext {
+  display: block;
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+.simbok-master-component-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin: 4px 0;
+}
+
+.simbok-master-component-summary strong {
+  color: #334155;
+  font-size: 11px;
+}
+
+.simbok-master-component-summary span {
+  color: #94a3b8;
+  font-size: 10px;
+}
+
+/* ============================================================
+   02. JUDUL HALAMAN PERENCANAAN
+============================================================ */
+
+.simbok-plan-title-copy {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+}
+
+.simbok-plan-title-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid #dce8fb;
+  border-radius: 18px;
+  box-sizing: border-box;
+  min-height: 108px;
+  padding: 15px 22px;
+  gap: 18px;
+  border-color: #c9ddff;
+  background: radial-gradient(ellipse at 82% 45%, rgba(96, 165, 250, 0.22), transparent 34%),
+
+    linear-gradient(105deg, #ffffff 0%, #f0f6ff 52%, #dceaff 100%);
+  box-shadow: 0 6px 18px rgba(31, 91, 177, 0.075);
+}
+
+.simbok-plan-title-accent {
+  width: 6px;
+  flex: 0 0 6px;
+  border-radius: 99px;
+  height: 62px;
+  background: linear-gradient(180deg, #0875ff 0%, #1459ed 100%);
+}
+
+.simbok-plan-title-copy h2 {
+  margin: 6px 0 5px;
+  font-size: clamp(21px, 2.2vw, 27px);
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  margin-top: 4px;
+  margin-bottom: 3px;
+  color: #10265a;
+}
+
+.simbok-plan-title-copy p {
+  max-width: 690px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.65;
+  color: #526b93;
+}
+
+.simbok-plan-title-art {
+  position: relative;
+  width: 250px;
+  height: 112px;
+  flex: 0 0 250px;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.simbok-title-illustration {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ============================================================
+   04. DOKUMEN MASTER BOK, FILTER, DAN KARTU DAFTAR
+============================================================ */
+
+.simbok-master-hero-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-master-hero-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.simbok-master-hero-copy p {
+  margin: 0;
+  color: #718096;
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.simbok-master-add-button span:first-child {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.simbok-master-add-button[hidden] {
+  display: none !important;
+}
+
+.simbok-master-list-toolbar {
+  display: grid;
+  gap: 13px;
+  margin: 17px 0 13px;
+}
+
+.simbok-master-list-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.simbok-master-list-title h3 {
+  margin: 0 0 4px;
+  color: #172b4d;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.simbok-master-list-title p {
+  margin: 0;
+  color: #8795a8;
+  font-size: 10px;
+}
+
+.simbok-master-count {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.simbok-master-search,
+
+.simbok-master-menu-filter {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.simbok-master-search input,
+
+.simbok-master-menu-filter select {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid #dce5f2;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334761;
+  font: inherit;
+  font-size: 11px;
+  box-sizing: border-box;
+}
+
+.simbok-master-search input:focus,
+
+.simbok-master-menu-filter select:focus,
+
+.simbok-year-control input:focus,
+
+.simbok-recap-year-control input:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.1);
+  border-color: #8ab4f8;
+}
+
+.simbok-icon-button {
+  display: grid;
+  place-items: center;
+  min-height: 40px;
+  border: 1px solid #dce5f2;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #2563eb;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.simbok-icon-button:hover {
+  background: #eff6ff;
+}
+
+.simbok-master-card-list {
+  display: grid;
+  gap: 9px;
+}
+
+.simbok-master-card {
+  display: grid;
+  grid-template-columns: 54px minmax(95px, auto) minmax(220px, 1fr) minmax(145px, auto) auto;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #e5edf8;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 3px 10px rgba(31, 65, 114, 0.025);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+}
+
+.simbok-master-card:hover {
+  transform: translateY(-1px);
+  border-color: #c9dcfb;
+  box-shadow: 0 7px 16px rgba(31, 65, 114, 0.07);
+}
+
+.simbok-master-card-icon svg {
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-master-card-code {
+  display: grid;
+  justify-items: start;
+  gap: 5px;
+  min-width: 0;
+}
+
+.simbok-master-card-code span {
+  display: inline-flex;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #eaf2ff;
+  color: #2563eb;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.simbok-master-card-code small {
+  color: #94a3b8;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.simbok-master-card-main {
+  min-width: 0;
+}
+
+.simbok-master-card-main h4 {
+  margin: 0 0 4px;
+  color: #172b4d;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.simbok-master-card-main p {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 0;
+  color: #64748b;
+  font-size: 10px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.simbok-master-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 16px;
+  margin-top: 9px;
+}
+
+.simbok-master-card-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #334b6c;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.simbok-master-card-meta svg {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  fill: none;
+  stroke: #2563eb;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-master-card-components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.simbok-master-card-budget {
+  display: grid;
+  gap: 5px;
+  justify-items: end;
+  white-space: nowrap;
+}
+
+.simbok-master-card-budget small {
+  color: #94a3b8;
+  font-size: 9px;
+}
+
+.simbok-master-card-budget strong {
+  color: #172b4d;
+  font-size: 13px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+}
+
+.simbok-master-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.simbok-master-card-actions button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #e1eaf7;
+  border-radius: 9px;
+  background: #eff6ff;
+  color: #2563eb;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.simbok-master-card-actions button:hover {
+  border-color: #bfdbfe;
+  background: #dbeafe;
+}
+
+.simbok-master-card-actions button.is-danger {
+  border-color: #fee2e2;
+  background: #fff1f2;
+  color: #dc2626;
+}
+
+.simbok-master-card-actions button.is-danger:hover {
+  border-color: #fecaca;
+  background: #ffe4e6;
+}
+
+.simbok-master-card-actions svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-master-hero {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-height: 82px;
+  padding: 14px 16px;
+  border: 1px solid #dce8fb;
+  border-radius: 14px;
+  border-color: #cfe0ff;
+  background: linear-gradient(105deg, #ffffff 0%, #edf5ff 100%);
+}
+
+.simbok-master-hero-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border: 1px solid #cfe0ff;
+  border-radius: 14px;
+  border-color: #c5dcff;
+  background: #dceaff;
+  color: #0866f5;
+}
+
+.simbok-master-hero-copy h3 {
+  margin: 4px 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0b1b4c;
+}
+
+.simbok-master-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 41px;
+  flex: 0 0 auto;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 10px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  background: linear-gradient(100deg, #0875ff 0%, #1459ed 100%);
+  box-shadow: 0 5px 13px rgba(8, 102, 245, 0.22);
+}
+
+.simbok-master-add-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.23);
+  background: #064fd0;
+}
+
+.simbok-master-card-code,
+
+.simbok-master-card-code-badge {
+  border-color: #d5e6ff;
+  background: #e8f2ff;
+  color: #075fe8;
+}
+
+.simbok-master-card-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid #d8e8ff;
+  border-radius: 13px;
+  border-color: #cfe1ff;
+  background: #e4f0ff;
+  color: #0866f5;
+}
+
+.simbok-master-year-filter select:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.1);
+  border-color: #8ab4f8;
+}
+
+.simbok-master-list-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr)
+
+    minmax(0, 1fr)
+
+    minmax(112px, 132px)
+
+    40px;
+  align-items: end;
+  gap: 10px;
+}
+
+.simbok-master-search,
+
+.simbok-master-menu-filter,
+
+.simbok-master-year-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+  color: #334761;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.simbok-master-year-filter {
+  flex: 0 0 138px;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.simbok-filter-label {
+  display: block;
+  min-height: 13px;
+  color: #405674;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.simbok-master-search {
+  position: relative;
+}
+
+.simbok-master-search svg {
+  position: absolute;
+  fill: none;
+  stroke: #7b8ca4;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  top: 31px;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.simbok-master-search input,
+
+.simbok-master-menu-filter select,
+
+.simbok-master-year-filter select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #d7e2f1;
+  border-radius: 9px;
+  background-color: #ffffff;
+  color: #29415f;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.simbok-master-search input {
+  padding-left: 38px;
+  padding: 9px 12px 9px 36px;
+}
+
+.simbok-master-menu-filter select,
+
+.simbok-master-year-filter select {
+  padding: 9px 30px 9px 11px;
+  cursor: pointer;
+}
+
+.simbok-master-year-filter select {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 30px 9px 12px;
+  border: 1px solid #dce5f2;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334761;
+  font: inherit;
+  font-size: 11px;
+  box-sizing: border-box;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.simbok-master-list-filters > .simbok-icon-button {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  align-self: end;
+}
+
+.simbok-master-search input:focus,
+
+.simbok-master-menu-filter select:focus,
+
+.simbok-master-year-filter select:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.1);
+  border-color: #8ab4f8;
+}
+
+/* ============================================================
+   RESPONSIVE — (max-width: 1050px)
+============================================================ */
+@media (max-width: 1050px) {
+  .simbok-master-card {
+    grid-template-columns: 48px minmax(90px, auto) minmax(180px, 1fr) minmax(125px, auto);
+  }
+
+  .simbok-master-card-actions {
+    grid-column: 3 / -1;
+    justify-content: flex-end;
+  }
+
+}
+
+@media (max-width: 640px) {
+  .simbok-master-identity-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .simbok-master-identity-grid .simbok-field-year {
+    grid-column: 1;
+  }
+
+  .simbok-master-identity-grid .simbok-field-code {
+    grid-column: 2;
+  }
+
+  .simbok-master-identity-grid .simbok-field-menu,
+  .simbok-master-identity-grid .simbok-field-rincian {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — (max-width: 480px)
+============================================================ */
+@media (max-width: 480px) {
+  .simbok-plan-title-art {
+    display: none;
+  }
+
+  .simbok-plan-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .simbok-master-workspace-card,
+
+  .simbok-plan-content-card {
+    padding: 11px;
+  }
+
+  .simbok-master-list-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .simbok-master-card {
+    padding: 11px;
+  }
+
+  .simbok-master-card-actions button {
+    width: 31px;
+    height: 31px;
+  }
+
+}
+
+/* ============================================================
+   RESPONSIVE — (max-width: 700px)
+============================================================ */
+@media (max-width: 700px) {
+  .simbok-modal-backdrop {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .simbok-master-modal {
+    width: 100%;
+    max-height: 96vh;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .simbok-master-modal-header {
+    padding: 18px;
+  }
+
+  .simbok-master-form {
+    padding: 18px 16px 0;
+  }
+
+  .simbok-master-grid,  .simbok-component-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .simbok-field-span-2 {
+    grid-column: auto;
+  }
+
+  .simbok-component-section-title {
+    flex-wrap: wrap;
+  }
+
+  .simbok-component-section-title .simbok-plan-button {
+    width: 100%;
+  }
+
+  .simbok-master-modal-footer {
+    margin: 0 -16px;
+    padding: 14px 16px;
+  }
+
+  .simbok-plan-stat {
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 10px;
+    min-height: 82px;
+    padding: 12px;
+  }
+
+  .simbok-stat-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .simbok-stat-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .simbok-plan-title-card {
+    min-height: 96px;
+    padding: 13px 15px;
+    gap: 10px;
+  }
+
+  .simbok-plan-title-accent {
+    height: 54px;
+  }
+
+  .simbok-plan-title-art {
+    width: 112px;
+    height: 76px;
+    flex-basis: 112px;
+  }
+
+}
+
+/* ============================================================
+   RESPONSIVE — (max-width: 420px)
+============================================================ */
+@media (max-width: 420px) {
+  .simbok-master-list-filters {
+    grid-template-columns: minmax(0, 1fr) 40px;
+  }
+
+  .simbok-master-search {
+    grid-column: 1 / -1;
+  }
+
+  .simbok-master-menu-filter,
+
+  .simbok-master-year-filter {
+    grid-column: 1;
+  }
+
+  .simbok-master-list-filters > .simbok-icon-button {
+    grid-column: 2;
+    grid-row: 2 / span 2;
+  }
+
+}
+
+/* ============================================================
+   RESPONSIVE — (max-width: 760px)
+============================================================ */
+@media (max-width: 760px) {
+  .simbok-plan-title-card {
+    min-height: 112px;
+    padding: 17px;
+  }
+
+  .simbok-plan-title-art {
+    width: 95px;
+    flex-basis: 95px;
+    transform: scale(0.8);
+    transform-origin: right center;
+  }
+
+  .simbok-plan-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .simbok-master-hero {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .simbok-master-hero-copy {
+    flex: 1 1 calc(100% - 65px);
+  }
+
+  .simbok-master-add-button {
+    width: 100%;
+  }
+
+  .simbok-master-card {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .simbok-master-card-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .simbok-master-card-code {
+    grid-column: 2 / -1;
+    grid-row: 1;
+  }
+
+  .simbok-master-card-main {
+    grid-column: 1 / -1;
+  }
+
+  .simbok-master-card-budget {
+    grid-column: 1 / 3;
+    justify-items: start;
+  }
+
+  .simbok-master-card-actions {
+    grid-column: 3;
+    grid-row: 4;
+    justify-content: flex-end;
+  }
+
+  .simbok-plan-summary-master {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .simbok-master-search {
+    grid-column: 1 / -1;
+  }
+
+  .simbok-master-menu-filter {
+    grid-row: 2;
+    grid-column: 1;
+  }
+
+  .simbok-master-year-filter {
+    flex-basis: 100%;
+    grid-column: 2;
+  }
+
+  .simbok-master-list-filters > .simbok-icon-button {
+    grid-column: 3;
+  }
+
+  .simbok-master-list-filters {
+    grid-template-columns: minmax(0, 1fr)
+
+      minmax(0, 1fr)
+
+      minmax(105px, 125px)
+
+      40px;
+    gap: 8px;
+  }
+
+}
+
+/* ============================================================
+   RESPONSIVE — (max-width: 520px)
+============================================================ */
+@media (max-width: 520px) {
+  .simbok-master-list-filters {
+    grid-template-columns: minmax(0, 1fr) minmax(105px, 0.8fr) 40px;
+    gap: 8px;
+  }
+
+  .simbok-master-search {
+    grid-column: 1 / -1;
+  }
+
+  .simbok-master-menu-filter {
+    grid-column: 1;
+  }
+
+  .simbok-master-year-filter {
+    grid-column: 2;
+  }
+
+  .simbok-master-list-filters > .simbok-icon-button {
+    grid-column: 3;
+    grid-row: 2;
+  }
+
+}
