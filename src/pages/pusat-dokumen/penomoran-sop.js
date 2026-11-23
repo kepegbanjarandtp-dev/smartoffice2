@@ -621,32 +621,51 @@ function smartofficeSOPApplyFilter(){
 }
 
 
+
 /* ======================================================
    SORT SOP
 
-   TERBARU DULU BERDASARKAN TANGGAL SOP
+   URUTAN:
+   NOMOR SOP TERKECIL → TERBESAR
+
+   CONTOH:
+   006/KL-1/2026
+   013/KL-1/2026
+   014/KL-1/2027
+   015/KL-3/2026
 ====================================================== */
 function smartofficeSOPSortData(){
 
     smartofficeSOPViewData.sort(
-        function(a,b){
-            const dateA =
-                smartofficeSOPParseDate(
-                    a.tanggalSOP
-                );
+        function(a, b){
 
-            const dateB =
-                smartofficeSOPParseDate(
-                    b.tanggalSOP
-                );
+            const nomorA =
+                String(a.nomorSOP || "").trim();
 
-            return (
-                dateB -
-                dateA
+            const nomorB =
+                String(b.nomorSOP || "").trim();
+
+            const angkaA =
+                Number(nomorA.split("/")[0]) || 0;
+
+            const angkaB =
+                Number(nomorB.split("/")[0]) || 0;
+
+            // Urutkan berdasarkan angka nomor SOP
+            if(angkaA !== angkaB){
+                return angkaA - angkaB;
+            }
+
+            // Jika angka sama, urutkan nomor lengkap
+            return nomorA.localeCompare(
+                nomorB,
+                "id",
+                { numeric: true }
             );
         }
     );
 }
+
 
 
 /* ======================================================
@@ -1532,50 +1551,43 @@ function smartofficeShowSOPActionSheet(
                         /* =========================
                            UBAH SOP
                         ========================= */
-                        if(
-                            action ===
-                            "edit"
-                        ){
-                            smartofficeCloseSOPActionSheet();
+                        if(action === "edit"){
 
-                            /* =====================
-                               DOUBLE CHECK LOCK
-                            ===================== */
                             const latestRow =
                                 smartofficeSOPAllData.find(
-                                    function(item){
-
-                                        return String(
-                                            item.rowIndex
-                                        ) ===
-                                        String(
-                                            rowIndex
-                                        );
-                                    }
+                                    item =>
+                                        Number(item.rowIndex) ===
+                                        Number(rowIndex)
                                 );
-
-                            const latestStatus =
-                                String(
-                                    latestRow?.status || ""
-                                )
-                                .trim()
-                                .toUpperCase();
+                            if(!latestRow){
+                                smartofficeShowToast(
+                                    "Data SOP tidak ditemukan.",
+                                    "error"
+                                );
+                                return;
+                            }
 
                             if(
-                                latestStatus ===
-                                "LOCK"
+                                String(latestRow.status || "")
+                                    .trim()
+                                    .toUpperCase() === "LOCK"
                             ){
                                 smartofficeShowToast(
                                     "SOP masih terkunci. Buka Kunci terlebih dahulu.",
                                     "error"
                                 );
-
                                 return;
                             }
 
-                            smartofficeOpenEditSOP(
-                                rowIndex
-                            );
+                            const sheet =
+                                document.getElementById(
+                                    "smartofficePenomoranSOPActionSheet"
+                                );
+                            if(sheet){
+                                sheet.remove();
+                            }
+
+                            smartofficeOpenEditSOP(rowIndex);
 
                             return;
                         }
