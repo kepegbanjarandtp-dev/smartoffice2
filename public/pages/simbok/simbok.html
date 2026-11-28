@@ -230,48 +230,58 @@
               <p>Kelola Dokumen Master BOK, susun rencana alokasi bulanan, dan pantau rekap pagu setiap tahun anggaran.</p>
             </div>
             <div class="simbok-plan-title-art" aria-hidden="true">
-  <svg class="simbok-title-illustration" viewBox="0 0 340 150" focusable="false">
-    <defs>
-      <linearGradient id="bokHeroWave" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#d9eaff" stop-opacity=".25"/>
-        <stop offset="100%" stop-color="#9fc8ff" stop-opacity=".75"/>
-      </linearGradient>
-      <linearGradient id="bokHeroFolder" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#1685ff"/>
-        <stop offset="100%" stop-color="#0755e8"/>
-      </linearGradient>
-    </defs>
-    <path d="M15 118C75 35 152 27 222 67c46 27 73 20 118-27v110H15Z" fill="url(#bokHeroWave)"/>
-    <path d="M220 143c20-36 42-47 65-46-6 27-25 43-65 46Z" fill="#36cfa0" opacity=".78"/>
-    <path d="M241 144c2-34 20-59 48-69 1 31-13 55-48 69Z" fill="#16b981" opacity=".78"/>
-    <g transform="translate(174 5) rotate(8 58 62)">
-      <rect x="0" y="0" width="116" height="132" rx="13" fill="#ffffff" stroke="#c8ddff" stroke-width="2"/>
-      <path d="M22 31h55M22 51h72M22 71h48" stroke="#c9dcf7" stroke-width="7" stroke-linecap="round"/>
-      <rect x="22" y="88" width="14" height="14" rx="4" fill="#22c55e"/>
-      <path d="m25 95 4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M46 95h42" stroke="#c9dcf7" stroke-width="6" stroke-linecap="round"/>
-      <rect x="22" y="110" width="14" height="14" rx="4" fill="#22c55e"/>
-      <path d="m25 117 4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </g>
-    <g transform="translate(78 75)">
-      <path d="M8 13h62l13 12h104a10 10 0 0 1 10 10v34a11 11 0 0 1-11 11H10A10 10 0 0 1 0 70V23A10 10 0 0 1 8 13Z" fill="url(#bokHeroFolder)"/>
-      <path d="M0 39h197" stroke="#75b8ff" stroke-width="2" opacity=".8"/>
-      <text x="98" y="66" text-anchor="middle" fill="#fff" font-size="27" font-weight="800" font-family="Arial, sans-serif">BOK</text>
-    </g>
-  </svg>
-</div>
+              <svg class="simbok-title-illustration" viewBox="0 0 340 150" focusable="false">
+                <defs>
+                  <linearGradient id="bokHeroWave" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#d9eaff" stop-opacity=".25"/>
+                    <stop offset="100%" stop-color="#9fc8ff" stop-opacity=".75"/>
+                  </linearGradient>
+                  <linearGradient id="bokHeroFolder" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#1685ff"/>
+                    <stop offset="100%" stop-color="#0755e8"/>
+                  </linearGradient>
+                </defs>
+                <path d="M15 118C75 35 152 27 222 67c46 27 73 20 118-27v110H15Z" fill="url(#bokHeroWave)"/>
+                <path d="M220 143c20-36 42-47 65-46-6 27-25 43-65 46Z" fill="#36cfa0" opacity=".78"/>
+                <path d="M241 144c2-34 20-59 48-69 1 31-13 55-48 69Z" fill="#16b981" opacity=".78"/>
+                <g transform="translate(174 5) rotate(8 58 62)">
+                  <rect x="0" y="0" width="116" height="132" rx="13" fill="#ffffff" stroke="#c8ddff" stroke-width="2"/>
+                  <path d="M22 31h55M22 51h72M22 71h48" stroke="#c9dcf7" stroke-width="7" stroke-linecap="round"/>
+                  <rect x="22" y="88" width="14" height="14" rx="4" fill="#22c55e"/>
+                  <path d="m25 95 4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M46 95h42" stroke="#c9dcf7" stroke-width="6" stroke-linecap="round"/>
+                  <rect x="22" y="110" width="14" height="14" rx="4" fill="#22c55e"/>
+                  <path d="m25 117 4 4 7-8" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </g>
+                <g transform="translate(78 75)">
+                  <path d="M8 13h62l13 12h104a10 10 0 0 1 10 10v34a11 11 0 0 1-11 11H10A10 10 0 0 1 0 70V23A10 10 0 0 1 8 13Z" fill="url(#bokHeroFolder)"/>
+                  <path d="M0 39h197" stroke="#75b8ff" stroke-width="2" opacity=".8"/>
+                  <text x="98" y="66" text-anchor="middle" fill="#fff" font-size="27" font-weight="800" font-family="Arial, sans-serif">BOK</text>
+                </g>
+              </svg>
+            </div>
           </section>
 
           <!-- Navigasi internal untuk tiga bagian perencanaan. -->
           <div class="simbok-plan-tabs" role="tablist" aria-label="Bagian perencanaan anggaran">
-            <button type="button" class="simbok-plan-tab is-active" data-plan-tab="master" role="tab" aria-selected="true">
+            <button type="button" class="simbok-plan-tab is-active"
+              data-plan-tab="master" role="tab" aria-selected="true">
               <span>01</span> Master Detail Menu
             </button>
-            <button type="button" class="simbok-plan-tab" data-plan-tab="bulanan" role="tab" aria-selected="false">
-              <span>02</span> Rencana Bulanan
+
+            <button type="button" class="simbok-plan-tab"
+              data-plan-tab="rpd" role="tab" aria-selected="false">
+              <span>02</span> Rencana Penggunaan Dana
             </button>
-            <button type="button" class="simbok-plan-tab" data-plan-tab="rekap" role="tab" aria-selected="false">
-              <span>03</span> Rekap Pagu
+
+            <button type="button" class="simbok-plan-tab"
+              data-plan-tab="bulanan" role="tab" aria-selected="false">
+              <span>03</span> Rencana Bulanan
+            </button>
+
+            <button type="button" class="simbok-plan-tab"
+              data-plan-tab="rekap" role="tab" aria-selected="false">
+              <span>04</span> Rekap Pagu
             </button>
           </div>
 
@@ -407,7 +417,129 @@
           </section>
 
           <!-- ==================================================
-               TAB 2 — RENCANA BULANAN
+              TAB 2 — RENCANA PENGGUNAAN DANA (RPD)
+          =================================================== -->
+          <section
+            class="simbok-plan-view"
+            data-plan-view="rpd"
+            hidden
+          >
+            
+            <section class="simbok-plan-content-card">
+
+              <!-- HEADER RPD -->
+              <section class="simbok-master-workspace-card">
+
+                <div class="simbok-master-hero">
+
+                  <div class="simbok-master-hero-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M5 3.75h10l4 4V20.25H5z"/>
+                      <path d="M14.5 3.75v4.5H19M8 12h8M8 15.5h8"/>
+                    </svg>
+                  </div>
+
+                  <div class="simbok-master-hero-copy">
+                    <span class="simbok-plan-eyebrow">
+                      PERENCANAAN PENGGUNAAN DANA
+                    </span>
+
+                    <h3>Daftar Rencana Penggunaan Dana</h3>
+
+                    <p>
+                      Kelola RPD berdasarkan Detail Menu dan pemegang program.
+                    </p>
+                  </div>
+
+                </div>
+
+                <!-- FILTER RPD -->
+                <div class="simbok-master-list-toolbar">
+
+                  <div class="simbok-master-list-title">
+                    <div>
+                      <h3>Daftar Detail Menu / Kegiatan</h3>
+                      <p>
+                        Pilih Detail Menu untuk mengisi Rencana Penggunaan Dana.
+                      </p>
+                    </div>
+
+                    <span class="simbok-master-count" id="simbokRpdCount">
+                      0 detail menu
+                    </span>
+                  </div>
+
+                  <div class="simbok-master-list-filters">
+
+                    <!-- PENCARIAN -->
+                    <label class="simbok-master-search">
+                      <span class="simbok-filter-label">
+                        Cari Detail Menu / Jenis Belanja
+                      </span>
+
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                        <path d="m16 16 5 5"></path>
+                      </svg>
+
+                      <input
+                        id="simbokRpdSearch"
+                        type="search"
+                        placeholder="Cari detail menu atau jenis belanja..."
+                        autocomplete="off"
+                      >
+                    </label>
+
+                    <!-- FILTER MENU -->
+                    <label class="simbok-master-menu-filter">
+                      <span class="simbok-filter-label">Filter Menu</span>
+
+                      <select id="simbokRpdMenuFilter">
+                        <option value="">Semua Menu</option>
+                      </select>
+                    </label>
+
+                    <!-- TAHUN ANGGARAN -->
+                    <label class="simbok-master-year-filter">
+                      <span class="simbok-filter-label">Tahun Anggaran</span>
+
+                      <select id="simbokPlanYearRpd">
+                        <option value="2027">2027</option>
+                      </select>
+                    </label>
+
+                    <!-- REFRESH -->
+                    <button
+                      type="button"
+                      class="simbok-icon-button"
+                      id="simbokRpdResetFilter"
+                      title="Refresh daftar RPD"
+                      aria-label="Refresh daftar RPD"
+                    >
+                      ↻
+                    </button>
+
+                  </div>
+                </div>
+
+              </section>
+
+              <!-- DAFTAR KARTU RPD -->
+              <div
+                id="simbokRpdCardList"
+                class="simbok-rpd-card-list"
+              >
+                <div class="simbok-plan-empty">
+                  Belum ada data RPD.
+                </div>
+              </div>
+
+            </section>
+
+          </section>
+
+          <!-- ==================================================
+               TAB 3 — RENCANA BULANAN
           =================================================== -->
           <section class="simbok-plan-view" data-plan-view="bulanan" hidden>
 
@@ -485,7 +617,7 @@
           </section>
 
           <!-- ==================================================
-               TAB 3 — REKAP PAGU
+               TAB 4 — REKAP PAGU
           =================================================== -->
           <section class="simbok-plan-view" data-plan-view="rekap" hidden>
 
@@ -547,22 +679,30 @@
                 <h3 id="simbokMasterModalTitle">Tambah Detail Menu / Kegiatan</h3>
                 <p>Identitas kegiatan, pemegang program, dan komponen belanja.</p>
               </div>
-              <button type="button" class="simbok-modal-close" id="simbokCloseMasterModal" aria-label="Tutup">×</button>
+              <button type="button" class="simbok-modal-close" id="simbokCloseMasterModal" aria-label="Tutup">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m7 7 10 10M17 7 7 17"/>
+                </svg>
+              </button>
             </header>
 
+            
             <form id="simbokMasterForm" class="simbok-master-form">
+
+              <!-- =========================================
+                  01. IDENTITAS DETAIL MENU
+              ========================================== -->
               <section class="simbok-modal-section">
-                <div class="simbok-modal-section-title">
-                  <span>01</span>
-                  <div>
-                    <h4>Identitas Detail Menu</h4>
-                    <p>Kode detail, definisi operasional, dan rekening kegiatan mengikuti Master Rincian Menu.</p>
+
+                <div class="simbok-modal-section-head">
+                  <div class="simbok-modal-section-title">
+                    <span>01</span>
+                    <div>
+                      <h4>Identitas Detail Menu</h4>
+                      <p>Data detail menu dan referensi master yang terkait.</p>
+                    </div>
                   </div>
-                </div>
 
-                <div class="simbok-master-grid simbok-master-identity-grid">
-
-                  <!-- Baris pertama: Tahun, Kode Detail, Menu -->
                   <label class="simbok-field-year">
                     Tahun Anggaran
                     <input
@@ -574,44 +714,122 @@
                       required
                     >
                   </label>
+                </div>
 
-                  <label class="simbok-field-code">
-                    Kode Detail
-                    <input
-                      id="simbokMasterKode"
-                      type="text"
-                      readonly
-                      placeholder="Otomatis dari Rincian Menu"
-                    >
-                  </label>
+                <div class="simbok-master-grid simbok-master-identity-grid">
 
-                  <label class="simbok-field-menu">
-                    Menu
-                    <select id="simbokMasterMenu" required>
-                      <option value="">Pilih menu</option>
-                    </select>
-                  </label>
+                  <!-- Baris 1: Kode Detail + Nama Detail -->
+                  <div class="simbok-identity-row simbok-identity-row-detail">
 
-                  <!-- Baris kedua: Rincian Menu -->
-                  <label class="simbok-field-span-2 simbok-field-rincian">
-                    Rincian Menu
-                    <select id="simbokMasterRincian" required disabled>
-                      <option value="">Pilih menu terlebih dahulu</option>
-                    </select>
-                  </label>
+                    <label class="simbok-field-detail-code">
+                      Kode Detail Menu
+                      <input
+                        id="simbokMasterKode"
+                        type="text"
+                        readonly
+                        placeholder="Terisi otomatis"
+                      >
+                    </label>
 
+                    <label class="simbok-field-detail-name">
+                      Nama Detail Menu
+                      <div class="simbok-custom-select" id="simbokDetailMenuCustom">
+                        <select id="simbokMasterDetailMenu" required>
+                          <option value="">Pilih detail menu</option>
+                        </select>
+
+                        <button
+                          type="button"
+                          class="simbok-custom-select-trigger"
+                          aria-expanded="false"
+                        >
+                          <span>Pilih detail menu</span>
+
+                          <svg
+                            class="simbok-custom-select-arrow"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                          >
+                            <path d="m6 9 6 6 6-6"/>
+                          </svg>
+                        </button>
+
+                        <div class="simbok-custom-select-options" hidden></div>
+                      </div>
+                    </label>
+
+                  </div>
+
+                  <!-- Baris 2: Kode Menu + Nama Menu -->
+                  <div class="simbok-identity-row simbok-identity-row-menu">
+
+                    <label class="simbok-field-menu-code">
+                      Kode Menu
+                      <input
+                        id="simbokMasterKodeMenu"
+                        type="text"
+                        readonly
+                        placeholder="Terisi otomatis"
+                      >
+                    </label>
+
+                    <label class="simbok-field-menu-name">
+                      Nama Menu
+                      <input
+                        id="simbokMasterNamaMenu"
+                        type="text"
+                        readonly
+                        placeholder="Terisi otomatis"
+                      >
+                    </label>
+
+                  </div>
+
+                  <!-- Baris 3: Kode Rincian + Nama Rincian -->
+                  <div class="simbok-identity-row simbok-identity-row-rincian">
+
+                    <label class="simbok-field-rincian-code">
+                      Kode Rincian Menu
+                      <input
+                        id="simbokMasterKodeRincian"
+                        type="text"
+                        readonly
+                        placeholder="Terisi otomatis"
+                      >
+                    </label>
+
+                    <label class="simbok-field-rincian-name">
+                      Nama Rincian Menu
+                      <textarea
+                        id="simbokMasterNamaRincian"
+                        rows="2"
+                        readonly
+                        placeholder="Terisi otomatis"
+                      ></textarea>
+                    </label>
+
+                  </div>
+
+                  <!-- Definisi Operasional -->
                   <label class="simbok-field-span-2">
                     Definisi Operasional
                     <textarea
                       id="simbokMasterDefinisi"
                       rows="3"
                       readonly
-                      placeholder="Tidak ada Definisi Operasional pada Master Rincian Menu"
+                      placeholder="Terisi otomatis sesuai detail menu"
                     ></textarea>
                     <small>Nilai disimpan sebagai snapshot saat detail menu dibuat.</small>
                   </label>
 
-                  <!-- Kode dan Nama Rekening Kegiatan dalam satu baris -->
+                  <!-- Kode dan Nama Rekening Kegiatan -->
                   <div class="simbok-rekening-kegiatan-row">
 
                     <label>
@@ -630,6 +848,7 @@
                         id="simbokMasterNamaRekKegiatan"
                         type="text"
                         readonly
+                        placeholder="Terisi otomatis"
                       >
                     </label>
 
@@ -638,7 +857,11 @@
                 </div>
               </section>
 
+              <!-- =========================================
+                  02. PEMEGANG PROGRAM
+              ========================================== -->
               <section class="simbok-modal-section">
+
                 <div class="simbok-modal-section-title">
                   <span>02</span>
                   <div>
@@ -648,6 +871,7 @@
                 </div>
 
                 <div class="simbok-master-grid">
+
                   <label>
                     Nama Pemegang Program
                     <select id="simbokMasterPemegang" required>
@@ -665,36 +889,251 @@
                       required
                     >
                   </label>
+
                 </div>
               </section>
 
+              <!-- =========================================
+                  03. KOMPONEN JENIS BELANJA
+              ========================================== -->
               <section class="simbok-modal-section">
+
                 <div class="simbok-modal-section-title simbok-component-section-title">
                   <span>03</span>
                   <div>
                     <h4>Komponen Jenis Belanja</h4>
                     <p>Setiap jenis belanja memiliki volume dan pagu tersendiri.</p>
                   </div>
-                  <button type="button" class="simbok-plan-button is-secondary" id="simbokAddKomponen">
+
+                  <button
+                    type="button"
+                    class="simbok-plan-button is-secondary"
+                    id="simbokAddKomponen"
+                  >
                     + Tambah Jenis Belanja
                   </button>
                 </div>
-                <div id="simbokKomponenList" class="simbok-plan-component-list"></div>
+
+                <div
+                  id="simbokKomponenList"
+                  class="simbok-plan-component-list"
+                ></div>
+
               </section>
 
+              <!-- =========================================
+                  FOOTER MODAL
+              ========================================== -->
               <footer class="simbok-master-modal-footer">
+
                 <div class="simbok-plan-live-total">
                   <span>Total Pagu Detail Menu / Kegiatan</span>
                   <strong id="simbokMasterTotal">Rp0</strong>
                 </div>
+
                 <div class="simbok-plan-actions">
-                  <button type="button" class="simbok-plan-button is-ghost" id="simbokCancelMasterModal">Batal</button>
-                  <button type="submit" class="simbok-plan-button is-primary" id="simbokSaveMaster">Simpan Detail Menu</button>
+
+                  <button
+                    type="button"
+                    class="simbok-plan-button is-ghost"
+                    id="simbokCancelMasterModal"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="simbok-plan-button is-primary"
+                    id="simbokSaveMaster"
+                  >
+                    Simpan Detail Menu
+                  </button>
+
                 </div>
               </footer>
+
+            </form>
+
+          </section>
+        </div>
+        
+        <!-- ======================================================
+            MODAL BUAT / EDIT RENCANA PENGGUNAAN DANA (RPD)
+        ====================================================== -->
+        <div class="simbok-modal-backdrop" id="simbokRpdModal" hidden>
+          <section
+            class="simbok-master-modal simbok-rpd-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="simbokRpdModalTitle"
+          >
+
+            <!-- HEADER -->
+            <header class="simbok-master-modal-header">
+              <div>
+                <span class="simbok-plan-eyebrow">
+                  RENCANA PENGGUNAAN DANA
+                </span>
+                <h3 id="simbokRpdModalTitle">Buat RPD</h3>
+                <p>Rencana penggunaan dana berdasarkan Detail Menu dan komponen belanja.</p>
+              </div>
+
+              <button
+                type="button"
+                class="simbok-modal-close"
+                id="simbokCloseRpdModal"
+                aria-label="Tutup"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m7 7 10 10M17 7 7 17"/>
+                </svg>
+              </button>
+            </header>
+
+            <form id="simbokRpdForm" class="simbok-master-form">
+
+              <!-- 01. IDENTITAS DETAIL MENU -->
+              <section class="simbok-modal-section">
+                <div class="simbok-modal-section-title">
+                  <span>01</span>
+                  <div>
+                    <h4>Identitas Detail Menu</h4>
+                    <p>Informasi Detail Menu yang akan dibuatkan RPD.</p>
+                  </div>
+                </div>
+
+                <div class="simbok-master-grid">
+                  <label>
+                    Tahun Anggaran
+                    <input id="simbokRpdTahun" type="text" readonly>
+                  </label>
+
+                  <label>
+                    Kode Detail Menu
+                    <input id="simbokRpdKode" type="text" readonly>
+                  </label>
+
+                  <label class="simbok-field-span-2">
+                    Nama Detail Menu
+                    <textarea id="simbokRpdNama" rows="2" readonly></textarea>
+                  </label>
+
+                  <label>
+                    Nama Pemegang Program
+                    <input id="simbokRpdPemegang" type="text" readonly>
+                  </label>
+
+                  <label>
+                    NIP / NRP
+                    <input id="simbokRpdNip" type="text" readonly>
+                  </label>
+                </div>
+              </section>
+
+              <!-- 02. RINGKASAN ANGGARAN -->
+              <section class="simbok-modal-section">
+                <div class="simbok-modal-section-title">
+                  <span>02</span>
+                  <div>
+                    <h4>Ringkasan Anggaran</h4>
+                    <p>Pemantauan pagu dan rencana penggunaan dana.</p>
+                  </div>
+                </div>
+
+                <div class="simbok-rpd-budget-summary">
+
+                  <div>
+                    <span>Total Pagu</span>
+                    <strong id="simbokRpdPagu">Rp0</strong>
+                  </div>
+
+                  <div>
+                    <span>Total Rencana</span>
+                    <strong id="simbokRpdTotal">Rp0</strong>
+                  </div>
+
+                  <div>
+                    <span>Sisa Anggaran</span>
+                    <strong id="simbokRpdSisa">Rp0</strong>
+                  </div>
+
+                </div>
+
+                <div id="simbokRpdBudgetWarning" hidden></div>
+              </section>
+
+              <!-- 03. KOMPONEN BELANJA -->
+              <section class="simbok-modal-section">
+
+                <div class="simbok-modal-section-title">
+                  <span>03</span>
+                  <div>
+                    <h4>Pemilihan Komponen Belanja</h4>
+                    <p>Pilih komponen yang akan digunakan dalam RPD.</p>
+                  </div>
+                </div>
+
+                <div id="simbokRpdComponentList">
+                  <div class="simbok-plan-empty">
+                    Komponen belanja akan ditampilkan di sini.
+                  </div>
+                </div>
+
+              </section>
+
+              <!-- 04. RENCANA BULANAN -->
+              <section class="simbok-modal-section">
+
+                <div class="simbok-modal-section-title">
+                  <span>04</span>
+                  <div>
+                    <h4>Rencana Penggunaan Dana Bulanan</h4>
+                    <p>Pengaturan volume dan harga satuan untuk setiap bulan.</p>
+                  </div>
+                </div>
+
+                <div id="simbokRpdMonthlyList">
+                  <div class="simbok-plan-empty">
+                    Pilih komponen belanja untuk mengisi rencana bulanan.
+                  </div>
+                </div>
+
+              </section>
+
+              <!-- FOOTER -->
+              <footer class="simbok-master-modal-footer">
+
+                <div class="simbok-plan-live-total">
+                  <span>Sisa Anggaran</span>
+                  <strong id="simbokRpdFooterSisa">Rp0</strong>
+                </div>
+
+                <div class="simbok-plan-actions">
+
+                  <button
+                    type="button"
+                    class="simbok-plan-button is-ghost"
+                    id="simbokCancelRpdModal"
+                  >
+                    Batal
+                  </button>
+
+                  <button
+                    type="submit"
+                    class="simbok-plan-button is-primary"
+                    id="simbokSaveRpd"
+                  >
+                    Simpan RPD
+                  </button>
+
+                </div>
+
+              </footer>
+
             </form>
           </section>
         </div>
+
 
       </section>
 
