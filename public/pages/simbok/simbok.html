@@ -962,14 +962,14 @@
         ====================================================== -->
         <div class="simbok-modal-backdrop" id="simbokRpdModal" hidden>
           <section
-            class="simbok-master-modal simbok-rpd-modal"
+            class="simbok-rpd-modal"
             role="dialog"
             aria-modal="true"
             aria-labelledby="simbokRpdModalTitle"
           >
 
             <!-- HEADER -->
-            <header class="simbok-master-modal-header">
+            <header class="simbok-rpd-modal-header">
               <div>
                 <span class="simbok-plan-eyebrow">
                   RENCANA PENGGUNAAN DANA
@@ -980,7 +980,7 @@
 
               <button
                 type="button"
-                class="simbok-modal-close"
+                class="simbok-rpd-modal-close"
                 id="simbokCloseRpdModal"
                 aria-label="Tutup"
               >
@@ -990,7 +990,7 @@
               </button>
             </header>
 
-            <form id="simbokRpdForm" class="simbok-master-form">
+            <form id="simbokRpdForm" class="simbok-rpd-modal-form">
 
               <!-- 01. IDENTITAS DETAIL MENU -->
               <section class="simbok-modal-section">
@@ -1029,10 +1029,10 @@
                   </label>
                 </div>
               </section>
-
+              
               <!-- 02. RINGKASAN ANGGARAN -->
-              <section class="simbok-modal-section">
-                <div class="simbok-modal-section-title">
+              <section class="simbok-rpd-section">
+                <div class="simbok-rpd-section-title">
                   <span>02</span>
                   <div>
                     <h4>Ringkasan Anggaran</h4>
@@ -1048,7 +1048,7 @@
                   </div>
 
                   <div>
-                    <span>Total Rencana</span>
+                    <span>Total RPD</span>
                     <strong id="simbokRpdTotal">Rp0</strong>
                   </div>
 
@@ -1062,46 +1062,27 @@
                 <div id="simbokRpdBudgetWarning" hidden></div>
               </section>
 
-              <!-- 03. KOMPONEN BELANJA -->
-              <section class="simbok-modal-section">
+              <!-- 03. RENCANA PENGGUNAAN DANA BULANAN -->
+              <section class="simbok-rpd-section">
 
-                <div class="simbok-modal-section-title">
+                <div class="simbok-rpd-section-title">
                   <span>03</span>
                   <div>
-                    <h4>Pemilihan Komponen Belanja</h4>
-                    <p>Pilih komponen yang akan digunakan dalam RPD.</p>
-                  </div>
-                </div>
-
-                <div id="simbokRpdComponentList">
-                  <div class="simbok-plan-empty">
-                    Komponen belanja akan ditampilkan di sini.
-                  </div>
-                </div>
-
-              </section>
-
-              <!-- 04. RENCANA BULANAN -->
-              <section class="simbok-modal-section">
-
-                <div class="simbok-modal-section-title">
-                  <span>04</span>
-                  <div>
                     <h4>Rencana Penggunaan Dana Bulanan</h4>
-                    <p>Pengaturan volume dan harga satuan untuk setiap bulan.</p>
+                    <p>Pilih komponen belanja dan isi anggaran untuk setiap bulan.</p>
                   </div>
                 </div>
 
                 <div id="simbokRpdMonthlyList">
                   <div class="simbok-plan-empty">
-                    Pilih komponen belanja untuk mengisi rencana bulanan.
+                    Rencana bulanan akan ditampilkan di sini.
                   </div>
                 </div>
 
               </section>
 
               <!-- FOOTER -->
-              <footer class="simbok-master-modal-footer">
+              <footer class="simbok-rpd-modal-footer">
 
                 <div class="simbok-plan-live-total">
                   <span>Sisa Anggaran</span>
