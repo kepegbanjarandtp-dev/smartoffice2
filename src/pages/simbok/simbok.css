@@ -3808,3 +3808,459 @@ body.simbok-modal-open {
     grid-template-columns: 1fr;
   }
 }
+
+
+
+
+/* ============================================================
+   SIMBOK RPD — MODAL UTAMA
+============================================================ */
+
+.simbok-rpd-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 980px);
+  max-height: 92vh;
+  overflow: hidden;
+  border: 1px solid #e3eaf4;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 28px 90px rgba(15, 23, 42, .28);
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   SIMBOK RPD — HEADER RINGKAS
+============================================================ */
+
+.simbok-rpd-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex: 0 0 auto;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e8edf4;
+  background: #fff;
+}
+
+.simbok-rpd-modal-header .simbok-plan-eyebrow {
+  display: block;
+  margin-bottom: 3px;
+  color: #2563eb;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: .8px;
+}
+
+.simbok-rpd-modal-header h3 {
+  margin: 0;
+  color: #172b4d;
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.simbok-rpd-modal-header p {
+  margin: 3px 0 0;
+  color: #64748b;
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+/* Tombol tutup */
+.simbok-rpd-modal-close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 9px;
+  background: #fff;
+  color: #64748b;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.simbok-rpd-modal-close svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-rpd-modal-close:hover {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+/* ============================================================
+   SIMBOK RPD — FORM DAN FOOTER
+============================================================ */
+
+.simbok-rpd-modal-form {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+.simbok-rpd-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+  margin: 0 -20px;
+  padding: 11px 20px;
+  border-top: 1px solid #e8edf4;
+  background: #fff;
+  box-shadow: 0 -5px 15px rgba(31, 65, 114, .035);
+}
+
+@media (max-width: 560px) {
+  .simbok-rpd-modal {
+    width: calc(100% - 20px);
+    max-height: 94vh;
+    border-radius: 15px;
+  }
+
+  .simbok-rpd-modal-header {
+    padding: 11px 14px;
+  }
+
+  .simbok-rpd-modal-header h3 {
+    font-size: 15px;
+  }
+
+  .simbok-rpd-modal-form {
+    padding: 0 14px;
+  }
+
+  .simbok-rpd-modal-footer {
+    margin: 0 -14px;
+    padding: 10px 14px;
+  }
+}
+
+
+
+/* ======================================================
+   RPD — PANEL RENCANA PENGGUNAAN DANA BULANAN
+====================================================== */
+
+.simbok-rpd-month {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+  margin-bottom: 10px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.simbok-rpd-month.is-open {
+  border-color: #93b4ff;
+  box-shadow: 0 3px 12px rgba(37, 99, 235, 0.07);
+}
+
+/* Header bulan */
+.simbok-rpd-month-header {
+  width: 100%;
+  min-height: 66px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 15px;
+  border: 0;
+  background: #ffffff;
+  color: #1e293b;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.simbok-rpd-month-header:hover {
+  background: #f8faff;
+}
+
+.simbok-rpd-month-number {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.simbok-rpd-month-heading {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.simbok-rpd-month-heading strong {
+  font-size: 13px;
+  font-weight: 750;
+  color: #1e293b;
+}
+
+.simbok-rpd-month-heading small {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.simbok-rpd-month-total {
+  flex: 0 0 auto;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.simbok-rpd-month-chevron {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 7px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 17px;
+  transition: transform 0.2s ease;
+}
+
+.simbok-rpd-month.is-open .simbok-rpd-month-chevron {
+  transform: rotate(180deg);
+}
+
+/* Isi panel */
+.simbok-rpd-month-body {
+  padding: 16px;
+  border-top: 1px solid #edf1f7;
+  background: #fbfcff;
+}
+
+.simbok-rpd-month-component-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-bottom: 16px;
+}
+
+.simbok-rpd-month-component-option {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.simbok-rpd-month-component-option:has(input:checked) {
+  border-color: #93b4fd;
+  background: #eff6ff;
+}
+
+.simbok-rpd-month-component-option input {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  margin: 2px 0 0;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.simbok-rpd-month-component-option span {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.simbok-rpd-month-component-option strong {
+  color: #334155;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.simbok-rpd-month-component-option small {
+  color: #64748b;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.simbok-rpd-month-component-option input:disabled {
+  cursor: not-allowed;
+}
+
+/* Form rincian komponen */
+.simbok-rpd-month-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.simbok-rpd-month-detail-card {
+  padding: 15px;
+  border: 1px solid #dbe5f2;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.simbok-rpd-month-detail-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid #edf1f7;
+}
+
+.simbok-rpd-month-detail-heading strong {
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.simbok-rpd-month-detail-heading small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+/* Grid input */
+.simbok-rpd-month-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.simbok-rpd-month-fields label {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.simbok-rpd-month-fields input {
+  width: 100%;
+  min-width: 0;
+  height: 39px;
+  padding: 0 10px;
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  outline: none;
+  background: #ffffff;
+  color: #334155;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.simbok-rpd-month-fields input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.10);
+}
+
+.simbok-rpd-month-fields input[readonly] {
+  background: #f1f5f9;
+  color: #64748b;
+  cursor: default;
+}
+
+.simbok-rpd-month-fields label:last-child input {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  font-weight: 750;
+}
+
+/* Perhitungan volume */
+.simbok-rpd-volume-summary {
+  margin-top: 13px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Tampilan kosong */
+.simbok-rpd-month-body .simbok-plan-empty {
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #94a3b8;
+  font-size: 12px;
+  text-align: center;
+}
+
+/* Responsive tablet dan HP */
+@media (max-width: 640px) {
+  .simbok-rpd-month-header {
+    gap: 9px;
+    padding: 10px;
+  }
+
+  .simbok-rpd-month-total {
+    font-size: 10px;
+  }
+
+  .simbok-rpd-month-body {
+    padding: 11px;
+  }
+
+  .simbok-rpd-month-component-list {
+    grid-template-columns: 1fr;
+  }
+
+  .simbok-rpd-month-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+}
+
+@media (max-width: 380px) {
+  .simbok-rpd-month-number {
+    width: 30px;
+    height: 30px;
+    flex-basis: 30px;
+  }
+
+  .simbok-rpd-month-total {
+    white-space: normal;
+    text-align: right;
+  }
+
+  .simbok-rpd-month-fields {
+    grid-template-columns: 1fr;
+  }
+}
+

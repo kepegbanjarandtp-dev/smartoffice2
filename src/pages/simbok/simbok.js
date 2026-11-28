@@ -3150,13 +3150,23 @@ function simbokCloseRPDModal() {
   }
 }
 
+
 /* ======================================================
-   DAFTAR KOMPONEN BELANJA RPD
+   SIMBOK RPD — RENCANA BULANAN
 ====================================================== */
 
+const SIMBOK_RPD_MONTHS = [
+  "Januari", "Februari", "Maret", "April",
+  "Mei", "Juni", "Juli", "Agustus",
+  "September", "Oktober", "November", "Desember"
+];
+
+let simbokRpdOpenMonth = "Januari";
+
+
+/* Membentuk draft komponen dan data bulanan. */
 function simbokRenderRPDComponents(master, rpd = null) {
-  const wrap = document.getElementById("simbokRpdComponentList");
-  if (!wrap || !master) return;
+  if (!master) return;
 
   const masterComponents = Array.isArray(master.komponenBelanja)
     ? master.komponenBelanja
@@ -3166,20 +3176,78 @@ function simbokRenderRPDComponents(master, rpd = null) {
     ? rpd.komponenRPD
     : [];
 
-  // Cocokkan komponen berdasarkan key dari Master.
   simbokRpdDraftComponents = masterComponents.map(component => {
     const saved = savedComponents.find(item =>
       String(item.key) === String(component.key)
     );
 
+    const bulanTersimpan = saved?.bulan || {};
+
+    const bulan = {};
+
+    SIMBOK_RPD_MONTHS.forEach(namaBulan => {
+      const data = bulanTersimpan[namaBulan] || {};
+
+      bulan[namaBulan] = {
+        digunakan: data.digunakan === true,
+        jumlahLokasi: Number(data.jumlahLokasi ?? component.jumlahLokasi ?? 0),
+        frekuensi: Number(data.frekuensi ?? component.frekuensi ?? 0),
+        hargaSatuan: Number(data.hargaSatuan ?? component.hargaSatuan ?? 0),
+        jumlah: Number(data.jumlah || 0),
+        locked: data.locked === true
+      };
+    });
+
     return {
       ...component,
-      digunakan: saved ? saved.digunakan !== false : false,
-      bulan: saved?.bulan || {}
+      bulan
     };
   });
 
-  if (!masterComponents.length) {
+  simbokRpdOpenMonth = "Januari";
+
+  simbokRenderRPDMonthlyList();
+  simbokUpdateRPDSummary();
+}
+
+
+/* Menghitung anggaran satu komponen pada satu bulan. */
+function simbokCalculateRPDMonthComponent(component, namaBulan) {
+  const data = component.bulan?.[namaBulan];
+
+  if (!data || data.digunakan !== true) return 0;
+
+  const jumlahOrang = Number(component.jumlahOrang || 0);
+  const jumlahLokasi = Number(data.jumlahLokasi || 0);
+  const frekuensi = Number(data.frekuensi || 0);
+  const hargaSatuan = Number(data.hargaSatuan || 0);
+
+  const volume = jumlahOrang * jumlahLokasi * frekuensi;
+  const jumlah = volume * hargaSatuan;
+
+  data.jumlah = jumlah;
+
+  return jumlah;
+}
+
+
+/* Menghitung total seluruh RPD. */
+function simbokCalculateDraftRPD() {
+  return simbokRpdDraftComponents.reduce((total, component) => {
+    return total + SIMBOK_RPD_MONTHS.reduce((subtotal, namaBulan) => {
+      return subtotal +
+        simbokCalculateRPDMonthComponent(component, namaBulan);
+    }, 0);
+  }, 0);
+}
+
+
+/* Menampilkan 12 panel bulan. */
+function simbokRenderRPDMonthlyList() {
+  const wrap = document.getElementById("simbokRpdMonthlyList");
+  if (!wrap) return;
+
+  if (!simbokRpdDraftComponents.length) {
     wrap.innerHTML = `
       <div class="simbok-plan-empty">
         Belum ada komponen belanja pada Detail Menu ini.
@@ -3188,97 +3256,238 @@ function simbokRenderRPDComponents(master, rpd = null) {
     return;
   }
 
-  wrap.innerHTML = `
-    <div class="simbok-rpd-component-selection">
+  wrap.innerHTML = SIMBOK_RPD_MONTHS.map((namaBulan, index) => {
+    const isOpen = simbokRpdOpenMonth === namaBulan;
 
-      <div class="simbok-rpd-selection-heading">
-        <strong>Pilih Komponen Jenis Belanja</strong>
-        <span id="simbokRpdSelectedCount">
-          0 dari ${masterComponents.length} komponen dipilih
-        </span>
-      </div>
+    const selected = simbokRpdDraftComponents.filter(component =>
+      component.bulan[namaBulan]?.digunakan === true
+    );
 
-      <div class="simbok-rpd-checkbox-list">
-        ${simbokRpdDraftComponents.map((component, index) => `
-          <label class="simbok-rpd-component-option">
+    const totalBulan = selected.reduce((total, component) =>
+      total + simbokCalculateRPDMonthComponent(component, namaBulan), 0
+    );
 
-            <input
-              type="checkbox"
-              data-rpd-component-toggle="${simbokEscape(component.key)}"
-              ${component.digunakan ? "checked" : ""}
-            >
+    const locked = selected.length > 0 &&
+      selected.every(component => component.bulan[namaBulan].locked);
 
-            <span class="simbok-rpd-component-check"></span>
+    return `
+      <section class="simbok-rpd-month ${isOpen ? "is-open" : ""}"
+        data-rpd-month="${namaBulan}">
 
-            <span class="simbok-rpd-component-info">
-              <strong>
-                ${simbokEscape(component.jenisBelanja || "-")}
-              </strong>
+        <button
+          type="button"
+          class="simbok-rpd-month-header"
+          data-rpd-month-toggle="${namaBulan}"
+          aria-expanded="${isOpen}"
+        >
+          <span class="simbok-rpd-month-number">
+            ${String(index + 1).padStart(2, "0")}
+          </span>
 
-              <small>
-                ${simbokEscape(component.kodeRekeningBelanja || "-")}
-                · ${simbokEscape(component.satuanHarga || "-")}
-              </small>
+          <span class="simbok-rpd-month-heading">
+            <strong>${namaBulan}</strong>
+            <small>
+              ${selected.length} komponen dipilih
+              ${locked ? " · Terkunci" : ""}
+            </small>
+          </span>
 
-              <small>
-                Jumlah Orang: ${simbokEscape(component.jumlahOrang ?? 0)}
-                ${simbokEscape(component.satuanOrang || "Orang")}
-              </small>
-            </span>
+          <span class="simbok-rpd-month-total">
+            ${simbokCurrency(totalBulan)}
+          </span>
 
-            <span class="simbok-rpd-component-price">
-              ${simbokCurrency(component.hargaSatuan || 0)}
-            </span>
+          <span class="simbok-rpd-month-chevron">⌄</span>
+        </button>
 
-          </label>
-        `).join("")}
-      </div>
+        ${isOpen ? `
+          <div class="simbok-rpd-month-body">
 
-    </div>
-  `;
+            <div class="simbok-rpd-month-component-list">
 
-  simbokUpdateRPDSelectedCount();
-  simbokRenderRPDSelectedSummary();
-}
+              ${simbokRpdDraftComponents.map(component => {
+                const data = component.bulan[namaBulan];
+                const isLocked = data.locked === true;
 
-/* Memperbarui jumlah komponen terpilih. */
-function simbokUpdateRPDSelectedCount() {
-  const count = document.getElementById("simbokRpdSelectedCount");
-  if (!count) return;
+                return `
+                  <label class="simbok-rpd-month-component-option">
+                    <input
+                      type="checkbox"
+                      data-rpd-month-component="${simbokEscape(component.key)}"
+                      data-rpd-month-name="${namaBulan}"
+                      ${data.digunakan ? "checked" : ""}
+                      ${isLocked ? "disabled" : ""}
+                    >
 
-  const selected = simbokRpdDraftComponents.filter(item =>
-    item.digunakan
-  ).length;
+                    <span>
+                      <strong>
+                        ${simbokEscape(component.jenisBelanja || "-")}
+                      </strong>
+                      <small>
+                        ${simbokEscape(component.kodeRekeningBelanja || "-")}
+                      </small>
+                    </span>
+                  </label>
+                `;
+              }).join("")}
 
-  count.textContent =
-    `${selected} dari ${simbokRpdDraftComponents.length} komponen dipilih`;
-}
+            </div>
 
-/* Menampilkan ringkasan komponen yang dipilih. */
-function simbokRenderRPDSelectedSummary() {
-  const wrap = document.getElementById("simbokRpdMonthlyList");
-  if (!wrap) return;
+            <div class="simbok-rpd-month-detail">
 
-  const selected = simbokRpdDraftComponents.filter(item =>
-    item.digunakan
-  );
+              ${selected.length
+                ? selected.map(component => {
+                    const data = component.bulan[namaBulan];
+                    const isLocked = data.locked === true;
 
-  if (!selected.length) {
-    wrap.innerHTML = `
-      <div class="simbok-plan-empty">
-        Pilih komponen belanja untuk mengisi rencana bulanan.
-      </div>
+                    const jumlahOrang = Number(component.jumlahOrang || 0);
+                    const jumlahLokasi = Number(data.jumlahLokasi || 0);
+                    const frekuensi = Number(data.frekuensi || 0);
+                    const hargaSatuan = Number(data.hargaSatuan || 0);
+
+                    const volume = jumlahOrang * jumlahLokasi * frekuensi;
+                    const jumlah = simbokCalculateRPDMonthComponent(
+                      component, namaBulan
+                    );
+
+                    return `
+                      <article class="simbok-rpd-month-detail-card"
+                        data-rpd-detail="${simbokEscape(component.key)}">
+
+                        <div class="simbok-rpd-month-detail-heading">
+                          <strong>
+                            ${simbokEscape(component.jenisBelanja || "-")}
+                          </strong>
+                          <small>
+                            ${simbokEscape(component.kodeRekeningBelanja || "-")}
+                          </small>
+                        </div>
+
+                        <div class="simbok-rpd-month-fields">
+
+                          <label>
+                            Jumlah Orang
+                            <input type="number"
+                              value="${jumlahOrang}"
+                              readonly>
+                          </label>
+
+                          <label>
+                            Satuan Orang
+                            <input type="text"
+                              value="${simbokEscape(component.satuanOrang || "Orang")}"
+                              readonly>
+                          </label>
+
+                          <label>
+                            Jumlah Lokasi
+                            <input type="number"
+                              min="0"
+                              step="1"
+                              data-rpd-field="jumlahLokasi"
+                              data-rpd-key="${simbokEscape(component.key)}"
+                              data-rpd-month="${namaBulan}"
+                              value="${jumlahLokasi}"
+                              ${isLocked ? "readonly" : ""}>
+                          </label>
+
+                          <label>
+                            Frekuensi
+                            <input type="number"
+                              min="0"
+                              step="1"
+                              data-rpd-field="frekuensi"
+                              data-rpd-key="${simbokEscape(component.key)}"
+                              data-rpd-month="${namaBulan}"
+                              value="${frekuensi}"
+                              ${isLocked ? "readonly" : ""}>
+                          </label>
+
+                          <label>
+                            Harga Satuan
+                            <input type="number"
+                              min="0"
+                              step="1"
+                              data-rpd-field="hargaSatuan"
+                              data-rpd-key="${simbokEscape(component.key)}"
+                              data-rpd-month="${namaBulan}"
+                              value="${hargaSatuan}"
+                              ${isLocked ? "readonly" : ""}>
+                          </label>
+
+                          <label>
+                            Total Anggaran
+                            <input
+                              type="text"
+                              data-rpd-field="totalAnggaran"
+                              value="${simbokCurrency(jumlah)}"
+                              readonly
+                            >
+                          </label>
+
+                        </div>
+
+                        <div class="simbok-rpd-volume-summary">
+                          Volume: ${jumlahOrang} × ${jumlahLokasi} × ${frekuensi}
+                          = ${volume}
+                        </div>
+
+                      </article>
+                    `;
+                  }).join("")
+                : `
+                  <div class="simbok-plan-empty">
+                    Pilih komponen belanja untuk bulan ${namaBulan}.
+                  </div>
+                `
+              }
+
+            </div>
+          </div>
+        ` : ""}
+
+      </section>
     `;
-    return;
+  }).join("");
+}
+
+
+/* Memperbarui ringkasan anggaran modal. */
+function simbokUpdateRPDSummary() {
+  const master = simbokRpdEditingMaster;
+  if (!master) return;
+
+  const totalPagu = Number(master.totalPagu || 0);
+  const totalRPD = simbokCalculateDraftRPD();
+  const sisa = totalPagu - totalRPD;
+
+  document.getElementById("simbokRpdPagu").textContent =
+    simbokCurrency(totalPagu);
+
+  document.getElementById("simbokRpdTotal").textContent =
+    simbokCurrency(totalRPD);
+
+  document.getElementById("simbokRpdSisa").textContent =
+    simbokCurrency(sisa);
+
+  document.getElementById("simbokRpdFooterSisa").textContent =
+    simbokCurrency(sisa);
+
+  const warning = document.getElementById("simbokRpdBudgetWarning");
+
+  if (warning) {
+    warning.hidden = totalRPD <= totalPagu;
+    warning.textContent = totalRPD > totalPagu
+      ? "Total RPD melebihi Total Pagu. Periksa kembali anggaran."
+      : "";
   }
 
-  wrap.innerHTML = `
-    <div class="simbok-plan-empty">
-      ${selected.length} komponen telah dipilih.
-      Form pengisian RPD bulanan akan ditampilkan pada tahap berikutnya.
-    </div>
-  `;
+  const saveButton = document.getElementById("simbokSaveRpd");
+
+  if (saveButton) {
+    saveButton.disabled = totalRPD > totalPagu;
+  }
 }
+
 
 
 
@@ -3514,55 +3723,110 @@ function simbokInitPlanning() {
     }
   );
 
-  /* Event pemilihan komponen RPD. */
-  simbokAddHandler(
-    document.getElementById("simbokRpdComponentList"),
-    "change",
-    event => {
-      const checkbox = event.target.closest(
-        "[data-rpd-component-toggle]"
-      );
+  
+/* ======================================================
+   EVENT LISTENER RPD — PANEL BULANAN
+====================================================== */
 
-      if (!checkbox) return;
+// 1. Buka / tutup panel bulan.
+simbokAddHandler(
+  document.getElementById("simbokRpdMonthlyList"),
+  "click",
+  event => {
+    const button = event.target.closest("[data-rpd-month-toggle]");
+    if (!button) return;
 
-      const key = checkbox.dataset.rpdComponentToggle;
+    const month = button.dataset.rpdMonthToggle;
 
-      const component = simbokRpdDraftComponents.find(item =>
-        String(item.key) === String(key)
-      );
+    simbokRpdOpenMonth =
+      simbokRpdOpenMonth === month ? "" : month;
 
-      if (!component) return;
+    simbokRenderRPDMonthlyList();
+  }
+);
 
-      // Periksa apakah komponen memiliki bulan yang terkunci.
-      if (!checkbox.checked) {
-        const hasLockedMonth = Object.values(
-          component.bulan || {}
-        ).some(month => month?.locked === true);
 
-        if (hasLockedMonth) {
-          window.alert(
-            "Komponen ini memiliki rencana pada bulan yang terkunci. " +
-            "Data bulan terkunci tetap akan dipertahankan."
-          );
-        }
+// 2. Pilih / batalkan komponen untuk bulan tertentu.
+simbokAddHandler(
+  document.getElementById("simbokRpdMonthlyList"),
+  "change",
+  event => {
+    const checkbox = event.target.closest(
+      "[data-rpd-month-component]"
+    );
 
-        const confirmed = window.confirm(
-          "Nonaktifkan komponen ini dari RPD? " +
-          "Data rencana yang sudah tersimpan tidak akan langsung dihapus."
-        );
+    if (!checkbox) return;
 
-        if (!confirmed) {
-          checkbox.checked = true;
-          return;
-        }
-      }
+    const key = checkbox.dataset.rpdMonthComponent;
+    const month = checkbox.dataset.rpdMonthName;
 
-      component.digunakan = checkbox.checked;
+    const component = simbokRpdDraftComponents.find(item =>
+      String(item.key) === String(key)
+    );
 
-      simbokUpdateRPDSelectedCount();
-      simbokRenderRPDSelectedSummary();
+    if (!component) return;
+
+    const data = component.bulan[month];
+
+    if (!data || data.locked) {
+      checkbox.checked = data?.digunakan === true;
+      return;
     }
-  );
+
+    data.digunakan = checkbox.checked;
+
+    simbokRenderRPDMonthlyList();
+    simbokUpdateRPDSummary();
+  }
+);
+
+
+// 3. Perubahan jumlah lokasi, frekuensi, dan harga satuan.
+simbokAddHandler(
+  document.getElementById("simbokRpdMonthlyList"),
+  "input",
+  event => {
+    const input = event.target.closest("[data-rpd-field]");
+    if (!input) return;
+
+    const component = simbokRpdDraftComponents.find(item =>
+      String(item.key) === String(input.dataset.rpdKey)
+    );
+
+    if (!component) return;
+
+    const month = input.dataset.rpdMonth;
+    const field = input.dataset.rpdField;
+    const data = component.bulan[month];
+
+    if (!data || data.locked) return;
+
+    if (!["jumlahLokasi", "frekuensi", "hargaSatuan"].includes(field)) {
+      return;
+    }
+
+    data[field] = Math.max(0, Number(input.value || 0));
+
+    simbokUpdateRPDSummary();
+
+    // Perbarui total komponen tanpa menutup panel bulan.
+    const total = simbokCalculateRPDMonthComponent(
+      component,
+      month
+    );
+
+    const detail = input.closest(".simbok-rpd-month-detail-card");
+
+    const totalInput = detail?.querySelector(
+      '[data-rpd-field="totalAnggaran"]'
+    );
+
+    if (totalInput) {
+      totalInput.value = simbokCurrency(total);
+    }
+  }
+);
+
 
   /* Kontrol rencana bulanan. */
   simbokAddHandler(
