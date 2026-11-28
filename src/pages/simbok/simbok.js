@@ -4,7 +4,15 @@
 import { smartofficeGetSession } from "../../core/session.js";
 import logoSimbok from "../../assets/icons/logo-simbok.svg";
 import { smartofficeFirestore } from "../../core/firebase-firestore.js";
-import { collection, getDocs } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+  serverTimestamp
+} from "firebase/firestore";
 
 
 /* ======================================================
@@ -32,6 +40,15 @@ let simbokNextComponentId = 1;
 /* Menyimpan elemen yang terakhir mendapatkan fokus. */
 let simbokLastFocus = null;
 
+/* RPD */
+let simbokRPDData = [];
+let simbokRPDLoaded = false;
+
+let simbokRpdEditingMaster = null;
+let simbokRpdLastFocus = null;
+
+let simbokRpdDraftComponents = [];
+
 
 /* ======================================================
    SIMBOK — CACHE MASTER FIRESTORE
@@ -41,6 +58,7 @@ let simbokLastFocus = null;
 const SIMBOK_REF = {
   menu: [],
   rincian: [],
+  detailMenu: [],
   rekeningKegiatan: [],
   rekeningBelanja: [],
   satuan: [],
@@ -111,14 +129,61 @@ async function simbokLoadCache() {
 async function simbokGetMasterCollection(collectionName) {
   console.log(`[simBOK] FIRESTORE FETCH: ${collectionName}`);
 
-  const snapshot = await getDocs(
-    collection(smartofficeFirestore, collectionName)
+  try {
+    const snapshot = await getDocs(
+      collection(smartofficeFirestore, collectionName)
+    );
+
+    console.log(
+      `[simBOK] FIRESTORE SUCCESS: ${collectionName} (${snapshot.size} dokumen)`
+    );
+
+    return snapshot.docs.map(document => ({
+      id: document.id,
+      ...document.data()
+    }));
+
+  } catch (error) {
+    console.error(
+      `[simBOK] FIRESTORE ERROR pada collection: ${collectionName}`,
+      {
+        code: error.code,
+        message: error.message,
+        error
+      }
+    );
+
+    throw error;
+  }
+}
+
+/* Collection transaksi Master Kegiatan BOK. */
+const SIMBOK_COLLECTION_MASTER = "simbok_master_kegiatan_bok";
+
+/* Memuat Master Kegiatan BOK dari Firestore. */
+async function simbokLoadMasters() {
+  const records = await simbokGetMasterCollection(
+    SIMBOK_COLLECTION_MASTER
   );
 
-  return snapshot.docs.map(document => ({
-    id: document.id,
-    ...document.data()
+  simbokMasters = records.map((item, index) => ({
+    ...item,
+
+    // ID internal numerik dipertahankan sementara
+    // agar fungsi tampilan lama tidak rusak.
+    id: index + 1,
+
+    // ID dokumen asli Firestore untuk update dan delete.
+    firestoreId: item.id,
+
+    tahunAnggaran: Number(item.tahunAnggaran),
+    komponenBelanja: Array.isArray(item.komponenBelanja)
+      ? item.komponenBelanja
+      : [],
+    totalPagu: Number(item.totalPagu || 0)
   }));
+
+  simbokNextId = simbokMasters.length + 1;
 }
 
 /* Memuat lima master referensi dari Firestore. */
@@ -134,12 +199,14 @@ async function simbokLoadReferences() {
     const [
       menu,
       rincian,
+      detailMenu,
       rekeningKegiatan,
       rekeningBelanja,
       satuan
     ] = await Promise.all([
       simbokGetMasterCollection("simbok_master_menu"),
       simbokGetMasterCollection("simbok_master_rincian_menu"),
+      simbokGetMasterCollection("simbok_master_detail_menu"),
       simbokGetMasterCollection("simbok_master_rekening_kegiatan"),
       simbokGetMasterCollection("simbok_master_rekening_belanja"),
       simbokGetMasterCollection("simbok_master_satuan")
@@ -167,6 +234,19 @@ async function simbokLoadReferences() {
       "NAMA REKENING KEGIATAN":
         item.namaRekeningKegiatan ?? item["NAMA REKENING KEGIATAN"] ?? "",
       STATUS: item.status ?? item.STATUS ?? item.AKTIF ?? ""
+    }));
+
+    SIMBOK_REF.detailMenu = detailMenu.map(item => ({
+      ...item,
+      kodeDetailMenu: item.kodeDetailMenu ?? item.id ?? "",
+      kodeMenu: item.kodeMenu ?? "",
+      namaMenu: item.namaMenu ?? "",
+      kodeRincianMenu: item.kodeRincianMenu ?? "",
+      namaRincianMenu: item.namaRincianMenu ?? "",
+      definisiOperasional: item.definisiOperasional ?? "",
+      kodeRekeningKegiatan: item.kodeRekeningKegiatan ?? "",
+      namaRekeningKegiatan: item.namaRekeningKegiatan ?? "",
+      status: item.status ?? ""
     }));
 
     SIMBOK_REF.rekeningKegiatan = rekeningKegiatan.map(item => ({
@@ -292,26 +372,57 @@ function simbokIsSuperAdmin() {
   return role === "SUPERADMIN" || role === "SUPER_ADMIN";
 }
 
+function simbokGetSessionUser() {
+  return smartofficeGetSession() || {};
+}
+
+function simbokGetSessionNip() {
+  const session = simbokGetSessionUser();
+  return String(session.nip || "").trim();
+}
+
+function simbokCanManageRPD(master) {
+  const session = simbokGetSessionUser();
+
+  // Super Admin dapat mengelola seluruh RPD.
+  if (simbokIsSuperAdmin()) {
+    return true;
+  }
+
+  // Pemegang Program hanya dapat mengelola Detail Menu miliknya.
+  const sessionNip = String(session.nip || "").trim();
+  const pemegangNip = String(master?.nipPemegangProgram || "").trim();
+
+  return Boolean(sessionNip && pemegangNip && sessionNip === pemegangNip);
+}
+
 
 /* ======================================================
    SIMBOK — MASTER REFERENSI
 ====================================================== */
 
-/* Mengisi dropdown Menu dan filter Menu. */
+/* Mengisi dropdown Menu, filter Menu, dan Detail Menu. */
 function simbokPopulateReferences() {
   const menu = document.getElementById("simbokMasterMenu");
   const filter = document.getElementById("simbokMasterMenuFilter");
+  const rpdFilter = document.getElementById("simbokRpdMenuFilter");
 
-  SIMBOK_REF.menu
-    .filter(item => String(item.STATUS).toUpperCase() === "AKTIF")
-    .forEach(item => {
-      const option = document.createElement("option");
-      option.value = item["KODE MENU"];
-      option.textContent = `${item["KODE MENU"]} — ${item.MENU}`;
-      menu.appendChild(option);
+  if (menu || filter || rpdFilter) {
+    SIMBOK_REF.menu
+      .filter(item => String(item.STATUS).toUpperCase() === "AKTIF")
+      .forEach(item => {
+        const option = document.createElement("option");
+        option.value = item["KODE MENU"];
+        option.textContent = `${item["KODE MENU"]} — ${item.MENU}`;
 
-      filter.appendChild(option.cloneNode(true));
-    });
+        if (menu) menu.appendChild(option.cloneNode(true));
+        if (filter) filter.appendChild(option.cloneNode(true));
+        if (rpdFilter) rpdFilter.appendChild(option.cloneNode(true));
+      });
+  }
+
+  // Mengisi dropdown Nama Detail Menu.
+  simbokPopulateDetailMenuOptions();
 }
 
 /* Mengisi dropdown Rincian Menu berdasarkan Menu terpilih dari cache. */
@@ -344,6 +455,149 @@ function simbokPopulateRincianOptions(selected = "") {
   select.value = selected;
 
   simbokUpdateRincianSnapshot();
+}
+
+/* Mengisi dropdown Nama Detail Menu dari Firestore. */
+function simbokPopulateDetailMenuOptions() {
+  const select = document.getElementById("simbokMasterDetailMenu");
+  if (!select) return;
+
+  select.innerHTML = '<option value="">Pilih detail menu</option>';
+
+  SIMBOK_REF.detailMenu
+    .filter(item => String(item.status).trim().toUpperCase() === "AKTIF")
+    .forEach(item => {
+      const option = document.createElement("option");
+
+      option.value = item.kodeDetailMenu;
+      option.textContent = item.namaDetailMenu;
+
+      select.appendChild(option);
+    });
+
+  simbokInitDetailMenuCustomSelect();
+}
+
+/* Menginisialisasi custom dropdown Detail Menu. */
+function simbokInitDetailMenuCustomSelect() {
+  const wrapper = document.getElementById("simbokDetailMenuCustom");
+  const select = document.getElementById("simbokMasterDetailMenu");
+
+  if (!wrapper || !select) return;
+
+  const trigger = wrapper.querySelector(
+    ".simbok-custom-select-trigger"
+  );
+
+  const triggerText = trigger.querySelector("span:first-child");
+
+  const optionsBox = wrapper.querySelector(
+    ".simbok-custom-select-options"
+  );
+
+  // Memperbarui tampilan pilihan aktif.
+  const updateDisplay = () => {
+    const selected = select.options[select.selectedIndex];
+
+    triggerText.textContent =
+      selected?.textContent || "Pilih detail menu";
+
+    trigger.classList.toggle("has-value", !!select.value);
+
+    optionsBox.querySelectorAll(".simbok-custom-option")
+      .forEach(option => {
+        option.classList.toggle(
+          "active",
+          option.dataset.value === select.value
+        );
+      });
+  };
+
+  // Membuat daftar pilihan.
+  optionsBox.innerHTML = "";
+
+  Array.from(select.options).forEach(option => {
+    const button = document.createElement("button");
+
+    button.type = "button";
+    button.className = "simbok-custom-option";
+    button.textContent = option.textContent;
+    button.dataset.value = option.value;
+
+    button.addEventListener("click", () => {
+      select.value = option.value;
+
+      // Memicu fungsi change yang sudah ada.
+      select.dispatchEvent(
+        new Event("change", { bubbles: true })
+      );
+
+      updateDisplay();
+
+      optionsBox.hidden = true;
+      trigger.setAttribute("aria-expanded", "false");
+    });
+
+    optionsBox.appendChild(button);
+  });
+
+  // Membuka dan menutup dropdown.
+  trigger.onclick = () => {
+    const isOpen = !optionsBox.hidden;
+
+    optionsBox.hidden = isOpen;
+
+    trigger.setAttribute(
+      "aria-expanded",
+      String(!isOpen)
+    );
+  };
+
+  // Sinkronisasi jika nilai select berubah dari JavaScript.
+  select.addEventListener("change", updateDisplay);
+
+  updateDisplay();
+}
+
+/* Mengisi identitas otomatis berdasarkan Detail Menu terpilih. */
+function simbokUpdateDetailMenuSnapshot() {
+  const select = document.getElementById("simbokMasterDetailMenu");
+  if (!select) return;
+
+  const kode = select.value;
+
+  const record = SIMBOK_REF.detailMenu.find(item =>
+    String(item.kodeDetailMenu).trim() === String(kode).trim()
+  );
+
+  // Kode Detail Menu.
+  document.getElementById("simbokMasterKode").value =
+    record?.kodeDetailMenu || "";
+
+  // Identitas Menu.
+  document.getElementById("simbokMasterKodeMenu").value =
+    record?.kodeMenu || "";
+
+  document.getElementById("simbokMasterNamaMenu").value =
+    record?.namaMenu || "";
+
+  // Identitas Rincian Menu.
+  document.getElementById("simbokMasterKodeRincian").value =
+    record?.kodeRincianMenu || "";
+
+  document.getElementById("simbokMasterNamaRincian").value =
+    record?.namaRincianMenu || "";
+
+  // Definisi Operasional.
+  document.getElementById("simbokMasterDefinisi").value =
+    record?.definisiOperasional || "";
+
+  // Rekening Kegiatan.
+  document.getElementById("simbokMasterRekKegiatan").value =
+    record?.kodeRekeningKegiatan || "";
+
+  document.getElementById("simbokMasterNamaRekKegiatan").value =
+    record?.namaRekeningKegiatan || "";
 }
 
 /* Mengisi kode rincian, definisi operasional, dan rekening kegiatan otomatis. */
@@ -434,18 +688,14 @@ function simbokUpdatePegawaiTerpilih() {
 ------------------------------------------------------ */
 
 /* Membuka modal tambah atau edit Detail Menu. */
-async function simbokOpenMasterModal(id = null) {
-  if (!simbokIsSuperAdmin()) return;
+async function simbokOpenMasterModal(id = null, mode = "edit") {
+  if (mode !== "view" && !simbokIsSuperAdmin()) return;
 
-  // Pastikan cache sudah tersedia.
   await simbokLoadCache();
 
-  const modal = document.getElementById(
-    "simbokMasterModal"
-  );
+  const modal = document.getElementById("simbokMasterModal");
 
   simbokLastFocus = document.activeElement;
-
   simbokResetMasterForm();
 
   if (id !== null) {
@@ -460,26 +710,24 @@ async function simbokOpenMasterModal(id = null) {
     document.getElementById("simbokMasterTahun").value =
       master.tahunAnggaran;
 
-    document.getElementById("simbokMasterMenu").value =
-      master.kodeMenu;
-
-    simbokPopulateRincianOptions(
-      master.kodeRincianMenu
+    // Pilih Detail Menu dan isi identitas otomatis.
+    const detailMenu = document.getElementById(
+      "simbokMasterDetailMenu"
     );
 
-    document.getElementById("simbokMasterDefinisi").value =
-      master.definisiOperasional;
+    detailMenu.value = master.kodeDetailMenu || "";
+    simbokUpdateDetailMenuSnapshot();
 
-    document.getElementById("simbokMasterRekKegiatan").value =
-      master.kodeRekeningKegiatan;
+    document.querySelector(
+      "#simbokDetailMenuCustom .simbok-custom-select-trigger span:first-child"
+    ).textContent =
+      detailMenu.options[detailMenu.selectedIndex]?.textContent ||
+      "Pilih detail menu";
 
-    simbokUpdateNamaRekeningKegiatan();
+    // Pemegang Program.
+    simbokPopulatePegawai(master.nipPemegangProgram);
 
-    // Pilih pegawai lama berdasarkan NIP.
-    simbokPopulatePegawai(
-      master.nipPemegangProgram
-    );
-
+    // Komponen Belanja.
     master.komponenBelanja.forEach(item => {
       simbokAddKomponenRow(item);
     });
@@ -494,12 +742,9 @@ async function simbokOpenMasterModal(id = null) {
 
   } else {
     document.getElementById("simbokMasterTahun").value =
-      document.getElementById("simbokPlanYearMaster").value ||
-      2027;
+      document.getElementById("simbokPlanYearMaster").value || 2027;
 
-    // Tampilkan daftar pegawai tanpa memilih siapa pun.
     simbokPopulatePegawai();
-
     simbokAddKomponenRow();
 
     document.getElementById(
@@ -511,8 +756,10 @@ async function simbokOpenMasterModal(id = null) {
     ).textContent = "Simpan Detail Menu";
   }
 
-  modal.hidden = false;
+  // Hitung ulang Total Pagu dari seluruh komponen belanja.
+  simbokUpdateMasterTotal();
 
+  modal.hidden = false;
   document.body.classList.add("simbok-modal-open");
 
   document.getElementById("simbokMasterTahun").focus();
@@ -530,16 +777,87 @@ function simbokCloseMasterModal() {
 function simbokResetMasterForm() {
   const form = document.getElementById("simbokMasterForm");
   if (!form) return;
+
   form.reset();
   simbokEditingId = null;
-  document.getElementById("simbokMasterRincian").innerHTML =
-    '<option value="">Pilih menu terlebih dahulu</option>';
-  document.getElementById("simbokMasterRincian").disabled = true;
-  document.getElementById("simbokMasterKode").value = "";
-  document.getElementById("simbokMasterDefinisi").value = "";
-  document.getElementById("simbokMasterNamaRekKegiatan").value = "";
-  document.getElementById("simbokKomponenList").innerHTML = "";
-  document.getElementById("simbokMasterTotal").textContent = simbokCurrency(0);
+
+  // Reset identitas Detail Menu.
+  const detailMenu = document.getElementById(
+    "simbokMasterDetailMenu"
+  );
+
+  if (detailMenu) {
+    detailMenu.value = "";
+  }
+
+  // Reset tampilan custom dropdown.
+  const customSelect = document.getElementById(
+    "simbokDetailMenuCustom"
+  );
+
+  if (customSelect) {
+    const trigger = customSelect.querySelector(
+      ".simbok-custom-select-trigger"
+    );
+
+    const optionsBox = customSelect.querySelector(
+      ".simbok-custom-select-options"
+    );
+
+    if (trigger) {
+      const text = trigger.querySelector("span:first-child");
+
+      if (text) {
+        text.textContent = "Pilih detail menu";
+      }
+
+      trigger.setAttribute("aria-expanded", "false");
+    }
+
+    if (optionsBox) {
+      optionsBox.hidden = true;
+
+      optionsBox.querySelectorAll(".simbok-custom-option")
+        .forEach(option => {
+          option.classList.remove("active");
+        });
+    }
+  }
+
+  // Reset seluruh identitas otomatis.
+  const fieldIds = [
+    "simbokMasterKode",
+    "simbokMasterKodeMenu",
+    "simbokMasterNamaMenu",
+    "simbokMasterKodeRincian",
+    "simbokMasterNamaRincian",
+    "simbokMasterDefinisi",
+    "simbokMasterRekKegiatan",
+    "simbokMasterNamaRekKegiatan"
+  ];
+
+  fieldIds.forEach(id => {
+    const field = document.getElementById(id);
+    if (field) field.value = "";
+  });
+
+  // Reset daftar komponen belanja.
+  const komponenList = document.getElementById(
+    "simbokKomponenList"
+  );
+
+  if (komponenList) {
+    komponenList.innerHTML = "";
+  }
+
+  // Reset total anggaran.
+  const total = document.getElementById(
+    "simbokMasterTotal"
+  );
+
+  if (total) {
+    total.textContent = simbokCurrency(0);
+  }
 }
 
 
@@ -636,11 +954,12 @@ function simbokAddKomponenRow(data = {}) {
 
         <label>
           Satuan Orang
-          <input
-            class="simbok-component-people-unit"
-            value="Orang"
-            required
-          >
+          <select class="simbok-component-people-unit" required>
+            ${simbokBuildUnitOptions(
+              "ORANG",
+              data.satuanOrang ?? "Orang"
+            )}
+          </select>
         </label>
 
         <label>
@@ -657,11 +976,12 @@ function simbokAddKomponenRow(data = {}) {
 
         <label>
           Satuan Lokasi
-          <input
-            class="simbok-component-location-unit"
-            value="Lokasi"
-            required
-          >
+          <select class="simbok-component-location-unit" required>
+            ${simbokBuildUnitOptions(
+              "LOKASI",
+              data.satuanLokasi ?? "Lokasi"
+            )}
+          </select>
         </label>
 
         <label>
@@ -678,11 +998,12 @@ function simbokAddKomponenRow(data = {}) {
 
         <label>
           Satuan Frekuensi
-          <input
-            class="simbok-component-frequency-unit"
-            value="Kali"
-            required
-          >
+          <select class="simbok-component-frequency-unit" required>
+            ${simbokBuildUnitOptions(
+              "FREKUENSI",
+              data.satuanFrekuensi ?? "Kali"
+            )}
+          </select>
         </label>
 
       </div>
@@ -740,6 +1061,18 @@ function simbokAddKomponenRow(data = {}) {
           </div>
         </div>
 
+        <!-- Total Belanja -->
+        <div class="simbok-component-total is-budget">
+          <svg viewBox="0 0 24 24" class="simbok-summary-icon green">
+            <rect x="3" y="5" width="18" height="14" rx="2"/>
+            <path d="M3 10h18M7 15h3"/>
+          </svg>
+          <div>
+            <span>Total Belanja</span>
+            <strong data-component-budget>Rp0</strong>
+          </div>
+        </div>
+
       </div>
 
       <!-- Input tersembunyi untuk mempertahankan fungsi perhitungan. -->
@@ -762,7 +1095,8 @@ function simbokAddKomponenRow(data = {}) {
 
   const select = row.querySelector(".simbok-component-account");
 
-  const savedKey = data.key ||
+  // Mengembalikan pilihan Jenis Belanja berdasarkan data tersimpan.
+  const savedKey =
     `${data.kodeRekeningBelanja || ""}||${data.jenisBelanja || ""}`;
 
   if (savedKey !== "||") {
@@ -893,6 +1227,52 @@ function simbokAddKomponenRow(data = {}) {
   simbokUpdateComponentTotal(row);
 }
 
+/* Membuat pilihan satuan dari Master Satuan. */
+function simbokBuildUnitOptions(kelompok, selected = "") {
+  const normalize = value => String(value || "")
+    .trim()
+    .toUpperCase();
+
+  const keyword = normalize(kelompok);
+
+  const units = SIMBOK_REF.satuan.filter(item => {
+    const group = normalize(item["KELOMPOK SATUAN"]);
+
+    return (
+      item.STATUS.toUpperCase() === "AKTIF" &&
+      group.includes(keyword)
+    );
+  });
+
+  const options = units.map(item => {
+    const name = item["NAMA SATUAN"];
+
+    return `
+      <option
+        value="${simbokEscape(name)}"
+        ${name === selected ? "selected" : ""}
+      >
+        ${simbokEscape(name)}
+      </option>
+    `;
+  });
+
+  // Pertahankan satuan lama ketika mengedit,
+  // meskipun satuan tersebut tidak lagi aktif di master.
+  if (selected && !units.some(item => item["NAMA SATUAN"] === selected)) {
+    options.unshift(`
+      <option value="${simbokEscape(selected)}" selected>
+        ${simbokEscape(selected)}
+      </option>
+    `);
+  }
+
+  return `
+    <option value="">Pilih satuan</option>
+    ${options.join("")}
+  `;
+}
+
 
 /* ------------------------------------------------------
    PERHITUNGAN KOMPONEN DAN TOTAL PAGU
@@ -975,6 +1355,10 @@ function simbokUpdateComponentTotal(row) {
   row.querySelector("[data-component-price-unit]").textContent =
     priceUnit;
 
+  // Menampilkan total belanja per komponen.
+  row.querySelector("[data-component-budget]").textContent =
+    simbokCurrency(budget);
+
   return { volume, budget };
 }
 
@@ -1029,35 +1413,51 @@ function simbokGetMasterTotal(master) {
 }
 
 
+
 /* ------------------------------------------------------
    TAMPILAN DAFTAR DETAIL MENU
 ------------------------------------------------------ */
 
-/* Menampilkan daftar Detail Menu dalam bentuk kartu. */
+/* Menampilkan daftar Detail Menu dalam bentuk kartu premium. */
 function simbokRenderMasters() {
   const wrap = document.getElementById("simbokMasterTableWrap");
   const count = document.getElementById("simbokMasterCount");
-  const year = Number(document.getElementById("simbokPlanYearMaster")?.value || 2027);
-  const search = document.getElementById("simbokMasterSearch")?.value.trim().toLowerCase() || "";
-  const menuFilter = document.getElementById("simbokMasterMenuFilter")?.value || "";
+  const year = Number(
+    document.getElementById("simbokPlanYearMaster")?.value || 2027
+  );
+
+  const search = document.getElementById("simbokMasterSearch")
+    ?.value.trim().toLowerCase() || "";
+
+  const menuFilter = document.getElementById(
+    "simbokMasterMenuFilter"
+  )?.value || "";
+
   if (!wrap || !count) return;
 
   const addButton = document.getElementById("simbokOpenMasterModal");
-  if (addButton) addButton.hidden = !simbokIsSuperAdmin();
+
+  if (addButton) {
+    addButton.hidden = !simbokIsSuperAdmin();
+  }
 
   const yearMasters = simbokMasters.filter(master =>
     Number(master.tahunAnggaran) === year
   );
 
   const filtered = yearMasters.filter(master => {
-    // Pencarian mencakup identitas detail menu dan seluruh jenis belanja.
+    const components = master.komponenBelanja || [];
+
     const searchable = [
-      master.kodeRincianMenu,
+      master.kodeDetailMenu,
+      master.namaDetailMenu,
+      master.kodeMenu,
       master.namaMenu,
+      master.kodeRincianMenu,
       master.namaRincianMenu,
       master.namaPemegangProgram,
       master.nipPemegangProgram,
-      ...(master.komponenBelanja || []).map(component => component.jenisBelanja)
+      ...components.map(component => component.jenisBelanja)
     ].join(" ").toLowerCase();
 
     return searchable.includes(search) &&
@@ -1066,19 +1466,29 @@ function simbokRenderMasters() {
 
   count.textContent = `${yearMasters.length} detail menu`;
 
+  // Sinkronisasi dropdown workspace bulanan.
   const monthlySelect = document.getElementById("simbokPlanMenuSelect");
+
   if (monthlySelect) {
     const previousValue = monthlySelect.value;
-    monthlySelect.innerHTML = '<option value="">Pilih detail menu</option>';
+
+    monthlySelect.innerHTML =
+      '<option value="">Pilih detail menu</option>';
 
     yearMasters.forEach(master => {
       const option = document.createElement("option");
+
       option.value = master.id;
-      option.textContent = `${master.kodeRincianMenu} — ${master.namaRincianMenu}`;
+      option.textContent =
+        `${master.kodeRincianMenu} — ${master.namaRincianMenu}`;
+
       monthlySelect.appendChild(option);
     });
 
-    if (Array.from(monthlySelect.options).some(option => option.value === previousValue)) {
+    if (
+      Array.from(monthlySelect.options)
+        .some(option => option.value === previousValue)
+    ) {
       monthlySelect.value = previousValue;
     }
   }
@@ -1087,45 +1497,87 @@ function simbokRenderMasters() {
     wrap.innerHTML = `
       <div class="simbok-plan-empty simbok-master-empty">
         <span class="simbok-master-empty-icon">⌕</span>
-        <strong>${yearMasters.length ? "Data tidak ditemukan" : "Belum ada Dokumen Master BOK"}</strong>
-        <p>${yearMasters.length
-          ? "Coba ubah kata pencarian atau filter menu."
-          : `Belum ada detail menu untuk Tahun Anggaran ${year}.`}</p>
+
+        <strong>
+          ${yearMasters.length
+            ? "Data tidak ditemukan"
+            : "Belum ada Dokumen Master BOK"}
+        </strong>
+
+        <p>
+          ${yearMasters.length
+            ? "Coba ubah kata pencarian atau filter menu."
+            : `Belum ada detail menu untuk Tahun Anggaran ${year}.`}
+        </p>
       </div>
     `;
   } else {
     const canManage = simbokIsSuperAdmin();
 
     wrap.innerHTML = filtered.map(master => {
-      const componentChips = master.komponenBelanja.map(component => `
-        <span class="simbok-master-component-chip">
-          ${simbokEscape(component.jenisBelanja)}
-        </span>
-      `).join("");
+      const components = master.komponenBelanja || [];
 
-      const actions = canManage ? `
+      const componentChips = components.length
+        ? components.map(component => `
+            <span class="simbok-master-component-chip">
+              ${simbokEscape(component.jenisBelanja || "-")}
+            </span>
+          `).join("")
+        : `<span class="simbok-master-component-empty">
+             Belum ada komponen
+           </span>`;
+
+      const actions = `
         <div class="simbok-master-card-actions">
-          <button type="button" data-master-edit="${master.id}" title="Edit" aria-label="Edit">
+
+          <button
+            type="button"
+            class="simbok-master-view"
+            data-master-view="${master.id}"
+            title="Lihat Detail Menu"
+            aria-label="Lihat Detail Menu"
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="m14 5 5 5M4 20l4.5-1 10.8-10.8a2.1 2.1 0 0 0-3-3L5.5 16z"/>
+              <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/>
+              <circle cx="12" cy="12" r="3"/>
             </svg>
+            <span>Detail</span>
           </button>
-          <button type="button" data-master-duplicate="${master.id}" title="Duplikasi" aria-label="Duplikasi">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="8" y="8" width="12" height="12" rx="2"/>
-              <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/>
-            </svg>
-          </button>
-          <button type="button" class="is-danger" data-master-delete="${master.id}" title="Hapus" aria-label="Hapus">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M4 7h16M10 11v6M14 11v6M5 7l1 14h12l1-14M9 7V4h6v3"/>
-            </svg>
-          </button>
+
+          ${canManage ? `
+            <button
+              type="button"
+              data-master-edit="${master.id}"
+              title="Edit"
+              aria-label="Edit"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m14 5 5 5M4 20l4.5-1 10.8-10.8a2.1 2.1 0 0 0-3-3L5.5 16z"/>
+              </svg>
+              <span>Edit</span>
+            </button>
+
+            <button
+              type="button"
+              class="is-danger"
+              data-master-delete="${master.id}"
+              title="Hapus"
+              aria-label="Hapus"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 7h16M10 11v6M14 11v6M5 7l1 14h12l1-14M9 7V4h6v3"/>
+              </svg>
+              <span>Hapus</span>
+            </button>
+          ` : ""}
+
         </div>
-      ` : "";
+      `;
 
       return `
-        <article class="simbok-master-card">
+        <article class="simbok-master-card simbok-master-card-premium">
+
+          <!-- Identitas utama -->
           <div class="simbok-master-card-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
               <path d="m12 3 9 4.5-9 4.5-9-4.5z"/>
@@ -1133,43 +1585,174 @@ function simbokRenderMasters() {
             </svg>
           </div>
 
-          <div class="simbok-master-card-code">
-            <span>${simbokEscape(master.kodeRincianMenu)}</span>
-            <small>TA ${simbokEscape(master.tahunAnggaran)}</small>
-          </div>
+          <div class="simbok-master-card-content">
 
-          <div class="simbok-master-card-main">
-            <h4>${simbokEscape(master.namaMenu)}</h4>
-            <p>${simbokEscape(master.namaRincianMenu)}</p>
+            <div class="simbok-master-card-heading">
+              <h4>
+                ${simbokEscape(master.namaDetailMenu || "-")}
+              </h4>
 
-            <div class="simbok-master-card-meta">
-              <span>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="12" cy="8" r="3.5"/>
-                  <path d="M5 21a7 7 0 0 1 14 0"/>
-                </svg>
-                ${simbokEscape(master.namaPemegangProgram)}
-              </span>
-              <span>
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m12 3 9 4.5-9 4.5-9-4.5z"/>
-                  <path d="m3 12 9 4.5 9-4.5"/>
-                </svg>
-                ${master.komponenBelanja.length} Komponen
+              <span class="simbok-master-year-badge">
+                TA ${simbokEscape(master.tahunAnggaran)}
               </span>
             </div>
 
-            <div class="simbok-master-card-components">
-              ${componentChips}
+            <!-- Nama Menu -->
+            <div class="simbok-master-info-row">
+              <span class="simbok-master-info-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </span>
+
+              <span class="simbok-master-info-label">Menu :</span>
+
+              <strong>
+                ${simbokEscape(master.namaMenu || "-")}
+              </strong>
             </div>
+
+            <!-- Nama Rincian Menu -->
+            <div class="simbok-master-info-row">
+              <span class="simbok-master-info-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="4" y="4" width="4" height="4" rx="1"/>
+                  <rect x="4" y="10" width="4" height="4" rx="1"/>
+                  <rect x="4" y="16" width="4" height="4" rx="1"/>
+                  <path d="M12 6h8M12 12h8M12 18h8"/>
+                </svg>
+              </span>
+
+              <span class="simbok-master-info-label">Rincian Menu :</span>
+
+              <span>
+                ${simbokEscape(master.namaRincianMenu || "-")}
+              </span>
+            </div>
+
+            <!-- Pemegang Program -->
+            <div class="simbok-master-info-row simbok-master-holder">
+              <span class="simbok-master-info-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="12" cy="8" r="4"/>
+                  <path d="M4 20c0-4 3.5-6 8-6s8 2 8 6z"/>
+                </svg>
+              </span>
+
+              <span class="simbok-master-info-label">
+                Pemegang Program :
+              </span>
+
+              <div class="simbok-master-holder-content">
+                <strong>
+                  ${simbokEscape(master.namaPemegangProgram || "-")}
+                </strong>
+
+                <span class="simbok-master-holder-nip">
+                  <b>NIP :</b>
+                  ${simbokEscape(master.nipPemegangProgram || "-")}
+                </span>
+              </div>
+            </div>
+
+            <div class="simbok-master-card-divider"></div>
+
+            <!-- Kode Detail dan Komponen -->
+            <div class="simbok-master-card-bottom">
+
+              <!-- Kode Detail Menu -->
+              <div class="simbok-master-detail-code">
+
+                <span class="simbok-master-detail-label">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M20.5 13.5 13 21l-10-10V3h8z"/>
+                    <circle cx="7.5" cy="7.5" r="1.5"/>
+                  </svg>
+                  Kode Detail Menu
+                </span>
+
+                <strong>
+                  ${simbokEscape(master.kodeDetailMenu || "-")}
+                </strong>
+
+              </div>
+
+              <!-- Komponen -->
+              <div class="simbok-master-component-list">
+
+                <strong>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m12 2 9 5-9 5-9-5z"/>
+                    <path d="m3 12 9 5 9-5"/>
+                    <path d="m3 17 9 5 9-5"/>
+                  </svg>
+
+                  <span class="simbok-master-component-count">
+                    ${components.length}
+                  </span>
+
+                  Komponen
+                </strong>
+
+                <div class="simbok-master-card-components">
+                  ${componentChips}
+                </div>
+
+              </div>
+
+            </div>
+          
+          </div> <!-- Penutup simbok-master-card-content -->
+
+          <!-- Total Pagu dan Aksi -->
+          <div class="simbok-master-card-side">
+
+            <div class="simbok-master-card-budget">
+
+              <div class="simbok-master-budget-heading">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="6" width="18" height="15" rx="2"/>
+                  <path d="M16 3v6M8 3v6M3 11h18"/>
+                </svg>
+                <small>Total Pagu</small>
+              </div>
+
+              <strong>
+                ${simbokCurrency(master.totalPagu)}
+              </strong>
+
+              <!-- Ilustrasi tumpukan uang -->
+              <div class="simbok-master-budget-illustration">
+                <svg viewBox="0 0 180 105" aria-hidden="true">
+
+                  <!-- Koin belakang -->
+                  <ellipse cx="124" cy="27" rx="25" ry="9"/>
+                  <path d="M99 27v38c0 5 11 9 25 9s25-4 25-9V27"/>
+                  <path d="M99 40c0 5 11 9 25 9s25-4 25-9"/>
+                  <path d="M99 53c0 5 11 9 25 9s25-4 25-9"/>
+
+                  <!-- Koin depan -->
+                  <ellipse cx="62" cy="55" rx="29" ry="11"/>
+                  <path d="M33 55v22c0 6 13 11 29 11s29-5 29-11V55"/>
+                  <path d="M33 67c0 6 13 11 29 11s29-5 29-11"/>
+
+                  <!-- Koin logo rupiah -->
+                  <circle cx="101" cy="68" r="25"/>
+                  <circle cx="101" cy="68" r="19"/>
+                  <text x="101" y="75" text-anchor="middle"
+                    font-size="21" font-weight="800"
+                    fill="currentColor" stroke="none">Rp</text>
+
+                </svg>
+              </div>
+
+            </div>
+
+            ${actions}
+
           </div>
 
-          <div class="simbok-master-card-budget">
-            <small>Total Pagu</small>
-            <strong>${simbokCurrency(master.totalPagu)}</strong>
-          </div>
-
-          ${actions}
         </article>
       `;
     }).join("");
@@ -1179,6 +1762,7 @@ function simbokRenderMasters() {
   simbokRenderBudgetRecap();
   simbokUpdateSummary();
 }
+
 
 
 /* ------------------------------------------------------
@@ -1209,22 +1793,168 @@ function simbokDuplicateMaster(id) {
     "Simpan Salinan";
 }
 
+/* Membuka Detail Menu dalam mode hanya-baca. */
+async function simbokViewMaster(id) {
+  await simbokOpenMasterModal(id, "view");
+}
+
+
+/* ======================================================
+   SIMBOK — PREMIUM FEEDBACK MODAL
+====================================================== */
+
+function simbokShowFeedbackModal({
+  type = "success",
+  title = "",
+  message = "",
+  confirmText = "Mengerti",
+  cancelText = "",
+  confirmLabel = "",
+  onConfirm = null
+}) {
+  return new Promise(resolve => {
+    document.getElementById("simbokFeedbackModal")?.remove();
+
+    const isConfirm = type === "confirm" || type === "danger";
+    const isDanger = type === "danger";
+    const isError = type === "error";
+
+    const icon = isConfirm || isDanger
+      ? "!"
+      : isError
+        ? "×"
+        : "✓";
+
+    const backdrop = document.createElement("div");
+    backdrop.id = "simbokFeedbackModal";
+    backdrop.className = "simbok-feedback-backdrop";
+
+    backdrop.innerHTML = `
+      <section
+        class="simbok-feedback-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="simbokFeedbackTitle"
+      >
+        <button
+          type="button"
+          class="simbok-feedback-close"
+          data-feedback-cancel
+          aria-label="Tutup"
+        >×</button>
+
+        <div class="simbok-feedback-icon ${type}">
+          ${icon}
+        </div>
+
+        <div class="simbok-feedback-content">
+          <h3 id="simbokFeedbackTitle">
+            ${simbokEscape(title)}
+          </h3>
+
+          <p>${simbokEscape(message)}</p>
+        </div>
+
+        <div class="simbok-feedback-actions">
+          ${
+            isConfirm
+              ? `
+                <button
+                  type="button"
+                  class="simbok-feedback-btn secondary"
+                  data-feedback-cancel
+                >${simbokEscape(cancelText || "Batal")}</button>
+              `
+              : ""
+          }
+
+          <button
+            type="button"
+            class="simbok-feedback-btn ${isDanger ? "danger" : "primary"}"
+            data-feedback-confirm
+          >
+            ${simbokEscape(confirmText)}
+          </button>
+        </div>
+      </section>
+    `;
+
+    document.body.appendChild(backdrop);
+
+    requestAnimationFrame(() => {
+      backdrop.classList.add("show");
+    });
+
+    const close = result => {
+      backdrop.classList.remove("show");
+
+      setTimeout(() => {
+        backdrop.remove();
+        resolve(result);
+      }, 180);
+    };
+
+    backdrop.querySelectorAll("[data-feedback-cancel]")
+      .forEach(button => {
+        button.addEventListener("click", () => close(false));
+      });
+
+    backdrop.querySelector("[data-feedback-confirm]")
+      .addEventListener("click", async () => {
+        if (onConfirm) {
+          await onConfirm();
+        }
+
+        close(true);
+      });
+
+    backdrop.addEventListener("click", event => {
+      if (event.target === backdrop) {
+        close(false);
+      }
+    });
+
+    const escapeHandler = event => {
+      if (
+        event.key === "Escape" &&
+        document.getElementById("simbokFeedbackModal") === backdrop
+      ) {
+        document.removeEventListener("keydown", escapeHandler);
+        close(false);
+      }
+    };
+
+    document.addEventListener("keydown", escapeHandler);
+  });
+}
+
 
 /* ------------------------------------------------------
    SIMPAN DETAIL MENU
 ------------------------------------------------------ */
 
-/* Memvalidasi dan menyimpan Detail Menu ke memori halaman. */
-function simbokSaveMaster(event) {
+/* Memvalidasi dan menyimpan Master Kegiatan ke Firestore. */
+async function simbokSaveMaster(event) {
   event.preventDefault();
+
   if (!simbokIsSuperAdmin()) return;
 
-  const year = Number(document.getElementById("simbokMasterTahun").value);
-  const menuCode = document.getElementById("simbokMasterMenu").value;
-  const detailCode = document.getElementById("simbokMasterRincian").value;
-  const detail = SIMBOK_REF.rincian.find(
-    item => item["KODE RINCIAN MENU"] === detailCode
+  const saveButton = document.getElementById("simbokSaveMaster");
+
+  if (saveButton.disabled) return;
+
+  const year = Number(
+    document.getElementById("simbokMasterTahun").value
   );
+
+  const detailCode = document.getElementById(
+    "simbokMasterDetailMenu"
+  ).value;
+
+  const detail = SIMBOK_REF.detailMenu.find(item =>
+    String(item.kodeDetailMenu).trim() === String(detailCode).trim()
+  );
+
   const components = simbokReadKomponen();
 
   if (!Number.isInteger(year) || year < 2027 || year > 2100) {
@@ -1232,16 +1962,31 @@ function simbokSaveMaster(event) {
     return;
   }
 
-  if (!detail || !menuCode) {
-    window.alert("Pilih Menu dan Rincian Menu terlebih dahulu.");
+  if (!detail || !detailCode) {
+    window.alert("Pilih Detail Menu terlebih dahulu.");
     return;
   }
 
-  if (
-    !document.getElementById("simbokMasterNip").value.trim() ||
-    !document.getElementById("simbokMasterPemegang").value.trim()
-  ) {
+  const nip = document.getElementById(
+    "simbokMasterNip"
+  ).value.trim();
+
+  const namaPemegangSelect = document.getElementById(
+    "simbokMasterPemegang"
+  );
+
+  const namaPemegang =
+    namaPemegangSelect.selectedOptions[0]?.textContent.trim() || "";
+
+  if (!nip || !namaPemegang || !namaPemegangSelect.value) {
     window.alert("Lengkapi NIP/NRP dan Nama Pemegang Program.");
+    return;
+  }
+
+  if (namaPemegang === nip) {
+    window.alert(
+      "Nama Pemegang Program tidak valid. Silakan pilih nama pegawai yang benar."
+    );
     return;
   }
 
@@ -1257,51 +2002,131 @@ function simbokSaveMaster(event) {
     !item.satuanLokasi ||
     !item.satuanFrekuensi
   )) {
-    window.alert("Lengkapi seluruh field pada setiap komponen jenis belanja.");
+    window.alert(
+      "Lengkapi seluruh field pada setiap komponen jenis belanja."
+    );
     return;
   }
 
+  // Cegah Detail Menu yang sama terdaftar dua kali
+  // dalam Tahun Anggaran yang sama.
   const duplicate = simbokMasters.some(master =>
-    master.tahunAnggaran === year &&
-    master.kodeRincianMenu === detailCode &&
+    Number(master.tahunAnggaran) === year &&
+    String(master.kodeDetailMenu) === String(detailCode) &&
     master.id !== simbokEditingId
   );
 
   if (duplicate) {
-    window.alert("Rincian Menu tersebut sudah terdaftar pada Tahun Anggaran ini.");
+    window.alert(
+      "Detail Menu tersebut sudah terdaftar pada Tahun Anggaran ini."
+    );
     return;
   }
 
-  const master = {
-    id: simbokEditingId ?? simbokNextId++,
+  const totalPagu = components.reduce(
+    (sum, item) => sum + Number(item.totalPagu || 0),
+    0
+  );
+
+  const masterData = {
     tahunAnggaran: year,
-    kodeMenu: menuCode,
-    namaMenu: SIMBOK_REF.menu.find(item => item["KODE MENU"] === menuCode)?.MENU || "",
-    kodeRincianMenu: detailCode,
-    kode: detailCode,
-    namaRincianMenu: detail["RINCIAN MENU"],
-    definisiOperasional: detail["DEFINISI OPERASIONAL"] || "",
-    kodeRekeningKegiatan: detail["KODE REKENING KEGIATAN"] || "",
-    namaRekeningKegiatan: detail["NAMA REKENING KEGIATAN"] || "",
-    nipPemegangProgram: document.getElementById("simbokMasterNip").value.trim(),
-    namaPemegangProgram: document.getElementById("simbokMasterPemegang").value.trim(),
+
+    kodeDetailMenu: detail.kodeDetailMenu,
+    namaDetailMenu: detail.namaDetailMenu || "",
+
+    kodeMenu: detail.kodeMenu || "",
+    namaMenu: detail.namaMenu || "",
+
+    kodeRincianMenu: detail.kodeRincianMenu || "",
+    namaRincianMenu: detail.namaRincianMenu || "",
+
+    definisiOperasional: detail.definisiOperasional || "",
+
+    kodeRekeningKegiatan: detail.kodeRekeningKegiatan || "",
+    namaRekeningKegiatan: detail.namaRekeningKegiatan || "",
+
+    nipPemegangProgram: nip,
+    namaPemegangProgram: namaPemegang,
+
     komponenBelanja: components,
-    totalPagu: components.reduce((sum, item) => sum + item.totalPagu, 0)
+    totalPagu,
+
+    updatedAt: serverTimestamp()
   };
 
-  if (simbokEditingId !== null) {
-    const index = simbokMasters.findIndex(item => item.id === simbokEditingId);
-    if (index >= 0) simbokMasters[index] = master;
-  } else {
-    simbokMasters.push(master);
+  saveButton.disabled = true;
+  const originalText = saveButton.textContent;
+  saveButton.textContent = "Menyimpan...";
+
+  try {
+    if (simbokEditingId !== null) {
+      // UPDATE dokumen yang sudah ada.
+      const existing = simbokMasters.find(
+        item => item.id === simbokEditingId
+      );
+
+      if (!existing?.firestoreId) {
+        throw new Error("ID dokumen Firestore tidak ditemukan.");
+      }
+
+      await updateDoc(
+        doc(
+          smartofficeFirestore,
+          SIMBOK_COLLECTION_MASTER,
+          existing.firestoreId
+        ),
+        masterData
+      );
+
+    } else {
+      // INSERT dokumen baru.
+      masterData.createdAt = serverTimestamp();
+
+      const masterDocId =
+        `${year}_${detail.kodeDetailMenu}`;
+
+      await setDoc(
+        doc(
+          smartofficeFirestore,
+          SIMBOK_COLLECTION_MASTER,
+          masterDocId
+        ),
+        {
+          ...masterData,
+          createdAt: serverTimestamp()
+        }
+      );
+    }
+
+    // Ambil ulang data agar cache sesuai dengan Firestore.
+    await simbokLoadMasters();
+
+    document.getElementById("simbokPlanYearMaster").value = year;
+    document.getElementById("simbokPlanYearMonthly").value = year;
+    document.getElementById("simbokPlanYearRecap").value = year;
+
+    simbokCloseMasterModal();
+    simbokRenderMasters();
+
+    await simbokShowFeedbackModal({
+      type: "success",
+      title: "Berhasil Disimpan!",
+      message: "Data Master Kegiatan BOK telah berhasil disimpan ke database.",
+      confirmText: "Selesai"
+    });
+
+  } catch (error) {
+    console.error("[simBOK] Gagal menyimpan Master Kegiatan:", error);
+
+    window.alert(
+      "Master Kegiatan gagal disimpan ke Firestore. " +
+      (error.message || "Periksa koneksi dan izin akses.")
+    );
+
+  } finally {
+    saveButton.disabled = false;
+    saveButton.textContent = originalText;
   }
-
-  document.getElementById("simbokPlanYearMaster").value = year;
-  document.getElementById("simbokPlanYearMonthly").value = year;
-  document.getElementById("simbokPlanYearRecap").value = year;
-
-  simbokCloseMasterModal();
-  simbokRenderMasters();
 }
 
 
@@ -1309,17 +2134,76 @@ function simbokSaveMaster(event) {
    HAPUS DETAIL MENU
 ------------------------------------------------------ */
 
-/* Menghapus Detail Menu beserta rencana bulanannya. */
-function simbokDeleteMaster(id) {
+/* Menghapus dokumen Master Kegiatan dari Firestore. */
+async function simbokDeleteMaster(id) {
   if (!simbokIsSuperAdmin()) return;
-  const master = simbokMasters.find(item => item.id === id);
-  if (!master || !window.confirm(`Hapus detail menu "${master.namaRincianMenu}"?`)) return;
 
-  simbokMasters = simbokMasters.filter(item => item.id !== id);
-  Object.keys(simbokMonthlyPlans).forEach(key => {
-    if (key.startsWith(`${id}-`)) delete simbokMonthlyPlans[key];
+  const master = simbokMasters.find(
+    item => item.id === id
+  );
+
+  if (!master) return;
+
+  if (!master.firestoreId) {
+    await simbokShowFeedbackModal({
+      type: "error",
+      title: "ID Dokumen Tidak Ditemukan",
+      message: "ID dokumen Firestore tidak ditemukan. Data tidak dapat dihapus.",
+      confirmText: "Mengerti"
+    });
+
+    return;
+  }
+
+  /* KONFIRMASI HAPUS */
+  const confirmed = await simbokShowFeedbackModal({
+    type: "danger",
+    title: "Hapus Master Kegiatan?",
+    message: `Apakah Anda yakin ingin menghapus Detail Menu "${master.namaRincianMenu}"? Data yang dihapus tidak dapat dikembalikan.`,
+    confirmText: "Ya, Hapus",
+    cancelText: "Batal"
   });
-  simbokRenderMasters();
+
+  if (!confirmed) return;
+
+  try {
+    await deleteDoc(
+      doc(
+        smartofficeFirestore,
+        SIMBOK_COLLECTION_MASTER,
+        master.firestoreId
+      )
+    );
+
+    /* PERBARUI CACHE */
+    simbokMasters = simbokMasters.filter(
+      item => item.id !== id
+    );
+
+    simbokRenderMasters();
+
+    /* NOTIFIKASI BERHASIL */
+    await simbokShowFeedbackModal({
+      type: "success",
+      title: "Berhasil Dihapus!",
+      message: "Master Kegiatan BOK berhasil dihapus dari database.",
+      confirmText: "Selesai"
+    });
+
+  } catch (error) {
+    console.error(
+      "[simBOK] Gagal menghapus Master Kegiatan:",
+      error
+    );
+
+    await simbokShowFeedbackModal({
+      type: "error",
+      title: "Gagal Menghapus!",
+      message: error.message ||
+        "Terjadi kesalahan saat menghapus data. Periksa koneksi dan izin akses.",
+      confirmText: "Mengerti"
+    });
+  }
 }
 
 
@@ -1759,6 +2643,647 @@ function simbokUpdateSummary() {
 
 
 /* ======================================================
+   SIMBOK — RENCANA PENGGUNAAN DANA
+====================================================== */
+
+/* Helper pembentuk ID dokumen */
+function simbokGetRPDDocumentId(master) {
+  return `RPD_${master.tahunAnggaran}_${master.kodeDetailMenu}`;
+}
+
+/* Pemuatan data RPD */
+async function simbokLoadRPD() {
+  try {
+    const records = await simbokGetCollection("simbok_rpd");
+
+    simbokRPDData = records.map(item => ({
+      ...item,
+      tahunAnggaran: Number(item.tahunAnggaran || 0),
+      totalRPD: Number(item.totalRPD || 0),
+      komponenRPD: Array.isArray(item.komponenRPD)
+        ? item.komponenRPD
+        : []
+    }));
+
+    simbokRPDLoaded = true;
+
+    return simbokRPDData;
+
+  } catch (error) {
+    console.error("Gagal memuat data RPD:", error);
+    simbokRPDLoaded = false;
+    throw error;
+  }
+}
+
+/* ======================================================
+   HITUNG TOTAL RPD PER DETAIL MENU
+====================================================== */
+
+function simbokCalculateTotalRPD(rpd) {
+  if (!rpd || !Array.isArray(rpd.komponenRPD)) return 0;
+
+  return rpd.komponenRPD.reduce((total, komponen) => {
+    if (komponen.digunakan === false) return total;
+
+    const bulan = komponen.bulan || {};
+
+    const totalKomponen = Object.values(bulan).reduce(
+      (sum, dataBulan) => {
+        return sum + Number(dataBulan?.jumlah || 0);
+      },
+      0
+    );
+
+    return total + totalKomponen;
+  }, 0);
+}
+
+
+/* ======================================================
+   SIMBOK — RENDER DAFTAR RPD
+   CSS DAN STRUKTUR KARTU MANDIRI
+====================================================== */
+
+async function simbokRenderRPD() {
+  const wrap = document.getElementById("simbokRpdCardList");
+  const count = document.getElementById("simbokRpdCount");
+  const searchInput = document.getElementById("simbokRpdSearch");
+  const yearSelect = document.getElementById("simbokPlanYearRpd");
+  const menuFilter = document.getElementById("simbokRpdMenuFilter");
+  const selectedMenu = String(menuFilter?.value || "");
+
+  if (!wrap || !count || !yearSelect) return;
+
+  const year = Number(yearSelect.value || 2027);
+  const search = String(searchInput?.value || "")
+    .trim()
+    .toLowerCase();
+
+  wrap.innerHTML = `
+    <div class="simbok-plan-empty">
+      Memuat daftar RPD...
+    </div>
+  `;
+
+  try {
+    if (!simbokRPDLoaded) {
+      await simbokLoadRPD();
+    }
+
+    const yearMasters = simbokMasters.filter(master =>
+      Number(master.tahunAnggaran) === year
+    );
+
+    const filtered = yearMasters.filter(master => {
+      const searchable = [
+        master.kodeDetailMenu,
+        master.namaDetailMenu,
+        master.namaMenu,
+        master.namaRincianMenu,
+        master.namaPemegangProgram,
+        master.nipPemegangProgram
+      ].join(" ").toLowerCase();
+
+      const matchSearch = searchable.includes(search);
+
+      const matchMenu = !selectedMenu ||
+        String(master.kodeMenu || "") === selectedMenu;
+
+      return matchSearch && matchMenu;
+    });
+
+    count.textContent = `${yearMasters.length} detail menu`;
+
+    if (!filtered.length) {
+      wrap.innerHTML = `
+        <div class="simbok-rpd-empty">
+          <span class="simbok-rpd-empty-icon">⌕</span>
+          <strong>
+            ${yearMasters.length
+              ? "Data tidak ditemukan"
+              : "Belum ada Detail Menu"}
+          </strong>
+          <p>
+            ${yearMasters.length
+              ? "Coba ubah kata pencarian."
+              : `Belum ada Detail Menu untuk Tahun Anggaran ${year}.`}
+          </p>
+        </div>
+      `;
+
+      return;
+    }
+
+    const bulan = [
+      "Januari", "Februari", "Maret", "April",
+      "Mei", "Juni", "Juli", "Agustus",
+      "September", "Oktober", "November", "Desember"
+    ];
+
+    wrap.innerHTML = filtered.map(master => {
+      const rpdId = simbokGetRPDDocumentId(master);
+
+      const rpd = simbokRPDData.find(item =>
+        item.id === rpdId
+      );
+
+      const komponen = rpd?.komponenRPD || [];
+
+      const komponenTerpilih = komponen.filter(item =>
+        item.digunakan !== false
+      );
+
+      const totalPagu = Number(master.totalPagu || 0);
+
+      const totalRPD = rpd
+        ? simbokCalculateTotalRPD(rpd)
+        : 0;
+
+      const sisaAnggaran = totalPagu - totalRPD;
+
+      const bulanTerkunci = komponen.reduce((total, item) => {
+        return total + bulan.filter(namaBulan =>
+          item.bulan?.[namaBulan]?.locked === true
+        ).length;
+      }, 0);
+
+      const statusRPD = !rpd
+        ? "Belum dibuat"
+        : totalRPD > totalPagu
+          ? "Melebihi Pagu"
+          : totalRPD > 0
+            ? "Sudah diisi"
+            : "Belum diisi";
+
+      const canManage = simbokCanManageRPD(master);
+
+      return `
+        <article class="simbok-rpd-card">
+
+          <!-- IDENTITAS KARTU -->
+          <div class="simbok-rpd-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="m12 3 9 5-9 5-9-5 9-5z"/>
+              <path d="m3 12 9 5 9-5"/>
+              <path d="m3 16 9 5 9-5"/>
+            </svg>
+          </div>
+
+          <!-- INFORMASI DETAIL MENU -->
+          <div class="simbok-rpd-card-content">
+
+            <div class="simbok-rpd-card-heading">
+              <h4>
+                ${simbokEscape(master.namaDetailMenu || "-")}
+              </h4>
+
+              <span class="simbok-rpd-year-badge">
+                TA ${simbokEscape(master.tahunAnggaran)}
+              </span>
+            </div>
+            
+            <div class="simbok-rpd-info-list">
+
+              <!-- MENU -->
+              <div class="simbok-rpd-info-row">
+                <span class="simbok-rpd-info-icon">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="9"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                </span>
+                <span class="simbok-rpd-info-label">Menu :</span>
+                <strong>${simbokEscape(master.namaMenu || "-")}</strong>
+              </div>
+
+              <!-- RINCIAN MENU -->
+              <div class="simbok-rpd-info-row">
+                <span class="simbok-rpd-info-icon">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M9 6h11M9 12h11M9 18h11"/>
+                    <circle cx="4" cy="6" r="1"/>
+                    <circle cx="4" cy="12" r="1"/>
+                    <circle cx="4" cy="18" r="1"/>
+                  </svg>
+                </span>
+                <span class="simbok-rpd-info-label">Rincian Menu :</span>
+                <strong>${simbokEscape(master.namaRincianMenu || "-")}</strong>
+              </div>
+
+              <!-- PEMEGANG PROGRAM -->
+              <div class="simbok-rpd-info-row">
+                <span class="simbok-rpd-info-icon">
+                  <svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"/>
+                  </svg>
+                </span>
+                <span class="simbok-rpd-info-label">Pemegang Program :</span>
+
+                <div class="simbok-rpd-holder">
+                  <strong>${simbokEscape(master.namaPemegangProgram || "-")}</strong>
+                  <span class="simbok-rpd-holder-nip">
+                    <b>NIP :</b>
+                    ${simbokEscape(master.nipPemegangProgram || "-")}
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- KODE DAN KOMPONEN -->
+            <div class="simbok-rpd-card-footer">
+
+              <div class="simbok-rpd-code">
+                <span class="simbok-rpd-code-label">
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/>
+                    <circle cx="8" cy="8" r="1.5"/>
+                  </svg>
+                  Kode Detail Menu
+                </span>
+
+                <strong>${simbokEscape(master.kodeDetailMenu || "-")}</strong>
+              </div>
+
+              <div class="simbok-rpd-components">
+
+                <div class="simbok-rpd-components-heading">
+                  <svg viewBox="0 0 24 24">
+                    <path d="m12 3 9 5-9 5-9-5 9-5z"/>
+                    <path d="m3 12 9 5 9-5"/>
+                    <path d="m3 16 9 5 9-5"/>
+                  </svg>
+
+                  <strong>
+                    ${komponenTerpilih.length} Komponen
+                  </strong>
+                </div>
+
+                <div class="simbok-rpd-component-chips">
+                  ${
+                    komponenTerpilih.length
+                      ? komponenTerpilih.map(item => `
+                          <span class="simbok-rpd-component-chip">
+                            ${simbokEscape(item.jenisBelanja || item.kodeRekeningBelanja || "Komponen")}
+                          </span>
+                        `).join("")
+                      : `<span class="simbok-rpd-component-empty">Belum ada komponen dipilih</span>`
+                  }
+                </div>
+
+                <div class="simbok-rpd-locked-info">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="4" y="10" width="16" height="11" rx="2"/>
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                    <path d="M12 14v3"/>
+                  </svg>
+
+                  <span>
+                    Bulan terkunci: <strong>${bulanTerkunci} / 12</strong>
+                  </span>
+                </div>
+
+              </div>
+
+            </div>           
+
+          </div>
+
+          <!-- RINGKASAN ANGGARAN -->
+          <aside class="simbok-rpd-card-side">
+            
+            <div class="simbok-rpd-budget">
+
+              <div class="simbok-rpd-budget-item">
+                <div class="simbok-rpd-budget-heading">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="6" width="18" height="14" rx="2"/>
+                    <path d="M3 10h18M7 15h3"/>
+                    <path d="M7 3h10"/>
+                  </svg>
+                  <span>Total Pagu</span>
+                </div>
+                <strong>${simbokCurrency(totalPagu)}</strong>
+              </div>
+
+              <div class="simbok-rpd-budget-item">
+                <div class="simbok-rpd-budget-heading">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="4" y="3" width="16" height="18" rx="2"/>
+                    <path d="M8 8h8M8 12h8M8 16h5"/>
+                  </svg>
+                  <span>Total RPD</span>
+                </div>
+                <strong>${simbokCurrency(totalRPD)}</strong>
+              </div>
+
+              <div class="simbok-rpd-budget-item">
+                <div class="simbok-rpd-budget-heading">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M8 12h8M12 8v8"/>
+                  </svg>
+                  <span>Sisa Anggaran</span>
+                </div>
+                <strong>${simbokCurrency(sisaAnggaran)}</strong>
+              </div>
+
+              <span class="simbok-rpd-status ${
+                totalRPD > totalPagu
+                  ? "is-warning"
+                  : rpd && totalRPD > 0
+                    ? "is-filled"
+                    : ""
+              }">
+                ${statusRPD}
+              </span>
+
+            </div>
+
+            <!-- AKSI RPD -->
+            <div class="simbok-rpd-actions">
+
+              <button
+                type="button"
+                class="simbok-rpd-edit-button"
+                data-rpd-edit="${simbokEscape(rpdId)}"
+                ${canManage ? "" : "disabled"}
+                title="${
+                  canManage
+                    ? (rpd ? "Edit RPD" : "Buat RPD")
+                    : "Tidak memiliki akses edit"
+                }"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="m14 5 5 5M4 20l4.5-1 10.8-10.8a2.1 2.1 0 0 0-3-3L5.5 16z"/>
+                </svg>
+
+                <span>${rpd ? "Edit RPD" : "Buat RPD"}</span>
+              </button>
+
+            </div>
+
+          </aside>
+
+        </article>
+      `;
+    }).join("");
+
+  } catch (error) {
+    console.error("Gagal menampilkan daftar RPD:", error);
+
+    wrap.innerHTML = `
+      <div class="simbok-plan-empty">
+        Gagal memuat data RPD. Silakan coba kembali.
+      </div>
+    `;
+  }
+}
+
+
+/* ======================================================
+   MEMBUKA MODAL BUAT / EDIT RPD
+====================================================== */
+
+async function simbokOpenRPDModal(master) {
+  if (!master) return;
+
+  if (!simbokCanManageRPD(master)) {
+    return;
+  }
+
+  try {
+    await simbokLoadCache();
+
+    if (!simbokRPDLoaded) {
+      await simbokLoadRPD();
+    }
+
+    const modal = document.getElementById("simbokRpdModal");
+    const rpdId = simbokGetRPDDocumentId(master);
+
+    if (!modal) return;
+
+    simbokRpdLastFocus = document.activeElement;
+    simbokRpdEditingMaster = master;
+
+    const rpd = simbokRPDData.find(item => item.id === rpdId);
+
+    // Identitas Detail Menu.
+    document.getElementById("simbokRpdTahun").value =
+      master.tahunAnggaran || "";
+
+    document.getElementById("simbokRpdKode").value =
+      master.kodeDetailMenu || "";
+
+    document.getElementById("simbokRpdNama").value =
+      master.namaDetailMenu || "";
+
+    document.getElementById("simbokRpdPemegang").value =
+      master.namaPemegangProgram || "";
+
+    document.getElementById("simbokRpdNip").value =
+      master.nipPemegangProgram || "";
+
+    // Ringkasan anggaran.
+    const totalPagu = Number(master.totalPagu || 0);
+    const totalRPD = rpd
+      ? simbokCalculateTotalRPD(rpd)
+      : 0;
+
+    const sisa = totalPagu - totalRPD;
+
+    document.getElementById("simbokRpdPagu").textContent =
+      simbokCurrency(totalPagu);
+
+    document.getElementById("simbokRpdTotal").textContent =
+      simbokCurrency(totalRPD);
+
+    document.getElementById("simbokRpdSisa").textContent =
+      simbokCurrency(sisa);
+
+    document.getElementById("simbokRpdFooterSisa").textContent =
+      simbokCurrency(sisa);
+
+    document.getElementById("simbokRpdModalTitle").textContent =
+      rpd ? "Edit Rencana Penggunaan Dana" : "Buat Rencana Penggunaan Dana";
+
+    document.getElementById("simbokSaveRpd").textContent =
+      rpd ? "Simpan Perubahan" : "Simpan RPD";
+
+    // Tampilkan komponen Master dan pilihan RPD yang tersimpan.
+    simbokRenderRPDComponents(master, rpd);
+
+    // Tampilkan modal.
+    modal.hidden = false;
+    document.body.classList.add("simbok-modal-open");
+
+    document.getElementById("simbokCloseRpdModal").focus();
+
+  } catch (error) {
+    console.error("Gagal membuka modal RPD:", error);
+    alert("Gagal membuka formulir RPD. Silakan coba kembali.");
+  }
+}
+
+/* ======================================================
+   MENUTUP MODAL RPD
+====================================================== */
+
+function simbokCloseRPDModal() {
+  const modal = document.getElementById("simbokRpdModal");
+
+  if (!modal) return;
+
+  modal.hidden = true;
+  document.body.classList.remove("simbok-modal-open");
+
+  simbokRpdEditingMaster = null;
+
+  if (
+    simbokRpdLastFocus &&
+    typeof simbokRpdLastFocus.focus === "function"
+  ) {
+    simbokRpdLastFocus.focus();
+  }
+}
+
+/* ======================================================
+   DAFTAR KOMPONEN BELANJA RPD
+====================================================== */
+
+function simbokRenderRPDComponents(master, rpd = null) {
+  const wrap = document.getElementById("simbokRpdComponentList");
+  if (!wrap || !master) return;
+
+  const masterComponents = Array.isArray(master.komponenBelanja)
+    ? master.komponenBelanja
+    : [];
+
+  const savedComponents = Array.isArray(rpd?.komponenRPD)
+    ? rpd.komponenRPD
+    : [];
+
+  // Cocokkan komponen berdasarkan key dari Master.
+  simbokRpdDraftComponents = masterComponents.map(component => {
+    const saved = savedComponents.find(item =>
+      String(item.key) === String(component.key)
+    );
+
+    return {
+      ...component,
+      digunakan: saved ? saved.digunakan !== false : false,
+      bulan: saved?.bulan || {}
+    };
+  });
+
+  if (!masterComponents.length) {
+    wrap.innerHTML = `
+      <div class="simbok-plan-empty">
+        Belum ada komponen belanja pada Detail Menu ini.
+      </div>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="simbok-rpd-component-selection">
+
+      <div class="simbok-rpd-selection-heading">
+        <strong>Pilih Komponen Jenis Belanja</strong>
+        <span id="simbokRpdSelectedCount">
+          0 dari ${masterComponents.length} komponen dipilih
+        </span>
+      </div>
+
+      <div class="simbok-rpd-checkbox-list">
+        ${simbokRpdDraftComponents.map((component, index) => `
+          <label class="simbok-rpd-component-option">
+
+            <input
+              type="checkbox"
+              data-rpd-component-toggle="${simbokEscape(component.key)}"
+              ${component.digunakan ? "checked" : ""}
+            >
+
+            <span class="simbok-rpd-component-check"></span>
+
+            <span class="simbok-rpd-component-info">
+              <strong>
+                ${simbokEscape(component.jenisBelanja || "-")}
+              </strong>
+
+              <small>
+                ${simbokEscape(component.kodeRekeningBelanja || "-")}
+                · ${simbokEscape(component.satuanHarga || "-")}
+              </small>
+
+              <small>
+                Jumlah Orang: ${simbokEscape(component.jumlahOrang ?? 0)}
+                ${simbokEscape(component.satuanOrang || "Orang")}
+              </small>
+            </span>
+
+            <span class="simbok-rpd-component-price">
+              ${simbokCurrency(component.hargaSatuan || 0)}
+            </span>
+
+          </label>
+        `).join("")}
+      </div>
+
+    </div>
+  `;
+
+  simbokUpdateRPDSelectedCount();
+  simbokRenderRPDSelectedSummary();
+}
+
+/* Memperbarui jumlah komponen terpilih. */
+function simbokUpdateRPDSelectedCount() {
+  const count = document.getElementById("simbokRpdSelectedCount");
+  if (!count) return;
+
+  const selected = simbokRpdDraftComponents.filter(item =>
+    item.digunakan
+  ).length;
+
+  count.textContent =
+    `${selected} dari ${simbokRpdDraftComponents.length} komponen dipilih`;
+}
+
+/* Menampilkan ringkasan komponen yang dipilih. */
+function simbokRenderRPDSelectedSummary() {
+  const wrap = document.getElementById("simbokRpdMonthlyList");
+  if (!wrap) return;
+
+  const selected = simbokRpdDraftComponents.filter(item =>
+    item.digunakan
+  );
+
+  if (!selected.length) {
+    wrap.innerHTML = `
+      <div class="simbok-plan-empty">
+        Pilih komponen belanja untuk mengisi rencana bulanan.
+      </div>
+    `;
+    return;
+  }
+
+  wrap.innerHTML = `
+    <div class="simbok-plan-empty">
+      ${selected.length} komponen telah dipilih.
+      Form pengisian RPD bulanan akan ditampilkan pada tahap berikutnya.
+    </div>
+  `;
+}
+
+
+
+
+/* ======================================================
    SIMBOK — INISIALISASI DAN PENGELOLAAN HALAMAN
 ====================================================== */
 
@@ -1812,16 +3337,13 @@ function simbokInitPlanning() {
     simbokUpdatePegawaiTerpilih
   );
 
+  /* Event perubahan pilihan Nama Detail Menu. */
   simbokAddHandler(
-    document.getElementById("simbokMasterMenu"),
+    document.getElementById("simbokMasterDetailMenu"),
     "change",
-    () => simbokPopulateRincianOptions()
+    simbokUpdateDetailMenuSnapshot
   );
-  simbokAddHandler(
-    document.getElementById("simbokMasterRincian"),
-    "change",
-    simbokUpdateRincianSnapshot
-  );
+
   simbokAddHandler(
     document.getElementById("simbokAddKomponen"),
     "click",
@@ -1832,15 +3354,36 @@ function simbokInitPlanning() {
   simbokAddHandler(form, "submit", simbokSaveMaster);
 
   /* Event aksi kartu dikelola dengan delegation agar listener tidak menumpuk. */
-  simbokAddHandler(document.getElementById("simbokMasterTableWrap"), "click", event => {
-    const edit = event.target.closest("[data-master-edit]");
-    const duplicate = event.target.closest("[data-master-duplicate]");
-    const remove = event.target.closest("[data-master-delete]");
+  simbokAddHandler(
+    document.getElementById("simbokMasterTableWrap"),
+    "click",
+    event => {
 
-    if (edit) simbokEditMaster(Number(edit.dataset.masterEdit));
-    if (duplicate) simbokDuplicateMaster(Number(duplicate.dataset.masterDuplicate));
-    if (remove) simbokDeleteMaster(Number(remove.dataset.masterDelete));
-  });
+      // Tombol Detail
+      const view = event.target.closest("[data-master-view]");
+
+      // Tombol Edit
+      const edit = event.target.closest("[data-master-edit]");
+
+      // Tombol Hapus
+      const remove = event.target.closest("[data-master-delete]");
+
+      if (view) {
+        simbokViewMaster(Number(view.dataset.masterView));
+        return;
+      }
+
+      if (edit) {
+        simbokEditMaster(Number(edit.dataset.masterEdit));
+        return;
+      }
+
+      if (remove) {
+        simbokDeleteMaster(Number(remove.dataset.masterDelete));
+        return;
+      }
+    }
+  );
 
   /* Pencarian dan filter daftar Dokumen Master BOK. */
   simbokAddHandler(
@@ -1883,15 +3426,143 @@ function simbokInitPlanning() {
     });
   });
 
-  /* Navigasi internal Master, Rencana Bulanan, dan Rekap Pagu. */
+  /* Navigasi internal Master, RPD, Rencana Bulanan, dan Rekap Pagu. */
   const planTabs = Array.from(document.querySelectorAll("[data-plan-tab]"));
   const planViews = Array.from(document.querySelectorAll("[data-plan-view]"));
 
   planTabs.forEach(tab => {
     simbokAddHandler(tab, "click", () => {
       simbokActivatePlanTab(tab, planTabs, planViews);
+
+      // Muat daftar RPD saat tab RPD dibuka.
+      if (tab.dataset.planTab === "rpd") {
+        simbokRenderRPD();
+      }
     });
   });
+
+  /* Pencarian dan filter daftar RPD. */
+  simbokAddHandler(
+    document.getElementById("simbokRpdSearch"),
+    "input",
+    simbokRenderRPD
+  );
+
+  simbokAddHandler(
+    document.getElementById("simbokRpdMenuFilter"),
+    "change",
+    () => simbokRenderRPD()
+  );
+
+  simbokAddHandler(
+    document.getElementById("simbokPlanYearRpd"),
+    "change",
+    simbokRenderRPD
+  );
+
+  simbokAddHandler(
+    document.getElementById("simbokRpdResetFilter"),
+    "click",
+    simbokRenderRPD
+  );
+
+  /* Event aksi kartu RPD menggunakan delegation. */
+  simbokAddHandler(
+    document.getElementById("simbokRpdCardList"),
+    "click",
+    event => {
+      const edit = event.target.closest("[data-rpd-edit]");
+      if (!edit) return;
+
+      const master = simbokMasters.find(item =>
+        simbokGetRPDDocumentId(item) === edit.dataset.rpdEdit
+      );
+
+      if (!master) {
+        console.warn("Data Master untuk RPD tidak ditemukan.");
+        return;
+      }
+
+      if (!simbokCanManageRPD(master)) {
+        return;
+      }
+
+      simbokOpenRPDModal(master);
+    }
+  );
+
+  /* Kontrol buka/tutup modal RPD. */
+  simbokAddHandler(
+    document.getElementById("simbokCloseRpdModal"),
+    "click",
+    simbokCloseRPDModal
+  );
+
+  simbokAddHandler(
+    document.getElementById("simbokCancelRpdModal"),
+    "click",
+    simbokCloseRPDModal
+  );
+
+  simbokAddHandler(
+    document.getElementById("simbokRpdModal"),
+    "click",
+    event => {
+      if (event.target.id === "simbokRpdModal") {
+        simbokCloseRPDModal();
+      }
+    }
+  );
+
+  /* Event pemilihan komponen RPD. */
+  simbokAddHandler(
+    document.getElementById("simbokRpdComponentList"),
+    "change",
+    event => {
+      const checkbox = event.target.closest(
+        "[data-rpd-component-toggle]"
+      );
+
+      if (!checkbox) return;
+
+      const key = checkbox.dataset.rpdComponentToggle;
+
+      const component = simbokRpdDraftComponents.find(item =>
+        String(item.key) === String(key)
+      );
+
+      if (!component) return;
+
+      // Periksa apakah komponen memiliki bulan yang terkunci.
+      if (!checkbox.checked) {
+        const hasLockedMonth = Object.values(
+          component.bulan || {}
+        ).some(month => month?.locked === true);
+
+        if (hasLockedMonth) {
+          window.alert(
+            "Komponen ini memiliki rencana pada bulan yang terkunci. " +
+            "Data bulan terkunci tetap akan dipertahankan."
+          );
+        }
+
+        const confirmed = window.confirm(
+          "Nonaktifkan komponen ini dari RPD? " +
+          "Data rencana yang sudah tersimpan tidak akan langsung dihapus."
+        );
+
+        if (!confirmed) {
+          checkbox.checked = true;
+          return;
+        }
+      }
+
+      component.digunakan = checkbox.checked;
+
+      simbokUpdateRPDSelectedCount();
+      simbokRenderRPDSelectedSummary();
+    }
+  );
 
   /* Kontrol rencana bulanan. */
   simbokAddHandler(
@@ -1946,10 +3617,17 @@ export async function smartofficeLoadPage() {
 
   try {
     await simbokLoadReferences();
+    await simbokLoadMasters();
+
     simbokInitPlanning();
+
   } catch (error) {
     console.error("[simBOK] Gagal memuat master Firestore:", error);
-    window.alert("Data master simBOK gagal dimuat dari Firestore. Periksa koneksi dan izin akses.");
+
+    window.alert(
+      "Data master simBOK gagal dimuat dari Firestore. " +
+      "Periksa koneksi dan izin akses."
+    );
   }
 }
 

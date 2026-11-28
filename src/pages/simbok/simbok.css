@@ -287,14 +287,30 @@
 }
 
 .simbok-plan-remove {
-  width: 38px;
-  height: 42px;
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 34px;
+  min-width: 32px;
+  padding: 0;
+
   border: 1px solid #fee2e2;
-  border-radius: 10px;
+  border-radius: 9px;
   background: #fff7f7;
   color: #dc2626;
-  font-size: 19px;
+
+  font-family: Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1;
+
+  text-align: center;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .simbok-component-section-title {
@@ -1078,7 +1094,7 @@ body.simbok-modal-open {
 
 .simbok-master-modal-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 20px;
   padding: 22px 26px;
@@ -1104,13 +1120,32 @@ body.simbok-modal-open {
   place-items: center;
   width: 38px;
   height: 38px;
-  flex: 0 0 38px;
+  min-width: 38px;
+  padding: 0;
   border: 1px solid #e2e8f0;
-  border-radius: 11px;
+  border-radius: 10px;
   background: #ffffff;
   color: #64748b;
-  font-size: 25px;
   cursor: pointer;
+  box-sizing: border-box;
+  flex: 0 0 38px;
+}
+
+.simbok-modal-close svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-modal-close:hover {
+  background: #f8fafc;
+  color: #2563eb;
+  border-color: #bfdbfe;
 }
 
 .simbok-master-form {
@@ -1165,50 +1200,187 @@ body.simbok-modal-open {
   gap: 14px;
 }
 
+
 /* ============================================================
-   IDENTITAS DETAIL MENU — LAYOUT GRID
+   IDENTITAS DETAIL MENU — LAYOUT GRID BARU
 ============================================================ */
-/* Lebar kolom identitas Detail Menu. */
+
 .simbok-master-identity-grid {
-  grid-template-columns:
-    minmax(0, 0.75fr)
-    minmax(0, 1fr)
-    minmax(0, 3.25fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 12px;
 }
 
-/* Tahun Anggaran */
-.simbok-master-identity-grid .simbok-field-year {
-  grid-column: 1;
-}
-
-/* Kode Detail */
-.simbok-master-identity-grid .simbok-field-code {
-  grid-column: 2;
-}
-
-/* Menu */
-.simbok-master-identity-grid .simbok-field-menu {
-  grid-column: 3;
-}
-
-/* Rincian Menu */
-.simbok-master-identity-grid .simbok-field-rincian {
+/* Baris identitas: Kode dan Nama */
+.simbok-identity-row {
+  display: grid;
+  grid-template-columns: minmax(125px, 0.7fr) minmax(0, 3.3fr);
+  gap: 12px;
+  min-width: 0;
   grid-column: 1 / -1;
 }
 
-.simbok-master-identity-grid .simbok-field-rincian select {
+/* Header judul dan tahun anggaran */
+.simbok-modal-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.simbok-modal-section-head .simbok-modal-section-title {
+  margin-bottom: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+/* Tahun anggaran */
+.simbok-field-year {
+  display: grid;
+  gap: 6px;
+  flex: 0 0 115px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.simbok-field-year input {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #dce3ed;
+  border-radius: 9px;
+  background: #fff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 12px;
+  box-sizing: border-box;
+}
+
+/* Nama Detail dan Nama Rincian */
+.simbok-field-detail-name select,
+.simbok-field-rincian-name textarea {
   min-height: 58px;
   height: auto;
-  padding: 12px 14px;
-  font-size: 12px;
-  line-height: 1.6;
-  white-space: normal;
+  line-height: 1.5;
 }
 
-/* Definisi dan rekening kegiatan menggunakan lebar penuh. */
+.simbok-field-rincian-name textarea {
+  resize: vertical;
+}
+
+/* Definisi dan rekening tetap selebar modal */
 .simbok-master-identity-grid > .simbok-field-span-2 {
   grid-column: 1 / -1;
+}
+
+#simbokMasterDetailMenu {
+  min-height: 52px;
+  height: 52px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+}
+
+/* Custom dropdown Detail Menu */
+.simbok-custom-select {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.simbok-custom-select > select {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.simbok-custom-select-trigger {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 38px 10px 12px;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #fff;
+  color: #172b4d;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.simbok-custom-select-trigger > span:first-child {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.simbok-custom-select-arrow {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  display: block;
+  flex-shrink: 0;
+  pointer-events: none;
+  color: #172b4d;
+}
+
+.simbok-custom-select-options {
+  position: absolute;
+  z-index: 100;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.14);
+  box-sizing: border-box;
+}
+
+.simbok-custom-select-options[hidden] {
+  display: none;
+}
+
+.simbok-custom-option {
+  display: block;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #334155;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.simbok-custom-option:hover,
+.simbok-custom-option.active {
+  background: #eff6ff;
+  color: #2563eb;
 }
 
 /* ============================================================
@@ -1217,7 +1389,7 @@ body.simbok-modal-open {
 
 .simbok-rekening-kegiatan-row {
   display: grid;
-  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 3.2fr);
+  grid-template-columns: minmax(155px, 0.7fr) minmax(0, 3.3fr);
   gap: 12px;
   grid-column: 1 / -1;
   min-width: 0;
@@ -1376,8 +1548,8 @@ body.simbok-modal-open {
 .simbok-component-main-row {
   display: grid;
   grid-template-columns:
-    minmax(0, 0.8fr)
-    minmax(0, 0.85fr)
+    minmax(0, 1fr)
+    minmax(0, 0.7fr)
     minmax(0, 2fr);
   gap: 12px;
   min-width: 0;
@@ -1394,18 +1566,23 @@ body.simbok-modal-open {
 /* Kartu ringkasan dengan ikon SVG. */
 .simbok-component-summary-row {
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr 1fr;
-  gap: 12px;
+  grid-template-columns:
+    1.65fr
+    .85fr
+    .95fr
+    .85fr
+    1.15fr;
+  gap: 8px;
   min-width: 0;
 }
 
 .simbok-component-summary-row .simbok-component-total {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   min-width: 0;
   min-height: 76px;
-  padding: 12px 14px;
+  padding: 10px;
   border: 1px solid #e2eaf6;
   border-radius: 13px;
   background: #edf4ff;
@@ -1450,12 +1627,23 @@ body.simbok-modal-open {
   overflow-wrap: anywhere;
 }
 
+/* Satuan Harga */
 .simbok-component-total.is-green {
   border-color: #d1f3e0;
   background: #e5f8ef;
 }
 
 .simbok-component-total.is-green strong {
+  color: #087443;
+}
+
+/* Total Belanja */
+.simbok-component-total.is-budget {
+  border-color: #d1f3e0;
+  background: #e5f8ef;
+}
+
+.simbok-component-total.is-budget strong {
   color: #087443;
 }
 
@@ -1618,7 +1806,12 @@ body.simbok-modal-open {
 }
 
 /* ============================================================
-   04. DOKUMEN MASTER BOK, FILTER, DAN KARTU DAFTAR
+   04. DOKUMEN MASTER BOK
+   CSS dipisahkan berdasarkan fungsi: Header, Filter, dan List
+============================================================ */
+
+/* ============================================================
+   04A. HEADER MASTER DETAIL MENU
 ============================================================ */
 
 .simbok-master-hero-icon svg {
@@ -1650,6 +1843,68 @@ body.simbok-modal-open {
 .simbok-master-add-button[hidden] {
   display: none !important;
 }
+
+.simbok-master-hero {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-height: 82px;
+  padding: 14px 16px;
+  border: 1px solid #dce8fb;
+  border-radius: 14px;
+  border-color: #cfe0ff;
+  background: linear-gradient(105deg, #ffffff 0%, #edf5ff 100%);
+}
+
+.simbok-master-hero-icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border: 1px solid #cfe0ff;
+  border-radius: 14px;
+  border-color: #c5dcff;
+  background: #dceaff;
+  color: #0866f5;
+}
+
+.simbok-master-hero-copy h3 {
+  margin: 4px 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0b1b4c;
+}
+
+.simbok-master-add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 41px;
+  flex: 0 0 auto;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 10px;
+  color: #ffffff;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  background: linear-gradient(100deg, #0875ff 0%, #1459ed 100%);
+  box-shadow: 0 5px 13px rgba(8, 102, 245, 0.22);
+}
+
+.simbok-master-add-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.23);
+  background: #064fd0;
+}
+
+/* ============================================================
+   04B. FILTER DETAIL MENU
+============================================================ */
 
 .simbok-master-list-toolbar {
   display: grid;
@@ -1742,6 +1997,141 @@ body.simbok-modal-open {
 .simbok-icon-button:hover {
   background: #eff6ff;
 }
+
+.simbok-master-year-filter select:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.1);
+  border-color: #8ab4f8;
+}
+
+.simbok-master-list-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr)
+
+    minmax(0, 1fr)
+
+    minmax(112px, 132px)
+
+    40px;
+  align-items: end;
+  gap: 10px;
+}
+
+.simbok-master-search,
+
+.simbok-master-menu-filter,
+
+.simbok-master-year-filter {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+  color: #334761;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.simbok-master-year-filter {
+  flex: 0 0 138px;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.simbok-filter-label {
+  display: block;
+  min-height: 13px;
+  color: #405674;
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 1.3;
+}
+
+.simbok-master-search {
+  position: relative;
+}
+
+.simbok-master-search svg {
+  position: absolute;
+  fill: none;
+  stroke: #7b8ca4;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  top: 31px;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  pointer-events: none;
+}
+
+.simbok-master-search input,
+
+.simbok-master-menu-filter select,
+
+.simbok-master-year-filter select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid #d7e2f1;
+  border-radius: 9px;
+  background-color: #ffffff;
+  color: #29415f;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.simbok-master-search input {
+  padding-left: 38px;
+  padding: 9px 12px 9px 36px;
+}
+
+.simbok-master-menu-filter select,
+
+.simbok-master-year-filter select {
+  padding: 9px 30px 9px 11px;
+  cursor: pointer;
+}
+
+.simbok-master-year-filter select {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 30px 9px 12px;
+  border: 1px solid #dce5f2;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #334761;
+  font: inherit;
+  font-size: 11px;
+  box-sizing: border-box;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.simbok-master-list-filters > .simbok-icon-button {
+  width: 40px;
+  height: 40px;
+  min-height: 40px;
+  align-self: end;
+}
+
+.simbok-master-search input:focus,
+
+.simbok-master-menu-filter select:focus,
+
+.simbok-master-year-filter select:focus {
+  outline: 3px solid rgba(37, 99, 235, 0.1);
+  border-color: #8ab4f8;
+}
+
+/* ============================================================
+   04C. LIST DETAIL MENU - STYLE DASAR DAN KARTU
+============================================================ */
 
 .simbok-master-card-list {
   display: grid;
@@ -1923,64 +2313,6 @@ body.simbok-modal-open {
   stroke-linejoin: round;
 }
 
-.simbok-master-hero {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  min-height: 82px;
-  padding: 14px 16px;
-  border: 1px solid #dce8fb;
-  border-radius: 14px;
-  border-color: #cfe0ff;
-  background: linear-gradient(105deg, #ffffff 0%, #edf5ff 100%);
-}
-
-.simbok-master-hero-icon {
-  display: grid;
-  place-items: center;
-  width: 48px;
-  height: 48px;
-  flex: 0 0 48px;
-  border: 1px solid #cfe0ff;
-  border-radius: 14px;
-  border-color: #c5dcff;
-  background: #dceaff;
-  color: #0866f5;
-}
-
-.simbok-master-hero-copy h3 {
-  margin: 4px 0;
-  font-size: 16px;
-  font-weight: 800;
-  color: #0b1b4c;
-}
-
-.simbok-master-add-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  min-height: 41px;
-  flex: 0 0 auto;
-  padding: 0 15px;
-  border: 0;
-  border-radius: 10px;
-  color: #ffffff;
-  font: inherit;
-  font-size: 11px;
-  font-weight: 750;
-  cursor: pointer;
-  transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
-  background: linear-gradient(100deg, #0875ff 0%, #1459ed 100%);
-  box-shadow: 0 5px 13px rgba(8, 102, 245, 0.22);
-}
-
-.simbok-master-add-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.23);
-  background: #064fd0;
-}
-
 .simbok-master-card-code,
 
 .simbok-master-card-code-badge {
@@ -2001,433 +2333,1478 @@ body.simbok-modal-open {
   color: #0866f5;
 }
 
-.simbok-master-year-filter select:focus {
-  outline: 3px solid rgba(37, 99, 235, 0.1);
-  border-color: #8ab4f8;
-}
+/* ============================================================
+   TAHAP 3 - PREMIUM DETAIL MENU CARD
+============================================================ */
 
-.simbok-master-list-filters {
+.simbok-master-card-premium {
   display: grid;
-  grid-template-columns: minmax(0, 1fr)
-
-    minmax(0, 1fr)
-
-    minmax(112px, 132px)
-
-    40px;
-  align-items: end;
-  gap: 10px;
+  grid-template-columns: 54px minmax(0, 1fr) 245px;
+  align-items: stretch;
+  gap: 16px;
+  padding: 17px;
+  border: 1px solid #d9e7fb;
+  border-left: 5px solid #1680ff;
+  border-radius: 17px;
+  background: linear-gradient(115deg, #ffffff 0%, #fbfdff 100%);
+  box-shadow: 0 5px 18px rgba(31, 65, 114, 0.045);
+  transition: border-color 160ms ease, box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
-.simbok-master-search,
+.simbok-master-card-premium:hover {
+  transform: translateY(-2px);
+  border-color: #b9d5ff;
+  box-shadow: 0 9px 24px rgba(31, 65, 114, 0.09);
+}
 
-.simbok-master-menu-filter,
+.simbok-master-card-premium > .simbok-master-card-icon {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #e8f2ff, #d8e9ff);
+  color: #0866f5;
+}
 
-.simbok-master-year-filter {
+.simbok-master-card-content {
+  min-width: 0;
+}
+
+.simbok-master-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.simbok-master-card-heading h4 {
+  margin: 0;
+  color: #0b1b4c;
+  font-size: 16px;
+  font-weight: 850;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.simbok-master-year-badge {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  border: 1px solid #b8f0d4;
+  border-radius: 999px;
+  background: #e6fff2;
+  color: #07864d;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.simbok-master-info-row {
+  display: grid;
+  grid-template-columns: 20px 135px minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  min-height: 37px;
+  padding: 5px 12px;
+  margin-bottom: 7px;
+  border-radius: 10px;
+  background: #f2f6fd;
+  color: #172b4d;
+  font-size: 12px;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+/* Ikon informasi */
+.simbok-master-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #0875ff;
+}
+
+.simbok-master-info-icon svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Label informasi */
+.simbok-master-info-label {
+  color: #405674;
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+/* Nilai informasi */
+.simbok-master-info-row > strong,
+.simbok-master-info-row > span:last-child {
+  min-width: 0;
+  color: #102654;
+  font-size: 12px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+/* Pemegang program */
+.simbok-master-holder-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 24px;
+  min-width: 0;
+}
+
+.simbok-master-holder-content strong {
+  color: #102654;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* NIP */
+.simbok-master-holder-nip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding-left: 18px;
+  border-left: 2px solid #b9c9e2;
+  color: #334b70;
+  font-size: 11px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+
+.simbok-master-holder-nip b {
+  color: #405674;
+  font-weight: 700;
+}
+
+.simbok-master-card-divider {
+  height: 1px;
+  margin: 12px 0;
+  background: #e3ecf8;
+}
+
+.simbok-master-card-bottom {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 22px;
+  padding-top: 12px;
+  border-top: 1px solid #e3ecf8;
+}
+
+.simbok-master-detail-code {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  min-height: 76px;
+  padding: 9px 14px;
+  border-right: 2px solid #dce8f8;
+  border-radius: 0;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.simbok-master-detail-code strong {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #eaf1ff;
+  color: #102b65;
+  font-size: 19px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+.simbok-master-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #405674;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.simbok-master-detail-label svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 19px;
+  fill: none;
+  stroke: #0875ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-master-component-list {
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.simbok-master-component-list > strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 11px;
+  color: #102654;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.simbok-master-component-list > strong > svg {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+  fill: none;
+  stroke: #0875ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-master-component-count {
+  color: #1768eb;
+  font-size: 17px;
+}
+
+.simbok-master-card-premium .simbok-master-card-components {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0;
+}
+
+.simbok-master-card-premium .simbok-master-component-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 7px 18px;
+  border: 1px solid #d9e8ff;
+  border-radius: 999px;
+  background: #e5efff;
+  color: #123b91;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.simbok-master-component-empty {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+/* ============================================================
+   PANEL TOTAL PAGU DAN AKSI KARTU DETAIL MENU
+============================================================ */
+
+.simbok-master-card-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  padding: 12px 0 4px 20px;
+  border-left: 1px solid #dce8f8;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   PANEL TOTAL PAGU
+============================================================ */
+
+.simbok-master-card-side .simbok-master-card-budget {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  justify-content: flex-end;
-  gap: 6px;
-  min-width: 0;
+  justify-content: flex-start;
+  gap: 9px;
   width: 100%;
-  color: #334761;
-  font-size: 10px;
-  font-weight: 650;
+  min-height: 260px;
+  padding: 16px;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #f0fff7, #e0f8ec);
+  box-sizing: border-box;
 }
 
-.simbok-master-year-filter {
-  flex: 0 0 138px;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
+/* Ikon dan label Total Pagu */
+.simbok-master-budget-heading {
+  display: flex;
+  align-items: center;
+  gap: 9px;
 }
 
-.simbok-filter-label {
-  display: block;
-  min-height: 13px;
-  color: #405674;
-  font-size: 10px;
-  font-weight: 650;
-  line-height: 1.3;
-}
-
-.simbok-master-search {
-  position: relative;
-}
-
-.simbok-master-search svg {
-  position: absolute;
+.simbok-master-budget-heading svg {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
   fill: none;
-  stroke: #7b8ca4;
+  stroke: #079653;
   stroke-width: 1.8;
   stroke-linecap: round;
-  top: 31px;
-  left: 12px;
-  width: 16px;
-  height: 16px;
-  pointer-events: none;
+  stroke-linejoin: round;
 }
 
-.simbok-master-search input,
+.simbok-master-budget-heading small {
+  color: #648a77;
+  font-size: 12px;
+  font-weight: 650;
+}
 
-.simbok-master-menu-filter select,
+/* Nominal Total Pagu */
+.simbok-master-card-side .simbok-master-card-budget strong {
+  color: #078b50;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.3;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
 
-.simbok-master-year-filter select {
+/* Ilustrasi koin di bawah nominal */
+.simbok-master-budget-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 100%;
+  min-height: 115px;
+  margin-top: 4px;
+  overflow: hidden;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #e9fff2, #d5f6e4);
+  color: #16a05d;
+}
+
+.simbok-master-budget-illustration svg {
   display: block;
   width: 100%;
-  min-width: 0;
-  min-height: 40px;
-  height: 40px;
-  box-sizing: border-box;
-  border: 1px solid #d7e2f1;
-  border-radius: 9px;
-  background-color: #ffffff;
-  color: #29415f;
-  font-family: inherit;
-  font-size: 11px;
-  font-weight: 500;
+  max-width: 190px;
+  height: 120px;
+  fill: #50cb80;
+  fill-opacity: 0.15;
+  stroke: #25b96a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.simbok-master-search input {
-  padding-left: 38px;
-  padding: 9px 12px 9px 36px;
-}
-
-.simbok-master-menu-filter select,
-
-.simbok-master-year-filter select {
-  padding: 9px 30px 9px 11px;
-  cursor: pointer;
-}
-
-.simbok-master-year-filter select {
-  width: 100%;
-  min-height: 40px;
-  padding: 9px 30px 9px 12px;
-  border: 1px solid #dce5f2;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #334761;
-  font: inherit;
-  font-size: 11px;
-  box-sizing: border-box;
-  cursor: pointer;
-  min-width: 0;
-}
-
-.simbok-master-list-filters > .simbok-icon-button {
-  width: 40px;
-  height: 40px;
-  min-height: 40px;
-  align-self: end;
-}
-
-.simbok-master-search input:focus,
-
-.simbok-master-menu-filter select:focus,
-
-.simbok-master-year-filter select:focus {
-  outline: 3px solid rgba(37, 99, 235, 0.1);
-  border-color: #8ab4f8;
+.simbok-master-budget-illustration svg text {
+  fill: #ffffff;
+  stroke: none;
 }
 
 /* ============================================================
-   RESPONSIVE — (max-width: 1050px)
+   TOMBOL AKSI: DETAIL, EDIT, HAPUS
 ============================================================ */
-@media (max-width: 1050px) {
-  .simbok-master-card {
-    grid-template-columns: 48px minmax(90px, auto) minmax(180px, 1fr) minmax(125px, auto);
-  }
 
-  .simbok-master-card-actions {
-    grid-column: 3 / -1;
-    justify-content: flex-end;
-  }
-
+.simbok-master-card-side .simbok-master-card-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
 }
 
-@media (max-width: 640px) {
-  .simbok-master-identity-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+/* Tampilan dasar tombol */
+.simbok-master-card-side .simbok-master-card-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  gap: 5px;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  padding: 0 8px;
+  border: 1px solid #c9dcff;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1765dc;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease,
+    transform 150ms ease, box-shadow 150ms ease;
+}
+
+.simbok-master-card-side .simbok-master-card-actions button:hover {
+  background: #dceaff;
+  border-color: #9fc4ff;
+  transform: translateY(-1px);
+}
+
+/* Tombol Detail */
+.simbok-master-card-side .simbok-master-card-actions button.simbok-master-view {
+  flex: 1.2 1 0;
+  min-height: 40px;
+  padding: 0 9px;
+  border-color: #1768eb;
+  background: linear-gradient(105deg, #0875ff, #1459ed);
+  color: #ffffff;
+  box-shadow: 0 5px 12px rgba(8, 102, 245, 0.17);
+}
+
+.simbok-master-card-side .simbok-master-card-actions button.simbok-master-view:hover {
+  border-color: #064fd0;
+  background: #064fd0;
+}
+
+/* Tombol Hapus */
+.simbok-master-card-side .simbok-master-card-actions button.is-danger {
+  border-color: #fecaca;
+  background: #fff0f1;
+  color: #dc2626;
+}
+
+.simbok-master-card-side .simbok-master-card-actions button.is-danger:hover {
+  border-color: #fca5a5;
+  background: #ffe1e4;
+}
+
+/* Ikon SVG tombol */
+.simbok-master-card-side .simbok-master-card-actions svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ============================================================
+   RESPONSIVE PANEL
+============================================================ */
+
+@media (max-width: 900px) {
+  .simbok-master-card-side {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0 0;
+    border-left: 0;
+    border-top: 1px solid #e3ecf8;
+  }
+
+  .simbok-master-card-side .simbok-master-card-budget {
+    flex: 1 1 180px;
+    min-height: 190px;
+  }
+
+  .simbok-master-card-side .simbok-master-card-actions {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .simbok-master-card-side {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .simbok-master-card-side .simbok-master-card-budget {
+    width: 100%;
+    min-height: 220px;
+  }
+
+  .simbok-master-card-side .simbok-master-card-actions {
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .simbok-master-card-side .simbok-master-card-actions button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 6px;
+  }
+}
+
+/* ============================================================
+   TOMBOL AKSI: DETAIL, EDIT, HAPUS
+============================================================ */
+
+.simbok-master-card-side .simbok-master-card-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Tampilan dasar tombol */
+.simbok-master-card-side .simbok-master-card-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  gap: 5px;
+  min-width: 0;
+  min-height: 40px;
+  height: 40px;
+  padding: 0 8px;
+  border: 1px solid #c9dcff;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1765dc;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease,
+    transform 150ms ease, box-shadow 150ms ease;
+}
+
+/* Hover tombol umum */
+.simbok-master-card-side .simbok-master-card-actions button:hover {
+  background: #dceaff;
+  border-color: #9fc4ff;
+  transform: translateY(-1px);
+}
+
+/* Tombol Detail */
+.simbok-master-card-side .simbok-master-card-actions button.simbok-master-view {
+  flex: 1.2 1 0;
+  min-height: 40px;
+  padding: 0 9px;
+  border-color: #1768eb;
+  background: linear-gradient(105deg, #0875ff, #1459ed);
+  color: #ffffff;
+  box-shadow: 0 5px 12px rgba(8, 102, 245, 0.17);
+}
+
+.simbok-master-card-side .simbok-master-card-actions button.simbok-master-view:hover {
+  border-color: #064fd0;
+  background: #064fd0;
+}
+
+/* Tombol Hapus */
+.simbok-master-card-side .simbok-master-card-actions button.is-danger {
+  border-color: #fecaca;
+  background: #fff0f1;
+  color: #dc2626;
+}
+
+.simbok-master-card-side .simbok-master-card-actions button.is-danger:hover {
+  border-color: #fca5a5;
+  background: #ffe1e4;
+}
+
+/* Ikon SVG tombol */
+.simbok-master-card-side .simbok-master-card-actions svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ============================================================
+   RESPONSIVE PANEL AKSI
+============================================================ */
+
+@media (max-width: 900px) {
+  .simbok-master-card-side {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 0 0;
+    border-left: 0;
+    border-top: 1px solid #e3ecf8;
+  }
+
+  .simbok-master-card-side .simbok-master-card-budget {
+    flex: 1 1 180px;
+    min-height: 110px;
+  }
+
+  .simbok-master-card-side .simbok-master-card-actions {
+    flex: 1 1 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .simbok-master-card-side {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .simbok-master-card-side .simbok-master-card-budget {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .simbok-master-card-side .simbok-master-card-actions {
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .simbok-master-card-side .simbok-master-card-actions button {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 6px;
+  }
+}
+
+/* ============================================================
+   04D. RESPONSIVE LIST DETAIL MENU
+============================================================ */
+
+/* Responsif */
+@media (max-width: 900px) {
+  .simbok-master-card-premium {
+    grid-template-columns: 46px minmax(0, 1fr);
     gap: 12px;
   }
 
-  .simbok-master-identity-grid .simbok-field-year {
-    grid-column: 1;
+  .simbok-master-card-premium > .simbok-master-card-icon {
+    width: 46px;
+    height: 46px;
   }
 
-  .simbok-master-identity-grid .simbok-field-code {
+  .simbok-master-card-content {
     grid-column: 2;
   }
 
-  .simbok-master-identity-grid .simbok-field-menu,
-  .simbok-master-identity-grid .simbok-field-rincian {
-    grid-column: 1 / -1;
-  }
-}
-
-/* ============================================================
-   RESPONSIVE — (max-width: 480px)
-============================================================ */
-@media (max-width: 480px) {
-  .simbok-plan-title-art {
-    display: none;
-  }
-
-  .simbok-plan-summary {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .simbok-master-workspace-card,
-
-  .simbok-plan-content-card {
-    padding: 11px;
-  }
-
-  .simbok-master-list-title {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .simbok-master-card {
-    padding: 11px;
-  }
-
-  .simbok-master-card-actions button {
-    width: 31px;
-    height: 31px;
-  }
-
-}
-
-/* ============================================================
-   RESPONSIVE — (max-width: 700px)
-============================================================ */
-@media (max-width: 700px) {
-  .simbok-modal-backdrop {
-    align-items: flex-end;
-    padding: 0;
-  }
-
-  .simbok-master-modal {
-    width: 100%;
-    max-height: 96vh;
-    border-radius: 18px 18px 0 0;
-  }
-
-  .simbok-master-modal-header {
-    padding: 18px;
-  }
-
-  .simbok-master-form {
-    padding: 18px 16px 0;
-  }
-
-  .simbok-master-grid,  .simbok-component-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .simbok-field-span-2 {
-    grid-column: auto;
-  }
-
-  .simbok-component-section-title {
+  .simbok-master-card-side {
+    grid-column: 2;
+    flex-direction: row;
+    align-items: center;
     flex-wrap: wrap;
+    padding: 12px 0 0;
+    border-left: 0;
+    border-top: 1px solid #e3ecf8;
   }
 
-  .simbok-component-section-title .simbok-plan-button {
-    width: 100%;
+  .simbok-master-card-side .simbok-master-card-budget {
+    flex: 1 1 180px;
   }
+}
 
-  .simbok-master-modal-footer {
-    margin: 0 -16px;
-    padding: 14px 16px;
-  }
-
-  .simbok-plan-stat {
-    grid-template-columns: 44px minmax(0, 1fr);
-    column-gap: 10px;
-    min-height: 82px;
+@media (max-width: 560px) {
+  .simbok-master-card-premium {
     padding: 12px;
-  }
-
-  .simbok-stat-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .simbok-stat-icon svg {
-    width: 22px;
-    height: 22px;
-  }
-
-  .simbok-plan-title-card {
-    min-height: 96px;
-    padding: 13px 15px;
     gap: 10px;
   }
 
-  .simbok-plan-title-accent {
-    height: 54px;
+  .simbok-master-card-heading {
+    flex-direction: column;
+    gap: 7px;
   }
 
-  .simbok-plan-title-art {
-    width: 112px;
-    height: 76px;
-    flex-basis: 112px;
+  .simbok-master-card-heading h4 {
+    font-size: 14px;
   }
 
-}
-
-/* ============================================================
-   RESPONSIVE — (max-width: 420px)
-============================================================ */
-@media (max-width: 420px) {
-  .simbok-master-list-filters {
-    grid-template-columns: minmax(0, 1fr) 40px;
+  .simbok-master-info-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
   }
 
-  .simbok-master-search {
+  .simbok-master-card-bottom {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .simbok-master-card-side {
     grid-column: 1 / -1;
   }
 
-  .simbok-master-menu-filter,
-
-  .simbok-master-year-filter {
-    grid-column: 1;
-  }
-
-  .simbok-master-list-filters > .simbok-icon-button {
-    grid-column: 2;
-    grid-row: 2 / span 2;
-  }
-
-}
-
-/* ============================================================
-   RESPONSIVE — (max-width: 760px)
-============================================================ */
-@media (max-width: 760px) {
-  .simbok-plan-title-card {
-    min-height: 112px;
-    padding: 17px;
-  }
-
-  .simbok-plan-title-art {
-    width: 95px;
-    flex-basis: 95px;
-    transform: scale(0.8);
-    transform-origin: right center;
-  }
-
-  .simbok-plan-summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .simbok-master-hero {
-    align-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .simbok-master-hero-copy {
-    flex: 1 1 calc(100% - 65px);
-  }
-
-  .simbok-master-add-button {
+  .simbok-master-card-side .simbok-master-card-actions {
     width: 100%;
+    justify-content: flex-start;
   }
 
-  .simbok-master-card {
-    grid-template-columns: 44px minmax(0, 1fr) auto;
-    align-items: start;
-    gap: 10px;
+  .simbok-master-card-side .simbok-master-card-actions button {
+    flex: 1 1 auto;
   }
 
-  .simbok-master-card-icon {
-    width: 42px;
-    height: 42px;
+  .simbok-master-card-side .simbok-master-card-actions button span {
+    display: inline;
   }
-
-  .simbok-master-card-code {
-    grid-column: 2 / -1;
-    grid-row: 1;
-  }
-
-  .simbok-master-card-main {
-    grid-column: 1 / -1;
-  }
-
-  .simbok-master-card-budget {
-    grid-column: 1 / 3;
-    justify-items: start;
-  }
-
-  .simbok-master-card-actions {
-    grid-column: 3;
-    grid-row: 4;
-    justify-content: flex-end;
-  }
-
-  .simbok-plan-summary-master {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .simbok-master-search {
-    grid-column: 1 / -1;
-  }
-
-  .simbok-master-menu-filter {
-    grid-row: 2;
-    grid-column: 1;
-  }
-
-  .simbok-master-year-filter {
-    flex-basis: 100%;
-    grid-column: 2;
-  }
-
-  .simbok-master-list-filters > .simbok-icon-button {
-    grid-column: 3;
-  }
-
-  .simbok-master-list-filters {
-    grid-template-columns: minmax(0, 1fr)
-
-      minmax(0, 1fr)
-
-      minmax(105px, 125px)
-
-      40px;
-    gap: 8px;
-  }
-
 }
 
+
+
+/* ======================================================
+   SIMBOK — PREMIUM FEEDBACK MODAL
+====================================================== */
+
+.simbok-feedback-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, .48);
+  backdrop-filter: blur(5px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .18s ease, visibility .18s ease;
+}
+
+.simbok-feedback-backdrop.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.simbok-feedback-dialog {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 32px 28px 26px;
+  border: 1px solid #e8edf5;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, .2);
+  text-align: center;
+  transform: translateY(12px) scale(.97);
+  transition: transform .2s ease;
+}
+
+.simbok-feedback-backdrop.show .simbok-feedback-dialog {
+  transform: translateY(0) scale(1);
+}
+
+.simbok-feedback-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  color: #64748b;
+  font-size: 21px;
+  cursor: pointer;
+}
+
+.simbok-feedback-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 66px;
+  height: 66px;
+  margin: 0 auto 20px;
+  border-radius: 20px;
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.simbok-feedback-icon.success {
+  color: #079455;
+  background: #e7f8ef;
+}
+
+.simbok-feedback-icon.confirm {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.simbok-feedback-icon.danger {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.simbok-feedback-icon.error {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.simbok-feedback-content h3 {
+  margin: 0 0 10px;
+  color: #172b4d;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.simbok-feedback-content p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.simbok-feedback-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.simbok-feedback-btn {
+  min-height: 43px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 11px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.simbok-feedback-btn.primary {
+  color: #fff;
+  background: #2563eb;
+}
+
+.simbok-feedback-btn.danger {
+  color: #fff;
+  background: #dc2626;
+}
+
+.simbok-feedback-btn.secondary {
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  background: #fff;
+}
+
+.simbok-feedback-btn:hover {
+  filter: brightness(.95);
+  transform: translateY(-1px);
+}
+
+/* FIX FINAL — Tombol konfirmasi hapus */
+#simbokFeedbackModal .simbok-feedback-actions
+.simbok-feedback-btn.danger {
+  background: #dc2626 !important;
+  background-color: #dc2626 !important;
+  border: 1px solid #dc2626 !important;
+  color: #ffffff !important;
+}
+
+#simbokFeedbackModal .simbok-feedback-actions
+.simbok-feedback-btn.danger:hover {
+  background: #b91c1c !important;
+  background-color: #b91c1c !important;
+  border-color: #b91c1c !important;
+}
+
+
+
+
 /* ============================================================
-   RESPONSIVE — (max-width: 520px)
+   SIMBOK — RPD CARD
+   CSS MANDIRI, TIDAK BERGANTUNG PADA MASTER DETAIL MENU
 ============================================================ */
-@media (max-width: 520px) {
-  .simbok-master-list-filters {
-    grid-template-columns: minmax(0, 1fr) minmax(105px, 0.8fr) 40px;
-    gap: 8px;
+
+#simbokRpdCardList {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+  margin-top: 12px;
+}
+
+.simbok-rpd-card,
+.simbok-rpd-card * {
+  box-sizing: border-box;
+}
+
+.simbok-rpd-card {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) 245px;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid #d9e7fb;
+  border-left: 5px solid #1680ff;
+  border-radius: 17px;
+  background: linear-gradient(115deg, #ffffff, #fbfdff);
+  box-shadow: 0 5px 18px rgba(31, 65, 114, .045);
+  transition: border-color .16s ease, box-shadow .16s ease,
+    transform .16s ease;
+}
+
+.simbok-rpd-card:hover {
+  transform: translateY(-2px);
+  border-color: #b9d5ff;
+  box-shadow: 0 9px 24px rgba(31, 65, 114, .09);
+}
+
+/* IKON */
+
+.simbok-rpd-card-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border: 1px solid #cfe1ff;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #e8f2ff, #d8e9ff);
+  color: #0866f5;
+}
+
+.simbok-rpd-card-icon svg {
+  display: block;
+  width: 25px;
+  height: 25px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* KONTEN UTAMA */
+
+.simbok-rpd-card-content {
+  min-width: 0;
+}
+
+.simbok-rpd-card-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+
+.simbok-rpd-card-heading h4 {
+  min-width: 0;
+  margin: 0;
+  color: #0b1b4c;
+  font-size: 15px;
+  font-weight: 850;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.simbok-rpd-year-badge {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  padding: 6px 10px;
+  border: 1px solid #b8f0d4;
+  border-radius: 999px;
+  background: #e6fff2;
+  color: #07864d;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+
+/* ============================================================
+   INFORMASI MENU RPD
+============================================================ */
+
+.simbok-rpd-info-list {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.simbok-rpd-info-row {
+  display: grid;
+  grid-template-columns: 18px 135px minmax(0, 1fr);
+  align-items: center;
+  gap: 7px;
+  min-height: 37px;
+  padding: 5px 12px;
+  border-radius: 10px;
+  background: #f2f6fd;
+  color: #172b4d;
+  font-size: 11px;
+  line-height: 1.45;
+  box-sizing: border-box;
+}
+
+/* Ikon informasi */
+.simbok-rpd-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: #0875ff;
+}
+
+.simbok-rpd-info-icon svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Label informasi */
+.simbok-rpd-info-label {
+  color: #405674;
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
+}
+
+/* Nilai informasi */
+.simbok-rpd-info-row > strong,
+.simbok-rpd-holder > strong {
+  min-width: 0;
+  color: #102654;
+  font-size: 11px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+
+/* Pemegang program */
+.simbok-rpd-holder {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 20px;
+  min-width: 0;
+}
+
+.simbok-rpd-holder-nip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 14px;
+  border-left: 2px solid #b9c9e2;
+  color: #334b70;
+  font-size: 10px;
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+
+.simbok-rpd-holder-nip b {
+  color: #405674;
+  font-weight: 700;
+}
+
+
+/* ============================================================
+   KODE DETAIL MENU DAN KOMPONEN RPD
+============================================================ */
+
+.simbok-rpd-card-footer {
+  display: grid;
+  grid-template-columns: 178px minmax(0, 1fr);
+  align-items: stretch;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e3ecf8;
+}
+
+/* Kode Detail Menu */
+.simbok-rpd-code {
+  display: grid;
+  align-content: center;
+  gap: 7px;
+  min-width: 0;
+  padding: 5px 14px 5px 0;
+  border-right: 1px solid #dce8f8;
+}
+
+.simbok-rpd-code-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #405674;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.simbok-rpd-code-label svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  fill: none;
+  stroke: #0875ff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-rpd-code strong {
+  display: block;
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 8px;
+  border: 0;
+  border-radius: 11px;
+  background: #eaf1ff;
+  color: #102b65;
+  font-size: 16px;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+
+/* Komponen */
+.simbok-rpd-components {
+  min-width: 0;
+  padding: 4px 0;
+}
+
+.simbok-rpd-components-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: #102654;
+}
+
+.simbok-rpd-components-heading svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  fill: none;
+  stroke: #0875ff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-rpd-components-heading strong {
+  color: #102654;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.simbok-rpd-component-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 0;
+}
+
+.simbok-rpd-component-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 35px;
+  padding: 7px 15px;
+  border: 1px solid #d9e8ff;
+  border-radius: 999px;
+  background: #e5efff;
+  color: #123b91;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.simbok-rpd-component-empty {
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.simbok-rpd-locked-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 10px;
+  color: #405674;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.simbok-rpd-locked-info svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+  flex: 0 0 15px;
+  fill: none;
+  stroke: #0875ff;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-rpd-locked-info strong {
+  color: #102654;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+/* PANEL ANGGARAN */
+
+.simbok-rpd-card-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  min-width: 0;
+  padding-left: 15px;
+  border-left: 1px solid #dce8f8;
+}
+
+.simbok-rpd-budget {
+  display: grid;
+  align-content: start;
+  gap: 11px;
+  width: 100%;
+  min-width: 0;
+  padding: 16px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #f0fff7, #e0f8ec);
+}
+
+
+.simbok-rpd-budget-item {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.simbok-rpd-budget-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.simbok-rpd-budget-heading svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  fill: none;
+  stroke: #079653;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.simbok-rpd-budget-heading span {
+  color: #648a77;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.simbok-rpd-budget-item > strong {
+  color: #078b50;
+  font-size: 21px;
+  font-weight: 900;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+
+.simbok-rpd-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 27px;
+  padding: 5px 10px;
+  border: 1px solid #b8f0d4;
+  border-radius: 999px;
+  background: #e6fff2;
+  color: #07864d;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.simbok-rpd-status.is-filled {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1765dc;
+}
+
+.simbok-rpd-status.is-warning {
+  border-color: #fecaca;
+  background: #fff1f2;
+  color: #dc2626;
+}
+
+/* TOMBOL RPD */
+
+.simbok-rpd-actions {
+  display: flex;
+  width: 100%;
+}
+
+.simbok-rpd-edit-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid #bfd7ff;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1765dc;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .15s ease;
+}
+
+.simbok-rpd-edit-button:hover:not(:disabled) {
+  border-color: #1768eb;
+  background: #1768eb;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.simbok-rpd-edit-button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.simbok-rpd-edit-button svg {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* EMPTY STATE */
+
+.simbok-rpd-empty {
+  display: grid;
+  justify-items: center;
+  gap: 9px;
+  padding: 38px 20px;
+  border: 1px dashed #cbdcf3;
+  border-radius: 14px;
+  background: #fbfdff;
+  text-align: center;
+}
+
+.simbok-rpd-empty-icon {
+  color: #8ba9d4;
+  font-size: 28px;
+}
+
+.simbok-rpd-empty strong {
+  color: #172b4d;
+  font-size: 14px;
+}
+
+.simbok-rpd-empty p {
+  margin: 0;
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* RESPONSIVE TABLET */
+
+@media (max-width: 900px) {
+  .simbok-rpd-card {
+    grid-template-columns: 46px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
   }
 
-  .simbok-master-search {
-    grid-column: 1 / -1;
+  .simbok-rpd-card-icon {
+    width: 46px;
+    height: 46px;
   }
 
-  .simbok-master-menu-filter {
-    grid-column: 1;
-  }
-
-  .simbok-master-year-filter {
+  .simbok-rpd-card-content {
     grid-column: 2;
   }
 
-  .simbok-master-list-filters > .simbok-icon-button {
-    grid-column: 3;
-    grid-row: 2;
+  .simbok-rpd-card-side {
+    grid-column: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(140px, 190px);
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0 0;
+    border-left: 0;
+    border-top: 1px solid #e3ecf8;
+  }
+}
+
+/* RESPONSIVE HP */
+
+@media (max-width: 560px) {
+  .simbok-rpd-card {
+    grid-template-columns: 1fr;
+    gap: 11px;
+    padding: 13px;
   }
 
+  .simbok-rpd-card-icon {
+    width: 43px;
+    height: 43px;
+  }
+
+  .simbok-rpd-card-content,
+  .simbok-rpd-card-side {
+    grid-column: 1;
+  }
+
+  .simbok-rpd-card-heading h4 {
+    font-size: 13px;
+  }
+
+  .simbok-rpd-info-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+
+  .simbok-rpd-card-footer {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .simbok-rpd-code {
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-right: 0;
+    border-bottom: 1px solid #dce8f8;
+  }
+
+  .simbok-rpd-card-side {
+    grid-template-columns: 1fr;
+  }
 }
